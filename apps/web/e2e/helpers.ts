@@ -10,12 +10,21 @@ export const uniqueEmail = (prefix = 'teacher') =>
 
 export const appPath = (locale: Locale) => new RegExp(`/${locale}/app$`);
 
+/** Marks the welcome tour as seen, so its dialog does not cover the page in other tests. */
+export async function skipTour(page: Page): Promise<void> {
+  await page
+    .context()
+    .addCookies([{ name: 'thp_tour_seen', value: '1', domain: 'localhost', path: '/' }]);
+}
+
 export async function signUp(
   page: Page,
   locale: Locale = 'en',
   email = uniqueEmail(),
+  { tour = false }: { readonly tour?: boolean } = {},
 ): Promise<string> {
   const t = createTranslator(locale);
+  if (!tour) await skipTour(page);
   await page.goto(`/${locale}/signup`);
   await page.getByLabel(t('auth.name'), { exact: true }).fill('Ana López');
   await page.getByLabel(t('auth.email'), { exact: true }).fill(email);
@@ -46,6 +55,7 @@ export async function continueWithGoogle(
   name = 'Ana Google',
 ): Promise<void> {
   const t = createTranslator(locale);
+  await skipTour(page);
   await page.goto(`/${locale}/login`);
   await page.getByRole('link', { name: t('auth.continueWithGoogle') }).click();
   await expect(page.getByRole('heading', { name: t('localGoogle.title') })).toBeVisible();

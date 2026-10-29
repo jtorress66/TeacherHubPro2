@@ -14,6 +14,7 @@ export * from './accounts/password-policy.ts';
 export * from './schools/school.ts';
 export * from './users/user.ts';
 export * from './users/roles.ts';
+export * from './onboarding/onboarding.ts';
 export * from './classes/class.ts';
 export * from './classes/schedule.ts';
 export * from './students/student.ts';

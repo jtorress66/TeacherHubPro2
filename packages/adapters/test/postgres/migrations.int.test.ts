@@ -43,13 +43,13 @@ describe('migrations', () => {
   it('rolls back completely and applies again', async () => {
     expect(await migrateDown(db)).toEqual({
       ok: true,
-      value: { applied: ['0002_accounts', '0001_initial'] },
+      value: { applied: ['0003_classes', '0002_accounts', '0001_initial'] },
     });
     expect(await tableNames()).toEqual([]);
 
     expect(await migrateToLatest(db)).toEqual({
       ok: true,
-      value: { applied: ['0001_initial', '0002_accounts'] },
+      value: { applied: ['0001_initial', '0002_accounts', '0003_classes'] },
     });
     expect(await tableNames()).toHaveLength(16);
   });

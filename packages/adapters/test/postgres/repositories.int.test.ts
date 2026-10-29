@@ -28,12 +28,15 @@ import {
   aSubscription,
   aUser,
   attendanceLookupContract,
+  classRepositoryContract,
   deletableContract,
   gradeRepositoryContract,
   passwordCredentialRepositoryContract,
   schoolRepositoryContract,
   scopedRepositoryContract,
+  semesterRepositoryContract,
   sessionRepositoryContract,
+  studentRepositoryContract,
   subscriptionLookupContract,
   userLookupContract,
 } from '@thp/testing';
@@ -64,10 +67,15 @@ withParents(parentsFor.school, () => {
     lists: [{ name: 'listBySchool', call: (repo, schoolId) => repo.listBySchool(schoolId) }],
   });
   userLookupContract('PostgresUserRepository', () => repos.users);
+  semesterRepositoryContract('PostgresSemesterRepository', () => repos.semesters);
 
-  scopedRepositoryContract('PostgresSemesterRepository', {
+  const semesters = {
     make: () => repos.semesters,
-    sample: (schoolId, id) => aSemester({ schoolId, id: id as SemesterId }),
+    sample: (schoolId: SchoolId, id: string) => aSemester({ schoolId, id: id as SemesterId }),
+  };
+  deletableContract('PostgresSemesterRepository', semesters);
+  scopedRepositoryContract('PostgresSemesterRepository', {
+    ...semesters,
     change: (semester) => ({ ...semester, isActive: true }),
     lists: [{ name: 'listBySchool', call: (repo, schoolId) => repo.listBySchool(schoolId) }],
   });
@@ -137,6 +145,14 @@ withParents(parentsFor.accounts, () => {
     'PostgresPasswordCredentialRepository',
     () => repos.credentials,
   );
+});
+
+withParents(parentsFor.classes, () => {
+  classRepositoryContract('PostgresClassRepository', () => repos.classes);
+});
+
+withParents(parentsFor.rosters, () => {
+  studentRepositoryContract('PostgresStudentRepository', () => repos.students);
 });
 
 withParents(parentsFor.class, () => {

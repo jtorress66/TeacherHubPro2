@@ -14,6 +14,11 @@ import type {
   UserId,
 } from '@thp/domain';
 import {
+  classRepositoryContract,
+  semesterRepositoryContract,
+  studentRepositoryContract,
+} from '../contracts/roster.contract.ts';
+import {
   deletableContract,
   scopedRepositoryContract,
 } from '../contracts/scoped-repository.contract.ts';
@@ -96,9 +101,13 @@ scopedRepositoryContract('InMemoryStudentRepository', {
 });
 deletableContract('InMemoryStudentRepository', students);
 
-scopedRepositoryContract('InMemorySemesterRepository', {
+const semesters = {
   make: () => new InMemorySemesterRepository(),
-  sample: (schoolId, id) => aSemester({ schoolId, id: id as SemesterId }),
+  sample: (schoolId: SchoolId, id: string) => aSemester({ schoolId, id: id as SemesterId }),
+};
+deletableContract('InMemorySemesterRepository', semesters);
+scopedRepositoryContract('InMemorySemesterRepository', {
+  ...semesters,
   change: (semester) => ({ ...semester, isActive: true }),
   lists: [{ name: 'listBySchool', call: (repo, schoolId) => repo.listBySchool(schoolId) }],
 });
@@ -215,3 +224,7 @@ subscriptionLookupContract(
   'InMemorySubscriptionRepository',
   () => new InMemorySubscriptionRepository(),
 );
+
+classRepositoryContract('InMemoryClassRepository', () => new InMemoryClassRepository());
+studentRepositoryContract('InMemoryStudentRepository', () => new InMemoryStudentRepository());
+semesterRepositoryContract('InMemorySemesterRepository', () => new InMemorySemesterRepository());

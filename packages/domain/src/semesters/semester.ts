@@ -53,3 +53,18 @@ export function activateSemester(
   if (!semesters.some((semester) => semester.id === id)) return err({ code: 'not_found' });
   return ok(semesters.map((semester) => ({ ...semester, isActive: semester.id === id })));
 }
+
+export type SemesterChanges = Omit<SemesterInput, 'id' | 'schoolId' | 'isActive'>;
+
+/** Changes name, dates and school year; which semester is active changes only through activateSemester. */
+export function updateSemester(
+  semester: Semester,
+  changes: SemesterChanges,
+): Result<Semester, ValidationError> {
+  return createSemester({
+    ...changes,
+    id: semester.id,
+    schoolId: semester.schoolId,
+    isActive: semester.isActive,
+  });
+}

@@ -45,6 +45,7 @@ export interface ClassesTable {
   period: number | null;
   start_time: string | null;
   end_time: string | null;
+  archived_at: Date | null;
   created_at: CreatedAt;
 }
 

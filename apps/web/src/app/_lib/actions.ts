@@ -1,5 +1,6 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createTranslator, isLocale, type Locale } from '@thp/i18n';
 import { getAppContainer } from '../../container.ts';
@@ -90,7 +91,10 @@ export async function updateSchoolAction(_state: FormState, data: FormData): Pro
     schoolId: school.id,
     details,
   });
-  return result.ok ? { saved: true } : { errors: formErrors(result.error, locale) };
+  if (!result.ok) return { errors: formErrors(result.error, locale) };
+  // The school name shows in the app header and drives the setup checklist.
+  revalidatePath(`/${locale}/app`, 'layout');
+  return { saved: true };
 }
 
 export async function upgradeAction(_state: FormState, data: FormData): Promise<FormState> {

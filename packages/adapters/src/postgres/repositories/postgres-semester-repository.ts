@@ -22,6 +22,14 @@ export class PostgresSemesterRepository implements SemesterRepository {
     return upsert(this.db, 'semesters', semesterMapper.toRow(semester));
   }
 
+  async delete(schoolId: SchoolId, id: SemesterId): Promise<void> {
+    await this.db
+      .deleteFrom('semesters')
+      .where('school_id', '=', schoolId)
+      .where('id', '=', id)
+      .execute();
+  }
+
   async listBySchool(schoolId: SchoolId): Promise<readonly Semester[]> {
     const rows = await this.db
       .selectFrom('semesters')

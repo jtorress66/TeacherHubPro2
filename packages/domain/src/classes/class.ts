@@ -14,6 +14,8 @@ export interface Class {
   readonly schoolYear: string | null;
   readonly semesterId: SemesterId | null;
   readonly schedule: Schedule | null;
+  /** When the class was archived (hidden but kept, with its roster); null while in use. */
+  readonly archivedAt: Date | null;
 }
 
 export interface ClassInput {
@@ -63,5 +65,24 @@ export function createClass(input: ClassInput): Result<Class, ValidationError> {
     ...optional,
     semesterId: input.semesterId ?? null,
     schedule,
+    archivedAt: null,
   });
 }
+
+export type ClassChanges = Omit<ClassInput, 'id' | 'schoolId' | 'teacherId'>;
+
+/** Replaces the editable fields with the same rules as creating a class. */
+export function updateClass(cls: Class, changes: ClassChanges): Result<Class, ValidationError> {
+  const updated = createClass({
+    ...changes,
+    id: cls.id,
+    schoolId: cls.schoolId,
+    teacherId: cls.teacherId,
+  });
+  return updated.ok ? ok({ ...updated.value, archivedAt: cls.archivedAt }) : updated;
+}
+
+/** Hides the class from everyday lists while keeping it and its roster. */
+export const archiveClass = (cls: Class, now: Date): Class => ({ ...cls, archivedAt: now });
+
+export const restoreClass = (cls: Class): Class => ({ ...cls, archivedAt: null });

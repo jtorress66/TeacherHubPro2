@@ -72,6 +72,20 @@ Never use a live key (`sk_live_…`): the job refuses it. The job creates the pr
 
 Accounts are matched by email only when Google says the email is verified.
 
+## Importing students (CSV)
+
+On a class page, **Import students from a CSV file** adds a whole roster at once. The first row names the columns, in English or Spanish, without regard to case or accents. Values can be separated by commas or semicolons (Spanish Excel uses semicolons).
+
+| Column         | Required | Accepted header names (examples)         |
+| -------------- | -------- | ---------------------------------------- |
+| First name     | yes      | `First name`, `Nombre`                   |
+| Last name      | yes      | `Last name`, `Apellidos`                 |
+| Student number | no       | `Student number`, `Número de estudiante` |
+| Parent email   | no       | `Parent email`, `Correo del padre`       |
+| Accommodations | no       | `Accommodations`, `Adaptaciones`         |
+
+Samples: `apps/web/public/samples/students-en.csv` and `students-es.csv`. At most 500 students per file. If any row has a problem, nothing is imported and every bad row is listed with its line number.
+
 ## Commands
 
 ```

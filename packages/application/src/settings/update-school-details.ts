@@ -1,5 +1,4 @@
 import {
-  isAdminOf,
   markOnboardingStarted,
   ok,
   updateSchoolDetails,
@@ -10,8 +9,8 @@ import {
   type User,
 } from '@thp/domain';
 import type { SchoolRepository, SubscriptionRepository, UserRepository } from '@thp/ports';
-import { findSchoolSubscription } from '../accounts/school-subscription.ts';
 import { fail, type UseCaseError } from '../errors.ts';
+import { SchoolManagementPolicy } from '../policies/school-management.ts';
 
 export interface UpdateSchoolDetailsDeps {
   readonly schools: SchoolRepository;
@@ -19,12 +18,13 @@ export interface UpdateSchoolDetailsDeps {
   readonly users: UserRepository;
 }
 
-/**
- * Edits a school's details. Allowed for an admin of that school, or for the teacher who owns the
- * school's subscription (the teacher whose sign-up created it). Never for another school.
- */
+/** Edits a school's details, for those the school management policy allows. */
 export class UpdateSchoolDetails {
-  constructor(private readonly deps: UpdateSchoolDetailsDeps) {}
+  private readonly policy: SchoolManagementPolicy;
+
+  constructor(private readonly deps: UpdateSchoolDetailsDeps) {
+    this.policy = new SchoolManagementPolicy(deps);
+  }
 
   async execute(input: {
     actor: User;
@@ -35,19 +35,12 @@ export class UpdateSchoolDetails {
     if (actor.schoolId !== schoolId && actor.role !== 'super_admin') return fail('forbidden');
     const school = await this.deps.schools.findById(schoolId);
     if (!school) return fail('not_found');
-    if (!isAdminOf(actor, schoolId) && !(await this.ownsSubscription(actor))) {
-      return fail('forbidden');
-    }
+    if (!(await this.policy.allows(actor, schoolId))) return fail('forbidden');
 
     const updated = updateSchoolDetails(school, input.details);
     if (!updated.ok) return updated;
     await this.deps.schools.save(updated.value);
     if (actor.schoolId === schoolId) await this.deps.users.save(markOnboardingStarted(actor));
     return ok(updated.value);
-  }
-
-  private async ownsSubscription(actor: User): Promise<boolean> {
-    const subscription = await findSchoolSubscription(this.deps.subscriptions, actor.schoolId);
-    return subscription?.ownerId === actor.id;
   }
 }

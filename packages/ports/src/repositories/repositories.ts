@@ -13,6 +13,7 @@ import type {
   School,
   SchoolId,
   Semester,
+  SemesterId,
   Student,
   StudentId,
   Submission,
@@ -34,15 +35,29 @@ export interface UserRepository extends ScopedRepository<User> {
   listBySchool(schoolId: SchoolId): Promise<readonly User[]>;
 }
 
-export interface ClassRepository extends ScopedRepository<Class>, Deletable<Class> {
-  listByTeacher(schoolId: SchoolId, teacherId: UserId): Promise<readonly Class[]>;
+export interface ClassListOptions {
+  /** Archived classes are left out unless asked for. */
+  readonly includeArchived?: boolean;
 }
 
+export interface ClassRepository extends ScopedRepository<Class>, Deletable<Class> {
+  listByTeacher(
+    schoolId: SchoolId,
+    teacherId: UserId,
+    options?: ClassListOptions,
+  ): Promise<readonly Class[]>;
+  listBySchool(schoolId: SchoolId, options?: ClassListOptions): Promise<readonly Class[]>;
+  countBySemester(schoolId: SchoolId, semesterId: SemesterId): Promise<number>;
+}
+
+/** A student number is unique within a class; saving a duplicate is refused (it throws). */
 export interface StudentRepository extends ScopedRepository<Student>, Deletable<Student> {
   listByClass(schoolId: SchoolId, classId: ClassId): Promise<readonly Student[]>;
+  /** Saves all the students or none of them. */
+  saveMany(students: readonly Student[]): Promise<void>;
 }
 
-export interface SemesterRepository extends ScopedRepository<Semester> {
+export interface SemesterRepository extends ScopedRepository<Semester>, Deletable<Semester> {
   listBySchool(schoolId: SchoolId): Promise<readonly Semester[]>;
 }
 

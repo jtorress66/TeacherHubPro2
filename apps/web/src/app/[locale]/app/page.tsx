@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { createTranslator } from '@thp/i18n';
+import { OnboardingChecklist } from '../../../components/onboarding-checklist.tsx';
+import { WelcomeTour } from '../../../components/welcome-tour.tsx';
+import { getAppContainer } from '../../../container.ts';
 import { planBadge } from '../../../server/plan-display.ts';
 import { requireUser } from '../../_lib/auth.ts';
 import { localeFrom, type LocaleParams } from '../locale-param.ts';
@@ -13,6 +16,7 @@ export default async function DashboardPage(props: LocaleParams) {
   const locale = await localeFrom(props);
   const t = createTranslator(locale);
   const { user, school, subscription, access } = await requireUser(locale);
+  const onboarding = await getAppContainer().getOnboarding.execute({ actor: user, school });
 
   return (
     <section className="stack">
@@ -26,6 +30,8 @@ export default async function DashboardPage(props: LocaleParams) {
           <Link href={`/${locale}/app/billing`}>{t('dashboard.seePlans')}</Link>
         ) : null}
       </p>
+      <OnboardingChecklist locale={locale} state={onboarding} />
+      <WelcomeTour locale={locale} />
     </section>
   );
 }

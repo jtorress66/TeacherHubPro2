@@ -280,3 +280,104 @@ h2 {
   gap: 1rem;
   grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
 }
+
+.field-row {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+}
+
+fieldset {
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  margin: 0;
+}
+
+.days {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+details[open] > summary {
+  margin-bottom: 1rem;
+}
+
+.row-between {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.class-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.class-list .badge {
+  margin-left: 0.5rem;
+}
+
+.roster {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.roster th,
+.roster td {
+  text-align: left;
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.row-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.error-list {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.checklist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.narrow {
+  max-width: 36rem;
+}
+
+.tour {
+  max-width: 28rem;
+  color: var(--fg);
+}
+
+.tour::backdrop {
+  background: rgb(0 0 0 / 45%);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

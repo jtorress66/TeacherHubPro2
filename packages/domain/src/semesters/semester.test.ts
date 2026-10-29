@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { type SchoolId, type SemesterId } from '../shared/ids.ts';
 import { errorOf, valueOf } from '../test-support.ts';
-import { activateSemester, createSemester } from './semester.ts';
+import { activateSemester, createSemester, updateSemester } from './semester.ts';
 
 const schoolId = 'school-1' as SchoolId;
 const make = (id: string, isActive = false) =>
@@ -95,6 +95,30 @@ describe('activateSemester', () => {
   it('fails for a semester that is not in the list', () => {
     expect(errorOf(activateSemester([make('a')], 'z' as SemesterId))).toEqual({
       code: 'not_found',
+    });
+  });
+});
+
+describe('updateSemester', () => {
+  it('changes name and dates with the same rules and keeps whether it is active', () => {
+    const active = make('a', true);
+    const updated = valueOf(
+      updateSemester(active, { name: 'Spring', startDate: '2027-01-10', endDate: '2027-05-30' }),
+    );
+
+    expect(updated).toMatchObject({
+      id: 'a',
+      name: 'Spring',
+      startDate: '2027-01-10',
+      isActive: true,
+    });
+    expect(
+      errorOf(
+        updateSemester(active, { name: 'X', startDate: '2027-05-30', endDate: '2027-01-10' }),
+      ),
+    ).toEqual({
+      field: 'endDate',
+      code: 'invalid_order',
     });
   });
 });

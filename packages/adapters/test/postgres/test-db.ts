@@ -5,10 +5,19 @@ import type {
   ClassId,
   GradeCategoryId,
   SchoolId,
+  SemesterId,
   StudentId,
   UserId,
 } from '@thp/domain';
-import { aClass, aGradeCategory, anAssignment, aSchool, aStudent, aUser } from '@thp/testing';
+import {
+  aClass,
+  aGradeCategory,
+  anAssignment,
+  aSchool,
+  aSemester,
+  aStudent,
+  aUser,
+} from '@thp/testing';
 import { createDatabase, type Database } from '../../src/postgres/index.ts';
 import {
   assignmentMapper,
@@ -17,6 +26,7 @@ import {
 import {
   classMapper,
   schoolMapper,
+  semesterMapper,
   studentMapper,
   userMapper,
 } from '../../src/postgres/mappers/school-mappers.ts';
@@ -78,6 +88,18 @@ const seeds = {
       .insertInto('classes')
       .values(classMapper.toRow(aClass({ id: 'class-1' as ClassId, schoolId: schoolA })))
       .execute(),
+  semester: (db: Kysely<Database>) =>
+    db
+      .insertInto('semesters')
+      .values(
+        semesterMapper.toRow(aSemester({ id: 'semester-1' as SemesterId, schoolId: schoolA })),
+      )
+      .execute(),
+  secondClass: (db: Kysely<Database>) =>
+    db
+      .insertInto('classes')
+      .values(classMapper.toRow(aClass({ id: 'class-2' as ClassId, schoolId: schoolA })))
+      .execute(),
   category: (db: Kysely<Database>) =>
     db
       .insertInto('grade_categories')
@@ -115,6 +137,8 @@ export const parentsFor = {
   school: ['schools'],
   teacher: ['schools', 'teacher'],
   accounts: ['schools', 'teacher', 'secondTeacher'],
+  classes: ['schools', 'teacher', 'secondTeacher', 'semester'],
+  rosters: ['schools', 'teacher', 'class', 'secondClass'],
   class: ['schools', 'teacher', 'class'],
   category: ['schools', 'teacher', 'class', 'category'],
   roster: ['schools', 'teacher', 'class', 'students'],
