@@ -2,13 +2,13 @@
 
 Place this file at `docs/BUILD_STEPS.md`. Work on one step at a time. Tick a step only when its gate passes and the Definition of Done in `CLAUDE.md` is met. For each step, read its section in `docs/FEATURES.md` first.
 
-**Current step:** 2
+**Current step:** 3
 
 | # | Step | Scope | Gate (must pass before next step) | Done |
 | --- | --- | --- | --- | --- |
 | 1 | Foundation | pnpm monorepo, TypeScript strict, Vitest, Playwright, ESLint, GitHub Actions CI (incl. gitleaks and the no-Emergent check), package skeletons, `packages/i18n` with seven languages (`en` and `es` complete; `fr`, `pt`, `de`, `it`, `zh` falling back to English) | CI green on a sample unit test and a sample E2E test rendered in both languages | [x] |
 | 2 | Domain and ports | Entities (School, User, Class, Student, Semester, LessonPlan, Assignment, Question, Submission, Grade, AttendanceSession, Game, Subscription), state machines (submission: submitted → ai_graded → confirmed), all port interfaces, fakes | 100% unit coverage on state machines and grade/attendance calculations; ports have fakes in `packages/testing` | [x] |
-| 3 | Persistence | Postgres schema + migrations, repository adapters | Repository contract suites pass against a real test DB (Testcontainers) | [ ] |
+| 3 | Persistence | Postgres schema + migrations, repository adapters | Repository contract suites pass against a real test DB (Testcontainers) | [x] |
 | 4 | Auth, schools, roles, billing | Email/password and our own Google sign-in, school per teacher, roles (teacher, school admin, super admin), Stripe plans and 7-day trial, plan limits | E2E: sign up (email and Google stubbed) → school created → buy a plan (Stripe test mode) | [ ] |
 | 5 | Classes, students, semesters | Classes with schedule (period, times, days), rosters, CSV bulk import, semesters, onboarding checklist | E2E: create a class with a schedule → import 25 students from CSV → edit one | [ ] |
 | 6 | Attendance | Sessions per class and date, statuses (present, absent, tardy, excused), reports | E2E: take attendance → report shows correct rates | [ ] |
