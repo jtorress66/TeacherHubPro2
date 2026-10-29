@@ -1,0 +1,8 @@
+{
+  "id": "price_New",
+  "object": "price",
+  "active": true,
+  "currency": "usd",
+  "lookup_key": "thp_individual_monthly",
+  "unit_amount": 999
+}

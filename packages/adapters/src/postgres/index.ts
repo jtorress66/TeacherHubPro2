@@ -7,8 +7,10 @@ import type {
   GradeCategoryRepository,
   GradeRepository,
   LessonPlanRepository,
+  PasswordCredentialRepository,
   SchoolRepository,
   SemesterRepository,
+  SessionRepository,
   StudentRepository,
   SubmissionRepository,
   SubscriptionRepository,
@@ -27,6 +29,8 @@ import { PostgresStudentRepository } from './repositories/postgres-student-repos
 import { PostgresSubmissionRepository } from './repositories/postgres-submission-repository.ts';
 import { PostgresSubscriptionRepository } from './repositories/postgres-subscription-repository.ts';
 import { PostgresUserRepository } from './repositories/postgres-user-repository.ts';
+import { PostgresSessionRepository } from './repositories/postgres-session-repository.ts';
+import { PostgresPasswordCredentialRepository } from './repositories/postgres-password-credential-repository.ts';
 import type { Database } from './schema.ts';
 
 export { createDatabase } from './database.ts';
@@ -47,6 +51,8 @@ export interface PostgresRepositories {
   readonly attendanceSessions: AttendanceSessionRepository;
   readonly games: GameRepository;
   readonly subscriptions: SubscriptionRepository;
+  readonly sessions: SessionRepository;
+  readonly credentials: PasswordCredentialRepository;
 }
 
 /** Every repository on one connection pool; wired in each app's composition root. */
@@ -65,5 +71,7 @@ export function createPostgresRepositories(db: Kysely<Database>): PostgresReposi
     attendanceSessions: new PostgresAttendanceSessionRepository(db),
     games: new PostgresGameRepository(db),
     subscriptions: new PostgresSubscriptionRepository(db),
+    sessions: new PostgresSessionRepository(db),
+    credentials: new PostgresPasswordCredentialRepository(db),
   };
 }

@@ -24,6 +24,8 @@ import {
 export const connect = (): Kysely<Database> => createDatabase(inject('databaseUrl'));
 
 const tables = [
+  'sessions',
+  'password_credentials',
   'attendance_entries',
   'attendance_sessions',
   'submissions',
@@ -61,6 +63,15 @@ const seeds = {
     db
       .insertInto('users')
       .values(userMapper.toRow(aUser({ id: 'teacher-1' as UserId, schoolId: schoolA })))
+      .execute(),
+  secondTeacher: (db: Kysely<Database>) =>
+    db
+      .insertInto('users')
+      .values(
+        userMapper.toRow(
+          aUser({ id: 'teacher-2' as UserId, schoolId: schoolA, email: 'ben@school.edu' }),
+        ),
+      )
       .execute(),
   class: (db: Kysely<Database>) =>
     db
@@ -103,6 +114,7 @@ export const parentsFor = {
   none: [],
   school: ['schools'],
   teacher: ['schools', 'teacher'],
+  accounts: ['schools', 'teacher', 'secondTeacher'],
   class: ['schools', 'teacher', 'class'],
   category: ['schools', 'teacher', 'class', 'category'],
   roster: ['schools', 'teacher', 'class', 'students'],

@@ -12,5 +12,8 @@
   "dependencies": {
     "@thp/domain": "workspace:*",
     "@thp/ports": "workspace:*"
+  },
+  "devDependencies": {
+    "@thp/testing": "workspace:*"
   }
 }

@@ -1,3 +1,153 @@
-// Composition root: the only place where concrete adapters are wired to ports.
-// Adapters arrive from step 3 onwards.
-export const container = {} as const;
+import {
+  createDatabase,
+  createPostgresRepositories,
+  createStripeClient,
+  GoogleOAuthIdentity,
+  issueLocalGoogleCode,
+  LocalBillingEvents,
+  LocalCheckoutSessions,
+  LocalCheckoutSimulator,
+  LocalGoogleIdentity,
+  NodeRandomTokenGenerator,
+  ScryptPasswordHasher,
+  Sha256TokenHasher,
+  StripeBillingEvents,
+  StripeCheckoutSessions,
+  SystemClock,
+  UuidIdGenerator,
+} from '@thp/adapters';
+import {
+  AuthenticateSession,
+  HandleBillingWebhook,
+  LogIn,
+  LogOut,
+  SignInWithGoogle,
+  SignUp,
+  StartCheckout,
+  UpdateProfile,
+  UpdateSchoolDetails,
+} from '@thp/application';
+import type {
+  BillingEvents,
+  CheckoutSessions,
+  GoogleIdentity,
+  GoogleProfile,
+  RandomTokenGenerator,
+} from '@thp/ports';
+import {
+  parseWebConfig,
+  type BillingConfig,
+  type GoogleConfig,
+  type WebConfig,
+} from './server/config.ts';
+
+export interface AppContainer {
+  readonly appUrl: string;
+  readonly signUp: SignUp;
+  readonly logIn: LogIn;
+  readonly logOut: LogOut;
+  readonly authenticate: AuthenticateSession;
+  readonly signInWithGoogle: SignInWithGoogle;
+  readonly updateProfile: UpdateProfile;
+  readonly updateSchoolDetails: UpdateSchoolDetails;
+  readonly startCheckout: StartCheckout;
+  readonly handleBillingWebhook: HandleBillingWebhook;
+  readonly google: GoogleIdentity;
+  readonly tokens: RandomTokenGenerator;
+  /** The header that carries the billing provider's webhook signature. */
+  readonly webhookSignatureHeader: string;
+  /** Development and test only: the "Pay" button of the in-app checkout. */
+  readonly localCheckout: LocalCheckoutSimulator | null;
+  /** Development and test only: signs the code of the in-app Google account picker. */
+  readonly issueLocalGoogleCode: ((profile: GoogleProfile) => string) | null;
+}
+
+interface Billing {
+  readonly checkout: CheckoutSessions;
+  readonly billingEvents: BillingEvents;
+  readonly webhookSignatureHeader: string;
+  readonly localCheckout: LocalCheckoutSimulator | null;
+}
+
+function billingFor(config: BillingConfig, appUrl: string): Billing {
+  if (config.provider === 'local') {
+    return {
+      checkout: new LocalCheckoutSessions(appUrl),
+      billingEvents: new LocalBillingEvents(config.secret),
+      webhookSignatureHeader: LocalCheckoutSimulator.signatureHeader,
+      localCheckout: new LocalCheckoutSimulator(appUrl, config.secret),
+    };
+  }
+  const stripe = createStripeClient(config.secretKey);
+  return {
+    checkout: new StripeCheckoutSessions(stripe),
+    billingEvents: new StripeBillingEvents(stripe, config.webhookSecret),
+    webhookSignatureHeader: 'stripe-signature',
+    localCheckout: null,
+  };
+}
+
+function googleFor(config: GoogleConfig, appUrl: string) {
+  return config.provider === 'local'
+    ? {
+        google: new LocalGoogleIdentity(appUrl, config.secret),
+        issueLocalGoogleCode: (profile: GoogleProfile) =>
+          issueLocalGoogleCode(config.secret, profile),
+      }
+    : {
+        google: new GoogleOAuthIdentity({
+          clientId: config.clientId,
+          clientSecret: config.clientSecret,
+        }),
+        issueLocalGoogleCode: null,
+      };
+}
+
+/** Composition root: the only place in the web app where concrete adapters are created. */
+export function createAppContainer(
+  config: WebConfig,
+  db: ReturnType<typeof createDatabase> = createDatabase(config.databaseUrl),
+): AppContainer {
+  const billing = billingFor(config.billing, config.appUrl);
+  const identity = googleFor(config.google, config.appUrl);
+  const deps = {
+    ...createPostgresRepositories(db),
+    ...billing,
+    google: identity.google,
+    clock: new SystemClock(),
+    ids: new UuidIdGenerator(),
+    tokens: new NodeRandomTokenGenerator(),
+    tokenHasher: new Sha256TokenHasher(),
+    passwordHasher: new ScryptPasswordHasher(),
+    appUrl: config.appUrl,
+  };
+
+  return {
+    appUrl: config.appUrl,
+    signUp: new SignUp(deps),
+    logIn: new LogIn(deps),
+    logOut: new LogOut(deps),
+    authenticate: new AuthenticateSession(deps),
+    signInWithGoogle: new SignInWithGoogle(deps),
+    updateProfile: new UpdateProfile(deps),
+    updateSchoolDetails: new UpdateSchoolDetails(deps),
+    startCheckout: new StartCheckout(deps),
+    handleBillingWebhook: new HandleBillingWebhook(deps),
+    google: identity.google,
+    tokens: deps.tokens,
+    webhookSignatureHeader: billing.webhookSignatureHeader,
+    localCheckout: billing.localCheckout,
+    issueLocalGoogleCode: identity.issueLocalGoogleCode,
+  };
+}
+
+let instance: AppContainer | undefined;
+
+/** The process-wide container, built on first use from the environment. Misconfiguration fails loudly. */
+export function getAppContainer(): AppContainer {
+  if (instance) return instance;
+  const config = parseWebConfig(process.env);
+  if (!config.ok) throw new Error(`Invalid configuration: ${config.error}`);
+  instance = createAppContainer(config.value);
+  return instance;
+}

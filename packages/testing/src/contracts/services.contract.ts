@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { Email, SubscriptionId } from '@thp/domain';
+import type { Email, SchoolId, SubscriptionId } from '@thp/domain';
 import type {
   BillingEvent,
   BillingEvents,
@@ -98,7 +98,11 @@ export function mailerContract(
 
 export function checkoutSessionsContract(
   name: string,
-  setup: { readonly working: () => CheckoutSessions; readonly failing: () => CheckoutSessions },
+  setup: {
+    readonly working: () => CheckoutSessions;
+    /** A provider that is down. Omitted for providers that cannot fail (the local test checkout). */
+    readonly failing?: () => CheckoutSessions;
+  },
 ): void {
   describe(`${name} (CheckoutSessions contract)`, () => {
     const request = {
@@ -106,7 +110,8 @@ export function checkoutSessionsContract(
       quantity: 12,
       customerEmail: 'admin@school.edu' as Email,
       clientReference: 'sub-1' as SubscriptionId,
-      trialDays: 7,
+      schoolId: 'school-1' as SchoolId,
+      trialEnd: new Date('2026-09-08T00:00:00Z'),
       successUrl: 'https://app.test/billing/success',
       cancelUrl: 'https://app.test/billing',
     };
@@ -118,12 +123,15 @@ export function checkoutSessionsContract(
       ).toBe(true);
     });
 
-    it('maps failures to typed errors', async () => {
-      expect(await setup.failing().createCheckout(request)).toEqual({
-        ok: false,
-        error: { code: 'unavailable' },
+    const { failing } = setup;
+    if (failing !== undefined) {
+      it('maps failures to typed errors', async () => {
+        expect(await failing().createCheckout(request)).toEqual({
+          ok: false,
+          error: { code: 'unavailable' },
+        });
       });
-    });
+    }
   });
 }
 
@@ -144,7 +152,10 @@ export function billingEventsContract(
       {
         type: 'checkout_completed',
         clientReference: 'sub-1' as SubscriptionId,
+        schoolId: 'school-1' as SchoolId,
         externalId: 'ext-1',
+        planId: 'school',
+        quantity: 12,
         currentPeriodEnd: new Date('2027-09-01T00:00:00Z'),
       },
       { type: 'renewed', externalId: 'ext-1', currentPeriodEnd: new Date('2028-09-01T00:00:00Z') },

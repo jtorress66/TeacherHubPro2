@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { type SchoolId, type UserId } from '../shared/ids.ts';
 import { errorOf, valueOf } from '../test-support.ts';
 import { isAdminOf, roles } from './roles.ts';
-import { createUser } from './user.ts';
+import { createUser, markOnboardingStarted, updateProfile } from './user.ts';
 
 const schoolId = 'school-1' as SchoolId;
 const otherSchool = 'school-2' as SchoolId;
@@ -75,5 +75,45 @@ describe('roles', () => {
 
     expect(isAdminOf(superAdmin, otherSchool)).toBe(true);
     expect(isAdminOf(teacher, schoolId)).toBe(false);
+  });
+});
+
+describe('updateProfile', () => {
+  it('changes the name, language and picture', () => {
+    const user = valueOf(createUser(base));
+    expect(
+      valueOf(
+        updateProfile(user, { name: ' Ana María ', language: 'es', picture: 'https://p/b.png' }),
+      ),
+    ).toMatchObject({ name: 'Ana María', language: 'es', picture: 'https://p/b.png' });
+  });
+
+  it('keeps the picture when none is given', () => {
+    const user = valueOf(createUser({ ...base, picture: 'https://p/a.png' }));
+    expect(valueOf(updateProfile(user, { name: 'Ana', language: 'en' })).picture).toBe(
+      'https://p/a.png',
+    );
+  });
+
+  it('rejects a blank name and an unsupported language', () => {
+    const user = valueOf(createUser(base));
+    expect(errorOf(updateProfile(user, { name: '', language: 'en' }))).toEqual({
+      field: 'name',
+      code: 'required',
+    });
+    expect(errorOf(updateProfile(user, { name: 'Ana', language: 'ru' }))).toEqual({
+      field: 'language',
+      code: 'invalid_format',
+    });
+  });
+});
+
+describe('markOnboardingStarted', () => {
+  it('moves a new user to in progress and leaves later states alone', () => {
+    const user = valueOf(createUser(base));
+    expect(markOnboardingStarted(user).onboardingStatus).toBe('in_progress');
+
+    const done = valueOf(createUser({ ...base, onboardingStatus: 'completed' }));
+    expect(markOnboardingStarted(done).onboardingStatus).toBe('completed');
   });
 });

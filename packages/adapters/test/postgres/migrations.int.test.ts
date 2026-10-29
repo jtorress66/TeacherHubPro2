@@ -29,8 +29,10 @@ describe('migrations', () => {
       'grade_categories',
       'grades',
       'lesson_plans',
+      'password_credentials',
       'schools',
       'semesters',
+      'sessions',
       'students',
       'submissions',
       'subscriptions',
@@ -39,10 +41,16 @@ describe('migrations', () => {
   });
 
   it('rolls back completely and applies again', async () => {
-    expect(await migrateDown(db)).toEqual({ ok: true, value: { applied: ['0001_initial'] } });
+    expect(await migrateDown(db)).toEqual({
+      ok: true,
+      value: { applied: ['0002_accounts', '0001_initial'] },
+    });
     expect(await tableNames()).toEqual([]);
 
-    expect(await migrateToLatest(db)).toEqual({ ok: true, value: { applied: ['0001_initial'] } });
-    expect(await tableNames()).toHaveLength(14);
+    expect(await migrateToLatest(db)).toEqual({
+      ok: true,
+      value: { applied: ['0001_initial', '0002_accounts'] },
+    });
+    expect(await tableNames()).toHaveLength(16);
   });
 });

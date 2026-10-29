@@ -1,0 +1,3 @@
+# Reviewed false positives: fake keys in config tests (commit 3732967), since replaced by obvious placeholders.
+37329677c68794eecf5a02d6bc52e9627e74c262:apps/web/src/server/config.test.ts:generic-api-key:19
+37329677c68794eecf5a02d6bc52e9627e74c262:apps/web/src/server/config.test.ts:generic-api-key:51

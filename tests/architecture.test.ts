@@ -9,15 +9,16 @@ import {
 
 const root = join(import.meta.dirname, '..');
 
+/** Folders that hold dependencies or build and test output, never our source. */
+const skipped = new Set(['node_modules', '.next', 'coverage', 'test-results', 'playwright-report']);
+
 function sourceFiles(dir: string): SourceFile[] {
-  return readdirSync(dir, { withFileTypes: true, recursive: true })
-    .filter((entry) => entry.isFile() && /\.(ts|tsx|mts)$/.test(entry.name))
-    .map((entry) => join(entry.parentPath, entry.name))
-    .filter((path) => !/[\\/](node_modules|\.next)[\\/]/.test(path))
-    .map((path) => ({
-      path: relative(root, path).replaceAll('\\', '/'),
-      source: readFileSync(path, 'utf8'),
-    }));
+  return readdirSync(dir, { withFileTypes: true }).flatMap((entry): SourceFile[] => {
+    const path = join(dir, entry.name);
+    if (entry.isDirectory()) return skipped.has(entry.name) ? [] : sourceFiles(path);
+    if (!entry.isFile() || !/\.(ts|tsx|mts)$/.test(entry.name)) return [];
+    return [{ path: relative(root, path).replaceAll('\\', '/'), source: readFileSync(path, 'utf8') }];
+  });
 }
 
 const packageDirs = readdirSync(join(root, 'packages'));

@@ -8,28 +8,38 @@ import type {
   GoogleProfile,
 } from '@thp/ports';
 
+export interface GoogleIdentitySetup {
+  readonly identity: GoogleIdentity;
+  /** A code this identity accepts for the profile. */
+  readonly code: string;
+}
+
 export function googleIdentityContract(
   name: string,
-  make: (code: string, profile: GoogleProfile) => GoogleIdentity,
+  make: (profile: GoogleProfile) => GoogleIdentitySetup,
   profile: GoogleProfile,
 ): void {
   describe(`${name} (GoogleIdentity contract)`, () => {
+    const redirectUri = 'https://app.test/api/auth/google/callback';
+
     it('exchanges a valid code for the profile', async () => {
-      expect(
-        await make('good-code', profile).exchangeCode('good-code', 'https://app.test/cb'),
-      ).toEqual({
-        ok: true,
-        value: profile,
-      });
+      const { identity, code } = make(profile);
+      expect(await identity.exchangeCode(code, redirectUri)).toEqual({ ok: true, value: profile });
     });
 
     it('rejects an invalid code', async () => {
-      expect(
-        await make('good-code', profile).exchangeCode('bad-code', 'https://app.test/cb'),
-      ).toEqual({
+      const { identity } = make(profile);
+      expect(await identity.exchangeCode('not-a-real-code', redirectUri)).toEqual({
         ok: false,
         error: { code: 'invalid_code' },
       });
+    });
+
+    it('builds a sign-in address that carries the state and the return address', () => {
+      const url = new URL(make(profile).identity.authorizationUrl('state-123', redirectUri));
+      expect(url.protocol).toBe('https:');
+      expect(url.searchParams.get('state')).toBe('state-123');
+      expect(url.searchParams.get('redirect_uri')).toBe(redirectUri);
     });
   });
 }

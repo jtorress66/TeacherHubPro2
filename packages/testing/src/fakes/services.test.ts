@@ -95,7 +95,8 @@ describe('FakeCheckoutSessions', () => {
       quantity: 40,
       customerEmail: 'a@d.org' as Email,
       clientReference: 'sub-1' as never,
-      trialDays: 7,
+      schoolId: 'school-1' as never,
+      trialEnd: null,
       successUrl: 'https://s',
       cancelUrl: 'https://c',
     });
@@ -159,7 +160,7 @@ describe('InMemoryJobQueue', () => {
 
 googleIdentityContract(
   'FakeGoogleIdentity',
-  (code, profile) => new FakeGoogleIdentity({ [code]: profile }),
+  (profile) => ({ identity: new FakeGoogleIdentity({ 'good-code': profile }), code: 'good-code' }),
   {
     email: 'ana@gmail.com' as Email,
     emailVerified: true,

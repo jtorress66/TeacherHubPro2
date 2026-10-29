@@ -15,3 +15,5 @@ export type * from './google/classroom.ts';
 export type * from './jobs/job-queue.ts';
 export type * from './repositories/scoped-repository.ts';
 export type * from './repositories/repositories.ts';
+export type { SessionRepository } from './accounts/session-repository.ts';
+export type * from './accounts/password-credential-repository.ts';

@@ -17,7 +17,9 @@
     "format": "prettier --write .",
     "check:forbidden": "node scripts/forbidden-terms.ts",
     "db:up": "docker compose up -d --wait postgres",
-    "db:migrate": "pnpm --filter @thp/worker migrate"
+    "db:migrate": "pnpm --filter @thp/worker migrate",
+    "stripe:setup": "pnpm --filter @thp/worker stripe:setup",
+    "test:e2e:stripe": "pnpm --filter @thp/web test:e2e:stripe"
   },
   "devDependencies": {
     "@eslint/js": "9.39.5",
