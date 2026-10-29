@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import type { AssignmentId, Grade, SchoolId, StudentId } from '@thp/domain';
+import {
+  createDateRange,
+  markAttendance,
+  type AssignmentId,
+  type AttendanceSessionId,
+  type ClassId,
+  type Grade,
+  type SchoolId,
+  type StudentId,
+} from '@thp/domain';
 import type {
   AttendanceSessionRepository,
   GradeRepository,
@@ -8,6 +17,7 @@ import type {
   UserRepository,
 } from '@thp/ports';
 import { aGrade, anAttendanceSession, aSchool, aSubscription, aUser } from '../fixtures.ts';
+import { unwrap } from '../unwrap.ts';
 
 const schoolA = 'school-a' as SchoolId;
 const schoolB = 'school-b' as SchoolId;
@@ -70,6 +80,54 @@ export function attendanceLookupContract(
       ).toBeNull();
       const otherDay = anAttendanceSession({ date: '2026-09-15' }).date;
       expect(await repository.findByClassAndDate(schoolA, session.classId, otherDay)).toBeNull();
+    });
+
+    it('keeps each mark’s minutes late and note', async () => {
+      const repository = make();
+      const studentId = 'student-1' as StudentId;
+      const session = unwrap(
+        markAttendance(anAttendanceSession({ schoolId: schoolA }), studentId, 'tardy', {
+          minutesLate: 12,
+          note: 'Doctor visit',
+        }),
+      );
+      await repository.save(session);
+
+      expect(await repository.findById(schoolA, session.id)).toEqual(session);
+    });
+
+    it('lists a class’s sessions by date, optionally within a date range', async () => {
+      const repository = make();
+      const classId = 'class-1' as ClassId;
+      const on = (date: string, overrides: { classId?: ClassId; schoolId?: SchoolId } = {}) =>
+        anAttendanceSession({
+          id: `att-${date}-${overrides.classId ?? classId}-${overrides.schoolId ?? schoolA}` as AttendanceSessionId,
+          schoolId: schoolA,
+          classId,
+          date,
+          ...overrides,
+        });
+      for (const session of [
+        on('2026-09-30'),
+        on('2026-08-31'),
+        on('2026-09-01'),
+        on('2026-10-01'),
+        on('2026-09-15', { classId: 'class-2' as ClassId }),
+      ])
+        await repository.save(session);
+
+      const dates = (sessions: readonly { date: string }[]) => sessions.map(({ date }) => date);
+      expect(dates(await repository.listByClass(schoolA, classId))).toEqual([
+        '2026-08-31',
+        '2026-09-01',
+        '2026-09-30',
+        '2026-10-01',
+      ]);
+      const september = unwrap(createDateRange('2026-09-01', '2026-09-30'));
+      expect(dates(await repository.listByClass(schoolA, classId, september))).toEqual([
+        '2026-09-01',
+        '2026-09-30',
+      ]);
     });
   });
 }

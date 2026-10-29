@@ -47,6 +47,17 @@ export default async function ClassPage(props: Props) {
       <p className="muted" data-testid="class-schedule">
         {scheduleSummary(cls.schedule, locale)}
       </p>
+      <p className="actions">
+        <Link href={`/${locale}/app/classes/${cls.id}/attendance`} className="button">
+          {t('attendance.take')}
+        </Link>
+        <Link
+          href={`/${locale}/app/classes/${cls.id}/attendance/report`}
+          className="button secondary"
+        >
+          {t('attendance.report')}
+        </Link>
+      </p>
       {archived ? (
         <p role="status" className="notice">
           {t('classes.archivedNotice')}

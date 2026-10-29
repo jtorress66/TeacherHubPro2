@@ -48,6 +48,17 @@ Seven interface languages: English, Spanish, French, Portuguese, German, Italian
 - Session per class and date with a status per student: present, absent, tardy, excused. Submit a session.
 - Attendance rate = (present + tardy) / total.
 - Reports per class: rates per student and per period.
+- Kept from the old app: everyone starts as present, a "Mark all present" button, a note per student and minutes late, Save and Submit. Reports default to the last 30 days and colour rates (90% and up green, 80% and up amber, otherwise red). Print button.
+- **Decided for the rebuild:**
+  - Reports count **submitted days only**. Each student's total is the submitted days they were on that day's roster, so a student who joins mid-term is not counted absent for earlier days.
+  - A note is at most 200 characters. Minutes late (1–240) can only be set on a tardy.
+  - A submitted day refuses changes; the teacher can **reopen** it to correct it.
+  - The report range has presets (last 30 days, the active semester) and a custom range. "Today" is the teacher's day, from the browser's time zone.
+  - Archived classes keep their attendance, read-only.
+- **Fixed from the old app:**
+  - Saving attendance had no teacher or school check; every attendance use case now checks that the caller manages the class.
+  - Saving again could overwrite a submitted session; now it is refused until the day is reopened.
+  - Reports counted unsubmitted sessions, gave every student the same total and counted an unmarked student as absent.
 - Old files: `server.py` (`/attendance`), `frontend/src/pages/Attendance.js`, `AttendanceReports.js`.
 
 ## Step 7 — Gradebook and report cards

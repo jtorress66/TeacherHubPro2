@@ -86,6 +86,10 @@ On a class page, **Import students from a CSV file** adds a whole roster at once
 
 Samples: `apps/web/public/samples/students-en.csv` and `students-es.csv`. At most 500 students per file. If any row has a problem, nothing is imported and every bad row is listed with its line number.
 
+## Attendance
+
+On a class page, **Take attendance** opens the sheet for a day (today by default). Everyone starts as present; set the others, add minutes late for tardies and a note if needed, then **Save** or **Submit**. A submitted day is read-only until it is reopened. **Attendance report** shows each student's counts and rate over submitted days (last 30 days by default). Tardy counts as present; excused days count in the total. **Attendance** in the menu shows every class and whether the day was taken.
+
 ## Commands
 
 ```

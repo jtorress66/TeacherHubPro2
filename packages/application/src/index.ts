@@ -73,3 +73,26 @@ export {
   type OnboardingItem,
   type OnboardingState,
 } from './onboarding/onboarding-use-cases.ts';
+export {
+  GetAttendanceSheet,
+  ListAttendanceDays,
+  ReopenAttendance,
+  SaveAttendance,
+  SubmitAttendance,
+  type AttendanceDeps,
+  type AttendanceSheet,
+  type AttendanceUseCaseError,
+  type SheetRow,
+} from './attendance/attendance-sheet.ts';
+export {
+  GetAttendanceReport,
+  defaultReportDays,
+  type AttendanceReport,
+  type AttendanceReportRow,
+  type GetAttendanceReportDeps,
+} from './attendance/attendance-report.ts';
+export {
+  GetAttendanceOverview,
+  type ClassDay,
+  type DayStatus,
+} from './attendance/attendance-overview.ts';

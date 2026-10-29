@@ -142,6 +142,7 @@ export const parentsFor = {
   class: ['schools', 'teacher', 'class'],
   category: ['schools', 'teacher', 'class', 'category'],
   roster: ['schools', 'teacher', 'class', 'students'],
+  attendance: ['schools', 'teacher', 'class', 'secondClass', 'students'],
   grading: ['schools', 'teacher', 'class', 'category', 'students', 'assignments'],
 } as const satisfies Record<string, readonly Parent[]>;
 

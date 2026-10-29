@@ -199,7 +199,7 @@ withParents(parentsFor.category, () => {
   deletableContract('PostgresAssignmentRepository', assignments);
 });
 
-withParents(parentsFor.roster, () => {
+withParents(parentsFor.attendance, () => {
   scopedRepositoryContract('PostgresAttendanceSessionRepository', {
     make: () => repos.attendanceSessions,
     sample: (schoolId, id) => anAttendanceSession({ schoolId, id: id as AttendanceSessionId }),

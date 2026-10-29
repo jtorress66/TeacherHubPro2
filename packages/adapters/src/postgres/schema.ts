@@ -151,6 +151,8 @@ export interface AttendanceEntriesTable {
   student_id: string;
   position: number;
   status: string | null;
+  minutes_late: number | null;
+  note: string | null;
 }
 
 export interface GamesTable {
