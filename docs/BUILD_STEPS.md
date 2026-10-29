@@ -6,7 +6,7 @@ Place this file at `docs/BUILD_STEPS.md`. Work on one step at a time. Tick a ste
 
 | # | Step | Scope | Gate (must pass before next step) | Done |
 | --- | --- | --- | --- | --- |
-| 1 | Foundation | pnpm monorepo, TypeScript strict, Vitest, Playwright, ESLint, GitHub Actions CI (incl. gitleaks and the no-Emergent check), package skeletons, `packages/i18n` with seven languages (`en` and `es` complete; `fr`, `pt`, `de`, `it`, `zh` falling back to English) | CI green on a sample unit test and a sample E2E test rendered in both languages | [ ] |
+| 1 | Foundation | pnpm monorepo, TypeScript strict, Vitest, Playwright, ESLint, GitHub Actions CI (incl. gitleaks and the no-Emergent check), package skeletons, `packages/i18n` with seven languages (`en` and `es` complete; `fr`, `pt`, `de`, `it`, `zh` falling back to English) | CI green on a sample unit test and a sample E2E test rendered in both languages | [x] |
 | 2 | Domain and ports | Entities (School, User, Class, Student, Semester, LessonPlan, Assignment, Question, Submission, Grade, AttendanceSession, Game, Subscription), state machines (submission: submitted → ai_graded → confirmed), all port interfaces, fakes | 100% unit coverage on state machines and grade/attendance calculations; ports have fakes in `packages/testing` | [ ] |
 | 3 | Persistence | Postgres schema + migrations, repository adapters | Repository contract suites pass against a real test DB (Testcontainers) | [ ] |
 | 4 | Auth, schools, roles, billing | Email/password and our own Google sign-in, school per teacher, roles (teacher, school admin, super admin), Stripe plans and 7-day trial, plan limits | E2E: sign up (email and Google stubbed) → school created → buy a plan (Stripe test mode) | [ ] |
