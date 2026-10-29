@@ -1,6 +1,6 @@
 # CLAUDE.md — TeacherHubPro
 
-TeacherHubPro is an AI workspace for teachers, schools and homeschool families: lesson planning, classes and rosters, attendance, gradebook and report cards, assignments with AI grading, educational games, live classroom games, adaptive learning, parent portals and a weekly lesson-prep agent. The interface is bilingual (Spanish and English).
+TeacherHubPro is an AI workspace for teachers, schools and homeschool families: lesson planning, classes and rosters, attendance, gradebook and report cards, assignments with AI grading, educational games, live classroom games, adaptive learning, parent portals and a weekly lesson-prep agent. The interface supports seven languages (English, Spanish, French, Portuguese, German, Italian and Chinese); English and Spanish are fully translated and the others fall back to English until translated.
 
 This repository is a clean rebuild. The previous version, built with Emergent, lives at `github.com/jtorress66/TeacherhubPro` and serves as a **reference only** (see "Legacy app" below).
 
@@ -37,7 +37,7 @@ packages/ports        interfaces only
 packages/application  use cases: orchestrate domain + ports, return Result — NO I/O, NO framework imports
 packages/agents       lesson planner, materials writer, question extractor, grader, game writer, adaptive path, insight, prep agent, chatbot — depend on ports only
 packages/adapters     claude, openai-tts, stripe, resend, google (sign-in + classroom), postgres, file storage, pdf text — implement ports
-packages/i18n         Spanish and English message catalogs and helpers
+packages/i18n         message catalogs (en, es, fr, pt, de, it, zh) and helpers
 packages/testing      fakes, fixtures, shared contract test suites
 ```
 
@@ -58,7 +58,7 @@ Dependency rule: `domain` ← `ports` ← `application` ← `agents` / `adapters
 | Unit | Vitest | Domain, use cases, agents with `FakeLlmClient`. No network, no DB. |
 | Contract | Vitest shared suites | Every adapter runs the suite for its port. |
 | Integration | Vitest + Testcontainers + MSW | Real Postgres; external HTTP via recorded responses. |
-| E2E | Playwright | Critical journeys: sign-up, attendance, grading, student assignment, live game, parent portal. Run in Spanish and English. |
+| E2E | Playwright | Critical journeys: sign-up, attendance, grading, student assignment, live game, parent portal. Run in English and Spanish (the fully translated languages). |
 | LLM evals | `pnpm eval` | Run when any prompt changes; scores must not drop below `evals/thresholds.json`. |
 
 Coverage thresholds (enforced in CI): `domain` and `agents` ≥ 90%, overall ≥ 80%.
@@ -69,7 +69,7 @@ Test names describe behaviour: `it("counts a tardy as present in the attendance 
 - [ ] Tests written first; full suite passes locally
 - [ ] Coverage thresholds met
 - [ ] `typecheck` and `lint` pass with zero warnings
-- [ ] Feature works end to end (E2E test or documented manual check), in Spanish and English
+- [ ] Feature works end to end (E2E test or documented manual check), in English and Spanish
 - [ ] No concrete adapter imported into `domain`, `ports`, or `agents`
 - [ ] Every legacy behaviour listed for the step in `docs/FEATURES.md` is covered by a test, or the user agreed to drop it
 - [ ] README / this file updated if conventions changed
@@ -91,7 +91,7 @@ Test names describe behaviour: `it("counts a tardy as present in the attendance 
 - TypeScript `strict`; no `any` (use `unknown` and narrow).
 - Errors: return typed `Result<T, E>` from use cases; throw only for programmer errors.
 - Validate all external input with Zod at the edges.
-- Every user-facing string goes through `packages/i18n` with both `es` and `en`. Spanish is the default for new users. AI output follows the language the teacher chose.
+- Every user-facing string goes through `packages/i18n`. Every key must exist in `en` and `es`; `fr`, `pt`, `de`, `it` and `zh` may omit keys, which fall back to English. English is the default language; a `?lang=` link overrides the user's saved choice, which overrides the default. AI output follows the language the teacher chose.
 - Long AI work (generation, PDF parsing, grading, prep batches) runs as a job in `apps/worker`, stored in Postgres, polled or pushed to the UI. Never hold an HTTP request open for AI.
 - Small files, small functions; prefer composition over inheritance.
 - Conventional commits; one build step per branch and PR.

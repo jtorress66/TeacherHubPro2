@@ -14,7 +14,7 @@ Legacy stack, for reference: FastAPI + MongoDB backend (`backend/server.py` is a
 | Student | Links only (assignment, game, learning path, Play to Learn PIN) | Take assignments, play games, do lessons |
 | Parent / homeschool parent | Portal link only | Read their child's grades, attendance and reports |
 
-New users default to Spanish (`language: "es"`).
+Seven interface languages: English, Spanish, French, Portuguese, German, Italian and Chinese. English is the default; a `?lang=` link overrides the user's saved choice, which overrides the default (old file: `frontend/src/contexts/LanguageContext.js`). English and Spanish are fully translated; the other five fall back to English until translated.
 
 ---
 

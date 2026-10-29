@@ -1,0 +1,4 @@
+title = "TeacherHubPro gitleaks config"
+
+[extend]
+useDefault = true
