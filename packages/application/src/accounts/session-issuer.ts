@@ -16,7 +16,12 @@ export class SessionIssuer {
     const token = this.deps.tokens.generate();
     const tokenHash = await this.deps.tokenHasher.hash(token);
     await this.deps.sessions.save(
-      startSession({ tokenHash, userId: user.id, schoolId: user.schoolId, now: this.deps.clock.now() }),
+      startSession({
+        tokenHash,
+        userId: user.id,
+        schoolId: user.schoolId,
+        now: this.deps.clock.now(),
+      }),
     );
     return token;
   }

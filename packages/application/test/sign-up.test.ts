@@ -20,9 +20,9 @@ describe('SignUp', () => {
     expect(await world.schools.findById(school.id)).toEqual(school);
     expect(await world.subscriptions.findById(school.id, subscription.id)).toEqual(subscription);
     const credential = await world.credentials.findByUserId(user.id);
-    expect(credential && (await world.passwordHasher.verify(password, credential.passwordHash))).toBe(
-      true,
-    );
+    expect(
+      credential && (await world.passwordHasher.verify(password, credential.passwordHash)),
+    ).toBe(true);
     expect(sessionToken).toMatch(/^token-/);
   });
 

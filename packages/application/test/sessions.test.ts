@@ -20,7 +20,9 @@ describe('LogIn', () => {
     const logIn = new LogIn(world);
     const refused = { ok: false, error: { code: 'invalid_credentials' } };
 
-    expect(await logIn.execute({ email: 'ana@school.edu', password: 'wrong password!' })).toEqual(refused);
+    expect(await logIn.execute({ email: 'ana@school.edu', password: 'wrong password!' })).toEqual(
+      refused,
+    );
     expect(await logIn.execute({ email: 'nobody@school.edu', password })).toEqual(refused);
     expect(await logIn.execute({ email: 'not an email', password })).toEqual(refused);
   });

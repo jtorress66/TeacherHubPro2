@@ -15,7 +15,13 @@ import {
   type UserId,
   type ValidationError,
 } from '@thp/domain';
-import type { Clock, IdGenerator, SchoolRepository, SubscriptionRepository, UserRepository } from '@thp/ports';
+import type {
+  Clock,
+  IdGenerator,
+  SchoolRepository,
+  SubscriptionRepository,
+  UserRepository,
+} from '@thp/ports';
 
 export interface AccountCreatorDeps {
   readonly users: UserRepository;
@@ -46,7 +52,10 @@ export class AccountCreator {
   constructor(private readonly deps: AccountCreatorDeps) {}
 
   async create(input: NewAccount): Promise<Result<Account, ValidationError>> {
-    const school = createSchool({ id: this.deps.ids.next() as SchoolId, name: input.defaultSchoolName });
+    const school = createSchool({
+      id: this.deps.ids.next() as SchoolId,
+      name: input.defaultSchoolName,
+    });
     if (!school.ok) return school;
     const user = createUser({
       id: this.deps.ids.next() as UserId,

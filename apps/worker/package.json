@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "migrate": "tsx --env-file-if-exists=../../.env src/migrate.ts"
+    "migrate": "tsx --env-file-if-exists=../../.env src/migrate.ts",
+    "stripe:setup": "tsx --env-file-if-exists=../../.env src/stripe-setup.ts"
   },
   "dependencies": {
     "@thp/adapters": "workspace:*",

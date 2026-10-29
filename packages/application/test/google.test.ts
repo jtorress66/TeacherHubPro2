@@ -67,7 +67,9 @@ describe('SignInWithGoogle', () => {
 
   it('uses the email as the name when Google gives none', async () => {
     const world = makeWorld();
-    world.google = new (world.google.constructor as typeof import('@thp/testing').FakeGoogleIdentity)({
+    world.google = new (
+      world.google.constructor as typeof import('@thp/testing').FakeGoogleIdentity
+    )({
       'good-code': { ...googleProfile, name: '', email: 'noname@gmail.com' as Email },
     });
 

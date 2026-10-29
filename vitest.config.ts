@@ -26,7 +26,10 @@ export default defineConfig({
         // Composition roots and CLI entry points: wiring only, exercised manually and by E2E.
         'apps/*/src/container.ts',
         'apps/worker/src/migrate.ts',
+        'apps/worker/src/stripe-setup.ts',
+        // React pages and components: covered by the Playwright journeys.
         'apps/web/src/app/**',
+        'apps/web/src/components/**',
         'apps/web/e2e/**',
       ],
       reporter: ['text-summary', 'lcov'],

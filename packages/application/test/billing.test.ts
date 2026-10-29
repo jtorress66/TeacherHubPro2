@@ -5,8 +5,12 @@ import { FakeBillingEvents, FakeCheckoutSessions, aUser, unwrap } from '@thp/tes
 import { HandleBillingWebhook, StartCheckout } from '../src/index.ts';
 import { advanceDays, makeWorld, signedUp, type World } from './world.ts';
 
-const checkout = (world: World, actor: Awaited<ReturnType<typeof signedUp>>['user'], planId = 'school' as const, quantity = 12) =>
-  new StartCheckout(world).execute({ actor, planId, quantity, locale: 'es' });
+const checkout = (
+  world: World,
+  actor: Awaited<ReturnType<typeof signedUp>>['user'],
+  planId = 'school' as const,
+  quantity = 12,
+) => new StartCheckout(world).execute({ actor, planId, quantity, locale: 'es' });
 
 describe('StartCheckout', () => {
   it('opens a checkout for the plan and seats chosen, returning to the billing page', async () => {
@@ -52,7 +56,10 @@ describe('StartCheckout', () => {
     const world = makeWorld();
     const { user } = await signedUp(world);
 
-    expect(await checkout(world, user, 'school', 5)).toEqual({ ok: false, error: { code: 'below_minimum_seats' } });
+    expect(await checkout(world, user, 'school', 5)).toEqual({
+      ok: false,
+      error: { code: 'below_minimum_seats' },
+    });
     expect(await checkout(world, user, 'district' as never, 99)).toEqual({
       ok: false,
       error: { code: 'below_minimum_seats' },
@@ -72,10 +79,16 @@ describe('StartCheckout', () => {
     const world = makeWorld();
     const { user, school, subscription } = await signedUp(world);
     await world.subscriptions.save({ ...subscription, status: 'active' });
-    expect(await checkout(world, user)).toEqual({ ok: false, error: { code: 'already_subscribed' } });
+    expect(await checkout(world, user)).toEqual({
+      ok: false,
+      error: { code: 'already_subscribed' },
+    });
 
     await world.subscriptions.save(unwrap(cancelSubscription(subscription)));
-    expect(await checkout(world, user)).toEqual({ ok: false, error: { code: 'subscription_ended' } });
+    expect(await checkout(world, user)).toEqual({
+      ok: false,
+      error: { code: 'subscription_ended' },
+    });
     expect(school.id).toBe(subscription.schoolId);
   });
 
@@ -110,7 +123,8 @@ describe('HandleBillingWebhook', () => {
       quantity: 12,
       currentPeriodEnd: periodEnd,
     };
-    const handle = (event: BillingEvent) => new HandleBillingWebhook(world).execute(FakeBillingEvents.sign(event));
+    const handle = (event: BillingEvent) =>
+      new HandleBillingWebhook(world).execute(FakeBillingEvents.sign(event));
     return { world, account, completed, handle };
   }
 
@@ -165,7 +179,13 @@ describe('HandleBillingWebhook', () => {
     });
     await paid.handle(paid.completed);
     await paid.handle({ type: 'canceled', externalId: 'sub_stripe_1' });
-    expect(await paid.handle({ type: 'renewed', externalId: 'sub_stripe_1', currentPeriodEnd: periodEnd })).toEqual({
+    expect(
+      await paid.handle({
+        type: 'renewed',
+        externalId: 'sub_stripe_1',
+        currentPeriodEnd: periodEnd,
+      }),
+    ).toEqual({
       ok: true,
       value: { handled: false },
     });
@@ -175,7 +195,10 @@ describe('HandleBillingWebhook', () => {
     const paid = await paidWorld();
 
     expect(
-      await new HandleBillingWebhook(paid.world).execute({ payload: JSON.stringify(paid.completed), signature: 'forged' }),
+      await new HandleBillingWebhook(paid.world).execute({
+        payload: JSON.stringify(paid.completed),
+        signature: 'forged',
+      }),
     ).toEqual({ ok: false, error: { code: 'invalid_signature' } });
     expect(await paid.handle({ ...paid.completed, clientReference: 'missing' as never })).toEqual({
       ok: false,

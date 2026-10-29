@@ -1,5 +1,10 @@
-import { createDatabase, migrateToLatest } from '@thp/adapters';
-import type { DatabaseConfig } from './config.ts';
+import {
+  createDatabase,
+  createStripeClient,
+  ensureStripePrices,
+  migrateToLatest,
+} from '@thp/adapters';
+import type { DatabaseConfig, StripeConfig } from './config.ts';
 
 // Composition root: the only place in the worker where concrete adapters are created.
 export const container = {} as const;
@@ -12,4 +17,9 @@ export async function runMigrations({ databaseUrl }: DatabaseConfig) {
   } finally {
     await db.destroy();
   }
+}
+
+/** Makes sure Stripe has a product and price for every plan in the catalog. */
+export function setUpStripePrices({ secretKey }: StripeConfig) {
+  return ensureStripePrices(createStripeClient(secretKey));
 }
