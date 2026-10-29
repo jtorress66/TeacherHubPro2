@@ -36,7 +36,7 @@ function layer(pkg, allowed, { testsMayUseTesting = false } = {}) {
   ];
   if (testsMayUseTesting) {
     configs.push({
-      files: [`packages/${pkg}/**/*.test.ts`],
+      files: [`packages/${pkg}/**/*.test.ts`, `packages/${pkg}/test/**/*.ts`],
       rules: { 'no-restricted-imports': rule(['testing']) },
     });
   }

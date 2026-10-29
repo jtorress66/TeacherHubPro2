@@ -19,6 +19,12 @@ export default defineConfig({
         '**/index.ts',
         '**/test-support.ts',
         'packages/testing/src/contracts/**',
+        // Only meaningful against a real database; covered by `pnpm test:int` (≥ 90%).
+        'packages/adapters/src/postgres/{repositories,migrations}/**',
+        'packages/adapters/src/postgres/{database,migrate,upsert}.ts',
+        // Composition roots and CLI entry points: wiring only, exercised manually and by E2E.
+        'apps/*/src/container.ts',
+        'apps/worker/src/migrate.ts',
         'apps/web/src/app/**',
         'apps/web/e2e/**',
       ],

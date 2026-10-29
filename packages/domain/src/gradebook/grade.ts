@@ -2,13 +2,17 @@ import type { AssignmentId, GradeId, SchoolId, StudentId, UserId } from '../shar
 import { ok, type Result } from '../shared/result.ts';
 import { invalid, optionalText, type ValidationError } from '../shared/validation.ts';
 
-export type GradeStatus = 'pending' | 'graded' | 'late' | 'missing' | 'excused';
+export const gradeStatuses = ['pending', 'graded', 'late', 'missing', 'excused'] as const;
+
+export type GradeStatus = (typeof gradeStatuses)[number];
 
 /**
  * Who decided the grade. Every Grade is a teacher decision: AI scores live on the
  * submission as drafts until a teacher confirms them.
  */
-export type GradeSource = 'manual' | 'confirmed_ai';
+export const gradeSources = ['manual', 'confirmed_ai'] as const;
+
+export type GradeSource = (typeof gradeSources)[number];
 
 /** The one grade a student has for an assignment. */
 export interface Grade {

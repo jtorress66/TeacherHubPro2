@@ -6,7 +6,9 @@ import { optionalHttpsUrl } from '../shared/url.ts';
 import { invalid, requiredText, type ValidationError } from '../shared/validation.ts';
 import type { Role } from './roles.ts';
 
-export type OnboardingStatus = 'not_started' | 'in_progress' | 'completed' | 'dismissed';
+export const onboardingStatuses = ['not_started', 'in_progress', 'completed', 'dismissed'] as const;
+
+export type OnboardingStatus = (typeof onboardingStatuses)[number];
 
 export interface User {
   readonly id: UserId;

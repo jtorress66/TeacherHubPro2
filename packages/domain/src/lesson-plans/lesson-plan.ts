@@ -4,7 +4,9 @@ import { ok, type Result } from '../shared/result.ts';
 import { invalid, optionalText, requiredText, type ValidationError } from '../shared/validation.ts';
 import type { Weekday } from '../shared/weekday.ts';
 
-export type LessonPlanKind = 'weekly' | 'conversational_english';
+export const lessonPlanKinds = ['weekly', 'conversational_english'] as const;
+
+export type LessonPlanKind = (typeof lessonPlanKinds)[number];
 
 export interface LessonPlanDay {
   readonly weekday: Weekday;

@@ -47,7 +47,9 @@ export function importsOf(source: string): string[] {
   });
 }
 
-const isTestFile = (path: string): boolean => /\.test\.tsx?$/.test(path);
+/** Test files, and support files in a package's `test/` folder (global setup, database helpers). */
+const isTestFile = (path: string): boolean =>
+  /\.test\.tsx?$/.test(path) || /^packages\/[^/]+\/test\//.test(path);
 
 const mayImportSdks = (path: string): boolean =>
   path.startsWith('packages/adapters/') || /^apps\/[^/]+\/src\/container\.ts$/.test(path);

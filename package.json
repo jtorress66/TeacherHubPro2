@@ -9,16 +9,19 @@
   "scripts": {
     "test": "vitest run --coverage",
     "test:watch": "vitest",
-    "test:int": "vitest run --config vitest.int.config.ts",
+    "test:int": "vitest run --config vitest.int.config.ts --coverage",
     "test:e2e": "pnpm --filter @thp/web build && pnpm --filter @thp/web test:e2e",
     "eval": "node -e \"console.log('No evals yet.')\"",
     "typecheck": "pnpm -r --parallel typecheck && tsc -p tsconfig.json --noEmit",
     "lint": "eslint . --max-warnings 0",
     "format": "prettier --write .",
-    "check:forbidden": "node scripts/forbidden-terms.ts"
+    "check:forbidden": "node scripts/forbidden-terms.ts",
+    "db:up": "docker compose up -d --wait postgres",
+    "db:migrate": "pnpm --filter @thp/worker migrate"
   },
   "devDependencies": {
     "@eslint/js": "9.39.5",
+    "@testcontainers/postgresql": "12.2.1",
     "@thp/domain": "workspace:*",
     "@thp/i18n": "workspace:*",
     "@types/node": "24.19.2",

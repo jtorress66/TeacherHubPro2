@@ -18,11 +18,27 @@ pnpm --filter @thp/web exec playwright install chromium   # once, for E2E
 pnpm --filter @thp/web dev                                # http://localhost:3000
 ```
 
+## Database
+
+Postgres 16 runs in Docker for local development. Start Docker Desktop first.
+
+```
+cp .env.example .env      # DATABASE_URL for the local database
+pnpm db:up                # starts Postgres on localhost:5433 (set POSTGRES_PORT to change)
+pnpm db:migrate           # applies pending migrations ("Database is up to date." when none)
+```
+
+| Variable       | Used by             | Example                                                      |
+| -------------- | ------------------- | ------------------------------------------------------------ |
+| `DATABASE_URL` | worker (migrations) | `postgres://teacherhub:teacherhub@localhost:5433/teacherhub` |
+
+The schema lives in `packages/adapters/src/postgres/migrations/`. Each change is a new numbered migration; never edit one that has been merged.
+
 ## Commands
 
 ```
 pnpm test             # unit + contract tests with coverage thresholds
-pnpm test:int         # integration tests (needs Docker; from step 3)
+pnpm test:int         # integration tests against a disposable Postgres (needs Docker running)
 pnpm test:e2e         # builds the web app and runs Playwright
 pnpm eval             # LLM evals (from step 8)
 pnpm typecheck
@@ -34,9 +50,9 @@ pnpm check:forbidden  # the legacy-platform reference check CI runs
 
 ```
 apps/web        Next.js app; routes are prefixed with the language (/en, /es, ...)
-apps/worker     background jobs (stub)
+apps/worker     background jobs; `pnpm db:migrate` CLI
 apps/realtime   live game WebSocket server (stub)
-packages/*      domain, ports, application, agents, adapters, i18n, testing
+packages/*      domain, ports, application, agents, adapters (Postgres via Kysely), i18n, testing
 tests/          architecture tests (dependency rule, SDK boundaries)
 scripts/        repository checks
 ```
