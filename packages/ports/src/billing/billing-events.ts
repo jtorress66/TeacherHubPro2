@@ -1,10 +1,13 @@
-import type { Result, SubscriptionId } from '@thp/domain';
+import type { PlanId, Result, SchoolId, SubscriptionId } from '@thp/domain';
 
 export type BillingEvent =
   | {
       readonly type: 'checkout_completed';
       readonly clientReference: SubscriptionId;
+      readonly schoolId: SchoolId;
       readonly externalId: string;
+      readonly planId: PlanId;
+      readonly quantity: number;
       readonly currentPeriodEnd: Date;
     }
   | { readonly type: 'renewed'; readonly externalId: string; readonly currentPeriodEnd: Date }

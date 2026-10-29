@@ -1,14 +1,23 @@
 import { describe, expect, it } from 'vitest';
 import { type SchoolId, type SubscriptionId, type UserId } from '../shared/ids.ts';
 import { errorOf, valueOf } from '../test-support.ts';
-import { chargePerBillingPeriodCents, planCatalog, planIds, trialDays } from './plan-catalog.ts';
+import {
+  chargePerBillingPeriodCents,
+  isValidQuantity,
+  planCatalog,
+  planIds,
+  trialDays,
+} from './plan-catalog.ts';
 import {
   activateSubscription,
   cancelSubscription,
   expireTrial,
   hasAccess,
   markPastDue,
+  renewSubscription,
+  seatLimit,
   startTrial,
+  trialDaysLeft,
   type Subscription,
 } from './subscription.ts';
 
@@ -177,5 +186,96 @@ describe('hasAccess', () => {
     expect(
       hasAccess(valueOf(expireTrial(trialing(), new Date(now.getTime() + 8 * day))), now),
     ).toBe(false);
+  });
+});
+
+describe('minimum seats (as in the original app)', () => {
+  it('the School plan needs at least 10 teachers and the District plan at least 100', () => {
+    expect(planCatalog.school.minimumSeats).toBe(10);
+    expect(planCatalog.district.minimumSeats).toBe(100);
+    expect(planCatalog.individual_monthly.minimumSeats).toBe(1);
+
+    expect(errorOf(startTrial({ ...base, planId: 'school', quantity: 9 }))).toEqual({
+      field: 'quantity',
+      code: 'out_of_range',
+    });
+    expect(valueOf(startTrial({ ...base, planId: 'school', quantity: 10 })).quantity).toBe(10);
+    expect(errorOf(startTrial({ ...base, planId: 'district', quantity: 99 }))).toEqual({
+      field: 'quantity',
+      code: 'out_of_range',
+    });
+    expect(valueOf(startTrial({ ...base, planId: 'district', quantity: 100 })).quantity).toBe(100);
+  });
+
+  it('checks a quantity for a plan', () => {
+    expect(isValidQuantity('individual_yearly', 1)).toBe(true);
+    expect(isValidQuantity('individual_yearly', 2)).toBe(false);
+    expect(isValidQuantity('school', 12)).toBe(true);
+    expect(isValidQuantity('school', 12.5)).toBe(false);
+  });
+});
+
+describe('activating with the purchased plan', () => {
+  it('switches the trial to the plan and seats that were bought', () => {
+    const paid = valueOf(
+      activateSubscription(trialing(), {
+        currentPeriodEnd: periodEnd,
+        externalId: 'sub_1',
+        planId: 'school',
+        quantity: 12,
+      }),
+    );
+
+    expect(paid).toMatchObject({ status: 'active', planId: 'school', quantity: 12 });
+  });
+
+  it('rejects seats below the plan minimum', () => {
+    expect(
+      errorOf(
+        activateSubscription(trialing(), {
+          currentPeriodEnd: periodEnd,
+          planId: 'district',
+          quantity: 5,
+        }),
+      ),
+    ).toEqual({ field: 'quantity', code: 'out_of_range' });
+  });
+});
+
+describe('trialDaysLeft', () => {
+  it('counts whole days left in a trial, rounding up', () => {
+    expect(trialDaysLeft(trialing(), now)).toBe(7);
+    expect(trialDaysLeft(trialing(), new Date(now.getTime() + 6.5 * day))).toBe(1);
+    expect(trialDaysLeft(trialing(), new Date(now.getTime() + 9 * day))).toBe(0);
+  });
+
+  it('is null when the subscription is not a trial', () => {
+    expect(trialDaysLeft(active(), now)).toBeNull();
+  });
+});
+
+describe('seatLimit', () => {
+  it('is one teacher on individual plans and the bought seats on School and District plans', () => {
+    expect(seatLimit(trialing())).toBe(1);
+    expect(seatLimit(valueOf(startTrial({ ...base, planId: 'school', quantity: 14 })))).toBe(14);
+  });
+});
+
+describe('renewSubscription', () => {
+  it('moves the period end forward for an active or past-due subscription', () => {
+    const next = new Date('2026-11-01T12:00:00Z');
+    expect(valueOf(renewSubscription(active(), next))).toMatchObject({
+      status: 'active',
+      currentPeriodEnd: next,
+    });
+    expect(valueOf(renewSubscription(valueOf(markPastDue(active())), next)).status).toBe('active');
+  });
+
+  it('cannot renew a trial or a canceled subscription', () => {
+    expect(errorOf(renewSubscription(trialing(), periodEnd))).toEqual({
+      code: 'invalid_transition',
+      from: 'trialing',
+      action: 'renew',
+    });
   });
 });

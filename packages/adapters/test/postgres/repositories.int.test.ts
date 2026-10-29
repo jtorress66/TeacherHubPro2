@@ -30,8 +30,10 @@ import {
   attendanceLookupContract,
   deletableContract,
   gradeRepositoryContract,
+  passwordCredentialRepositoryContract,
   schoolRepositoryContract,
   scopedRepositoryContract,
+  sessionRepositoryContract,
   subscriptionLookupContract,
   userLookupContract,
 } from '@thp/testing';
@@ -127,6 +129,14 @@ withParents(parentsFor.teacher, () => {
     lists: [{ name: 'listBySchool', call: (repo, schoolId) => repo.listBySchool(schoolId) }],
   });
   subscriptionLookupContract('PostgresSubscriptionRepository', () => repos.subscriptions);
+});
+
+withParents(parentsFor.accounts, () => {
+  sessionRepositoryContract('PostgresSessionRepository', () => repos.sessions);
+  passwordCredentialRepositoryContract(
+    'PostgresPasswordCredentialRepository',
+    () => repos.credentials,
+  );
 });
 
 withParents(parentsFor.class, () => {

@@ -43,3 +43,17 @@ export function createSchool(input: SchoolInput): Result<School, ValidationError
     logoUrl: logoUrl.value,
   });
 }
+
+export type SchoolDetails = Omit<SchoolInput, 'id'>;
+
+/** Replaces the school's details, with the same rules as creating one. The logo is kept unless given. */
+export function updateSchoolDetails(
+  school: School,
+  details: SchoolDetails,
+): Result<School, ValidationError> {
+  return createSchool({
+    logoUrl: school.logoUrl,
+    ...details,
+    id: school.id,
+  });
+}

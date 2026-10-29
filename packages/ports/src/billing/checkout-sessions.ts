@@ -1,12 +1,14 @@
-import type { Email, PlanId, Result, SubscriptionId } from '@thp/domain';
+import type { Email, PlanId, Result, SchoolId, SubscriptionId } from '@thp/domain';
 
 export interface CheckoutRequest {
   readonly planId: PlanId;
   readonly quantity: number;
   readonly customerEmail: Email;
-  /** Our subscription id, echoed back by billing events. */
+  /** Our subscription and its school, echoed back by billing events. */
   readonly clientReference: SubscriptionId;
-  readonly trialDays: number;
+  readonly schoolId: SchoolId;
+  /** When the free trial ends; the first charge happens then. Null when the trial is over. */
+  readonly trialEnd: Date | null;
   readonly successUrl: string;
   readonly cancelUrl: string;
 }

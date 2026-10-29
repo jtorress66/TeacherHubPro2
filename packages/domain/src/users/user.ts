@@ -53,3 +53,23 @@ export function createUser(input: UserInput): Result<User, ValidationError> {
     onboardingStatus: input.onboardingStatus ?? 'not_started',
   });
 }
+
+export interface ProfileChanges {
+  readonly name: string;
+  readonly language: string;
+  readonly picture?: string | null;
+}
+
+/** The fields a user may change about themselves; role and school are not among them. */
+export function updateProfile(user: User, changes: ProfileChanges): Result<User, ValidationError> {
+  return createUser({
+    ...user,
+    name: changes.name,
+    language: changes.language,
+    picture: changes.picture === undefined ? user.picture : changes.picture,
+  });
+}
+
+/** A new user's first saved settings start their onboarding; later states are kept. */
+export const markOnboardingStarted = (user: User): User =>
+  user.onboardingStatus === 'not_started' ? { ...user, onboardingStatus: 'in_progress' } : user;

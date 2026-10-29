@@ -6,7 +6,7 @@ import {
   type TransitionTable,
 } from '../shared/state-machine.ts';
 import { invalid, type ValidationError } from '../shared/validation.ts';
-import { planCatalog, trialDays, type PlanId } from './plan-catalog.ts';
+import { isValidQuantity, planCatalog, trialDays, type PlanId } from './plan-catalog.ts';
 
 export const subscriptionStatuses = [
   'trialing',
@@ -18,7 +18,7 @@ export const subscriptionStatuses = [
 
 export type SubscriptionStatus = (typeof subscriptionStatuses)[number];
 
-export type SubscriptionAction = 'activate' | 'mark_past_due' | 'cancel' | 'expire_trial';
+export type SubscriptionAction = 'activate' | 'renew' | 'mark_past_due' | 'cancel' | 'expire_trial';
 
 export type SubscriptionError =
   InvalidTransition<SubscriptionStatus, SubscriptionAction> | { readonly code: 'trial_not_over' };
@@ -48,6 +48,7 @@ export interface TrialInput {
 
 const transitions: TransitionTable<SubscriptionStatus, SubscriptionAction> = {
   activate: ['trialing', 'past_due'],
+  renew: ['active', 'past_due'],
   mark_past_due: ['active'],
   cancel: ['trialing', 'active', 'past_due'],
   expire_trial: ['trialing'],
@@ -55,14 +56,9 @@ const transitions: TransitionTable<SubscriptionStatus, SubscriptionAction> = {
 
 const dayMs = 24 * 60 * 60 * 1000;
 
-function validQuantity(planId: PlanId, quantity: number): boolean {
-  if (planCatalog[planId].unit === 'account') return quantity === 1;
-  return Number.isInteger(quantity) && quantity >= 1;
-}
-
 export function startTrial(input: TrialInput): Result<Subscription, ValidationError> {
   const quantity = input.quantity ?? 1;
-  if (!validQuantity(input.planId, quantity)) return invalid('quantity', 'out_of_range');
+  if (!isValidQuantity(input.planId, quantity)) return invalid('quantity', 'out_of_range');
   return ok({
     id: input.id,
     schoolId: input.schoolId,
@@ -76,18 +72,41 @@ export function startTrial(input: TrialInput): Result<Subscription, ValidationEr
   });
 }
 
+export interface Payment {
+  readonly currentPeriodEnd: Date;
+  readonly externalId?: string;
+  /** The plan and seats bought at checkout; the current ones are kept when omitted. */
+  readonly planId?: PlanId;
+  readonly quantity?: number;
+}
+
 export function activateSubscription(
   subscription: Subscription,
-  payment: { readonly currentPeriodEnd: Date; readonly externalId?: string },
-): Result<Subscription, SubscriptionError> {
+  payment: Payment,
+): Result<Subscription, SubscriptionError | ValidationError> {
   const allowed = guardTransition(transitions, subscription.status, 'activate');
   if (!allowed.ok) return allowed;
+  const planId = payment.planId ?? subscription.planId;
+  const quantity = payment.quantity ?? subscription.quantity;
+  if (!isValidQuantity(planId, quantity)) return invalid('quantity', 'out_of_range');
   return ok({
     ...subscription,
+    planId,
+    quantity,
     status: 'active',
     currentPeriodEnd: payment.currentPeriodEnd,
     externalId: payment.externalId ?? subscription.externalId,
   });
+}
+
+/** A paid period renewed: the subscription is active until the new period end. */
+export function renewSubscription(
+  subscription: Subscription,
+  currentPeriodEnd: Date,
+): Result<Subscription, SubscriptionError> {
+  const allowed = guardTransition(transitions, subscription.status, 'renew');
+  if (!allowed.ok) return allowed;
+  return ok({ ...subscription, status: 'active', currentPeriodEnd });
 }
 
 export function markPastDue(subscription: Subscription): Result<Subscription, SubscriptionError> {
@@ -118,4 +137,16 @@ export function expireTrial(
 export function hasAccess(subscription: Subscription, now: Date): boolean {
   if (subscription.status === 'trialing') return now < subscription.trialEndsAt;
   return subscription.status === 'active' || subscription.status === 'past_due';
+}
+
+/** Whole days left in a trial, rounded up (0 once it has ended); null when not on a trial. */
+export function trialDaysLeft(subscription: Subscription, now: Date): number | null {
+  if (subscription.status !== 'trialing') return null;
+  const left = subscription.trialEndsAt.getTime() - now.getTime();
+  return Math.max(0, Math.ceil(left / dayMs));
+}
+
+/** How many teachers the subscription covers: one on individual plans, the bought seats otherwise. */
+export function seatLimit(subscription: Subscription): number {
+  return planCatalog[subscription.planId].unit === 'account' ? 1 : subscription.quantity;
 }

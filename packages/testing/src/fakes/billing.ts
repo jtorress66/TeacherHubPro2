@@ -1,4 +1,4 @@
-import { err, ok, type Result, type SubscriptionId } from '@thp/domain';
+import { err, ok, type PlanId, type Result, type SchoolId, type SubscriptionId } from '@thp/domain';
 import type {
   BillingError,
   BillingEvent,
@@ -32,7 +32,10 @@ const readers: Readonly<Record<BillingEvent['type'], (payload: Payload) => Billi
   checkout_completed: (p) => ({
     type: 'checkout_completed',
     clientReference: text(p, 'clientReference') as SubscriptionId,
+    schoolId: text(p, 'schoolId') as SchoolId,
     externalId: text(p, 'externalId'),
+    planId: text(p, 'planId') as PlanId,
+    quantity: Number(p.quantity),
     currentPeriodEnd: date(p, 'currentPeriodEnd'),
   }),
   renewed: (p) => ({

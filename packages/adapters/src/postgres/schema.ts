@@ -176,6 +176,20 @@ export interface SubscriptionsTable {
   created_at: CreatedAt;
 }
 
+export interface SessionsTable {
+  token_hash: string;
+  user_id: string;
+  school_id: string;
+  created_at: Date;
+  expires_at: Date;
+}
+
+export interface PasswordCredentialsTable {
+  user_id: string;
+  password_hash: string;
+  updated_at: Generated<Date>;
+}
+
 export interface Database {
   schools: SchoolsTable;
   users: UsersTable;
@@ -191,4 +205,6 @@ export interface Database {
   attendance_entries: AttendanceEntriesTable;
   games: GamesTable;
   subscriptions: SubscriptionsTable;
+  sessions: SessionsTable;
+  password_credentials: PasswordCredentialsTable;
 }

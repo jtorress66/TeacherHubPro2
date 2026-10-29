@@ -1,7 +1,14 @@
 import { err, ok, type Err, type Result } from './result.ts';
 
 export type ValidationCode =
-  'required' | 'invalid_format' | 'out_of_range' | 'too_long' | 'duplicate' | 'invalid_order';
+  | 'required'
+  | 'invalid_format'
+  | 'out_of_range'
+  | 'too_short'
+  | 'too_long'
+  | 'not_allowed'
+  | 'duplicate'
+  | 'invalid_order';
 
 export interface ValidationError {
   readonly field: string;

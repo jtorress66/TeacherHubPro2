@@ -11,8 +11,10 @@ export interface GoogleIdentityError {
   readonly code: 'invalid_code' | 'unavailable';
 }
 
-/** Google sign-in: exchanges an OAuth code for the user's profile. */
+/** Google sign-in: sends the user to Google, then exchanges the returned code for their profile. */
 export interface GoogleIdentity {
+  /** Where to send the browser to sign in; `state` comes back unchanged to prevent forgery. */
+  authorizationUrl(state: string, redirectUri: string): string;
   exchangeCode(
     code: string,
     redirectUri: string,

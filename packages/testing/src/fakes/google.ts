@@ -15,6 +15,12 @@ import type {
 export class FakeGoogleIdentity implements GoogleIdentity {
   constructor(private readonly profiles: Readonly<Record<string, GoogleProfile>>) {}
 
+  authorizationUrl(state: string, redirectUri: string): string {
+    const url = new URL('https://accounts.test/o/oauth2/auth');
+    url.search = new URLSearchParams({ state, redirect_uri: redirectUri }).toString();
+    return url.toString();
+  }
+
   exchangeCode(code: string): Promise<Result<GoogleProfile, GoogleIdentityError>> {
     const profile = this.profiles[code];
     return Promise.resolve(profile === undefined ? err({ code: 'invalid_code' }) : ok(profile));
