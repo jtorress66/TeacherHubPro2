@@ -19,6 +19,8 @@
   },
   "devDependencies": {
     "@eslint/js": "9.39.5",
+    "@thp/domain": "workspace:*",
+    "@thp/i18n": "workspace:*",
     "@types/node": "24.19.2",
     "@vitest/coverage-v8": "5.0.5",
     "eslint": "9.39.5",
