@@ -53,6 +53,15 @@ describe('findImportViolations', () => {
     expect(violations.map((v) => v.path)).toEqual(['packages/agents/src/x.ts']);
   });
 
+  it('treats support files in a package test folder like tests', () => {
+    const violations = findImportViolations([
+      { path: 'packages/adapters/test/postgres/test-db.ts', source: "import '@thp/testing';" },
+      { path: 'packages/domain/test/helpers.ts', source: "import '@thp/testing';" },
+    ]);
+
+    expect(violations.map((v) => v.path)).toEqual(['packages/domain/test/helpers.ts']);
+  });
+
   it('flags SDK and driver imports outside adapters and composition roots', () => {
     const violations = findImportViolations([
       { path: 'packages/agents/src/a.ts', source: "import Anthropic from '@anthropic-ai/sdk';" },

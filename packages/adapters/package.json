@@ -11,6 +11,12 @@
   },
   "dependencies": {
     "@thp/domain": "workspace:*",
-    "@thp/ports": "workspace:*"
+    "@thp/ports": "workspace:*",
+    "kysely": "0.29.7",
+    "pg": "8.23.1"
+  },
+  "devDependencies": {
+    "@thp/testing": "workspace:*",
+    "@types/pg": "8.23.1"
   }
 }

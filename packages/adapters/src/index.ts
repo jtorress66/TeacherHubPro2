@@ -1,2 +1,1 @@
-// Filled from step 2 onwards.
-export {};
+export * from './postgres/index.ts';

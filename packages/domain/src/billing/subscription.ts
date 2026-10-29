@@ -8,7 +8,15 @@ import {
 import { invalid, type ValidationError } from '../shared/validation.ts';
 import { planCatalog, trialDays, type PlanId } from './plan-catalog.ts';
 
-export type SubscriptionStatus = 'trialing' | 'active' | 'past_due' | 'canceled' | 'expired';
+export const subscriptionStatuses = [
+  'trialing',
+  'active',
+  'past_due',
+  'canceled',
+  'expired',
+] as const;
+
+export type SubscriptionStatus = (typeof subscriptionStatuses)[number];
 
 export type SubscriptionAction = 'activate' | 'mark_past_due' | 'cancel' | 'expire_trial';
 

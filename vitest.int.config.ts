@@ -1,9 +1,22 @@
 import { defineConfig } from 'vitest/config';
 
-// Integration tests (real Postgres via Testcontainers) arrive in step 3.
 export default defineConfig({
   test: {
-    include: ['packages/*/src/**/*.int.test.ts', 'apps/*/src/**/*.int.test.ts'],
-    passWithNoTests: true,
+    name: 'integration',
+    include: ['{packages,apps}/*/test/**/*.int.test.ts'],
+    globalSetup: ['packages/adapters/test/postgres/global-setup.ts'],
+    // Files share one database and truncate it between tests, so they run one at a time.
+    fileParallelism: false,
+    testTimeout: 120_000,
+    hookTimeout: 120_000,
+    coverage: {
+      provider: 'v8',
+      reporter: ['text-summary', 'text', 'lcov'],
+      reportsDirectory: 'coverage/integration',
+      include: ['packages/adapters/src/postgres/**/*.ts'],
+      // Mappers and the migration result helper are pure and fully covered by the unit run.
+      exclude: ['**/*.test.ts', '**/mappers/**', '**/migration-result.ts'],
+      thresholds: { lines: 90, functions: 90, branches: 90, statements: 90 },
+    },
   },
 });

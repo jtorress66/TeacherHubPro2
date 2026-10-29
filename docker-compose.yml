@@ -1,0 +1,20 @@
+# Local development database: `pnpm db:up`, then `pnpm db:migrate`.
+# Host port 5433 by default, so it can run next to other local Postgres servers.
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: teacherhub
+      POSTGRES_PASSWORD: teacherhub
+      POSTGRES_DB: teacherhub
+    ports:
+      - '${POSTGRES_PORT:-5433}:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U teacherhub']
+      interval: 5s
+      retries: 10
+
+volumes:
+  postgres-data:

@@ -8,9 +8,13 @@ import {
 } from '../shared/state-machine.ts';
 import { invalid, type ValidationError } from '../shared/validation.ts';
 
-export type AttendanceStatus = 'present' | 'absent' | 'tardy' | 'excused';
+export const attendanceStatuses = ['present', 'absent', 'tardy', 'excused'] as const;
 
-export type SessionStatus = 'open' | 'submitted';
+export type AttendanceStatus = (typeof attendanceStatuses)[number];
+
+export const sessionStatuses = ['open', 'submitted'] as const;
+
+export type SessionStatus = (typeof sessionStatuses)[number];
 
 export type SessionAction = 'mark' | 'submit' | 'reopen';
 

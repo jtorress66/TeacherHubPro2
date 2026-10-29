@@ -16,7 +16,9 @@ import {
 } from '../shared/state-machine.ts';
 import { invalid, type ValidationError } from '../shared/validation.ts';
 
-export type SubmissionStatus = 'submitted' | 'ai_graded' | 'confirmed';
+export const submissionStatuses = ['submitted', 'ai_graded', 'confirmed'] as const;
+
+export type SubmissionStatus = (typeof submissionStatuses)[number];
 
 export type SubmissionAction =
   'record_ai_grade' | 'record_ai_failure' | 'confirm_ai_grade' | 'grade_manually';
