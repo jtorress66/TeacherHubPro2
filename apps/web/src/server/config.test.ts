@@ -16,8 +16,8 @@ const production = {
   APP_URL: 'https://teacherhubpro.com',
   APP_ENV: 'production',
   BILLING_PROVIDER: 'stripe',
-  STRIPE_SECRET_KEY: 'sk_live_abc123',
-  STRIPE_WEBHOOK_SECRET: 'whsec_abc123',
+  STRIPE_SECRET_KEY: 'sk_live_xxxxxxxx',
+  STRIPE_WEBHOOK_SECRET: 'whsec_xxxxxxxx',
   GOOGLE_AUTH_PROVIDER: 'google',
   GOOGLE_CLIENT_ID: 'client-123.apps.googleusercontent.com',
   GOOGLE_CLIENT_SECRET: 'google-secret',
@@ -48,7 +48,11 @@ describe('parseWebConfig', () => {
         databaseUrl: production.DATABASE_URL,
         appUrl: production.APP_URL,
         env: 'production',
-        billing: { provider: 'stripe', secretKey: 'sk_live_abc123', webhookSecret: 'whsec_abc123' },
+        billing: {
+          provider: 'stripe',
+          secretKey: 'sk_live_xxxxxxxx',
+          webhookSecret: 'whsec_xxxxxxxx',
+        },
         google: {
           provider: 'google',
           clientId: production.GOOGLE_CLIENT_ID,

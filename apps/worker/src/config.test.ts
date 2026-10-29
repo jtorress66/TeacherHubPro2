@@ -25,11 +25,11 @@ describe('parseDatabaseConfig', () => {
 
 describe('parseStripeConfig', () => {
   it('reads a Stripe secret key, trimming pasted whitespace', () => {
-    expect(parseStripeConfig({ STRIPE_SECRET_KEY: ' sk_test_abc123\n' })).toEqual({
+    expect(parseStripeConfig({ STRIPE_SECRET_KEY: ' sk_test_xxxxxxxx\n' })).toEqual({
       ok: true,
-      value: { secretKey: 'sk_test_abc123' },
+      value: { secretKey: 'sk_test_xxxxxxxx' },
     });
-    expect(parseStripeConfig({ STRIPE_SECRET_KEY: 'rk_live_abc' }).ok).toBe(true);
+    expect(parseStripeConfig({ STRIPE_SECRET_KEY: 'rk_live_xxxxxxxx' }).ok).toBe(true);
   });
 
   it('refuses a missing key and a publishable key', () => {
