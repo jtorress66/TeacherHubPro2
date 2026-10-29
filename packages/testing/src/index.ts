@@ -17,6 +17,7 @@ export { clockContract } from './contracts/clock.contract.ts';
 export { idGeneratorContract } from './contracts/id-generator.contract.ts';
 export * from './contracts/scoped-repository.contract.ts';
 export * from './contracts/accounts.contract.ts';
+export * from './contracts/roster.contract.ts';
 export * from './contracts/repository-lookups.contract.ts';
 export * from './contracts/security.contract.ts';
 export * from './contracts/files.contract.ts';

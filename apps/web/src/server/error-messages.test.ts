@@ -19,6 +19,9 @@ const applicationCodes: ApplicationErrorCode[] = [
   'billing_failed',
   'invalid_signature',
   'unknown_subscription',
+  'class_archived',
+  'duplicate_student_number',
+  'semester_in_use',
 ];
 
 const validationCodes: ValidationCode[] = [

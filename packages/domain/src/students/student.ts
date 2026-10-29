@@ -49,3 +49,17 @@ export function createStudent(input: StudentInput): Result<Student, ValidationEr
     accommodations: accommodations.value,
   });
 }
+
+export type StudentChanges = Omit<StudentInput, 'id' | 'schoolId' | 'classId'>;
+
+export function updateStudent(
+  student: Student,
+  changes: StudentChanges,
+): Result<Student, ValidationError> {
+  return createStudent({
+    ...changes,
+    id: student.id,
+    schoolId: student.schoolId,
+    classId: student.classId,
+  });
+}

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { type ClassId, type SchoolId, type StudentId } from '../shared/ids.ts';
 import { errorOf, valueOf } from '../test-support.ts';
-import { createStudent } from './student.ts';
+import { createStudent, updateStudent } from './student.ts';
 
 const base = {
   id: 'student-1' as StudentId,
@@ -70,6 +70,27 @@ describe('createStudent', () => {
     expect(errorOf(createStudent({ ...base, accommodations: 'x'.repeat(2001) }))).toEqual({
       field: 'accommodations',
       code: 'too_long',
+    });
+  });
+});
+
+describe('updateStudent', () => {
+  it('changes the details with the same rules, keeping id, school and class', () => {
+    const student = valueOf(createStudent(base));
+    const updated = valueOf(
+      updateStudent(student, { firstName: 'Ana María', lastName: 'Cruz', parentEmail: 'P@x.com' }),
+    );
+
+    expect(updated).toMatchObject({
+      id: base.id,
+      classId: base.classId,
+      firstName: 'Ana María',
+      lastName: 'Cruz',
+      parentEmail: 'p@x.com',
+    });
+    expect(errorOf(updateStudent(student, { firstName: 'A', lastName: '' }))).toEqual({
+      field: 'lastName',
+      code: 'required',
     });
   });
 });

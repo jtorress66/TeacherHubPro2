@@ -28,3 +28,48 @@ export {
   HandleBillingWebhook,
   type HandleBillingWebhookDeps,
 } from './billing/handle-billing-webhook.ts';
+export { SchoolManagementPolicy } from './policies/school-management.ts';
+export { canManageClass } from './policies/class-access.ts';
+export {
+  ArchiveClass,
+  CreateClass,
+  GetClass,
+  ListClasses,
+  RestoreClass,
+  UpdateClass,
+} from './classes/class-use-cases.ts';
+export {
+  AddStudent,
+  DeleteStudent,
+  ListStudents,
+  UpdateStudent,
+} from './students/student-use-cases.ts';
+export {
+  ImportStudents,
+  type ImportError,
+  type ImportStudentsDeps,
+  type RowError,
+} from './students/import-students.ts';
+export {
+  maxRosterRows,
+  parseRosterCsv,
+  type RosterCsvError,
+  type RosterRow,
+} from './students/roster-csv.ts';
+export {
+  CreateSemester,
+  DeleteSemester,
+  ListSemesters,
+  SetActiveSemester,
+  UpdateSemester,
+} from './semesters/semester-use-cases.ts';
+export {
+  DismissOnboarding,
+  GetOnboarding,
+  defaultOnboardingItems,
+  firstClassItem,
+  schoolInfoItem,
+  type OnboardingContext,
+  type OnboardingItem,
+  type OnboardingState,
+} from './onboarding/onboarding-use-cases.ts';

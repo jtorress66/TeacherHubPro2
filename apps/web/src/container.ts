@@ -17,8 +17,27 @@ import {
   UuidIdGenerator,
 } from '@thp/adapters';
 import {
+  AddStudent,
+  ArchiveClass,
   AuthenticateSession,
+  CreateClass,
+  CreateSemester,
+  DeleteSemester,
+  DeleteStudent,
+  DismissOnboarding,
+  GetClass,
+  GetOnboarding,
   HandleBillingWebhook,
+  ImportStudents,
+  ListClasses,
+  ListSemesters,
+  ListStudents,
+  RestoreClass,
+  SetActiveSemester,
+  UpdateClass,
+  UpdateSemester,
+  UpdateStudent,
+  defaultOnboardingItems,
   LogIn,
   LogOut,
   SignInWithGoogle,
@@ -40,6 +59,7 @@ import {
   type GoogleConfig,
   type WebConfig,
 } from './server/config.ts';
+import { createTranslator, locales } from '@thp/i18n';
 
 export interface AppContainer {
   readonly appUrl: string;
@@ -52,6 +72,24 @@ export interface AppContainer {
   readonly updateSchoolDetails: UpdateSchoolDetails;
   readonly startCheckout: StartCheckout;
   readonly handleBillingWebhook: HandleBillingWebhook;
+  readonly createClass: CreateClass;
+  readonly updateClass: UpdateClass;
+  readonly archiveClass: ArchiveClass;
+  readonly restoreClass: RestoreClass;
+  readonly getClass: GetClass;
+  readonly listClasses: ListClasses;
+  readonly addStudent: AddStudent;
+  readonly updateStudent: UpdateStudent;
+  readonly deleteStudent: DeleteStudent;
+  readonly listStudents: ListStudents;
+  readonly importStudents: ImportStudents;
+  readonly createSemester: CreateSemester;
+  readonly updateSemester: UpdateSemester;
+  readonly setActiveSemester: SetActiveSemester;
+  readonly deleteSemester: DeleteSemester;
+  readonly listSemesters: ListSemesters;
+  readonly getOnboarding: GetOnboarding;
+  readonly dismissOnboarding: DismissOnboarding;
   readonly google: GoogleIdentity;
   readonly tokens: RandomTokenGenerator;
   /** The header that carries the billing provider's webhook signature. */
@@ -133,6 +171,30 @@ export function createAppContainer(
     updateSchoolDetails: new UpdateSchoolDetails(deps),
     startCheckout: new StartCheckout(deps),
     handleBillingWebhook: new HandleBillingWebhook(deps),
+    createClass: new CreateClass(deps),
+    updateClass: new UpdateClass(deps),
+    archiveClass: new ArchiveClass(deps),
+    restoreClass: new RestoreClass(deps),
+    getClass: new GetClass(deps),
+    listClasses: new ListClasses(deps),
+    addStudent: new AddStudent(deps),
+    updateStudent: new UpdateStudent(deps),
+    deleteStudent: new DeleteStudent(deps),
+    listStudents: new ListStudents(deps),
+    importStudents: new ImportStudents(deps),
+    createSemester: new CreateSemester(deps),
+    updateSemester: new UpdateSemester(deps),
+    setActiveSemester: new SetActiveSemester(deps),
+    deleteSemester: new DeleteSemester(deps),
+    listSemesters: new ListSemesters(deps),
+    getOnboarding: new GetOnboarding({
+      ...deps,
+      items: defaultOnboardingItems,
+      defaultSchoolNames: [
+        ...new Set(locales.map((locale) => createTranslator(locale)('defaults.schoolName'))),
+      ],
+    }),
+    dismissOnboarding: new DismissOnboarding(deps),
     google: identity.google,
     tokens: deps.tokens,
     webhookSignatureHeader: billing.webhookSignatureHeader,

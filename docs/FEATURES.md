@@ -32,6 +32,15 @@ Seven interface languages: English, Spanish, French, Portuguese, German, Italian
 - Class: name, subject, grade, section, school year, **period (1–12), start and end time (HH:MM), days of week (default Mon–Fri)**. Create, edit (no blank names), delete.
 - Students per class: add, edit, delete, bulk add. Semesters: create, edit, set the active one.
 - Onboarding banner, welcome tour, onboarding videos (`frontend/public/*.mp4` can be reused).
+- **Decided for the rebuild:**
+  - "Delete class" **archives** the class: it is hidden from lists but kept with its roster and records, and can be restored.
+  - **CSV import** (new: the old app only took JSON) is all-or-nothing. A file with any bad row imports nothing and lists every bad row with its line number. Headers can be in English or Spanish; comma or semicolon separated.
+  - Student `email` and `notes` are not stored (data minimisation); private notes return in step 15.
+  - The onboarding checklist has "School information" and "First class"; step 8 adds "First plan". The welcome tour covers only built features. The old videos are not reused (they show the old screens).
+- **Fixed from the old app:**
+  - Semester edits and deletes had no school check; every read and write is now scoped to the caller's school.
+  - Bulk add accepted blank names; every row now uses the same rules as adding one student.
+  - Deleting a class orphaned its students; it now archives.
 - Old files: `server.py` (classes, students, semesters), `frontend/src/pages/Classes.js`, `components/OnboardingBanner.js`, `WelcomeTour.js`, `OnboardingVideo.js`.
 
 ## Step 6 — Attendance

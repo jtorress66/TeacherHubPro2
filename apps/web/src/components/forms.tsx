@@ -26,7 +26,7 @@ interface FieldProps {
   readonly required?: boolean;
 }
 
-function Field(props: FieldProps) {
+export function Field(props: FieldProps) {
   const {
     label,
     name,
@@ -68,7 +68,7 @@ function Field(props: FieldProps) {
   );
 }
 
-function Submit({ label }: { readonly label: string }) {
+export function Submit({ label }: { readonly label: string }) {
   const { pending } = useFormStatus();
   return (
     <button type="submit" className="button" disabled={pending}>
@@ -77,7 +77,7 @@ function Submit({ label }: { readonly label: string }) {
   );
 }
 
-function FormAlert({ message }: { readonly message?: string | undefined }) {
+export function FormAlert({ message }: { readonly message?: string | undefined }) {
   return message ? (
     <p role="alert" className="alert">
       {message}
@@ -151,7 +151,7 @@ export function LogInForm({ locale }: { readonly locale: Locale }) {
   );
 }
 
-function Saved({ state, label }: { readonly state: FormState; readonly label: string }) {
+export function Saved({ state, label }: { readonly state: FormState; readonly label: string }) {
   return state.saved ? (
     <p role="status" className="notice">
       {label}

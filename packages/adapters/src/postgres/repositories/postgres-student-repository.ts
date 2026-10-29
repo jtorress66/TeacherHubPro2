@@ -22,6 +22,13 @@ export class PostgresStudentRepository implements StudentRepository {
     return upsert(this.db, 'students', studentMapper.toRow(student));
   }
 
+  /** One transaction: a repeated student number (unique per class) rolls back the whole batch. */
+  async saveMany(students: readonly Student[]): Promise<void> {
+    await this.db.transaction().execute(async (trx) => {
+      for (const student of students) await upsert(trx, 'students', studentMapper.toRow(student));
+    });
+  }
+
   async delete(schoolId: SchoolId, id: StudentId): Promise<void> {
     await this.db
       .deleteFrom('students')

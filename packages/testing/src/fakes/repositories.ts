@@ -13,6 +13,7 @@ import type {
   School,
   SchoolId,
   Semester,
+  SemesterId,
   Student,
   StudentId,
   Submission,
@@ -31,6 +32,7 @@ import type {
   SchoolOwned,
   SchoolRepository,
   ScopedRepository,
+  ClassListOptions,
   SemesterRepository,
   StudentRepository,
   SubmissionRepository,
@@ -101,8 +103,28 @@ export class InMemoryClassRepository
   extends InMemoryScopedRepository<Class>
   implements ClassRepository
 {
-  listByTeacher(schoolId: SchoolId, teacherId: UserId): Promise<readonly Class[]> {
-    return this.listWhere(schoolId, (cls) => cls.teacherId === teacherId);
+  listByTeacher(
+    schoolId: SchoolId,
+    teacherId: UserId,
+    options: ClassListOptions = {},
+  ): Promise<readonly Class[]> {
+    return this.listWhere(
+      schoolId,
+      (cls) =>
+        cls.teacherId === teacherId &&
+        (options.includeArchived === true || cls.archivedAt === null),
+    );
+  }
+
+  listBySchool(schoolId: SchoolId, options: ClassListOptions = {}): Promise<readonly Class[]> {
+    return this.listWhere(
+      schoolId,
+      (cls) => options.includeArchived === true || cls.archivedAt === null,
+    );
+  }
+
+  async countBySemester(schoolId: SchoolId, semesterId: SemesterId): Promise<number> {
+    return (await this.listWhere(schoolId, (cls) => cls.semesterId === semesterId)).length;
   }
 }
 
@@ -113,6 +135,25 @@ export class InMemoryStudentRepository
   listByClass(schoolId: SchoolId, classId: ClassId): Promise<readonly Student[]> {
     return this.listWhere(schoolId, (student) => student.classId === classId);
   }
+
+  override save(student: Student): Promise<void> {
+    return this.saveMany([student]);
+  }
+
+  /** All or nothing: a student number repeated within a class refuses the whole batch. */
+  saveMany(students: readonly Student[]): Promise<void> {
+    const after = new Map(this.rows);
+    for (const student of students) after.set(student.id, student);
+    const numbers = new Set<string>();
+    for (const student of after.values()) {
+      if (student.studentNumber === null) continue;
+      const key = `${student.classId}/${student.studentNumber}`;
+      if (numbers.has(key)) return Promise.reject(new Error(`Duplicate student number ${key}`));
+      numbers.add(key);
+    }
+    for (const student of students) this.rows.set(student.id, student);
+    return Promise.resolve();
+  }
 }
 
 export class InMemorySemesterRepository
@@ -121,6 +162,19 @@ export class InMemorySemesterRepository
 {
   listBySchool(schoolId: SchoolId): Promise<readonly Semester[]> {
     return this.listWhere(schoolId);
+  }
+
+  /** At most one active semester per school, like the database's partial unique index. */
+  override save(semester: Semester): Promise<void> {
+    const clash = [...this.rows.values()].some(
+      (other) =>
+        other.id !== semester.id &&
+        other.schoolId === semester.schoolId &&
+        other.isActive &&
+        semester.isActive,
+    );
+    if (clash) return Promise.reject(new Error('A school can have only one active semester'));
+    return super.save(semester);
   }
 }
 

@@ -5,12 +5,12 @@ import { defaultLocale, isLocale, type Locale } from '@thp/i18n';
 /** Form-level shape checks only; the domain and use cases apply the real rules. */
 export type FieldErrors = Readonly<Record<string, 'required' | 'invalid_format'>>;
 
-const text = z.string({ error: 'required' }).trim().min(1, 'required');
-const optional = z
+export const text = z.string({ error: 'required' }).trim().min(1, 'required');
+export const optional = z
   .string()
   .optional()
   .transform((value) => (value === undefined || value.trim() === '' ? null : value.trim()));
-const locale = z
+export const locale = z
   .string()
   .optional()
   .transform((value): Locale => (isLocale(value) ? value : defaultLocale));
@@ -39,8 +39,14 @@ const codeFor = (message: string): 'required' | 'invalid_format' =>
   message === 'required' ? 'required' : 'invalid_format';
 
 export function parseForm<T>(schema: z.ZodType<T>, data: FormData): Result<T, FieldErrors> {
-  const fields: Record<string, string> = {};
-  for (const [key, value] of data.entries()) if (typeof value === 'string') fields[key] = value;
+  // A repeated field (a group of checkboxes) becomes a list of its values.
+  const fields: Record<string, string | string[]> = {};
+  for (const [key, value] of data.entries()) {
+    if (typeof value !== 'string') continue;
+    const current = fields[key];
+    fields[key] =
+      current === undefined ? value : [...(Array.isArray(current) ? current : [current]), value];
+  }
   const parsed = schema.safeParse(fields);
   if (parsed.success) return ok(parsed.data);
   const errors: Record<string, 'required' | 'invalid_format'> = {};

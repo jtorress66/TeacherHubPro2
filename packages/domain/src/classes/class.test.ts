@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { type ClassId, type SchoolId, type SemesterId, type UserId } from '../shared/ids.ts';
 import { errorOf, valueOf } from '../test-support.ts';
-import { createClass } from './class.ts';
+import { archiveClass, createClass, restoreClass, updateClass } from './class.ts';
 import { createSchedule } from './schedule.ts';
 
 const base = {
@@ -21,6 +21,7 @@ describe('createClass', () => {
       schoolYear: null,
       semesterId: null,
       schedule: null,
+      archivedAt: null,
     });
   });
 
@@ -127,5 +128,60 @@ describe('createSchedule', () => {
       field: 'days',
       code: 'duplicate',
     });
+  });
+});
+
+describe('updateClass', () => {
+  it('replaces the editable fields with validated values, keeping id, school and teacher', () => {
+    const cls = valueOf(createClass(base));
+    const updated = valueOf(
+      updateClass(cls, {
+        name: ' Math 7B ',
+        subject: 'Math',
+        schedule: { period: 3, days: ['Tue', 'Thu'] },
+      }),
+    );
+
+    expect(updated).toMatchObject({
+      id: base.id,
+      schoolId: base.schoolId,
+      teacherId: base.teacherId,
+      name: 'Math 7B',
+    });
+    expect(updated.schedule).toEqual({
+      period: 3,
+      startTime: null,
+      endTime: null,
+      days: ['Tue', 'Thu'],
+    });
+  });
+
+  it('rejects a blank name, a period of 13 and an end before the start', () => {
+    const cls = valueOf(createClass(base));
+    expect(errorOf(updateClass(cls, { name: '' }))).toEqual({ field: 'name', code: 'required' });
+    expect(errorOf(updateClass(cls, { name: 'A', schedule: { period: 13 } }))).toEqual({
+      field: 'period',
+      code: 'out_of_range',
+    });
+    expect(
+      errorOf(updateClass(cls, { name: 'A', schedule: { startTime: '10:00', endTime: '09:00' } })),
+    ).toEqual({ field: 'endTime', code: 'invalid_order' });
+  });
+
+  it('keeps an archived class archived', () => {
+    const archived = archiveClass(valueOf(createClass(base)), new Date('2026-10-01T00:00:00Z'));
+    expect(valueOf(updateClass(archived, { name: 'Renamed' })).archivedAt).toEqual(
+      new Date('2026-10-01T00:00:00Z'),
+    );
+  });
+});
+
+describe('archiving', () => {
+  it('archives a class and restores it', () => {
+    const now = new Date('2026-10-01T00:00:00Z');
+    const archived = archiveClass(valueOf(createClass(base)), now);
+
+    expect(archived.archivedAt).toEqual(now);
+    expect(restoreClass(archived).archivedAt).toBeNull();
   });
 });

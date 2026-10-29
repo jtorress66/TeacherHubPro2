@@ -14,7 +14,10 @@ export type ApplicationErrorCode =
   | 'subscription_ended'
   | 'billing_failed'
   | 'invalid_signature'
-  | 'unknown_subscription';
+  | 'unknown_subscription'
+  | 'class_archived'
+  | 'duplicate_student_number'
+  | 'semester_in_use';
 
 /**
  * What a use case can report: a broken validation rule (with its field) or an application-level
