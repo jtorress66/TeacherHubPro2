@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { parseEmail } from './email.ts';
 import { type SchoolId } from './ids.ts';
 import { defaultLanguage, isLanguage, languages } from './language.ts';
-import { compareDates, parseLocalDate } from './local-date.ts';
+import { addDays, compareDates, localDateIn, parseLocalDate } from './local-date.ts';
 import { andThen, err, ok } from './result.ts';
 import { minutesOf, parseTimeOfDay } from './time-of-day.ts';
 import { optionalText, requiredText } from './validation.ts';
@@ -43,6 +43,26 @@ describe('local date', () => {
     expect(compareDates(a, b)).toBeLessThan(0);
     expect(compareDates(b, a)).toBeGreaterThan(0);
     expect(compareDates(a, a)).toBe(0);
+  });
+});
+
+describe('local date arithmetic', () => {
+  const date = (value: string) => valueOf(parseLocalDate('d', value));
+
+  it('adds and subtracts days across months and leap years', () => {
+    expect(addDays(date('2026-01-31'), 1)).toBe('2026-02-01');
+    expect(addDays(date('2028-03-01'), -1)).toBe('2028-02-29');
+    expect(addDays(date('2026-10-29'), -29)).toBe('2026-09-30');
+  });
+
+  it('gives the calendar date of an instant in a time zone', () => {
+    const lateEvening = new Date('2026-10-30T02:30:00Z');
+    expect(localDateIn(lateEvening, 'America/Puerto_Rico')).toBe('2026-10-29');
+    expect(localDateIn(lateEvening, 'UTC')).toBe('2026-10-30');
+  });
+
+  it('falls back to UTC for an unknown time zone', () => {
+    expect(localDateIn(new Date('2026-10-30T02:30:00Z'), 'Not/AZone')).toBe('2026-10-30');
   });
 });
 

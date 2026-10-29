@@ -3,6 +3,7 @@ import type {
   AttendanceSession,
   AttendanceSessionId,
   ClassId,
+  DateRange,
   LocalDate,
   SchoolId,
 } from '@thp/domain';
@@ -53,16 +54,35 @@ export class PostgresAttendanceSessionRepository implements AttendanceSessionRep
     return row === undefined ? null : this.withEntries(row);
   }
 
-  async listByClass(schoolId: SchoolId, classId: ClassId): Promise<readonly AttendanceSession[]> {
-    const rows = await this.db
+  async listByClass(
+    schoolId: SchoolId,
+    classId: ClassId,
+    range?: DateRange,
+  ): Promise<readonly AttendanceSession[]> {
+    let query = this.db
       .selectFrom('attendance_sessions')
       .selectAll()
       .where('school_id', '=', schoolId)
-      .where('class_id', '=', classId)
-      .orderBy('date')
-      .orderBy('id')
+      .where('class_id', '=', classId);
+    if (range !== undefined)
+      query = query.where('date', '>=', range.from).where('date', '<=', range.to);
+    const rows = await query.orderBy('date').orderBy('id').execute();
+    if (rows.length === 0) return [];
+    const entries = await this.db
+      .selectFrom('attendance_entries')
+      .selectAll()
+      .where(
+        'session_id',
+        'in',
+        rows.map((row) => row.id),
+      )
       .execute();
-    return Promise.all(rows.map((row) => this.withEntries(row)));
+    return rows.map((row) =>
+      attendanceMapper.fromRows(
+        row,
+        entries.filter((entry) => entry.session_id === row.id),
+      ),
+    );
   }
 
   private async withEntries(row: Selectable<AttendanceSessionsTable>): Promise<AttendanceSession> {

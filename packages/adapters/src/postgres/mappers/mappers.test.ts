@@ -192,6 +192,19 @@ describe('row mappers round-trip every entity unchanged', () => {
     expect({ ...restored, records: [] }).toEqual({ ...session, records: [] });
   });
 
+  it('attendance marks keep their minutes late and note', () => {
+    const session = unwrap(
+      markAttendance(anAttendanceSession(), 'student-1' as StudentId, 'tardy', {
+        minutesLate: 7,
+        note: 'Rain',
+      }),
+    );
+
+    const { session: row, entries } = attendanceMapper.toRows(session);
+    expect(entries[0]).toMatchObject({ minutes_late: 7, note: 'Rain' });
+    expect(attendanceMapper.fromRows(stored(row), entries)).toEqual(session);
+  });
+
   it('game', () => {
     const game = aGame({ language: 'fr' });
     expect(gameMapper.fromRow(stored(gameMapper.toRow(game), ['items']))).toEqual(game);

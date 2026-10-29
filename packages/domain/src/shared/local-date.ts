@@ -18,3 +18,27 @@ export function parseLocalDate(field: string, value: string): Result<LocalDate, 
 
 /** Negative when `a` is earlier, positive when later, 0 when equal. */
 export const compareDates = (a: LocalDate, b: LocalDate): number => a.localeCompare(b);
+
+const dayInMs = 24 * 60 * 60 * 1000;
+
+/** The date `days` days after `date` (before it when negative). */
+export function addDays(date: LocalDate, days: number): LocalDate {
+  const time = Date.parse(`${date}T00:00:00Z`) + days * dayInMs;
+  return new Date(time).toISOString().slice(0, 10) as LocalDate;
+}
+
+/** The calendar date of an instant in a time zone; an unknown zone counts as UTC. */
+export function localDateIn(instant: Date, timeZone: string): LocalDate {
+  const format = (zone: string) =>
+    new Intl.DateTimeFormat('en-CA', {
+      timeZone: zone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(instant) as LocalDate;
+  try {
+    return format(timeZone);
+  } catch {
+    return format('UTC');
+  }
+}

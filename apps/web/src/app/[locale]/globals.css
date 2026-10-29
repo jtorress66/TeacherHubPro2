@@ -381,3 +381,61 @@ details[open] > summary {
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+.status-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.attendance-sheet input[type='text'] {
+  width: 100%;
+  min-width: 8rem;
+}
+
+.attendance-sheet .minutes {
+  width: 5rem;
+}
+
+.rate {
+  font-weight: 600;
+}
+
+.band-good {
+  color: #1b7a3d;
+}
+
+.band-warning {
+  color: #9a6200;
+}
+
+.band-low {
+  color: #b42318;
+}
+
+@media (prefers-color-scheme: dark) {
+  .band-good {
+    color: #6fdc8c;
+  }
+
+  .band-warning {
+    color: #f5c25b;
+  }
+
+  .band-low {
+    color: #ff8a80;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .report .rate {
+    color: #000;
+  }
+}

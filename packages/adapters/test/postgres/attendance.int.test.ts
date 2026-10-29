@@ -13,15 +13,17 @@ describe('PostgresAttendanceSessionRepository', () => {
   it('keeps the roster order and every mark across a save and reload', async () => {
     const roster = ['student-two', 'student-1', 'student-one'] as StudentId[];
     let session = anAttendanceSession({ schoolId: schoolA, roster });
-    session = unwrap(markAttendance(session, 'student-one' as StudentId, 'tardy'));
+    session = unwrap(
+      markAttendance(session, 'student-one' as StudentId, 'tardy', { minutesLate: 9, note: 'Bus' }),
+    );
     session = unwrap(markAttendance(session, 'student-two' as StudentId, 'absent'));
     await sessions.save(session);
 
     const reloaded = await sessions.findById(schoolA, session.id);
     expect(reloaded?.roster).toEqual(roster);
     expect(reloaded?.records).toEqual([
-      { studentId: 'student-two', status: 'absent' },
-      { studentId: 'student-one', status: 'tardy' },
+      { studentId: 'student-two', status: 'absent', minutesLate: null, note: null },
+      { studentId: 'student-one', status: 'tardy', minutesLate: 9, note: 'Bus' },
     ]);
   });
 
@@ -34,6 +36,25 @@ describe('PostgresAttendanceSessionRepository', () => {
     await sessions.save(session);
 
     expect(await sessions.findById(schoolA, session.id)).toEqual(session);
+  });
+
+  it('refuses minutes late outside 1–240 and a note over 200 characters', async () => {
+    const session = anAttendanceSession({ schoolId: schoolA });
+    await sessions.save(session);
+    const entry = (values: { minutes_late?: number; note?: string }) =>
+      db
+        .updateTable('attendance_entries')
+        .set(values)
+        .where('session_id', '=', session.id)
+        .execute();
+
+    await expect(entry({ minutes_late: 0 })).rejects.toThrow(
+      /attendance_entries_minutes_late_check/,
+    );
+    await expect(entry({ minutes_late: 241 })).rejects.toThrow(
+      /attendance_entries_minutes_late_check/,
+    );
+    await expect(entry({ note: 'x'.repeat(201) })).rejects.toThrow(/too long/);
   });
 
   it('saves a session with an empty roster', async () => {

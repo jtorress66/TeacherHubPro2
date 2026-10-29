@@ -12,6 +12,7 @@ import {
 import type { ClassRepository, IdGenerator, StudentRepository } from '@thp/ports';
 import { findManagedClass } from '../classes/managed-class.ts';
 import { fail, type UseCaseError } from '../errors.ts';
+import { byName } from './roster-order.ts';
 
 interface RosterDeps {
   readonly classes: ClassRepository;
@@ -105,12 +106,6 @@ export class ListStudents {
     const cls = await findManagedClass(this.deps.classes, input.actor, input.classId);
     if (!cls.ok) return cls;
     const roster = await this.deps.students.listByClass(cls.value.schoolId, cls.value.id);
-    const collator = new Intl.Collator(undefined, { sensitivity: 'base' });
-    return ok(
-      [...roster].sort(
-        (a, b) =>
-          collator.compare(a.lastName, b.lastName) || collator.compare(a.firstName, b.firstName),
-      ),
-    );
+    return ok([...roster].sort(byName));
   }
 }

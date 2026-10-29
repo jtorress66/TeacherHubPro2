@@ -31,6 +31,7 @@ export * from './gradebook/gpa.ts';
 export * from './submissions/submission.ts';
 export * from './attendance/attendance-session.ts';
 export * from './attendance/attendance-calculations.ts';
+export * from './attendance/attendance-report.ts';
 export * from './games/game.ts';
 export * from './billing/plan-catalog.ts';
 export * from './billing/subscription.ts';

@@ -1,6 +1,7 @@
 import type { Email } from '@thp/domain';
 import {
   FakeBillingEvents,
+  InMemoryAttendanceSessionRepository,
   FakeCheckoutSessions,
   FakeGoogleIdentity,
   FakePasswordHasher,
@@ -41,6 +42,7 @@ export const makeWorld = () => ({
   classes: new InMemoryClassRepository(),
   students: new InMemoryStudentRepository(),
   semesters: new InMemorySemesterRepository(),
+  attendanceSessions: new InMemoryAttendanceSessionRepository(),
   google: new FakeGoogleIdentity({
     'good-code': googleProfile,
     'unverified-code': { ...googleProfile, email: 'new@gmail.com' as Email, emailVerified: false },

@@ -9,6 +9,7 @@ import type {
   Grade,
   GradeCategory,
   LessonPlan,
+  DateRange,
   LocalDate,
   School,
   SchoolId,
@@ -21,6 +22,7 @@ import type {
   User,
   UserId,
 } from '@thp/domain';
+import { compareDates, inRange } from '@thp/domain';
 import type {
   AssignmentRepository,
   AttendanceSessionRepository,
@@ -264,8 +266,17 @@ export class InMemoryAttendanceSessionRepository
     );
   }
 
-  listByClass(schoolId: SchoolId, classId: ClassId): Promise<readonly AttendanceSession[]> {
-    return this.listWhere(schoolId, (session) => session.classId === classId);
+  async listByClass(
+    schoolId: SchoolId,
+    classId: ClassId,
+    range?: DateRange,
+  ): Promise<readonly AttendanceSession[]> {
+    const sessions = await this.listWhere(
+      schoolId,
+      (session) =>
+        session.classId === classId && (range === undefined || inRange(session.date, range)),
+    );
+    return [...sessions].sort((a, b) => compareDates(a.date, b.date));
   }
 }
 

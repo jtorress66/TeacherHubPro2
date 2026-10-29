@@ -9,6 +9,7 @@ import type {
   Grade,
   GradeCategory,
   LessonPlan,
+  DateRange,
   LocalDate,
   School,
   SchoolId,
@@ -95,7 +96,12 @@ export interface AttendanceSessionRepository extends ScopedRepository<Attendance
     classId: ClassId,
     date: LocalDate,
   ): Promise<AttendanceSession | null>;
-  listByClass(schoolId: SchoolId, classId: ClassId): Promise<readonly AttendanceSession[]>;
+  /** Oldest first; only the dates within `range` when given. */
+  listByClass(
+    schoolId: SchoolId,
+    classId: ClassId,
+    range?: DateRange,
+  ): Promise<readonly AttendanceSession[]>;
 }
 
 export interface GameRepository extends ScopedRepository<Game>, Deletable<Game> {

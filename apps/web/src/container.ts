@@ -25,8 +25,15 @@ import {
   DeleteSemester,
   DeleteStudent,
   DismissOnboarding,
+  GetAttendanceOverview,
+  GetAttendanceReport,
+  GetAttendanceSheet,
   GetClass,
   GetOnboarding,
+  ListAttendanceDays,
+  ReopenAttendance,
+  SaveAttendance,
+  SubmitAttendance,
   HandleBillingWebhook,
   ImportStudents,
   ListClasses,
@@ -60,6 +67,7 @@ import {
   type WebConfig,
 } from './server/config.ts';
 import { createTranslator, locales } from '@thp/i18n';
+import { localDateIn, type LocalDate } from '@thp/domain';
 
 export interface AppContainer {
   readonly appUrl: string;
@@ -90,6 +98,15 @@ export interface AppContainer {
   readonly listSemesters: ListSemesters;
   readonly getOnboarding: GetOnboarding;
   readonly dismissOnboarding: DismissOnboarding;
+  readonly getAttendanceSheet: GetAttendanceSheet;
+  readonly saveAttendance: SaveAttendance;
+  readonly submitAttendance: SubmitAttendance;
+  readonly reopenAttendance: ReopenAttendance;
+  readonly listAttendanceDays: ListAttendanceDays;
+  readonly getAttendanceOverview: GetAttendanceOverview;
+  readonly getAttendanceReport: GetAttendanceReport;
+  /** Today's date where the teacher is. */
+  readonly today: (timeZone: string) => LocalDate;
   readonly google: GoogleIdentity;
   readonly tokens: RandomTokenGenerator;
   /** The header that carries the billing provider's webhook signature. */
@@ -195,6 +212,14 @@ export function createAppContainer(
       ],
     }),
     dismissOnboarding: new DismissOnboarding(deps),
+    getAttendanceSheet: new GetAttendanceSheet(deps),
+    saveAttendance: new SaveAttendance(deps),
+    submitAttendance: new SubmitAttendance(deps),
+    reopenAttendance: new ReopenAttendance(deps),
+    listAttendanceDays: new ListAttendanceDays(deps),
+    getAttendanceOverview: new GetAttendanceOverview(deps),
+    getAttendanceReport: new GetAttendanceReport(deps),
+    today: (timeZone) => localDateIn(deps.clock.now(), timeZone),
     google: identity.google,
     tokens: deps.tokens,
     webhookSignatureHeader: billing.webhookSignatureHeader,

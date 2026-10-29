@@ -19,7 +19,7 @@ export interface AttendanceRows {
 /** A session is one row plus one entry per rostered student (in roster order). */
 export const attendanceMapper = {
   toRows(session: AttendanceSession): AttendanceRows {
-    const statusOf = new Map(session.records.map((record) => [record.studentId, record.status]));
+    const recordOf = new Map(session.records.map((record) => [record.studentId, record]));
     return {
       session: {
         id: session.id,
@@ -28,12 +28,17 @@ export const attendanceMapper = {
         date: session.date,
         status: session.status,
       },
-      entries: session.roster.map((studentId, position) => ({
-        session_id: session.id,
-        student_id: studentId,
-        position,
-        status: statusOf.get(studentId) ?? null,
-      })),
+      entries: session.roster.map((studentId, position) => {
+        const record = recordOf.get(studentId);
+        return {
+          session_id: session.id,
+          student_id: studentId,
+          position,
+          status: record?.status ?? null,
+          minutes_late: record?.minutesLate ?? null,
+          note: record?.note ?? null,
+        };
+      }),
     };
   },
 
@@ -56,6 +61,8 @@ export const attendanceMapper = {
               {
                 studentId: entry.student_id as StudentId,
                 status: oneOf(attendanceStatuses, entry.status, 'attendance_entries.status'),
+                minutesLate: entry.minutes_late,
+                note: entry.note,
               },
             ],
       ),
