@@ -49,6 +49,15 @@ Seven interface languages: English, Spanish, French, Portuguese, German, Italian
 - GPA on a 4.0 scale (old `server.py` ~4870): ≥ 90% → 4.0; 80–90 → 3.0 + (p − 80)/10; 70–80 → 2.0 + (p − 70)/10; 60–70 → 1.0 + (p − 60)/10; below 60 → p/60.
 - Report cards: generated per student with the school's logo, grades and attendance.
 - Manual grades take precedence over AI grades for the same assignment.
+- **Overall grade (decided for the rebuild):** each category's average is its points earned ÷ points possible; the overall grade weights those averages by `weight_percent`, rescaled over the categories that have counted grades. If every such weight is 0, the categories count equally. (The old app stored weights but ignored them.)
+- **Which grades count:** `graded` and `late` count with their score; `missing` counts as 0; `excused` and `pending` are left out. (The old report card counted every row, so excused work scored 0.)
+- **Recorded examples** (reproduced by `packages/domain/src/gradebook/grade-calculations.test.ts`):
+
+  | # | Setup | Overall | GPA |
+  | --- | --- | --- | --- |
+  | 1 | Tests 50%: 45/50 (90%). Homework 30%: 7/10 and 9/10 (80%). Projects 20%: no grades yet. | (50×90 + 30×80) ÷ 80 = **86.25%** | 3.625 |
+  | 2 | Homework 100%: 10/10 graded, one excused, one pending, one missing (all out of 10). | 10 ÷ 20 = **50%** | 0.83 |
+  | 3 | Tests 100%: a 100-point assignment with three 10-point questions, scored 24. | 24 ÷ 30 = **80%** | 3.0 |
 - Old files: `server.py` (gradebook, report cards ~4800–4950), `frontend/src/pages/Gradebook.js`, `GradebookReports.js`, `ReportCards.js`.
 
 ## Step 8 — AI platform and lesson planner

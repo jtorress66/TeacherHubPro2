@@ -1,5 +1,7 @@
 import { defineConfig } from 'vitest/config';
 
+const full = { lines: 100, functions: 100, branches: 100, statements: 100 };
+
 export default defineConfig({
   test: {
     include: [
@@ -12,7 +14,14 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       include: ['packages/*/src/**/*.ts', 'apps/*/src/**/*.ts', 'apps/*/src/**/*.tsx'],
-      exclude: ['**/*.test.ts', '**/index.ts', 'apps/web/src/app/**', 'apps/web/e2e/**'],
+      exclude: [
+        '**/*.test.ts',
+        '**/index.ts',
+        '**/test-support.ts',
+        'packages/testing/src/contracts/**',
+        'apps/web/src/app/**',
+        'apps/web/e2e/**',
+      ],
       reporter: ['text-summary', 'lcov'],
       thresholds: {
         lines: 80,
@@ -21,6 +30,10 @@ export default defineConfig({
         statements: 80,
         'packages/domain/src/**': { lines: 90, functions: 90, branches: 90, statements: 90 },
         'packages/agents/src/**': { lines: 90, functions: 90, branches: 90, statements: 90 },
+        // Step 2 gate: state machines and grade/attendance calculations are fully covered.
+        'packages/domain/src/{submissions,attendance,billing}/**': full,
+        'packages/domain/src/shared/state-machine.ts': full,
+        'packages/domain/src/gradebook/{grade-calculations,gpa}.ts': full,
       },
     },
   },

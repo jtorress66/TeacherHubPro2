@@ -20,3 +20,8 @@ export const isErr = <T, E>(result: Result<T, E>): result is Err<E> => !result.o
 
 export const map = <T, U, E>(result: Result<T, E>, fn: (value: T) => U): Result<U, E> =>
   result.ok ? ok(fn(result.value)) : result;
+
+export const andThen = <T, U, E, F>(
+  result: Result<T, E>,
+  fn: (value: T) => Result<U, F>,
+): Result<U, E | F> => (result.ok ? fn(result.value) : result);
