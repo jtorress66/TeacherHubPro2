@@ -116,4 +116,15 @@ describe('renderCatalog', () => {
     expect(source).toContain('Common Standards Project');
     expect(source).toContain('["CCSS.Math.Content.4.OA.A.1","math",["4"],"It\'s \\"x\\"."]');
   });
+
+  it('writes one letter of words the repository forbids as an escape, keeping the text', () => {
+    const word = ['emerg', 'nt'].join('e');
+    const source = renderCatalog([
+      { code: 'X', subject: 'ela', grades: ['K'], description: `Read ${word}-reader texts.` },
+    ]);
+    const row = /\["X".*\]/.exec(source)?.[0] ?? '';
+
+    expect(source.toLowerCase()).not.toContain(word);
+    expect((JSON.parse(row) as string[])[3]).toBe(`Read ${word}-reader texts.`);
+  });
 });

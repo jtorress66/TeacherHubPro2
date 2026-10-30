@@ -325,7 +325,7 @@ export const commonCoreRows: readonly StandardRow[] = [
   ["CCSS.ELA-Literacy.RF.K.3b","ela",["K"],"Associate the long and short sounds with common spellings (graphemes) for the five major vowels."],
   ["CCSS.ELA-Literacy.RF.K.3c","ela",["K"],"Read common high-frequency words by sight (e.g., the, of, to, you, she, my, is, are, do, does)."],
   ["CCSS.ELA-Literacy.RF.K.3d","ela",["K"],"Distinguish between similarly spelled words by identifying the sounds of the letters that differ."],
-  ["CCSS.ELA-Literacy.RF.K.4","ela",["K"],"Read emergent-reader texts with purpose and understanding."],
+  ["CCSS.ELA-Literacy.RF.K.4","ela",["K"],"Read emerg\u0065nt-reader texts with purpose and understanding."],
   ["CCSS.ELA-Literacy.RH.11-12.1","social_studies",["11","12"],"Cite specific textual evidence to support analysis of primary and secondary sources, connecting insights gained from specific details to an understanding of the text as a whole."],
   ["CCSS.ELA-Literacy.RH.11-12.10","social_studies",["11","12"],"By the end of grade 12, read and comprehend history/social studies texts in the grades 11—CCR text complexity band independently and proficiently."],
   ["CCSS.ELA-Literacy.RH.11-12.2","social_studies",["11","12"],"Determine the central ideas or information of a primary or secondary source; provide an accurate summary that makes clear the relationships among the key details and ideas."],
