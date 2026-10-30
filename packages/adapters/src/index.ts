@@ -17,3 +17,9 @@ export {
 } from './google/google-oauth-identity.ts';
 export { issueLocalGoogleCode, LocalGoogleIdentity } from './google/local-google-identity.ts';
 export { PdfLibReportCardRenderer } from './pdf/pdf-lib-report-card-renderer.ts';
+export {
+  AnthropicLlmClient,
+  defaultClaudeModel,
+  type AnthropicConfig,
+} from './ai/anthropic-llm-client.ts';
+export { LocalLlmClient } from './ai/local-llm-client.ts';

@@ -1,0 +1,62 @@
+import Anthropic from '@anthropic-ai/sdk';
+import { err, ok, type Result } from '@thp/domain';
+import type { LlmClient, LlmError, LlmRequest, LlmResponse } from '@thp/ports';
+
+export const defaultClaudeModel = 'claude-opus-5-5';
+
+export interface AnthropicConfig {
+  readonly apiKey: string;
+  readonly model?: string;
+  readonly timeoutMs?: number;
+  /** The SDK retries rate limits, overloads and server errors this many times. */
+  readonly maxRetries?: number;
+  readonly baseURL?: string;
+}
+
+/** 4xx other than timeouts, conflicts and rate limits cannot succeed on retry. */
+function errorCode(error: unknown): LlmError['code'] {
+  if (error instanceof Anthropic.RateLimitError) return 'rate_limited';
+  const status: unknown = error instanceof Anthropic.APIError ? error.status : undefined;
+  const retryable = typeof status !== 'number' || status >= 500 || [408, 409].includes(status);
+  return retryable ? 'unavailable' : 'invalid_request';
+}
+
+/**
+ * Claude through the official SDK. A refusal is offered to Claude's server-side fallback model
+ * first, and reported as `refused` only if the whole chain declines. Nothing is logged.
+ */
+export class AnthropicLlmClient implements LlmClient {
+  private readonly client: Anthropic;
+  private readonly model: string;
+
+  constructor(config: AnthropicConfig) {
+    this.client = new Anthropic({
+      apiKey: config.apiKey,
+      timeout: config.timeoutMs ?? 120_000,
+      maxRetries: config.maxRetries ?? 2,
+      ...(config.baseURL === undefined ? {} : { baseURL: config.baseURL }),
+    });
+    this.model = config.model ?? defaultClaudeModel;
+  }
+
+  async complete(request: LlmRequest): Promise<Result<LlmResponse, LlmError>> {
+    try {
+      const response = await this.client.beta.messages.create({
+        model: this.model,
+        max_tokens: request.maxTokens,
+        system: request.system,
+        messages: request.messages.map(({ role, content }) => ({ role, content })),
+        betas: ['server-side-fallback-2026-07-01'],
+        fallbacks: 'default',
+      });
+      if (response.stop_reason === 'refusal') return err({ code: 'refused' });
+      const text = response.content.flatMap((block) => (block.type === 'text' ? [block.text] : []));
+      return ok({
+        text: text.join(''),
+        stopReason: response.stop_reason === 'max_tokens' ? 'max_tokens' : 'end',
+      });
+    } catch (error) {
+      return err({ code: errorCode(error) });
+    }
+  }
+}

@@ -10,6 +10,9 @@ import type {
   GradeCategory,
   GradeCategoryId,
   LessonPlan,
+  PlanFolder,
+  PlanFolderId,
+  PlanTemplate,
   DateRange,
   LocalDate,
   ReportCardComment,
@@ -66,6 +69,17 @@ export interface SemesterRepository extends ScopedRepository<Semester>, Deletabl
 
 export interface LessonPlanRepository extends ScopedRepository<LessonPlan>, Deletable<LessonPlan> {
   listByTeacher(schoolId: SchoolId, teacherId: UserId): Promise<readonly LessonPlan[]>;
+  /** Moves the folder's plans to Unfiled. */
+  unfileFolder(schoolId: SchoolId, folderId: PlanFolderId): Promise<void>;
+}
+
+export interface PlanFolderRepository extends ScopedRepository<PlanFolder>, Deletable<PlanFolder> {
+  listByTeacher(schoolId: SchoolId, teacherId: UserId): Promise<readonly PlanFolder[]>;
+}
+
+export interface PlanTemplateRepository
+  extends ScopedRepository<PlanTemplate>, Deletable<PlanTemplate> {
+  listByTeacher(schoolId: SchoolId, teacherId: UserId): Promise<readonly PlanTemplate[]>;
 }
 
 export interface GradeCategoryRepository

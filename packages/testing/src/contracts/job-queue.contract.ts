@@ -57,6 +57,42 @@ export function jobQueueContract(name: string, make: () => JobQueue): void {
       });
     });
 
+    it('never hands the same job to two claims at once', async () => {
+      const queue = make();
+      await queue.enqueue(newJob());
+      await queue.enqueue(newJob());
+
+      const claims = await Promise.all([1, 2, 3].map(() => queue.claimNext(['lesson_plan'])));
+      const ids = claims.flatMap((job) => (job ? [job.id] : []));
+      expect(ids).toHaveLength(2);
+      expect(new Set(ids).size).toBe(2);
+    });
+
+    it('fails unfinished jobs created before the cut-off, and nothing else', async () => {
+      const queue = make();
+      const queued = await queue.enqueue(newJob());
+      const running = await queue.enqueue(newJob());
+      const done = await queue.enqueue(newJob());
+      await queue.claimNext(['lesson_plan']);
+      await queue.claimNext(['lesson_plan']);
+      await queue.claimNext(['lesson_plan']);
+      await queue.complete(done.id, {});
+
+      expect(await queue.failStale(new Date(queued.createdAt.getTime() - 1), 'timed_out')).toBe(0);
+      const cutOff = new Date(
+        Math.max(queued.createdAt.getTime(), running.createdAt.getTime()) + 1,
+      );
+      expect(await queue.failStale(cutOff, 'timed_out')).toBe(2);
+
+      for (const job of [queued, running]) {
+        expect(await queue.findForOwner(schoolId, ownerId, job.id)).toMatchObject({
+          status: 'failed',
+          error: 'timed_out',
+        });
+      }
+      expect((await queue.findForOwner(schoolId, ownerId, done.id))?.status).toBe('completed');
+    });
+
     it('users can read only their own jobs', async () => {
       const queue = make();
       const job = await queue.enqueue(newJob());

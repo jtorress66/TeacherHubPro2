@@ -42,3 +42,24 @@ export function parseStripeConfig(
   }
   return ok({ secretKey: key });
 }
+
+export type LlmConfig =
+  | { readonly provider: 'local' }
+  | { readonly provider: 'anthropic'; readonly apiKey: string; readonly model: string | null };
+
+/**
+ * Which model drafts plans. `LLM_PROVIDER=local` is the scripted stand-in for tests and local
+ * runs; without the setting, a configured ANTHROPIC_API_KEY means Claude.
+ */
+export function parseLlmConfig(
+  env: Readonly<Record<string, string | undefined>>,
+): Result<LlmConfig, string> {
+  const apiKey = env.ANTHROPIC_API_KEY?.trim() ?? '';
+  const chosen = env.LLM_PROVIDER?.trim() ?? '';
+  const provider = chosen !== '' ? chosen : apiKey === '' ? 'local' : 'anthropic';
+  if (provider === 'local') return ok({ provider });
+  if (provider !== 'anthropic') return err('LLM_PROVIDER must be "anthropic" or "local".');
+  if (apiKey === '') return err('ANTHROPIC_API_KEY is required when LLM_PROVIDER is "anthropic".');
+  const model = env.ANTHROPIC_MODEL?.trim() ?? '';
+  return ok({ provider, apiKey, model: model === '' ? null : model });
+}

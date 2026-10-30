@@ -5,7 +5,6 @@ import type {
   GameId,
   GradeCategoryId,
   GradeId,
-  LessonPlanId,
   SchoolId,
   SemesterId,
   StudentId,
@@ -34,12 +33,12 @@ import {
   gradebookGradeContract,
   reportCardCommentContract,
 } from '../contracts/gradebook.contract.ts';
+import { plannerRepositoryContract } from '../contracts/planner.contract.ts';
 import {
   aClass,
   aGame,
   aGrade,
   aGradeCategory,
-  aLessonPlan,
   anAssignment,
   anAttendanceSession,
   aSemester,
@@ -56,6 +55,8 @@ import {
   InMemoryGradeCategoryRepository,
   InMemoryGradeRepository,
   InMemoryLessonPlanRepository,
+  InMemoryPlanFolderRepository,
+  InMemoryPlanTemplateRepository,
   InMemoryReportCardCommentRepository,
   InMemorySchoolRepository,
   InMemorySemesterRepository,
@@ -118,21 +119,11 @@ scopedRepositoryContract('InMemorySemesterRepository', {
   lists: [{ name: 'listBySchool', call: (repo, schoolId) => repo.listBySchool(schoolId) }],
 });
 
-const plans = {
-  make: () => new InMemoryLessonPlanRepository(),
-  sample: (schoolId: SchoolId, id: string) => aLessonPlan({ schoolId, id: id as LessonPlanId }),
-};
-scopedRepositoryContract('InMemoryLessonPlanRepository', {
-  ...plans,
-  change: (plan) => ({ ...plan, standards: ['CCSS.ELA'] }),
-  lists: [
-    {
-      name: 'listByTeacher',
-      call: (repo, schoolId, plan) => repo.listByTeacher(schoolId, plan.teacherId),
-    },
-  ],
-});
-deletableContract('InMemoryLessonPlanRepository', plans);
+plannerRepositoryContract('InMemory', () => ({
+  plans: new InMemoryLessonPlanRepository(),
+  folders: new InMemoryPlanFolderRepository(),
+  templates: new InMemoryPlanTemplateRepository(),
+}));
 
 const categories = {
   make: () => new InMemoryGradeCategoryRepository(),

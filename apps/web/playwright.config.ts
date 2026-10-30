@@ -2,6 +2,8 @@ import { defineConfig, devices } from '@playwright/test';
 
 const port = 3100;
 const appUrl = `http://localhost:${String(port)}`;
+const databaseUrl =
+  process.env.DATABASE_URL ?? 'postgres://teacherhub:teacherhub@localhost:5433/teacherhub';
 
 export default defineConfig({
   testDir: './e2e',
@@ -14,21 +16,31 @@ export default defineConfig({
     trace: 'retain-on-failure',
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
-  webServer: {
-    command: `pnpm start --port ${String(port)}`,
-    url: `${appUrl}/api/health`,
-    reuseExistingServer: !process.env.CI,
-    timeout: 60_000,
-    // The local stand-ins for Stripe and Google; the database comes from `pnpm db:up` (or CI).
-    env: {
-      DATABASE_URL:
-        process.env.DATABASE_URL ?? 'postgres://teacherhub:teacherhub@localhost:5433/teacherhub',
-      APP_URL: appUrl,
-      APP_ENV: 'test',
-      BILLING_PROVIDER: 'local',
-      LOCAL_BILLING_SECRET: 'e2e-local-billing-secret',
-      GOOGLE_AUTH_PROVIDER: 'local',
-      LOCAL_GOOGLE_SECRET: 'e2e-local-google-secret',
+  webServer: [
+    {
+      command: `pnpm start --port ${String(port)}`,
+      url: `${appUrl}/api/health`,
+      reuseExistingServer: !process.env.CI,
+      timeout: 60_000,
+      // The local stand-ins for Stripe and Google; the database comes from `pnpm db:up` (or CI).
+      env: {
+        DATABASE_URL: databaseUrl,
+        APP_URL: appUrl,
+        APP_ENV: 'test',
+        BILLING_PROVIDER: 'local',
+        LOCAL_BILLING_SECRET: 'e2e-local-billing-secret',
+        GOOGLE_AUTH_PROVIDER: 'local',
+        LOCAL_GOOGLE_SECRET: 'e2e-local-google-secret',
+      },
     },
-  },
+    {
+      // The background worker, drafting plans with the scripted stand-in for Claude.
+      name: 'Worker',
+      command: 'pnpm --filter @thp/worker start',
+      wait: { stdout: /Worker started/ },
+      stdout: 'pipe',
+      timeout: 60_000,
+      env: { DATABASE_URL: databaseUrl, LLM_PROVIDER: 'local' },
+    },
+  ],
 });

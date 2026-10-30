@@ -20,7 +20,8 @@ export type ApplicationErrorCode =
   | 'semester_in_use'
   | 'categories_exist'
   | 'category_in_use'
-  | 'storage_unavailable';
+  | 'storage_unavailable'
+  | 'subscription_required';
 
 /**
  * What a use case can report: a broken validation rule (with its field) or an application-level

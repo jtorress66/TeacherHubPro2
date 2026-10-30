@@ -132,3 +132,43 @@ export {
   type ReportCards,
 } from './gradebook/report-cards.ts';
 export { GetSchoolLogo, RemoveSchoolLogo, UploadSchoolLogo } from './settings/school-logo.ts';
+export {
+  GetJob,
+  JobHandlerRegistry,
+  RunNextJob,
+  SweepStaleJobs,
+  type JobHandler,
+  type JobRun,
+} from './jobs/jobs.ts';
+export {
+  CreatePlan,
+  DeletePlan,
+  DuplicatePlan,
+  GetPlan,
+  ListPlans,
+  MovePlan,
+  UpdatePlan,
+  type PlanContent,
+  type PlanFilter,
+} from './lesson-plans/plans.ts';
+export {
+  CreateFolder,
+  DeleteFolder,
+  ListFolders,
+  UpdateFolder,
+  type FolderWithCount,
+} from './lesson-plans/folders.ts';
+export {
+  DeleteTemplate,
+  ListTemplates,
+  SaveAsTemplate,
+  StartFromTemplate,
+  type TemplateList,
+  type TemplateSource,
+} from './lesson-plans/templates.ts';
+export {
+  GetDraftedPlan,
+  LessonPlanDraftHandler,
+  RequestLessonPlanDraft,
+  draftJobKind,
+} from './lesson-plans/drafts.ts';

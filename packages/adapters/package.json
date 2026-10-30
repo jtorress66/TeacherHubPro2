@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "1.3.0",
     "@thp/domain": "workspace:*",
     "@thp/ports": "workspace:*",
     "kysely": "0.29.7",
@@ -20,6 +21,7 @@
   "devDependencies": {
     "@thp/testing": "workspace:*",
     "@types/pg": "8.23.1",
+    "msw": "3.0.3",
     "unpdf": "2.0.0"
   }
 }

@@ -579,3 +579,190 @@ details[open] > summary {
     color: #000;
   }
 }
+
+/* Lesson planner */
+.chip {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--muted) 40%, transparent);
+  border-radius: 999px;
+  font-size: 0.875rem;
+}
+
+.chip[aria-current='page'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+}
+
+.checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.checks legend {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.checks .activity {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.checks .activity input:not([type='checkbox']) {
+  flex: 1;
+  min-width: 10rem;
+}
+
+.plan-week {
+  border: 1px solid color-mix(in srgb, var(--muted) 30%, transparent);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.plan-week legend {
+  font-weight: 700;
+}
+
+.plan-day summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.field textarea,
+.plan-editor select {
+  width: 100%;
+  font: inherit;
+}
+
+.plan-calendar {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.plan-calendar td {
+  vertical-align: top;
+  height: 4.5rem;
+  border: 1px solid color-mix(in srgb, var(--muted) 25%, transparent);
+  padding: 0.25rem;
+}
+
+.plan-calendar .chip {
+  display: block;
+  margin-top: 0.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.folder-dot {
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+}
+
+.folder-indigo {
+  background: #4f46e5;
+}
+.folder-emerald {
+  background: #059669;
+}
+.folder-amber {
+  background: #d97706;
+}
+.folder-rose {
+  background: #e11d48;
+}
+.folder-sky {
+  background: #0284c7;
+}
+.folder-violet {
+  background: #7c3aed;
+}
+.folder-slate {
+  background: #64748b;
+}
+
+.markdown .blank {
+  display: inline-block;
+  min-width: 5rem;
+  border-bottom: 1px solid currentColor;
+  vertical-align: baseline;
+  height: 1em;
+}
+
+.md-table,
+.print-days {
+  border-collapse: collapse;
+  margin: 0.5rem 0;
+}
+
+.md-table th,
+.md-table td,
+.print-days th,
+.print-days td {
+  border: 1px solid color-mix(in srgb, var(--muted) 50%, transparent);
+  padding: 0.25rem 0.5rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.print-days {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 2rem;
+}
+
+.facts dt {
+  font-weight: 600;
+}
+
+.facts dd {
+  margin: 0;
+}
+
+.standards-list dt {
+  margin-top: 0.75rem;
+}
+
+.standards-list dd {
+  margin-left: 0;
+}
+
+@media print {
+  .print-plan {
+    color: #000;
+    background: #fff;
+    font-size: 10pt;
+  }
+
+  .print-week {
+    break-inside: auto;
+  }
+
+  .print-days tr {
+    break-inside: avoid;
+  }
+
+  .md-table th,
+  .md-table td,
+  .print-days th,
+  .print-days td {
+    border-color: #000;
+  }
+}

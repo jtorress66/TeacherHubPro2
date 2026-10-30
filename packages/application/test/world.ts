@@ -9,6 +9,10 @@ import {
   FixedClock,
   InMemoryAssignmentRepository,
   InMemoryFileStore,
+  InMemoryJobQueue,
+  InMemoryLessonPlanRepository,
+  InMemoryPlanFolderRepository,
+  InMemoryPlanTemplateRepository,
   InMemoryGradeCategoryRepository,
   InMemoryGradeRepository,
   InMemoryReportCardCommentRepository,
@@ -33,34 +37,45 @@ export const googleProfile = {
 };
 
 /** Every port a use case may need, backed by in-memory fakes. */
-export const makeWorld = () => ({
-  clock: new FixedClock(new Date('2026-09-01T08:00:00.000Z')),
-  ids: new SequentialIdGenerator(),
-  tokens: new SequentialTokenGenerator(),
-  tokenHasher: new FakeTokenHasher(),
-  passwordHasher: new FakePasswordHasher(),
-  users: new InMemoryUserRepository(),
-  schools: new InMemorySchoolRepository(),
-  subscriptions: new InMemorySubscriptionRepository(),
-  credentials: new InMemoryPasswordCredentialRepository(),
-  sessions: new InMemorySessionRepository(),
-  classes: new InMemoryClassRepository(),
-  students: new InMemoryStudentRepository(),
-  semesters: new InMemorySemesterRepository(),
-  attendanceSessions: new InMemoryAttendanceSessionRepository(),
-  gradeCategories: new InMemoryGradeCategoryRepository(),
-  assignments: new InMemoryAssignmentRepository(),
-  grades: new InMemoryGradeRepository(),
-  reportCardComments: new InMemoryReportCardCommentRepository(),
-  files: new InMemoryFileStore(),
-  google: new FakeGoogleIdentity({
-    'good-code': googleProfile,
-    'unverified-code': { ...googleProfile, email: 'new@gmail.com' as Email, emailVerified: false },
-  }),
-  checkout: new FakeCheckoutSessions(),
-  billingEvents: new FakeBillingEvents(),
-  appUrl: 'https://app.teacherhub.test',
-});
+export const makeWorld = () => {
+  const clock = new FixedClock(new Date('2026-09-01T08:00:00.000Z'));
+  return {
+    clock,
+    ids: new SequentialIdGenerator(),
+    jobs: new InMemoryJobQueue(clock, new SequentialIdGenerator('job')),
+    lessonPlans: new InMemoryLessonPlanRepository(),
+    planFolders: new InMemoryPlanFolderRepository(),
+    planTemplates: new InMemoryPlanTemplateRepository(),
+    tokens: new SequentialTokenGenerator(),
+    tokenHasher: new FakeTokenHasher(),
+    passwordHasher: new FakePasswordHasher(),
+    users: new InMemoryUserRepository(),
+    schools: new InMemorySchoolRepository(),
+    subscriptions: new InMemorySubscriptionRepository(),
+    credentials: new InMemoryPasswordCredentialRepository(),
+    sessions: new InMemorySessionRepository(),
+    classes: new InMemoryClassRepository(),
+    students: new InMemoryStudentRepository(),
+    semesters: new InMemorySemesterRepository(),
+    attendanceSessions: new InMemoryAttendanceSessionRepository(),
+    gradeCategories: new InMemoryGradeCategoryRepository(),
+    assignments: new InMemoryAssignmentRepository(),
+    grades: new InMemoryGradeRepository(),
+    reportCardComments: new InMemoryReportCardCommentRepository(),
+    files: new InMemoryFileStore(),
+    google: new FakeGoogleIdentity({
+      'good-code': googleProfile,
+      'unverified-code': {
+        ...googleProfile,
+        email: 'new@gmail.com' as Email,
+        emailVerified: false,
+      },
+    }),
+    checkout: new FakeCheckoutSessions(),
+    billingEvents: new FakeBillingEvents(),
+    appUrl: 'https://app.teacherhub.test',
+  };
+};
 
 export type World = ReturnType<typeof makeWorld>;
 

@@ -21,3 +21,4 @@ export type GameId = Id<'Game'>;
 export type GameModeId = Id<'GameMode'>;
 export type SubscriptionId = Id<'Subscription'>;
 export type JobId = Id<'Job'>;
+export type PlanTemplateId = Id<'PlanTemplate'>;

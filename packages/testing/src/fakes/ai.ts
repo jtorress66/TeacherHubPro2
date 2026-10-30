@@ -1,5 +1,7 @@
-import { err, ok, type Result } from '@thp/domain';
+import { err, ok, type DraftRequest, type LessonPlanDraft, type Result } from '@thp/domain';
 import type {
+  DraftError,
+  LessonPlanDrafter,
   LlmClient,
   LlmError,
   LlmRequest,
@@ -50,3 +52,28 @@ export class FakeTextToSpeech implements TextToSpeech {
     );
   }
 }
+
+/** A scripted drafter: returns the given draft (or error) and records each request. */
+export class FakeLessonPlanDrafter implements LessonPlanDrafter {
+  readonly requests: DraftRequest[] = [];
+
+  constructor(private readonly outcome: Result<LessonPlanDraft, DraftError>) {}
+
+  draft(request: DraftRequest): Promise<Result<LessonPlanDraft, DraftError>> {
+    this.requests.push(request);
+    return Promise.resolve(this.outcome);
+  }
+}
+
+/** A small valid weekly draft for tests. */
+export const aWeeklyDraft = (overrides: Partial<LessonPlanDraft> = {}): LessonPlanDraft =>
+  ({
+    kind: 'weekly',
+    unit: 'Fractions',
+    objective: 'Compare fractions',
+    skills: ['Equivalence'],
+    standards: ['CCSS.Math.Content.4.NF.A.1'],
+    expectations: null,
+    days: [{ theme: 'Hook' }, {}, {}, {}, {}],
+    ...overrides,
+  }) as LessonPlanDraft;
