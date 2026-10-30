@@ -1,5 +1,6 @@
 import {
   activityTypes,
+  type ActivityType,
   dokLevels,
   materialTypes,
   maxPlanTextLength,
@@ -49,7 +50,7 @@ const weeklyShape = `{
   "days": [5 objects, Monday to Friday: {
     "theme": ${short},
     "dok": [numbers from 1 to 4],
-    "activities": [{ "type": one of ${activityTypes.join(', ')}, "notes": ${long} }],
+    "activities": [{ "type": one of ${activityTypes.join(', ')}, "notes": ${long} }] (each type at most once),
     "materials": [any of ${materialTypes.join(', ')}],
     "notes": ${long}: the day's plan (activities with minutes, materials, success criteria)
   }]
@@ -62,14 +63,26 @@ Wednesday: independent practice (stations, partners, small groups).
 Thursday: mastery and extension (higher-order thinking, real-world application).
 Friday: assessment and reflection (formative assessment, self-reflection, closure).`;
 
+/** A day ticks each activity type once, so repeats of a type become one with all their notes. */
+function mergedActivities(value: unknown): { type: ActivityType; notes: string | null }[] {
+  const notes = new Map<ActivityType, string[]>();
+  for (const activity of objects(value)) {
+    const [type] = allowed([activity.type], activityTypes);
+    if (type === undefined) continue;
+    const note = text(activity.notes);
+    notes.set(type, [...(notes.get(type) ?? []), ...(note === null ? [] : [note])]);
+  }
+  return [...notes].map(([type, list]) => ({
+    type,
+    notes: list.length === 0 ? null : list.join('\n\n'),
+  }));
+}
+
 function weeklyDay(day: Json): PlanDayInput {
   return {
     theme: text(day.theme),
     dok: allowed(day.dok, dokLevels),
-    activities: objects(day.activities).flatMap((activity) => {
-      const [type] = allowed([activity.type], activityTypes);
-      return type === undefined ? [] : [{ type, notes: text(activity.notes) }];
-    }),
+    activities: mergedActivities(day.activities),
     materials: allowed(day.materials, materialTypes),
     notes: text(day.notes),
   };

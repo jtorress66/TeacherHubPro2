@@ -90,6 +90,26 @@ describe('LessonPlanner (weekly)', () => {
     });
   });
 
+  it('merges activities of the same type in a day into one, keeping both notes', async () => {
+    const twice = {
+      ...day('Lunes'),
+      activities: [
+        { type: 'other', notes: 'Lectura en voz alta' },
+        { type: 'other', notes: 'Diario' },
+        { type: 'other', notes: '' },
+      ],
+    };
+    const llm = new FakeLlmClient().replyWith(
+      weeklyReply({ days: [twice, ...['b', 'c', 'd', 'e'].map(day)] }),
+    );
+    const draft = unwrap(await new LessonPlanner(llm).draft(request()));
+
+    expect(draft.kind === 'weekly' && draft.days[0]?.activities).toEqual([
+      { type: 'other', notes: 'Lectura en voz alta\n\nDiario' },
+    ]);
+    expect(llm.requests[0]?.messages[0]?.content).toContain('each type at most once');
+  });
+
   it('tells the model there are no codes for science before grade 6', async () => {
     const llm = new FakeLlmClient().replyWith(weeklyReply({ standards: [] }));
     const k5 = request({ subject: 'science', grade: '3' });
