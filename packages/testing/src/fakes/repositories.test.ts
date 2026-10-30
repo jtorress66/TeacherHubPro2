@@ -30,6 +30,11 @@ import {
   userLookupContract,
 } from '../contracts/repository-lookups.contract.ts';
 import {
+  assignmentLookupContract,
+  gradebookGradeContract,
+  reportCardCommentContract,
+} from '../contracts/gradebook.contract.ts';
+import {
   aClass,
   aGame,
   aGrade,
@@ -51,6 +56,7 @@ import {
   InMemoryGradeCategoryRepository,
   InMemoryGradeRepository,
   InMemoryLessonPlanRepository,
+  InMemoryReportCardCommentRepository,
   InMemorySchoolRepository,
   InMemorySemesterRepository,
   InMemoryStudentRepository,
@@ -154,6 +160,7 @@ scopedRepositoryContract('InMemoryAssignmentRepository', {
   ],
 });
 deletableContract('InMemoryAssignmentRepository', assignments);
+assignmentLookupContract('InMemoryAssignmentRepository', () => new InMemoryAssignmentRepository());
 
 scopedRepositoryContract('InMemoryGradeRepository', {
   make: () => new InMemoryGradeRepository(),
@@ -172,6 +179,11 @@ scopedRepositoryContract('InMemoryGradeRepository', {
   ],
 });
 gradeRepositoryContract('InMemoryGradeRepository', () => new InMemoryGradeRepository());
+gradebookGradeContract('InMemoryGradeRepository', () => new InMemoryGradeRepository());
+reportCardCommentContract(
+  'InMemoryReportCardCommentRepository',
+  () => new InMemoryReportCardCommentRepository(),
+);
 
 scopedRepositoryContract('InMemorySubmissionRepository', {
   make: () => new InMemorySubmissionRepository(),

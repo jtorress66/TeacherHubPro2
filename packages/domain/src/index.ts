@@ -12,6 +12,7 @@ export * from './shared/url.ts';
 export * from './accounts/session.ts';
 export * from './accounts/password-policy.ts';
 export * from './schools/school.ts';
+export * from './schools/school-logo.ts';
 export * from './users/user.ts';
 export * from './users/roles.ts';
 export * from './onboarding/onboarding.ts';
@@ -27,6 +28,10 @@ export * from './gradebook/assignment.ts';
 export * from './gradebook/grade.ts';
 export * from './gradebook/grade-calculations.ts';
 export * from './gradebook/gpa.ts';
+export * from './gradebook/letter-grade.ts';
+export * from './gradebook/student-grades.ts';
+export * from './gradebook/class-grade-report.ts';
+export * from './gradebook/report-card-comment.ts';
 
 export * from './submissions/submission.ts';
 export * from './attendance/attendance-session.ts';

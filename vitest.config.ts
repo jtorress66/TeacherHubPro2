@@ -43,7 +43,8 @@ export default defineConfig({
         // Step 2 gate: state machines and grade/attendance calculations are fully covered.
         'packages/domain/src/{submissions,attendance,billing}/**': full,
         'packages/domain/src/shared/state-machine.ts': full,
-        'packages/domain/src/gradebook/{grade-calculations,gpa}.ts': full,
+        'packages/domain/src/gradebook/{grade-calculations,gpa,letter-grade,student-grades,class-grade-report}.ts':
+          full,
       },
     },
   },

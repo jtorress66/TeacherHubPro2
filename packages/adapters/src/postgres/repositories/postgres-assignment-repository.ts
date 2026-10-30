@@ -1,5 +1,5 @@
 import type { Kysely } from 'kysely';
-import type { Assignment, AssignmentId, ClassId, SchoolId } from '@thp/domain';
+import type { Assignment, AssignmentId, ClassId, GradeCategoryId, SchoolId } from '@thp/domain';
 import type { AssignmentRepository } from '@thp/ports';
 import { assignmentMapper } from '../mappers/gradebook-mappers.ts';
 import type { Database } from '../schema.ts';
@@ -28,6 +28,16 @@ export class PostgresAssignmentRepository implements AssignmentRepository {
       .where('school_id', '=', schoolId)
       .where('id', '=', id)
       .execute();
+  }
+
+  async countByCategory(schoolId: SchoolId, categoryId: GradeCategoryId): Promise<number> {
+    const { count } = await this.db
+      .selectFrom('assignments')
+      .select((eb) => eb.fn.countAll<string>().as('count'))
+      .where('school_id', '=', schoolId)
+      .where('category_id', '=', categoryId)
+      .executeTakeFirstOrThrow();
+    return Number(count);
   }
 
   async listByClass(schoolId: SchoolId, classId: ClassId): Promise<readonly Assignment[]> {

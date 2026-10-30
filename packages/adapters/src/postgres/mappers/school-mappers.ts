@@ -53,7 +53,7 @@ export const schoolMapper: RowMapper<School, SchoolsTable> = {
     address: school.address,
     phone: school.phone,
     email: school.email,
-    logo_url: school.logoUrl,
+    logo_key: school.logoKey,
   }),
   fromRow: (row) => ({
     id: row.id as SchoolId,
@@ -61,7 +61,7 @@ export const schoolMapper: RowMapper<School, SchoolsTable> = {
     address: row.address,
     phone: row.phone,
     email: row.email as Email | null,
-    logoUrl: row.logo_url,
+    logoKey: row.logo_key,
   }),
 };
 

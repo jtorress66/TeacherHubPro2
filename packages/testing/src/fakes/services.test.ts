@@ -3,6 +3,8 @@ import type { Email } from '@thp/domain';
 import { fileStoreContract, pdfTextExtractorContract } from '../contracts/files.contract.ts';
 import { classroomContract, googleIdentityContract } from '../contracts/google.contract.ts';
 import { jobQueueContract } from '../contracts/job-queue.contract.ts';
+import { reportCardRendererContract } from '../contracts/gradebook.contract.ts';
+import { FakeReportCardRenderer } from './documents.ts';
 import {
   passwordHasherContract,
   randomTokenGeneratorContract,
@@ -197,3 +199,5 @@ describe('FakeClassroom', () => {
     ).toEqual({ ok: false, error: { code: 'not_found' } });
   });
 });
+
+reportCardRendererContract('FakeReportCardRenderer', () => new FakeReportCardRenderer());

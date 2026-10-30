@@ -6,6 +6,7 @@ export type ValidationCode =
   | 'out_of_range'
   | 'too_short'
   | 'too_long'
+  | 'too_large'
   | 'not_allowed'
   | 'duplicate'
   | 'invalid_order';

@@ -7,8 +7,8 @@ import {
   type SchoolId,
 } from '../shared/ids.ts';
 import { errorOf, valueOf } from '../test-support.ts';
-import { createAssignment, maxPoints } from './assignment.ts';
-import { createGradeCategory } from './grade-category.ts';
+import { createAssignment, maxPoints, updateAssignment } from './assignment.ts';
+import { createGradeCategory, standardCategories, updateGradeCategory } from './grade-category.ts';
 import { createQuestion } from './question.ts';
 
 const schoolId = 'school-1' as SchoolId;
@@ -60,6 +60,32 @@ describe('createAssignment', () => {
   });
 });
 
+describe('updateAssignment', () => {
+  it('replaces the editable fields with the same rules and keeps the id and questions', () => {
+    const assignment = valueOf(createAssignment({ ...base, questions: [question('q1', 4)] }));
+    const updated = valueOf(
+      updateAssignment(assignment, {
+        title: ' Quiz 2 ',
+        categoryId: 'cat-2' as GradeCategoryId,
+        points: 20,
+        dueDate: '2026-10-01',
+      }),
+    );
+
+    expect(updated).toEqual({
+      ...assignment,
+      title: 'Quiz 2',
+      categoryId: 'cat-2',
+      points: 20,
+      dueDate: '2026-10-01',
+    });
+    expect(errorOf(updateAssignment(assignment, { ...base, points: -1 }))).toEqual({
+      field: 'points',
+      code: 'out_of_range',
+    });
+  });
+});
+
 describe('maxPoints', () => {
   it('max is the sum of question points', () => {
     const assignment = valueOf(
@@ -102,5 +128,34 @@ describe('createGradeCategory', () => {
       field: 'name',
       code: 'required',
     });
+  });
+});
+
+describe('updateGradeCategory', () => {
+  it('renames and reweights with the same rules, keeping the id and class', () => {
+    const category = valueOf(
+      createGradeCategory({ id: 'cat-1' as GradeCategoryId, schoolId, classId, name: 'Tests' }),
+    );
+
+    expect(valueOf(updateGradeCategory(category, { name: 'Exams', weightPercent: 40 }))).toEqual({
+      ...category,
+      name: 'Exams',
+      weightPercent: 40,
+    });
+    expect(errorOf(updateGradeCategory(category, { name: 'Exams', weightPercent: 120 }))).toEqual({
+      field: 'weightPercent',
+      code: 'out_of_range',
+    });
+  });
+});
+
+describe('standardCategories', () => {
+  it('are homework 25, quiz 25, test 30 and project 20, adding up to 100', () => {
+    expect(standardCategories).toEqual([
+      { key: 'homework', weightPercent: 25 },
+      { key: 'quiz', weightPercent: 25 },
+      { key: 'test', weightPercent: 30 },
+      { key: 'project', weightPercent: 20 },
+    ]);
   });
 });

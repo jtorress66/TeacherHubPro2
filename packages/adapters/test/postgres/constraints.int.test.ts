@@ -3,6 +3,7 @@ import type {
   AttendanceSessionId,
   ClassId,
   GradeCategoryId,
+  ReportCardCommentId,
   SemesterId,
   SubscriptionId,
   UserId,
@@ -12,6 +13,7 @@ import {
   aGrade,
   aGradeCategory,
   anAttendanceSession,
+  aReportCardComment,
   aSemester,
   aSubmission,
   aSubscription,
@@ -21,6 +23,7 @@ import { attendanceMapper } from '../../src/postgres/mappers/attendance-mapper.t
 import {
   gradeCategoryMapper,
   gradeMapper,
+  reportCardCommentMapper,
   submissionMapper,
 } from '../../src/postgres/mappers/gradebook-mappers.ts';
 import {
@@ -227,5 +230,34 @@ describe('school-level rules', () => {
     await expect(
       db.insertInto('subscriptions').values(subscription('s2')).execute(),
     ).rejects.toThrow(/subscriptions_external_id_key/);
+  });
+});
+
+describe('gradebook', () => {
+  it("removes an assignment's grades with it", async () => {
+    await db.insertInto('grades').values(grade()).execute();
+    await db.deleteFrom('assignments').where('id', '=', 'assignment-1').execute();
+
+    expect(await db.selectFrom('grades').selectAll().execute()).toEqual([]);
+  });
+
+  it('allow one report card comment per class and student, of at most 1000 characters', async () => {
+    const comment = (id: string, text = 'Good work') => ({
+      ...reportCardCommentMapper.toRow(
+        aReportCardComment({ id: id as ReportCardCommentId, schoolId: schoolA }),
+      ),
+      text,
+    });
+    await expect(
+      db
+        .insertInto('report_card_comments')
+        .values(comment('c0', 'x'.repeat(1001)))
+        .execute(),
+    ).rejects.toThrow(/report_card_comments_text_check/);
+
+    await db.insertInto('report_card_comments').values(comment('c1')).execute();
+    await expect(
+      db.insertInto('report_card_comments').values(comment('c2')).execute(),
+    ).rejects.toThrow(/report_card_comments_class_student_key/);
   });
 });

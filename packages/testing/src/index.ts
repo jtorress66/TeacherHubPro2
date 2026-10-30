@@ -12,6 +12,7 @@ export * from './fakes/billing.ts';
 export * from './fakes/security.ts';
 export * from './fakes/job-queue.ts';
 export * from './fakes/google.ts';
+export * from './fakes/documents.ts';
 
 export { clockContract } from './contracts/clock.contract.ts';
 export { idGeneratorContract } from './contracts/id-generator.contract.ts';
@@ -24,3 +25,4 @@ export * from './contracts/files.contract.ts';
 export * from './contracts/services.contract.ts';
 export * from './contracts/google.contract.ts';
 export * from './contracts/job-queue.contract.ts';
+export * from './contracts/gradebook.contract.ts';

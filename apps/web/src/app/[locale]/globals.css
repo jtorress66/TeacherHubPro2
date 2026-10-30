@@ -439,3 +439,143 @@ details[open] > summary {
     color: #000;
   }
 }
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+.gradebook th:first-child {
+  position: sticky;
+  left: 0;
+  background: var(--bg);
+}
+
+.gradebook thead th a {
+  display: block;
+}
+
+.small {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: normal;
+}
+
+.narrow-input {
+  width: 6rem;
+}
+
+.grade-entry input:not([type='number']) {
+  width: 100%;
+  min-width: 8rem;
+}
+
+.badge.grade-late,
+.badge.grade-missing,
+.badge.grade-excused {
+  margin-left: 0.25rem;
+  font-size: 0.8rem;
+}
+
+.letter {
+  font-weight: 600;
+}
+
+.letter-a {
+  color: #1b7a3d;
+}
+
+.letter-b {
+  color: #1d5fbf;
+}
+
+.letter-c {
+  color: #8a6100;
+}
+
+.letter-d {
+  color: #b45309;
+}
+
+.letter-f {
+  color: #b42318;
+}
+
+@media (prefers-color-scheme: dark) {
+  .letter-a {
+    color: #6fdc8c;
+  }
+
+  .letter-b {
+    color: #8ab4ff;
+  }
+
+  .letter-c {
+    color: #f5c25b;
+  }
+
+  .letter-d {
+    color: #ffb070;
+  }
+
+  .letter-f {
+    color: #ff8a80;
+  }
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 1rem;
+  margin: 0;
+}
+
+.stats div {
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+}
+
+.stats dt {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.stats dd {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.distribution {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.card-list {
+  display: grid;
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.card-list textarea {
+  width: 100%;
+  font: inherit;
+}
+
+.logo-preview {
+  max-height: 5rem;
+  max-width: 12rem;
+  object-fit: contain;
+}
+
+@media print {
+  .report .letter {
+    color: #000;
+  }
+}

@@ -14,7 +14,7 @@ export interface SchoolsTable {
   address: string | null;
   phone: string | null;
   email: string | null;
-  logo_url: string | null;
+  logo_key: string | null;
   created_at: CreatedAt;
 }
 
@@ -120,6 +120,23 @@ export interface GradesTable {
   created_at: CreatedAt;
 }
 
+export interface ReportCardCommentsTable {
+  id: string;
+  school_id: string;
+  class_id: string;
+  student_id: string;
+  text: string;
+  written_by: string;
+  created_at: CreatedAt;
+}
+
+export interface StoredFilesTable {
+  key: string;
+  content_type: string;
+  bytes: Uint8Array;
+  created_at: CreatedAt;
+}
+
 export interface SubmissionsTable {
   id: string;
   school_id: string;
@@ -203,6 +220,8 @@ export interface Database {
   grade_categories: GradeCategoriesTable;
   assignments: AssignmentsTable;
   grades: GradesTable;
+  report_card_comments: ReportCardCommentsTable;
+  stored_files: StoredFilesTable;
   submissions: SubmissionsTable;
   attendance_sessions: AttendanceSessionsTable;
   attendance_entries: AttendanceEntriesTable;

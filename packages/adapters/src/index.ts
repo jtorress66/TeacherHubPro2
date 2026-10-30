@@ -16,3 +16,4 @@ export {
   type GoogleOAuthCredentials,
 } from './google/google-oauth-identity.ts';
 export { issueLocalGoogleCode, LocalGoogleIdentity } from './google/local-google-identity.ts';
+export { PdfLibReportCardRenderer } from './pdf/pdf-lib-report-card-renderer.ts';

@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { createTranslator } from '@thp/i18n';
 import { ProfileForm, SchoolForm } from '../../../../components/forms.tsx';
+import { LogoForm } from '../../../../components/gradebook-forms.tsx';
+import { removeLogoAction } from '../../../_lib/gradebook-actions.ts';
 import { requireUser } from '../../../_lib/auth.ts';
 import { localeFrom, type LocaleParams } from '../../locale-param.ts';
 
@@ -32,6 +34,28 @@ export default async function SettingsPage(props: LocaleParams) {
               email: school.email,
             }}
           />
+        </section>
+        <section className="card stack" aria-labelledby="logo-heading">
+          <h2 id="logo-heading">{t('settings.logo')}</h2>
+          {school.logoKey === null ? (
+            <p className="muted">{t('settings.noLogo')}</p>
+          ) : (
+            <>
+              <img
+                src="/api/school-logo"
+                alt={t('settings.logoAlt')}
+                className="logo-preview"
+                data-testid="logo-preview"
+              />
+              <form action={removeLogoAction}>
+                <input type="hidden" name="locale" value={locale} />
+                <button type="submit" className="button secondary">
+                  {t('settings.removeLogo')}
+                </button>
+              </form>
+            </>
+          )}
+          <LogoForm locale={locale} />
         </section>
       </div>
     </section>

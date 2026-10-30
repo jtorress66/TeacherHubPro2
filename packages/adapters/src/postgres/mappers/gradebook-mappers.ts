@@ -12,6 +12,8 @@ import {
   type GradeId,
   type Question,
   type QuestionId,
+  type ReportCardComment,
+  type ReportCardCommentId,
   type SchoolId,
   type StudentId,
   type Submission,
@@ -22,6 +24,7 @@ import type {
   AssignmentsTable,
   GradeCategoriesTable,
   GradesTable,
+  ReportCardCommentsTable,
   SubmissionsTable,
 } from '../schema.ts';
 import { localDate, oneOf, readJson, toJson, type RowMapper } from './columns.ts';
@@ -119,5 +122,24 @@ export const submissionMapper: RowMapper<Submission, SubmissionsTable> = {
     aiFailure: row.ai_failure,
     finalScore: row.final_score,
     confirmedBy: row.confirmed_by as UserId | null,
+  }),
+};
+
+export const reportCardCommentMapper: RowMapper<ReportCardComment, ReportCardCommentsTable> = {
+  toRow: (comment) => ({
+    id: comment.id,
+    school_id: comment.schoolId,
+    class_id: comment.classId,
+    student_id: comment.studentId,
+    text: comment.text,
+    written_by: comment.writtenBy,
+  }),
+  fromRow: (row) => ({
+    id: row.id as ReportCardCommentId,
+    schoolId: row.school_id as SchoolId,
+    classId: row.class_id as ClassId,
+    studentId: row.student_id as StudentId,
+    text: row.text,
+    writtenBy: row.written_by as UserId,
   }),
 };

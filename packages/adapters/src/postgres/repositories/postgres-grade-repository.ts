@@ -54,6 +54,30 @@ export class PostgresGradeRepository implements GradeRepository {
     return this.list(schoolId, 'assignment_id', assignmentId);
   }
 
+  async listByAssignments(
+    schoolId: SchoolId,
+    assignmentIds: readonly AssignmentId[],
+  ): Promise<readonly Grade[]> {
+    if (assignmentIds.length === 0) return [];
+    const rows = await this.db
+      .selectFrom('grades')
+      .selectAll()
+      .where('school_id', '=', schoolId)
+      .where('assignment_id', 'in', assignmentIds)
+      .orderBy('created_at')
+      .orderBy('id')
+      .execute();
+    return rows.map(gradeMapper.fromRow);
+  }
+
+  async deleteByAssignment(schoolId: SchoolId, assignmentId: AssignmentId): Promise<void> {
+    await this.db
+      .deleteFrom('grades')
+      .where('school_id', '=', schoolId)
+      .where('assignment_id', '=', assignmentId)
+      .execute();
+  }
+
   private async list(
     schoolId: SchoolId,
     column: 'student_id' | 'assignment_id',

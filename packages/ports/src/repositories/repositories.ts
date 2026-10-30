@@ -8,9 +8,11 @@ import type {
   Game,
   Grade,
   GradeCategory,
+  GradeCategoryId,
   LessonPlan,
   DateRange,
   LocalDate,
+  ReportCardComment,
   School,
   SchoolId,
   Semester,
@@ -73,6 +75,7 @@ export interface GradeCategoryRepository
 
 export interface AssignmentRepository extends ScopedRepository<Assignment>, Deletable<Assignment> {
   listByClass(schoolId: SchoolId, classId: ClassId): Promise<readonly Assignment[]>;
+  countByCategory(schoolId: SchoolId, categoryId: GradeCategoryId): Promise<number>;
 }
 
 /** One grade per student and assignment: saving another replaces it. */
@@ -84,6 +87,12 @@ export interface GradeRepository extends ScopedRepository<Grade> {
   ): Promise<Grade | null>;
   listByStudent(schoolId: SchoolId, studentId: StudentId): Promise<readonly Grade[]>;
   listByAssignment(schoolId: SchoolId, assignmentId: AssignmentId): Promise<readonly Grade[]>;
+  /** Every grade for the given assignments (a class's gradebook in one read). */
+  listByAssignments(
+    schoolId: SchoolId,
+    assignmentIds: readonly AssignmentId[],
+  ): Promise<readonly Grade[]>;
+  deleteByAssignment(schoolId: SchoolId, assignmentId: AssignmentId): Promise<void>;
 }
 
 export interface SubmissionRepository extends ScopedRepository<Submission> {
@@ -112,4 +121,15 @@ export interface SubscriptionRepository extends ScopedRepository<Subscription> {
   listBySchool(schoolId: SchoolId): Promise<readonly Subscription[]>;
   /** Unscoped on purpose: billing webhooks identify a subscription by the provider's id. */
   findByExternalId(externalId: string): Promise<Subscription | null>;
+}
+
+/** One comment per student and class: saving another replaces it. */
+export interface ReportCardCommentRepository extends ScopedRepository<ReportCardComment> {
+  findFor(
+    schoolId: SchoolId,
+    classId: ClassId,
+    studentId: StudentId,
+  ): Promise<ReportCardComment | null>;
+  listByClass(schoolId: SchoolId, classId: ClassId): Promise<readonly ReportCardComment[]>;
+  deleteFor(schoolId: SchoolId, classId: ClassId, studentId: StudentId): Promise<void>;
 }

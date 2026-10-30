@@ -39,21 +39,23 @@ export interface ClassAttendanceReport {
   /** Every listed student's days added together. */
   readonly summary: AttendanceSummary;
   readonly rate: number | null;
-  /** Submitted days in the range. */
+  /** Submitted days counted. */
   readonly days: number;
 }
 
 /**
- * Attendance per student over the submitted days in a range. Each student's total is the days
+ * Attendance per student over the submitted days in a range (every day when there is none).
+ * Each student's total is the days
  * they were on that day's roster, so a student who joined later is not counted absent before.
  */
 export function classAttendanceReport(
   sessions: readonly AttendanceSession[],
   studentIds: readonly StudentId[],
-  range: DateRange,
+  range?: DateRange,
 ): ClassAttendanceReport {
   const counted = sessions.filter(
-    (session) => session.status === 'submitted' && inRange(session.date, range),
+    (session) =>
+      session.status === 'submitted' && (range === undefined || inRange(session.date, range)),
   );
   const perStudent = studentIds.map((studentId) => ({
     studentId,
