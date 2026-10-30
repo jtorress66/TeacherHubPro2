@@ -175,7 +175,7 @@ jobs:
           retention-days: 7
 
   evals:
-    name: LLM evals (lesson planner)
+    name: LLM evals (planner, assistant, presentations)
     runs-on: ubuntu-latest
     # Calls Claude, which costs money: only on pull requests, and only once the key is set.
     if: github.event_name == 'pull_request'

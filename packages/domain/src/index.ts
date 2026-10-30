@@ -49,3 +49,10 @@ export * from './attendance/attendance-report.ts';
 export * from './games/game.ts';
 export * from './billing/plan-catalog.ts';
 export * from './billing/subscription.ts';
+
+export * from './assistant/content-request.ts';
+export * from './assistant/generation.ts';
+export * from './presentations/presentation.ts';
+export * from './presentations/presentation-request.ts';
+export * from './substitutes/sub-packet.ts';
+export * from './speech/speech.ts';

@@ -14,6 +14,7 @@ const config: WebConfig = {
   env: 'test',
   billing: { provider: 'local', secret: billingSecret },
   google: { provider: 'local', secret: 'google-secret-for-int-tests' },
+  voice: 'nova',
 };
 const db = createDatabase(config.databaseUrl);
 const app = createAppContainer(config, db);

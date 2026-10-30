@@ -1,5 +1,7 @@
-import type { DraftRequest, Language, LessonPlanDraft } from '@thp/domain';
-import { parseJsonObject, texts } from './json-reply.ts';
+import type { DraftRequest, LessonPlanDraft } from '@thp/domain';
+import { detectLanguage } from '../drafting/language.ts';
+import { averageOf, failingMetrics } from '../drafting/scores.ts';
+import { parseJsonObject, texts } from '../drafting/json-reply.ts';
 import { allowedStandards } from './plan-formats.ts';
 
 /** Each metric is a score from 0 to 1 for one eval case. */
@@ -17,33 +19,6 @@ export interface PlanScores {
 }
 
 export type PlanMetric = keyof PlanScores;
-
-const stopWords: Readonly<Record<Exclude<Language, 'zh'>, readonly string[]>> = {
-  en: ['the', 'and', 'of', 'to', 'students', 'with', 'their', 'what'],
-  es: ['los', 'las', 'el', 'del', 'que', 'y', 'estudiantes', 'con', 'para'],
-  fr: ['les', 'des', 'et', 'le', 'la', 'élèves', 'avec', 'pour'],
-  pt: ['os', 'as', 'do', 'da', 'que', 'e', 'alunos', 'com', 'para'],
-  de: ['die', 'der', 'und', 'das', 'mit', 'schüler', 'für', 'ein'],
-  it: ['il', 'gli', 'della', 'che', 'e', 'studenti', 'con', 'per'],
-};
-
-/** The language whose common words appear most; mostly CJK text counts as Chinese. */
-export function detectLanguage(text: string): Language {
-  const letters = text.replace(/[\s\d\p{P}\p{S}]/gu, '');
-  const cjk = (letters.match(/\p{Script=Han}/gu) ?? []).length;
-  if (letters.length > 0 && cjk / letters.length > 0.3) return 'zh';
-  const words = text.toLowerCase().split(/[^\p{L}]+/u);
-  let best: Language = 'en';
-  let bestScore = -1;
-  for (const [language, list] of Object.entries(stopWords) as [Language, readonly string[]][]) {
-    const score = words.filter((word) => list.includes(word)).length;
-    if (score > bestScore) {
-      best = language;
-      bestScore = score;
-    }
-  }
-  return best;
-}
 
 /** All the prose a draft holds, for the language check. */
 export function draftText(draft: LessonPlanDraft): string {
@@ -88,22 +63,22 @@ export function scorePlan(
   };
 }
 
+const planMetrics: readonly PlanMetric[] = [
+  'structure',
+  'language',
+  'validCodes',
+  'complete',
+  'relevantCodes',
+];
+
 /** The mean of each metric over all cases. */
-export function averageScores(scores: readonly PlanScores[]): PlanScores {
-  const mean = (metric: PlanMetric) =>
-    scores.length === 0 ? 0 : scores.reduce((sum, s) => sum + s[metric], 0) / scores.length;
-  return {
-    structure: mean('structure'),
-    language: mean('language'),
-    validCodes: mean('validCodes'),
-    complete: mean('complete'),
-    relevantCodes: mean('relevantCodes'),
-  };
-}
+export const averageScores = (scores: readonly PlanScores[]): PlanScores =>
+  averageOf(planMetrics, scores);
 
 /** The metrics below their threshold. */
 export const belowThreshold = (
   scores: PlanScores,
   thresholds: Readonly<Record<PlanMetric, number>>,
-): PlanMetric[] =>
-  (Object.keys(thresholds) as PlanMetric[]).filter((metric) => scores[metric] < thresholds[metric]);
+): PlanMetric[] => failingMetrics(scores, thresholds);
+
+export { detectLanguage };

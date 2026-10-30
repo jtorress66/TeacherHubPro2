@@ -72,9 +72,7 @@ describe('reviewReply', () => {
 
     expect(reviewReply(fiveSkills, request, reply())).toEqual({
       ok: false,
-      error: expect.stringContaining(
-        '"weeks.0.skills" breaks a plan rule (out_of_range)',
-      ) as unknown,
+      error: expect.stringContaining('"weeks.0.skills" breaks a rule (out_of_range)') as unknown,
     });
   });
 });

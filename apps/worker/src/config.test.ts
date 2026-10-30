@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { parseDatabaseConfig, parseLlmConfig, parseStripeConfig } from './config.ts';
+import {
+  parseDatabaseConfig,
+  parseLlmConfig,
+  parseStripeConfig,
+  parseTtsConfig,
+} from './config.ts';
 
 describe('parseDatabaseConfig', () => {
   it('reads a Postgres connection string from DATABASE_URL', () => {
@@ -66,5 +71,32 @@ describe('parseLlmConfig', () => {
       error: 'ANTHROPIC_API_KEY is required when LLM_PROVIDER is "anthropic".',
     });
     expect(parseLlmConfig({ LLM_PROVIDER: 'gpt' }).ok).toBe(false);
+  });
+});
+
+describe('parseTtsConfig', () => {
+  it('uses OpenAI when a key is set, with the nova voice unless another is chosen', () => {
+    expect(parseTtsConfig({ OPENAI_API_KEY: ' sk-x ' })).toEqual({
+      ok: true,
+      value: { provider: 'openai', apiKey: 'sk-x', voice: 'nova' },
+    });
+    expect(parseTtsConfig({ OPENAI_API_KEY: 'k', OPENAI_TTS_VOICE: 'coral' })).toMatchObject({
+      value: { voice: 'coral' },
+    });
+  });
+
+  it('uses the local stand-in when asked, or when there is no key', () => {
+    expect(parseTtsConfig({})).toEqual({ ok: true, value: { provider: 'local', voice: 'nova' } });
+    expect(parseTtsConfig({ TTS_PROVIDER: 'local', OPENAI_API_KEY: 'k' })).toMatchObject({
+      value: { provider: 'local' },
+    });
+  });
+
+  it('refuses OpenAI without a key and an unknown provider', () => {
+    expect(parseTtsConfig({ TTS_PROVIDER: 'openai' })).toEqual({
+      ok: false,
+      error: 'OPENAI_API_KEY is required when TTS_PROVIDER is "openai".',
+    });
+    expect(parseTtsConfig({ TTS_PROVIDER: 'robot' }).ok).toBe(false);
   });
 });

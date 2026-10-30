@@ -126,6 +126,24 @@ Seven interface languages: English, Spanish, French, Portuguese, German, Italian
 - Presentation creator: generate, edit, list, delete.
 - Text-to-speech (`/tts/generate`): OpenAI TTS with our own key.
 - Substitute packet per class (schedule, roster, plans).
+- Kept from the old app: the AI assistant's five content types (lesson plan, quiz with a number of questions, topic summary, class activities, worksheet) from subject, grade, topic, difficulty, class period and instructions, with copy and print; the generations history (list, open, delete); presentations (generate from topic, subject, grade, slide count and theme; edit, add, duplicate, reorder and delete slides; layouts title, content, image left/right, two columns and quote; eight themes; transitions; list, rename, delete; full-screen present mode with arrow keys and Escape); the substitute packet per class (emergency extensions, class information, this week's plan, roster with accommodations, a five-column seating chart in roster order, daily routines, emergency procedures and notes, saved per class, print page).
+- **Decided for the rebuild:**
+  - **Read aloud** (Listen) on assistant content and on each slide, in the editor and present mode, for signed-in teachers with AI access. OpenAI text-to-speech with our own `OPENAI_API_KEY` (`gpt-4o-mini-tts`, voice `OPENAI_TTS_VOICE`, default `nova`); E2E and local runs use a silent stand-in. Audio is made by a worker job and cached per school, so the same text is paid for once.
+  - **No chat tab**: content types and history only.
+  - **Slide pictures are emoji**; uploaded images come with step 10's file storage. No stock image search or external image URLs, so the `full-image` layout is dropped.
+  - **Present mode and a print page** (one slide per page; the browser's *Save as PDF* makes the PDF). No .pptx or downloaded .html.
+  - Everything the assistant makes is kept in the teacher's history until they delete it. Generations and presentations are private to their teacher (a school admin sees neither); the substitute packet is for the class's teacher or a school admin.
+  - A slide draft is saved only when the teacher keeps it.
+  - The substitute packet's roster can hide accommodations; the teacher chooses.
+  - Evals: `pnpm eval` also runs eight assistant cases (every type and language) and four presentation cases against real Claude, with thresholds in `evals/thresholds.json`.
+- **Fixed from the old app:**
+  - `/tts/generate` had no login check, so anyone could spend the key: speech needs a signed-in teacher with AI access, and audio is cached in file storage per school (not base64 in the browser) and served only within the school.
+  - Assistant and slide calls held HTTP requests open for up to 90 seconds: they are worker jobs the page polls.
+  - The assistant could invent standards codes: it is shown only the official codes for the subject and grade, and any other `CCSS.` code is removed from what it writes.
+  - A bad slide reply fell back to a fake one-slide deck: the reply is checked, retried once with the reason, and otherwise the job fails with a safe message.
+  - AI errors showed raw messages: only safe codes are stored.
+  - AI output followed only Spanish or English: it follows the language the teacher chooses (all seven).
+- **Dropped (agreed in the step 9 plan):** the chat tab; AI "customize template" (it pasted raw text into days; the step 8 planner covers it); stock image search, image URLs and the `full-image` layout; the downloaded `.html` presentation; the onboarding-video narration.
 - Old files: `routes/ai.py`, `server.py` (TTS ~4960, sub packet ~1165), `frontend/src/pages/AIAssistant.js`, `PresentationCreator.js`, `SubstitutePacket.js`.
 
 ## Step 10 — Assignments and AI grading

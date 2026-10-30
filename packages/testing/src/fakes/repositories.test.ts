@@ -34,6 +34,7 @@ import {
   reportCardCommentContract,
 } from '../contracts/gradebook.contract.ts';
 import { plannerRepositoryContract } from '../contracts/planner.contract.ts';
+import { assistantRepositoryContract } from '../contracts/assistant.contract.ts';
 import {
   aClass,
   aGame,
@@ -57,6 +58,9 @@ import {
   InMemoryLessonPlanRepository,
   InMemoryPlanFolderRepository,
   InMemoryPlanTemplateRepository,
+  InMemoryAiGenerationRepository,
+  InMemoryPresentationRepository,
+  InMemorySubPacketRepository,
   InMemoryReportCardCommentRepository,
   InMemorySchoolRepository,
   InMemorySemesterRepository,
@@ -123,6 +127,12 @@ plannerRepositoryContract('InMemory', () => ({
   plans: new InMemoryLessonPlanRepository(),
   folders: new InMemoryPlanFolderRepository(),
   templates: new InMemoryPlanTemplateRepository(),
+}));
+
+assistantRepositoryContract('InMemory', () => ({
+  generations: new InMemoryAiGenerationRepository(),
+  presentations: new InMemoryPresentationRepository(),
+  subPackets: new InMemorySubPacketRepository(),
 }));
 
 const categories = {

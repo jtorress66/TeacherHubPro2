@@ -63,3 +63,27 @@ export function parseLlmConfig(
   const model = env.ANTHROPIC_MODEL?.trim() ?? '';
   return ok({ provider, apiKey, model: model === '' ? null : model });
 }
+
+export const defaultVoice = 'nova';
+
+export type TtsConfig =
+  | { readonly provider: 'local'; readonly voice: string }
+  | { readonly provider: 'openai'; readonly apiKey: string; readonly voice: string };
+
+/**
+ * Which service reads text aloud. `TTS_PROVIDER=local` is the silent stand-in for tests and
+ * local runs; without the setting, a configured OPENAI_API_KEY means OpenAI.
+ */
+export function parseTtsConfig(
+  env: Readonly<Record<string, string | undefined>>,
+): Result<TtsConfig, string> {
+  const apiKey = env.OPENAI_API_KEY?.trim() ?? '';
+  const chosen = env.TTS_PROVIDER?.trim() ?? '';
+  const chosenVoice = env.OPENAI_TTS_VOICE?.trim() ?? '';
+  const voice = chosenVoice === '' ? defaultVoice : chosenVoice;
+  const provider = chosen !== '' ? chosen : apiKey === '' ? 'local' : 'openai';
+  if (provider === 'local') return ok({ provider, voice });
+  if (provider !== 'openai') return err('TTS_PROVIDER must be "openai" or "local".');
+  if (apiKey === '') return err('OPENAI_API_KEY is required when TTS_PROVIDER is "openai".');
+  return ok({ provider, apiKey, voice });
+}

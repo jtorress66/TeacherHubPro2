@@ -1,6 +1,10 @@
 import {
   AnthropicLlmClient,
   createDatabase,
+  createPostgresRepositories,
+  LocalTextToSpeech,
+  OpenAiTextToSpeech,
+  PostgresFileStore,
   createStripeClient,
   ensureStripePrices,
   LocalLlmClient,
@@ -9,37 +13,53 @@ import {
   SystemClock,
   UuidIdGenerator,
 } from '@thp/adapters';
-import { LessonPlanner } from '@thp/agents';
+import { ContentWriter, LessonPlanner, PresentationWriter } from '@thp/agents';
 import {
+  GenerationHandler,
   JobHandlerRegistry,
   LessonPlanDraftHandler,
+  PresentationDraftHandler,
+  SpeechHandler,
   RunNextJob,
   SweepStaleJobs,
 } from '@thp/application';
-import type { LlmClient } from '@thp/ports';
-import type { DatabaseConfig, LlmConfig, StripeConfig } from './config.ts';
-import { localPlannerReply } from './local-planner-reply.ts';
+import type { LlmClient, TextToSpeech } from '@thp/ports';
+import type { DatabaseConfig, LlmConfig, StripeConfig, TtsConfig } from './config.ts';
+import { localReply } from './local-replies.ts';
 
 // Composition root: the only place in the worker where concrete adapters are created.
 
 function llmClient(config: LlmConfig): LlmClient {
-  if (config.provider === 'local') return new LocalLlmClient(localPlannerReply);
+  if (config.provider === 'local') return new LocalLlmClient(localReply);
   return new AnthropicLlmClient({
     apiKey: config.apiKey,
     ...(config.model === null ? {} : { model: config.model }),
   });
 }
 
+function textToSpeech(config: TtsConfig): TextToSpeech {
+  if (config.provider === 'local') return new LocalTextToSpeech();
+  return new OpenAiTextToSpeech({ apiKey: config.apiKey });
+}
+
 /** The job runner: every job kind the worker handles is registered here. */
-export function createJobRunner(database: DatabaseConfig, llm: LlmConfig) {
+export function createJobRunner(database: DatabaseConfig, llm: LlmConfig, tts: TtsConfig) {
   const db = createDatabase(database.databaseUrl);
-  const jobs = new PostgresJobQueue(db, new UuidIdGenerator());
+  const ids = new UuidIdGenerator();
+  const clock = new SystemClock();
+  const jobs = new PostgresJobQueue(db, ids);
+  const model = llmClient(llm);
+  const { generations } = createPostgresRepositories(db);
+  const files = new PostgresFileStore(db);
   const handlers = new JobHandlerRegistry([
-    new LessonPlanDraftHandler(new LessonPlanner(llmClient(llm))),
+    new LessonPlanDraftHandler(new LessonPlanner(model)),
+    new GenerationHandler({ writer: new ContentWriter(model), generations, ids, clock }),
+    new PresentationDraftHandler(new PresentationWriter(model)),
+    new SpeechHandler({ tts: textToSpeech(tts), files }),
   ]);
   return {
     runNext: new RunNextJob({ jobs, handlers }),
-    sweep: new SweepStaleJobs({ jobs, clock: new SystemClock() }),
+    sweep: new SweepStaleJobs({ jobs, clock }),
     close: () => db.destroy(),
   };
 }

@@ -23,3 +23,9 @@ export {
   type AnthropicConfig,
 } from './ai/anthropic-llm-client.ts';
 export { LocalLlmClient } from './ai/local-llm-client.ts';
+export { LocalTextToSpeech } from './ai/local-text-to-speech.ts';
+export {
+  OpenAiTextToSpeech,
+  defaultSpeechModel,
+  type OpenAiSpeechConfig,
+} from './ai/openai-text-to-speech.ts';

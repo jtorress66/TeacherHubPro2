@@ -17,9 +17,18 @@ export interface WebConfig {
   readonly env: AppEnv;
   readonly billing: BillingConfig;
   readonly google: GoogleConfig;
+  /** The voice that reads text aloud (the worker makes the audio with the same one). */
+  readonly voice: string;
 }
 
 const required = (name: string) => ({ error: `${name} is required` });
+
+const defaultVoice = 'nova';
+
+const voiceFrom = (env: Readonly<Record<string, string | undefined>>): string => {
+  const voice = env.OPENAI_TTS_VOICE?.trim() ?? '';
+  return voice === '' ? defaultVoice : voice;
+};
 const localSecret = (name: string) =>
   z.string(required(name)).min(16, `${name} must be at least 16 characters`);
 
@@ -113,5 +122,6 @@ export function parseWebConfig(
             clientId: c.GOOGLE_CLIENT_ID,
             clientSecret: c.GOOGLE_CLIENT_SECRET,
           },
+    voice: voiceFrom(env),
   });
 }

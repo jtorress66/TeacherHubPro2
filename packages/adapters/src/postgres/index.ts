@@ -1,5 +1,8 @@
 import type { Kysely } from 'kysely';
 import type {
+  AiGenerationRepository,
+  PresentationRepository,
+  SubPacketRepository,
   AssignmentRepository,
   AttendanceSessionRepository,
   ClassRepository,
@@ -28,6 +31,11 @@ import { PostgresGradeRepository } from './repositories/postgres-grade-repositor
 import { PostgresLessonPlanRepository } from './repositories/postgres-lesson-plan-repository.ts';
 import { PostgresPlanFolderRepository } from './repositories/postgres-plan-folder-repository.ts';
 import { PostgresPlanTemplateRepository } from './repositories/postgres-plan-template-repository.ts';
+import {
+  PostgresAiGenerationRepository,
+  PostgresPresentationRepository,
+  PostgresSubPacketRepository,
+} from './repositories/postgres-assistant-repositories.ts';
 import { PostgresReportCardCommentRepository } from './repositories/postgres-report-card-comment-repository.ts';
 import { PostgresSchoolRepository } from './repositories/postgres-school-repository.ts';
 import { PostgresSemesterRepository } from './repositories/postgres-semester-repository.ts';
@@ -54,6 +62,9 @@ export interface PostgresRepositories {
   readonly lessonPlans: LessonPlanRepository;
   readonly planFolders: PlanFolderRepository;
   readonly planTemplates: PlanTemplateRepository;
+  readonly generations: AiGenerationRepository;
+  readonly presentations: PresentationRepository;
+  readonly subPackets: SubPacketRepository;
   readonly gradeCategories: GradeCategoryRepository;
   readonly assignments: AssignmentRepository;
   readonly grades: GradeRepository;
@@ -77,6 +88,9 @@ export function createPostgresRepositories(db: Kysely<Database>): PostgresReposi
     lessonPlans: new PostgresLessonPlanRepository(db),
     planFolders: new PostgresPlanFolderRepository(db),
     planTemplates: new PostgresPlanTemplateRepository(db),
+    generations: new PostgresAiGenerationRepository(db),
+    presentations: new PostgresPresentationRepository(db),
+    subPackets: new PostgresSubPacketRepository(db),
     gradeCategories: new PostgresGradeCategoryRepository(db),
     assignments: new PostgresAssignmentRepository(db),
     grades: new PostgresGradeRepository(db),

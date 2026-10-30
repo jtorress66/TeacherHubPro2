@@ -6,15 +6,16 @@ import {
   reviewReply,
   scorePlan,
 } from '@thp/agents';
-import type { PlanMetric, PlanScores } from '@thp/agents';
+import type { PlanMetric } from '@thp/agents';
+import { createDraftRequest, type DraftRequestInput } from '@thp/domain';
+import type { LlmClient } from '@thp/ports';
 import {
-  createDraftRequest,
-  type DraftRequest,
-  type DraftRequestInput,
-  type LessonPlanDraft,
-  type Result,
-} from '@thp/domain';
-import type { DraftError, LlmClient, LlmRequest, LlmResponse } from '@thp/ports';
+  formatReport,
+  problemOf,
+  Recording,
+  type CaseResult,
+  type EvalReport,
+} from './eval-report.ts';
 
 /** Fixed cases: every language, each subject, and a grade with no Common Core codes. */
 export const plannerCases: readonly (DraftRequestInput & { readonly name: string })[] = [
@@ -110,49 +111,14 @@ export const plannerCases: readonly (DraftRequestInput & { readonly name: string
   },
 ];
 
-/** Keeps the model's last reply, so the scorecard can see codes the planner dropped. */
-class Recording implements LlmClient {
-  lastReply: LlmResponse = { text: '', stopReason: 'end' };
-
-  constructor(private readonly inner: LlmClient) {}
-
-  async complete(request: LlmRequest) {
-    const reply = await this.inner.complete(request);
-    this.lastReply = reply.ok ? reply.value : { text: '', stopReason: 'end' };
-    return reply;
-  }
-}
-
-export interface CaseResult {
-  readonly name: string;
-  readonly scores: PlanScores;
-  /** Why no draft came back, or null when one did. */
-  readonly problem: string | null;
-}
-
-function problemOf(
-  draft: Result<LessonPlanDraft, DraftError>,
-  request: DraftRequest,
-  lastReply: LlmResponse,
-): string | null {
-  if (draft.ok) return null;
-  if (draft.error.code === 'ai_unavailable') return 'the model was unavailable (ai_unavailable)';
-  const review = reviewReply(planFormats[request.kind], request, lastReply);
-  return review.ok ? draft.error.code : review.error;
-}
-
-export interface EvalReport {
-  readonly cases: readonly CaseResult[];
-  readonly average: PlanScores;
-  readonly failing: readonly PlanMetric[];
-}
+export type PlannerReport = EvalReport<PlanMetric>;
 
 export async function runPlannerEvals(
   llm: LlmClient,
   thresholds: Readonly<Record<PlanMetric, number>>,
   cases: typeof plannerCases = plannerCases,
-): Promise<EvalReport> {
-  const results: CaseResult[] = [];
+): Promise<PlannerReport> {
+  const results: CaseResult<PlanMetric>[] = [];
   for (const { name, ...input } of cases) {
     const request = createDraftRequest(input);
     if (!request.ok) throw new Error(`Eval case "${name}" is invalid: ${request.error.field}`);
@@ -161,31 +127,13 @@ export async function runPlannerEvals(
     results.push({
       name,
       scores: scorePlan(request.value, draft.ok ? draft.value : null, recording.lastReply.text),
-      problem: problemOf(draft, request.value, recording.lastReply),
+      problem: problemOf(draft, () =>
+        reviewReply(planFormats[request.value.kind], request.value, recording.lastReply),
+      ),
     });
   }
   const average = averageScores(results.map((r) => r.scores));
   return { cases: results, average, failing: belowThreshold(average, thresholds) };
 }
 
-const cell = (value: number) => value.toFixed(2).padStart(6);
-
-/** A plain-text table of the scores, one row per case and the average last, then why cases failed. */
-export function formatReport(report: EvalReport): string {
-  const metrics = Object.keys(report.average) as PlanMetric[];
-  const width = Math.max(...report.cases.map((c) => c.name.length), 'average'.length);
-  const row = (name: string, scores: PlanScores) =>
-    `${name.padEnd(width)} ${metrics.map((m) => cell(scores[m])).join(' ')}`;
-  const failed = report.cases.flatMap((c) =>
-    c.problem === null ? [] : [`${c.name}: ${c.problem}`],
-  );
-  return [
-    `${''.padEnd(width)} ${metrics.map((m) => m.slice(0, 6).padStart(6)).join(' ')}`,
-    ...report.cases.map((c) => row(c.name, c.scores)),
-    row('average', report.average),
-    report.failing.length === 0
-      ? 'All thresholds met.'
-      : `Below threshold: ${report.failing.join(', ')}`,
-    ...(failed.length === 0 ? [] : ['Failed cases:', ...failed]),
-  ].join('\n');
-}
+export { formatReport };

@@ -1,14 +1,7 @@
-import type { DraftRequest, Language, StandardSubject } from '@thp/domain';
+import type { DraftRequest, StandardSubject } from '@thp/domain';
+import { languageNames } from '../drafting/language.ts';
 
-export const languageNames: Readonly<Record<Language, string>> = {
-  en: 'English',
-  es: 'Spanish (español)',
-  fr: 'French (français)',
-  pt: 'Portuguese (português)',
-  de: 'German (Deutsch)',
-  it: 'Italian (italiano)',
-  zh: 'Simplified Chinese (简体中文)',
-};
+export { languageNames };
 
 export const subjectNames: Readonly<Record<StandardSubject, string>> = {
   math: 'Mathematics',

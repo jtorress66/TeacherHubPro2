@@ -14,7 +14,7 @@ import {
   type Standard,
   type WeeklyDraft,
 } from '@thp/domain';
-import { allowed, objects, text, texts, type Json } from './json-reply.ts';
+import { allowed, objects, text, texts, type Json } from '../drafting/json-reply.ts';
 import { requestLines } from './prompts.ts';
 
 /** How one kind of plan is asked for and read back. A new kind adds an entry here. */

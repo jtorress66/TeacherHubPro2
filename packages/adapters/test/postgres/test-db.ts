@@ -34,6 +34,9 @@ import {
 export const connect = (): Kysely<Database> => createDatabase(inject('databaseUrl'));
 
 const tables = [
+  'ai_generations',
+  'presentations',
+  'sub_packets',
   'jobs',
   'plan_templates',
   'stored_files',
@@ -145,6 +148,7 @@ export const parentsFor = {
   classes: ['schools', 'teacher', 'secondTeacher', 'semester'],
   rosters: ['schools', 'teacher', 'class', 'secondClass'],
   class: ['schools', 'teacher', 'class'],
+  assistant: ['schools', 'teacher', 'secondTeacher', 'class'],
   category: ['schools', 'teacher', 'class', 'category'],
   roster: ['schools', 'teacher', 'class', 'students'],
   attendance: ['schools', 'teacher', 'class', 'secondClass', 'students'],

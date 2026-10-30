@@ -104,6 +104,46 @@ export interface PlanTemplatesTable {
   created_at: CreatedAt;
 }
 
+/** created_at is set from the domain, so it is written like any other column. */
+export interface AiGenerationsTable {
+  id: string;
+  school_id: string;
+  teacher_id: string;
+  type: string;
+  subject: string;
+  grade: string;
+  topic: string;
+  language: string;
+  content: string;
+  created_at: Date;
+}
+
+export interface PresentationsTable {
+  id: string;
+  school_id: string;
+  teacher_id: string;
+  name: string;
+  topic: string | null;
+  subject: string | null;
+  grade: string | null;
+  theme: string;
+  slides: Json;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface SubPacketsTable {
+  class_id: string;
+  school_id: string;
+  main_office_ext: string | null;
+  nurse_ext: string | null;
+  daily_routines: string | null;
+  emergency_procedures: string | null;
+  additional_notes: string | null;
+  include_accommodations: boolean;
+  updated_at: Generated<Date>;
+}
+
 export interface JobsTable {
   id: string;
   school_id: string;
@@ -253,6 +293,9 @@ export interface Database {
   plan_folders: PlanFoldersTable;
   plan_templates: PlanTemplatesTable;
   jobs: JobsTable;
+  ai_generations: AiGenerationsTable;
+  presentations: PresentationsTable;
+  sub_packets: SubPacketsTable;
   grade_categories: GradeCategoriesTable;
   assignments: AssignmentsTable;
   grades: GradesTable;

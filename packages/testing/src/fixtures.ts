@@ -1,4 +1,11 @@
 import {
+  createContentRequest,
+  createGeneration,
+  createPresentation,
+  createSubPacket,
+  type AiGeneration,
+  type Presentation,
+  type SubPacket,
   createAssignment,
   createClass,
   createGame,
@@ -36,6 +43,8 @@ import {
 import type {
   AssignmentId,
   AttendanceSessionId,
+  GenerationId,
+  PresentationId,
   ClassId,
   GameId,
   GameModeId,
@@ -235,3 +244,64 @@ export const aSubscription = (overrides: Partial<TrialInput> = {}) =>
       ...overrides,
     }),
   );
+
+export const aContentRequest = (
+  overrides: Partial<Parameters<typeof createContentRequest>[0]> = {},
+) =>
+  unwrap(
+    createContentRequest({
+      type: 'worksheet',
+      subject: 'math',
+      grade: '4',
+      topic: 'Equivalent fractions',
+      language: 'en',
+      ...overrides,
+    }),
+  );
+
+export const aGeneration = (overrides: Partial<AiGeneration> = {}): AiGeneration => ({
+  ...unwrap(
+    createGeneration({
+      id: 'gen-1' as GenerationId,
+      schoolId,
+      teacherId,
+      request: aContentRequest(),
+      content: ['# Worksheet', '', '1. Compare 1/2 and 2/4: ___'].join('\n'),
+      createdAt: new Date('2026-10-30T12:00:00Z'),
+    }),
+  ),
+  ...overrides,
+});
+
+export const aPresentation = (overrides: Partial<Presentation> = {}): Presentation => ({
+  ...unwrap(
+    createPresentation({
+      id: 'pres-1' as PresentationId,
+      schoolId,
+      teacherId,
+      name: 'Plants',
+      topic: 'Parts of a plant',
+      subject: 'science',
+      grade: '3',
+      slides: [
+        { layout: 'title', title: 'Plants', subtitle: 'Grade 3 science', emoji: '🌱' },
+        { layout: 'content', title: 'Parts', bullets: ['Roots', 'Stem', 'Leaves'] },
+      ],
+      now: new Date('2026-10-30T12:00:00Z'),
+    }),
+  ),
+  ...overrides,
+});
+
+export const aSubPacket = (overrides: Partial<SubPacket> = {}): SubPacket => ({
+  ...unwrap(
+    createSubPacket({
+      classId,
+      schoolId,
+      mainOfficeExt: 'Ext. 100',
+      nurseExt: 'Ext. 105',
+      dailyRoutines: 'Line up at 8:00',
+    }),
+  ),
+  ...overrides,
+});

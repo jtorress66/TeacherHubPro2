@@ -1,5 +1,16 @@
-import { err, ok, type DraftRequest, type LessonPlanDraft, type Result } from '@thp/domain';
+import {
+  err,
+  ok,
+  type ContentRequest,
+  type DraftRequest,
+  type LessonPlanDraft,
+  type PresentationDraft,
+  type PresentationRequest,
+  type Result,
+} from '@thp/domain';
 import type {
+  ContentWriter,
+  PresentationDrafter,
   DraftError,
   LessonPlanDrafter,
   LlmClient,
@@ -77,3 +88,40 @@ export const aWeeklyDraft = (overrides: Partial<LessonPlanDraft> = {}): LessonPl
     days: [{ theme: 'Hook' }, {}, {}, {}, {}],
     ...overrides,
   }) as LessonPlanDraft;
+
+/** A scripted content writer: returns the given Markdown (or error) and records each request. */
+export class FakeContentWriter implements ContentWriter {
+  readonly requests: ContentRequest[] = [];
+
+  constructor(private readonly outcome: Result<string, DraftError>) {}
+
+  write(request: ContentRequest): Promise<Result<string, DraftError>> {
+    this.requests.push(request);
+    return Promise.resolve(this.outcome);
+  }
+}
+
+/** A scripted slide drafter: returns the given draft (or error) and records each request. */
+export class FakePresentationDrafter implements PresentationDrafter {
+  readonly requests: PresentationRequest[] = [];
+
+  constructor(private readonly outcome: Result<PresentationDraft, DraftError>) {}
+
+  draft(request: PresentationRequest): Promise<Result<PresentationDraft, DraftError>> {
+    this.requests.push(request);
+    return Promise.resolve(this.outcome);
+  }
+}
+
+/** A small valid slide draft for tests. */
+export const aPresentationDraft = (
+  overrides: Partial<PresentationDraft> = {},
+): PresentationDraft => ({
+  title: 'Volcanoes',
+  slides: [
+    { layout: 'title', title: 'Volcanoes', subtitle: 'Mountains of fire', emoji: '🌋' },
+    { layout: 'content', title: 'How they form', bullets: ['Magma rises', 'Pressure builds'] },
+    { layout: 'quote', title: 'Remember', content: 'Lava is magma above ground.' },
+  ],
+  ...overrides,
+});

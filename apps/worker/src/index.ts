@@ -1,20 +1,21 @@
 import { setTimeout as sleep } from 'node:timers/promises';
-import { parseDatabaseConfig, parseLlmConfig } from './config.ts';
+import { parseDatabaseConfig, parseLlmConfig, parseTtsConfig } from './config.ts';
 import { createJobRunner } from './container.ts';
 import { runWorkerLoop } from './worker-loop.ts';
 
 /** `pnpm --filter @thp/worker start`: runs background jobs until SIGTERM or SIGINT. */
 const database = parseDatabaseConfig(process.env);
 const llm = parseLlmConfig(process.env);
-for (const config of [database, llm]) {
+const tts = parseTtsConfig(process.env);
+for (const config of [database, llm, tts]) {
   if (!config.ok) {
     process.stderr.write(`${config.error}\n`);
     process.exit(1);
   }
 }
-if (!database.ok || !llm.ok) process.exit(1);
+if (!database.ok || !llm.ok || !tts.ok) process.exit(1);
 
-const runner = createJobRunner(database.value, llm.value);
+const runner = createJobRunner(database.value, llm.value, tts.value);
 let stopping = false;
 for (const signal of ['SIGTERM', 'SIGINT'] as const) {
   process.on(signal, () => {
@@ -22,7 +23,9 @@ for (const signal of ['SIGTERM', 'SIGINT'] as const) {
   });
 }
 
-process.stdout.write(`Worker started (${llm.value.provider} model).\n`);
+process.stdout.write(
+  `Worker started (${llm.value.provider} model, ${tts.value.provider} voice).\n`,
+);
 await runWorkerLoop({
   runNext: () => runner.runNext.execute(),
   sweep: () => runner.sweep.execute(),

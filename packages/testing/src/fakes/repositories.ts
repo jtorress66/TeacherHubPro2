@@ -1,4 +1,9 @@
 import type {
+  AiGeneration,
+  GenerationSummary,
+  Presentation,
+  PresentationSummary,
+  SubPacket,
   AssignmentId,
   Assignment,
   AttendanceSession,
@@ -27,8 +32,11 @@ import type {
   User,
   UserId,
 } from '@thp/domain';
-import { compareDates, inRange } from '@thp/domain';
+import { compareDates, generationSummary, inRange, presentationSummary } from '@thp/domain';
 import type {
+  AiGenerationRepository,
+  PresentationRepository,
+  SubPacketRepository,
   AssignmentRepository,
   AttendanceSessionRepository,
   ClassRepository,
@@ -383,5 +391,49 @@ export class InMemorySubscriptionRepository
 
   findByExternalId(externalId: string): Promise<Subscription | null> {
     return this.findWhere((subscription) => subscription.externalId === externalId);
+  }
+}
+
+export class InMemoryAiGenerationRepository
+  extends InMemoryScopedRepository<AiGeneration>
+  implements AiGenerationRepository
+{
+  async listByTeacher(
+    schoolId: SchoolId,
+    teacherId: UserId,
+  ): Promise<readonly GenerationSummary[]> {
+    const rows = await this.listWhere(schoolId, (row) => row.teacherId === teacherId);
+    return [...rows]
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .map(generationSummary);
+  }
+}
+
+export class InMemoryPresentationRepository
+  extends InMemoryScopedRepository<Presentation>
+  implements PresentationRepository
+{
+  async listByTeacher(
+    schoolId: SchoolId,
+    teacherId: UserId,
+  ): Promise<readonly PresentationSummary[]> {
+    const rows = await this.listWhere(schoolId, (row) => row.teacherId === teacherId);
+    return [...rows]
+      .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
+      .map(presentationSummary);
+  }
+}
+
+export class InMemorySubPacketRepository implements SubPacketRepository {
+  private readonly rows = new Map<ClassId, SubPacket>();
+
+  findByClass(schoolId: SchoolId, classId: ClassId): Promise<SubPacket | null> {
+    const row = this.rows.get(classId);
+    return Promise.resolve(row?.schoolId === schoolId ? row : null);
+  }
+
+  save(packet: SubPacket): Promise<void> {
+    this.rows.set(packet.classId, packet);
+    return Promise.resolve();
   }
 }

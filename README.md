@@ -108,7 +108,13 @@ pnpm --filter @thp/worker start   # LLM_PROVIDER=local drafts with a scripted st
 
 A job not finished 5 minutes after it was created reads as timed out, and the worker stores that. E2E tests start the worker with the stand-in automatically.
 
-**Evals.** `pnpm eval` drafts ten fixed plans (every interface language, each subject, and a grade with no Common Core codes) with real Claude and scores structure, language, valid and relevant codes and completeness against `evals/thresholds.json`. It needs `ANTHROPIC_API_KEY` in `.env` and costs a small amount per run. In CI the `evals` job runs on pull requests once the `ANTHROPIC_API_KEY` repository secret is set (Settings → Secrets and variables → Actions); without it the job is skipped with a notice. The model defaults to `claude-opus-5-5`; set `ANTHROPIC_MODEL` to change it.
+**Evals.** `pnpm eval` runs three suites against real Claude: the planner, the AI assistant (eight cases, every content type and language: structure, language, valid codes, quiz question count) and presentations (four cases: structure, language, slide count, titles). The planner suite drafts ten fixed plans (every interface language, each subject, and a grade with no Common Core codes) with real Claude and scores structure, language, valid and relevant codes and completeness against `evals/thresholds.json`. It needs `ANTHROPIC_API_KEY` in `.env` and costs a small amount per run. In CI the `evals` job runs on pull requests once the `ANTHROPIC_API_KEY` repository secret is set (Settings → Secrets and variables → Actions); without it the job is skipped with a notice. The model defaults to `claude-opus-5-5`; set `ANTHROPIC_MODEL` to change it.
+
+## AI assistant, presentations and voice
+
+The **AI assistant** (`/app/assistant`) writes worksheets, quizzes, topic summaries, class activities and free-form lesson plans as Markdown, in the language the teacher picks; everything it writes is kept in the teacher's history, with copy, print and Listen. **Presentations** (`/app/presentations`) are drafted by Claude or started blank, edited slide by slide (layouts, emoji, themes, transitions), shown full screen in present mode and printed one slide per page. Each class has a **substitute packet** (`/app/classes/<id>/sub-packet`) with saved notes and a print page.
+
+**Voice.** Listen reads text aloud with OpenAI text-to-speech. The worker makes the audio (`TTS_PROVIDER=openai` with `OPENAI_API_KEY`; voice `OPENAI_TTS_VOICE`, default `nova`, which the web app must share) and caches it per school; without a key it uses a silent local stand-in.
 
 ## Commands
 
@@ -118,7 +124,7 @@ pnpm test:int         # integration tests against a disposable Postgres (needs D
 pnpm test:e2e         # builds the web app and runs Playwright (needs `pnpm db:up && pnpm db:migrate`)
 pnpm test:e2e:stripe  # the Stripe test-mode journey (CI job e2e-stripe; needs a running app on :3000)
 pnpm stripe:setup     # creates the Stripe products and prices (STRIPE_SECRET_KEY)
-pnpm eval             # lesson planner evals against Claude (needs ANTHROPIC_API_KEY)
+pnpm eval             # planner, assistant and presentation evals against Claude (needs ANTHROPIC_API_KEY)
 pnpm standards:import # re-imports the Common Core codes (network)
 pnpm typecheck
 pnpm lint             # zero warnings allowed
