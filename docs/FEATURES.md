@@ -101,6 +101,23 @@ Seven interface languages: English, Spanish, French, Portuguese, German, Italian
 - Lesson plans: weekly plans and **Conversational English** plans (with a title), standards framework (Common Core for Math, ELA, Science, Social Studies, K–12), additional instructions, calendar view, duplicate, print and PDF. Printing must render Markdown tables and clean fill-in-the-blank lines (an old bug printed `\_\_` and raw `|---|`).
 - Folders for plans: create, rename, colour, delete (plans move to Unfiled), filter by All / Unfiled / folder.
 - Templates, including starter and weekly templates.
+- Kept from the old app: weekly plans (class, unit, story, teacher, objective, up to four skills, standards, expectations, and Monday–Friday days with a theme, Depth of Knowledge levels, E/C/A marks, an activity checklist with notes, a materials checklist and notes; subject integration), an optional **second week**, Conversational English plans (title required, lesson dates, topic, objectives, materials, hook, learning goal, closure, test/quiz date, notes), the AI draft form (subject, grade, topic, difficulty, class period, instructions) with the five-day progression (introduction, guided practice, independent practice, mastery, assessment), folders (create, rename, colour, delete to Unfiled, filter All / Unfiled / folder, plan counts), duplicate to another week (both weeks move), five starter templates in English and Spanish, a template of the week rotating by ISO week, saving a plan as a template, a month calendar, and AI access only with an active trial or plan.
+- **Decided for the rebuild:**
+  - **Evals use real Claude** (`pnpm eval`, ten fixed cases in all seven languages, thresholds in `evals/thresholds.json`); CI runs them on pull requests once the `ANTHROPIC_API_KEY` secret is set. E2E and local runs use a scripted stand-in for Claude in the worker. The model is `claude-opus-5-5` unless `ANTHROPIC_MODEL` says otherwise, with Claude's server-side fallback on refusals.
+  - **Common Core codes come from the official list**, imported once (`pnpm standards:import`) from the Common Standards Project's data for the CCSS Mathematics and ELA & Literacy documents (CC BY 3.0 US) and checked in: Math and ELA K–12, plus the 6–12 literacy codes (RH, RST, WHST) for social studies and science. Science and social studies before grade 6 have no Common Core codes. The model is shown only the codes for the subject and grade and may cite only those; any other code is dropped, and saved plans accept only listed codes.
+  - **Printing is a print page** (the browser's *Save as PDF* makes the PDF), not a server PDF.
+  - **The optional second week is kept.**
+  - The AI draft is structured JSON mapped onto the plan's fields and opened in the editor; nothing is saved until the teacher saves it. Drafts start new plans (week 1); week 2 and edits are the teacher's.
+  - Activities, materials, Depth of Knowledge levels, day types, subject integrations and folder colours are fixed lists; English is added to subject integration.
+- **Fixed from the old app:**
+  - Jobs lived in memory and hit 504s: they are rows in Postgres, claimed by `apps/worker` with `FOR UPDATE SKIP LOCKED`; the web app only enqueues and reads.
+  - Polling deleted jobs two minutes after the first read: polling is now a pure read. A job not finished 5 minutes after it was created reads as `timed_out`, and the worker's sweep stores it.
+  - Another user's job answered 403 (showing it exists): it is now not found. Only safe failure codes are stored, never raw errors or prompts.
+  - The AI draft was pasted as raw text into day 1's notes, split by regex on day names: it now fills the plan's real fields.
+  - The AI invented standards codes and the PR Core option was ignored in the prompt: only official Common Core codes are kept, and PR Core is dropped (not in this inventory).
+  - Printing showed `\_\_` and raw `|---|`: a tested Markdown renderer prints headings, lists, bold, tables and blank lines, without raw HTML.
+  - AI output followed only Spanish or English: it follows the teacher's language in all seven.
+- **Dropped (agreed in the step 8 plan):** per-day AI suggestions and the generic AI tools (quiz, worksheet, summary, activities) move to step 9's assistant; the .ics calendar export; school-wide shared templates.
 - Old files: `backend/routes/ai.py`, `utils/constants.py` (system prompts, standards), `server.py` (plans, folders, templates), `frontend/src/pages/LessonPlanner.js`, `PlannerList.js`, `Templates.js`, `components/PlanPrintView.js`, `ConversationalEnglishPlanView.js`.
 
 ## Step 9 — AI assistant, presentations, voice

@@ -1,5 +1,5 @@
-import type { JobId, SchoolId, UserId } from '@thp/domain';
-import type { Clock, IdGenerator, Job, JobQueue, NewJob } from '@thp/ports';
+import { isFinished, type Job, type JobId, type SchoolId, type UserId } from '@thp/domain';
+import type { Clock, IdGenerator, JobQueue, NewJob } from '@thp/ports';
 
 export class InMemoryJobQueue implements JobQueue {
   private readonly jobs: Job[] = [];
@@ -45,6 +45,13 @@ export class InMemoryJobQueue implements JobQueue {
   fail(id: JobId, error: string): Promise<void> {
     this.update(id, { status: 'failed', error, finishedAt: this.clock.now() });
     return Promise.resolve();
+  }
+
+  failStale(createdBefore: Date, error: string): Promise<number> {
+    const stale = this.jobs.filter((job) => !isFinished(job) && job.createdAt < createdBefore);
+    for (const job of stale)
+      this.update(job.id, { status: 'failed', error, finishedAt: this.clock.now() });
+    return Promise.resolve(stale.length);
   }
 
   findForOwner(schoolId: SchoolId, ownerId: UserId, id: JobId): Promise<Job | null> {

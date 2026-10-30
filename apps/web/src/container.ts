@@ -9,6 +9,7 @@ import {
   LocalCheckoutSimulator,
   LocalGoogleIdentity,
   NodeRandomTokenGenerator,
+  PostgresJobQueue,
   PdfLibReportCardRenderer,
   PostgresFileStore,
   ScryptPasswordHasher,
@@ -19,6 +20,24 @@ import {
   UuidIdGenerator,
 } from '@thp/adapters';
 import {
+  CreateFolder,
+  CreatePlan,
+  DeleteFolder,
+  DeletePlan,
+  DeleteTemplate,
+  DuplicatePlan,
+  GetDraftedPlan,
+  GetJob,
+  GetPlan,
+  ListFolders,
+  ListPlans,
+  ListTemplates,
+  MovePlan,
+  RequestLessonPlanDraft,
+  SaveAsTemplate,
+  StartFromTemplate,
+  UpdateFolder,
+  UpdatePlan,
   AddGradeCategory,
   AddStandardCategories,
   AddStudent,
@@ -138,6 +157,24 @@ export interface AppContainer {
   readonly getGradeEntry: GetGradeEntry;
   readonly saveGrades: SaveGrades;
   readonly getGradebook: GetGradebook;
+  readonly createFolder: CreateFolder;
+  readonly createPlan: CreatePlan;
+  readonly deleteFolder: DeleteFolder;
+  readonly deletePlan: DeletePlan;
+  readonly deleteTemplate: DeleteTemplate;
+  readonly duplicatePlan: DuplicatePlan;
+  readonly getDraftedPlan: GetDraftedPlan;
+  readonly getJob: GetJob;
+  readonly getPlan: GetPlan;
+  readonly listFolders: ListFolders;
+  readonly listPlans: ListPlans;
+  readonly listTemplates: ListTemplates;
+  readonly movePlan: MovePlan;
+  readonly requestLessonPlanDraft: RequestLessonPlanDraft;
+  readonly saveAsTemplate: SaveAsTemplate;
+  readonly startFromTemplate: StartFromTemplate;
+  readonly updateFolder: UpdateFolder;
+  readonly updatePlan: UpdatePlan;
   readonly getGradebookReport: GetGradebookReport;
   readonly getReportCards: GetReportCards;
   readonly saveReportCardComment: SaveReportCardComment;
@@ -215,6 +252,7 @@ export function createAppContainer(
     tokenHasher: new Sha256TokenHasher(),
     passwordHasher: new ScryptPasswordHasher(),
     files: new PostgresFileStore(db),
+    jobs: new PostgresJobQueue(db, new UuidIdGenerator()),
     appUrl: config.appUrl,
   };
 
@@ -272,6 +310,24 @@ export function createAppContainer(
     getGradeEntry: new GetGradeEntry(deps),
     saveGrades: new SaveGrades(deps),
     getGradebook: new GetGradebook(deps),
+    createFolder: new CreateFolder(deps),
+    createPlan: new CreatePlan(deps),
+    deleteFolder: new DeleteFolder(deps),
+    deletePlan: new DeletePlan(deps),
+    deleteTemplate: new DeleteTemplate(deps),
+    duplicatePlan: new DuplicatePlan(deps),
+    getDraftedPlan: new GetDraftedPlan(deps),
+    getJob: new GetJob(deps),
+    getPlan: new GetPlan(deps),
+    listFolders: new ListFolders(deps),
+    listPlans: new ListPlans(deps),
+    listTemplates: new ListTemplates(deps),
+    movePlan: new MovePlan(deps),
+    requestLessonPlanDraft: new RequestLessonPlanDraft(deps),
+    saveAsTemplate: new SaveAsTemplate(deps),
+    startFromTemplate: new StartFromTemplate(deps),
+    updateFolder: new UpdateFolder(deps),
+    updatePlan: new UpdatePlan(deps),
     getGradebookReport: new GetGradebookReport(deps),
     getReportCards: new GetReportCards(deps),
     saveReportCardComment: new SaveReportCardComment(deps),

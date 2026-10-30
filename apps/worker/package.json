@@ -6,14 +6,20 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "migrate": "tsx --env-file-if-exists=../../.env src/migrate.ts",
-    "stripe:setup": "tsx --env-file-if-exists=../../.env src/stripe-setup.ts"
+    "stripe:setup": "tsx --env-file-if-exists=../../.env src/stripe-setup.ts",
+    "start": "tsx --env-file-if-exists=../../.env src/index.ts",
+    "eval": "tsx --env-file-if-exists=../../.env src/eval.ts"
   },
   "dependencies": {
     "@thp/adapters": "workspace:*",
+    "@thp/agents": "workspace:*",
+    "@thp/application": "workspace:*",
     "@thp/domain": "workspace:*",
+    "@thp/ports": "workspace:*",
     "zod": "4.6.7"
   },
   "devDependencies": {
+    "@thp/testing": "workspace:*",
     "tsx": "4.23.15"
   }
 }

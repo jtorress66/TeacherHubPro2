@@ -19,6 +19,8 @@ import {
   aReportCardComment,
   aGradeCategory,
   aLessonPlan,
+  aPlanFolder,
+  aPlanTemplate,
   anAssignment,
   anAttendanceSession,
   aSchool,
@@ -41,6 +43,8 @@ import {
   classMapper,
   gameMapper,
   lessonPlanMapper,
+  planFolderMapper,
+  planTemplateMapper,
   schoolMapper,
   semesterMapper,
   studentMapper,
@@ -113,17 +117,25 @@ describe('row mappers round-trip every entity unchanged', () => {
     expect(semesterMapper.fromRow(stored(row))).toEqual(semester);
   });
 
-  it('lesson plan with days, standards and a folder', () => {
+  it('lesson plan with its body, kind and folder', () => {
     const plan = aLessonPlan({
-      kind: 'conversational_english',
       title: 'At the café',
       folderId: 'folder-1' as PlanFolderId,
-      days: [{ weekday: 'Tue', content: 'Ordering food' }],
-      standards: ['CCSS.ELA-LITERACY.SL.7.1'],
+      body: { kind: 'conversational_english', lessonDate: '2026-09-08', hook: 'Menus' },
     });
-    expect(
-      lessonPlanMapper.fromRow(stored(lessonPlanMapper.toRow(plan), ['days', 'standards'])),
-    ).toEqual(plan);
+    const row = lessonPlanMapper.toRow(plan);
+
+    expect(row.kind).toBe('conversational_english');
+    expect(lessonPlanMapper.fromRow(stored(row, ['body']))).toEqual(plan);
+  });
+
+  it('plan folder and plan template', () => {
+    const folder = aPlanFolder({ color: 'rose' });
+    expect(planFolderMapper.fromRow(stored(planFolderMapper.toRow(folder)))).toEqual(folder);
+    const template = aPlanTemplate();
+    const row = planTemplateMapper.toRow(template);
+    expect(row.kind).toBe('weekly');
+    expect(planTemplateMapper.fromRow(stored(row, ['body']))).toEqual(template);
   });
 
   it('grade category', () => {
@@ -232,7 +244,7 @@ describe('row mappers round-trip every entity unchanged', () => {
   });
 
   it('accepts jsonb given as text as well as parsed', () => {
-    const plan = aLessonPlan({ standards: ['X'] });
+    const plan = aLessonPlan({ title: 'X' });
     expect(lessonPlanMapper.fromRow(stored(lessonPlanMapper.toRow(plan)))).toEqual(plan);
   });
 });
@@ -273,7 +285,7 @@ describe('row mappers reject corrupt stored values', () => {
     ).toThrow('attendance_entries.status');
   });
 
-  it('an unknown plan, subscription status, lesson plan kind or schedule day', () => {
+  it('an unknown plan, subscription status, folder colour or schedule day', () => {
     const subscription = stored(subscriptionMapper.toRow(aSubscription()));
     expect(() => subscriptionMapper.fromRow({ ...subscription, plan_id: 'gold' })).toThrow(
       'subscriptions.plan_id',
@@ -282,8 +294,10 @@ describe('row mappers reject corrupt stored values', () => {
       'subscriptions.status',
     );
 
-    const plan = stored(lessonPlanMapper.toRow(aLessonPlan()), ['days', 'standards']);
-    expect(() => lessonPlanMapper.fromRow({ ...plan, kind: 'daily' })).toThrow('lesson_plans.kind');
+    const folder = stored(planFolderMapper.toRow(aPlanFolder()));
+    expect(() => planFolderMapper.fromRow({ ...folder, color: 'plaid' })).toThrow(
+      'plan_folders.color',
+    );
 
     const cls = stored(classMapper.toRow(aClass({ schedule: {} })), ['schedule_days']);
     expect(() => classMapper.fromRow({ ...cls, schedule_days: ['Funday'] })).toThrow(

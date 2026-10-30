@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseDatabaseConfig, parseStripeConfig } from './config.ts';
+import { parseDatabaseConfig, parseLlmConfig, parseStripeConfig } from './config.ts';
 
 describe('parseDatabaseConfig', () => {
   it('reads a Postgres connection string from DATABASE_URL', () => {
@@ -38,5 +38,33 @@ describe('parseStripeConfig', () => {
       ok: false,
       error: 'STRIPE_SECRET_KEY must be a secret key (sk_ or rk_), not a publishable key.',
     });
+  });
+});
+
+describe('parseLlmConfig', () => {
+  it('uses Claude when a key is set, with an optional model', () => {
+    expect(parseLlmConfig({ ANTHROPIC_API_KEY: ' sk-ant-x ' })).toEqual({
+      ok: true,
+      value: { provider: 'anthropic', apiKey: 'sk-ant-x', model: null },
+    });
+    expect(
+      parseLlmConfig({ ANTHROPIC_API_KEY: 'k', ANTHROPIC_MODEL: 'claude-sonnet-5-5' }),
+    ).toMatchObject({ value: { model: 'claude-sonnet-5-5' } });
+  });
+
+  it('uses the local stand-in when asked, or when there is no key', () => {
+    expect(parseLlmConfig({})).toEqual({ ok: true, value: { provider: 'local' } });
+    expect(parseLlmConfig({ LLM_PROVIDER: 'local', ANTHROPIC_API_KEY: 'k' })).toEqual({
+      ok: true,
+      value: { provider: 'local' },
+    });
+  });
+
+  it('refuses Claude without a key and an unknown provider', () => {
+    expect(parseLlmConfig({ LLM_PROVIDER: 'anthropic' })).toEqual({
+      ok: false,
+      error: 'ANTHROPIC_API_KEY is required when LLM_PROVIDER is "anthropic".',
+    });
+    expect(parseLlmConfig({ LLM_PROVIDER: 'gpt' }).ok).toBe(false);
   });
 });

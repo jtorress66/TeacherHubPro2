@@ -5,6 +5,7 @@ export type { TokenHasher } from './security/token-hasher.ts';
 export type { PasswordHasher } from './security/password-hasher.ts';
 export type * from './ai/llm-client.ts';
 export type * from './ai/text-to-speech.ts';
+export type * from './ai/lesson-plan-drafter.ts';
 export type * from './files/file-store.ts';
 export type * from './files/pdf-text-extractor.ts';
 export type * from './documents/report-card-renderer.ts';

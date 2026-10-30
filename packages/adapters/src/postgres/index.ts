@@ -7,6 +7,8 @@ import type {
   GradeCategoryRepository,
   GradeRepository,
   LessonPlanRepository,
+  PlanFolderRepository,
+  PlanTemplateRepository,
   ReportCardCommentRepository,
   PasswordCredentialRepository,
   SchoolRepository,
@@ -24,6 +26,8 @@ import { PostgresGameRepository } from './repositories/postgres-game-repository.
 import { PostgresGradeCategoryRepository } from './repositories/postgres-grade-category-repository.ts';
 import { PostgresGradeRepository } from './repositories/postgres-grade-repository.ts';
 import { PostgresLessonPlanRepository } from './repositories/postgres-lesson-plan-repository.ts';
+import { PostgresPlanFolderRepository } from './repositories/postgres-plan-folder-repository.ts';
+import { PostgresPlanTemplateRepository } from './repositories/postgres-plan-template-repository.ts';
 import { PostgresReportCardCommentRepository } from './repositories/postgres-report-card-comment-repository.ts';
 import { PostgresSchoolRepository } from './repositories/postgres-school-repository.ts';
 import { PostgresSemesterRepository } from './repositories/postgres-semester-repository.ts';
@@ -39,6 +43,7 @@ export { createDatabase } from './database.ts';
 export { migrateDown, migrateToLatest, type MigrationOutcome } from './migrate.ts';
 export type { Database } from './schema.ts';
 export { PostgresFileStore } from './repositories/postgres-file-store.ts';
+export { PostgresJobQueue } from './repositories/postgres-job-queue.ts';
 
 export interface PostgresRepositories {
   readonly schools: SchoolRepository;
@@ -47,6 +52,8 @@ export interface PostgresRepositories {
   readonly students: StudentRepository;
   readonly semesters: SemesterRepository;
   readonly lessonPlans: LessonPlanRepository;
+  readonly planFolders: PlanFolderRepository;
+  readonly planTemplates: PlanTemplateRepository;
   readonly gradeCategories: GradeCategoryRepository;
   readonly assignments: AssignmentRepository;
   readonly grades: GradeRepository;
@@ -68,6 +75,8 @@ export function createPostgresRepositories(db: Kysely<Database>): PostgresReposi
     students: new PostgresStudentRepository(db),
     semesters: new PostgresSemesterRepository(db),
     lessonPlans: new PostgresLessonPlanRepository(db),
+    planFolders: new PostgresPlanFolderRepository(db),
+    planTemplates: new PostgresPlanTemplateRepository(db),
     gradeCategories: new PostgresGradeCategoryRepository(db),
     assignments: new PostgresAssignmentRepository(db),
     grades: new PostgresGradeRepository(db),

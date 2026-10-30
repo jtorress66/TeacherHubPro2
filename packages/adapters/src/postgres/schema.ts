@@ -78,12 +78,45 @@ export interface LessonPlansTable {
   teacher_id: string;
   kind: string;
   title: string | null;
-  week_start: DateText;
   class_id: string | null;
   folder_id: string | null;
-  days: Json;
-  standards: Json;
+  body: Json;
   created_at: CreatedAt;
+}
+
+export interface PlanFoldersTable {
+  id: string;
+  school_id: string;
+  teacher_id: string;
+  name: string;
+  color: string;
+  created_at: CreatedAt;
+}
+
+export interface PlanTemplatesTable {
+  id: string;
+  school_id: string;
+  teacher_id: string;
+  name: string;
+  kind: string;
+  title: string | null;
+  body: Json;
+  created_at: CreatedAt;
+}
+
+export interface JobsTable {
+  id: string;
+  school_id: string;
+  owner_id: string;
+  kind: string;
+  payload: Json;
+  status: Generated<string>;
+  result: ColumnType<unknown, string | null, string | null>;
+  error: string | null;
+  attempts: Generated<number>;
+  created_at: Generated<Date>;
+  started_at: Date | null;
+  finished_at: Date | null;
 }
 
 export interface GradeCategoriesTable {
@@ -217,6 +250,9 @@ export interface Database {
   students: StudentsTable;
   semesters: SemestersTable;
   lesson_plans: LessonPlansTable;
+  plan_folders: PlanFoldersTable;
+  plan_templates: PlanTemplatesTable;
+  jobs: JobsTable;
   grade_categories: GradeCategoriesTable;
   assignments: AssignmentsTable;
   grades: GradesTable;

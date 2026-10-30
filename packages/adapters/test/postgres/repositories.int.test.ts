@@ -6,7 +6,6 @@ import type {
   GameId,
   GradeCategoryId,
   GradeId,
-  LessonPlanId,
   ReportCardCommentId,
   SchoolId,
   SemesterId,
@@ -20,7 +19,6 @@ import {
   aGame,
   aGrade,
   aGradeCategory,
-  aLessonPlan,
   anAssignment,
   anAttendanceSession,
   aSemester,
@@ -35,6 +33,9 @@ import {
   aReportCardComment,
   fileStoreContract,
   gradebookGradeContract,
+  jobQueueContract,
+  plannerRepositoryContract,
+  SequentialIdGenerator,
   gradeRepositoryContract,
   reportCardCommentContract,
   passwordCredentialRepositoryContract,
@@ -46,7 +47,11 @@ import {
   subscriptionLookupContract,
   userLookupContract,
 } from '@thp/testing';
-import { createPostgresRepositories, PostgresFileStore } from '../../src/postgres/index.ts';
+import {
+  createPostgresRepositories,
+  PostgresFileStore,
+  PostgresJobQueue,
+} from '../../src/postgres/index.ts';
 import { connect, parentsFor, resetWith, type Parent } from './test-db.ts';
 
 const db = connect();
@@ -104,21 +109,15 @@ withParents(parentsFor.teacher, () => {
   });
   deletableContract('PostgresClassRepository', classes);
 
-  const plans = {
-    make: () => repos.lessonPlans,
-    sample: (schoolId: SchoolId, id: string) => aLessonPlan({ schoolId, id: id as LessonPlanId }),
-  };
-  scopedRepositoryContract('PostgresLessonPlanRepository', {
-    ...plans,
-    change: (plan) => ({ ...plan, standards: ['CCSS.ELA'] }),
-    lists: [
-      {
-        name: 'listByTeacher',
-        call: (repo, schoolId, plan) => repo.listByTeacher(schoolId, plan.teacherId),
-      },
-    ],
-  });
-  deletableContract('PostgresLessonPlanRepository', plans);
+  plannerRepositoryContract('Postgres', () => ({
+    plans: repos.lessonPlans,
+    folders: repos.planFolders,
+    templates: repos.planTemplates,
+  }));
+  jobQueueContract(
+    'PostgresJobQueue',
+    () => new PostgresJobQueue(db, new SequentialIdGenerator('job')),
+  );
 
   const games = {
     make: () => repos.games,

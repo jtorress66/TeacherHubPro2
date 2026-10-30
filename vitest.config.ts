@@ -27,6 +27,8 @@ export default defineConfig({
         'apps/*/src/container.ts',
         'apps/worker/src/migrate.ts',
         'apps/worker/src/stripe-setup.ts',
+        'apps/worker/src/index.ts',
+        'apps/worker/src/eval.ts',
         // React pages and components: covered by the Playwright journeys.
         'apps/web/src/app/**',
         'apps/web/src/components/**',

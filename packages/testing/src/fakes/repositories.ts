@@ -10,6 +10,9 @@ import type {
   GradeCategory,
   GradeCategoryId,
   LessonPlan,
+  PlanFolder,
+  PlanFolderId,
+  PlanTemplate,
   DateRange,
   LocalDate,
   ReportCardComment,
@@ -33,6 +36,8 @@ import type {
   GradeCategoryRepository,
   GradeRepository,
   LessonPlanRepository,
+  PlanFolderRepository,
+  PlanTemplateRepository,
   ReportCardCommentRepository,
   SchoolOwned,
   SchoolRepository,
@@ -189,6 +194,33 @@ export class InMemoryLessonPlanRepository
 {
   listByTeacher(schoolId: SchoolId, teacherId: UserId): Promise<readonly LessonPlan[]> {
     return this.listWhere(schoolId, (plan) => plan.teacherId === teacherId);
+  }
+
+  unfileFolder(schoolId: SchoolId, folderId: PlanFolderId): Promise<void> {
+    for (const plan of this.rows.values()) {
+      if (plan.schoolId === schoolId && plan.folderId === folderId) {
+        this.rows.set(plan.id, { ...plan, folderId: null });
+      }
+    }
+    return Promise.resolve();
+  }
+}
+
+export class InMemoryPlanFolderRepository
+  extends InMemoryScopedRepository<PlanFolder>
+  implements PlanFolderRepository
+{
+  listByTeacher(schoolId: SchoolId, teacherId: UserId): Promise<readonly PlanFolder[]> {
+    return this.listWhere(schoolId, (folder) => folder.teacherId === teacherId);
+  }
+}
+
+export class InMemoryPlanTemplateRepository
+  extends InMemoryScopedRepository<PlanTemplate>
+  implements PlanTemplateRepository
+{
+  listByTeacher(schoolId: SchoolId, teacherId: UserId): Promise<readonly PlanTemplate[]> {
+    return this.listWhere(schoolId, (template) => template.teacherId === teacherId);
   }
 }
 

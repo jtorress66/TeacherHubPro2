@@ -5,6 +5,10 @@ import {
   createGrade,
   createGradeCategory,
   createLessonPlan,
+  createPlanFolder,
+  templateFromPlan,
+  type PlanFolder,
+  type PlanTemplate,
   createSchool,
   createSemester,
   createStudent,
@@ -38,6 +42,8 @@ import type {
   GradeCategoryId,
   GradeId,
   LessonPlanId,
+  PlanFolderId,
+  PlanTemplateId,
   ReportCardCommentId,
   SchoolId,
   SemesterId,
@@ -101,11 +107,26 @@ export const aLessonPlan = (overrides: Partial<LessonPlanInput> = {}) =>
       id: 'plan-1' as LessonPlanId,
       schoolId,
       teacherId,
-      kind: 'weekly',
-      weekStart: '2026-09-07',
+      body: { kind: 'weekly', weeks: [{ weekStart: '2026-09-07' }] },
       ...overrides,
     }),
   );
+
+export const aPlanFolder = (overrides: Partial<PlanFolder> = {}): PlanFolder =>
+  unwrap(
+    createPlanFolder({
+      id: 'folder-1' as PlanFolderId,
+      schoolId,
+      teacherId,
+      name: 'Unit 1',
+      ...overrides,
+    }),
+  );
+
+export const aPlanTemplate = (overrides: Partial<PlanTemplate> = {}): PlanTemplate => ({
+  ...unwrap(templateFromPlan(aLessonPlan(), 'template-1' as PlanTemplateId, 'My week')),
+  ...overrides,
+});
 
 export const aGradeCategory = (overrides: Partial<GradeCategoryInput> = {}) =>
   unwrap(

@@ -26,3 +26,4 @@ export * from './contracts/services.contract.ts';
 export * from './contracts/google.contract.ts';
 export * from './contracts/job-queue.contract.ts';
 export * from './contracts/gradebook.contract.ts';
+export * from './contracts/planner.contract.ts';

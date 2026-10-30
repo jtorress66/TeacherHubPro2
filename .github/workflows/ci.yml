@@ -173,3 +173,28 @@ jobs:
             web.log
             stripe-listen.log
           retention-days: 7
+
+  evals:
+    name: LLM evals (lesson planner)
+    runs-on: ubuntu-latest
+    # Calls Claude, which costs money: only on pull requests, and only once the key is set.
+    if: github.event_name == 'pull_request'
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+    steps:
+      - name: Skip without an Anthropic key
+        if: env.ANTHROPIC_API_KEY == ''
+        run: echo "::notice::Add the ANTHROPIC_API_KEY repository secret to run the evals. See README, Lesson planner."
+      - uses: actions/checkout@v4
+        if: env.ANTHROPIC_API_KEY != ''
+      - uses: pnpm/action-setup@v4
+        if: env.ANTHROPIC_API_KEY != ''
+      - uses: actions/setup-node@v4
+        if: env.ANTHROPIC_API_KEY != ''
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+        if: env.ANTHROPIC_API_KEY != ''
+      - run: pnpm eval
+        if: env.ANTHROPIC_API_KEY != ''

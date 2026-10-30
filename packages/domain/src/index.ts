@@ -21,6 +21,14 @@ export * from './classes/schedule.ts';
 export * from './students/student.ts';
 export * from './semesters/semester.ts';
 export * from './lesson-plans/lesson-plan.ts';
+export * from './lesson-plans/weekly-plan.ts';
+export * from './lesson-plans/conversational-plan.ts';
+export * from './lesson-plans/plan-folder.ts';
+export * from './lesson-plans/plan-template.ts';
+export * from './lesson-plans/starter-templates.ts';
+export * from './lesson-plans/plan-draft.ts';
+export * from './standards/common-core.ts';
+export * from './jobs/job.ts';
 
 export * from './gradebook/grade-category.ts';
 export * from './gradebook/question.ts';

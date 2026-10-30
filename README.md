@@ -94,6 +94,22 @@ On a class page, **Take attendance** opens the sheet for a day (today by default
 
 On a class page, **Gradebook** shows every student against every assignment with their weighted overall grade and letter. Start with **Use standard categories** (Homework 25%, Quiz 25%, Test 30%, Project 20%) or add your own, then create assignments (title, category, points, due date). Click an assignment to enter the whole class's scores at once: a score counts as graded unless you mark it late; leave it blank to keep it pending; missing counts as 0 and excused is left out. **Gradebook report** shows the class average, GPA and the A–F distribution. **Report cards** lets you save a comment per student and download one student's report card, or the whole class's, as a PDF with the school logo (uploaded in **Settings**, PNG or JPEG up to 1 MB), grades by category, overall grade and GPA, and attendance over the class's semester.
 
+## Lesson planner and the worker
+
+**Lesson plans** in the menu lists your plans (latest first), filtered by **All**, **Unfiled** or a folder, as a list or a month **Calendar**. A weekly plan holds one or two weeks, each with an objective, up to four skills, Common Core codes, expectations and Monday–Friday days (theme, Depth of Knowledge, day type, activity and material checklists, notes). A **Conversational English** plan has a title, lesson dates and its own sections. Plans can be duplicated to another week, moved between folders, saved as templates and printed (the print page renders tables and fill-in-the-blank lines; use the browser's _Save as PDF_ for a PDF). **Templates** has five starter weeks in English and Spanish, a template of the week, and your own templates.
+
+**Draft a plan with AI** queues a job: the page polls until the worker has drafted the plan, then opens it in the editor to review, edit and save. Nothing is saved until you press Save. The AI may cite only official Common Core codes (Math and ELA, plus the 6–12 literacy codes for science and social studies), imported once with `pnpm standards:import` from the Common Standards Project (CC BY 3.0 US) into `packages/domain/src/standards/common-core-codes.ts`; any other code is dropped. **Browse Common Core codes** lists them by subject and grade.
+
+Jobs live in Postgres. Run the worker next to the web app:
+
+```
+pnpm --filter @thp/worker start   # LLM_PROVIDER=local drafts with a scripted stand-in; set ANTHROPIC_API_KEY for Claude
+```
+
+A job not finished 5 minutes after it was created reads as timed out, and the worker stores that. E2E tests start the worker with the stand-in automatically.
+
+**Evals.** `pnpm eval` drafts ten fixed plans (every interface language, each subject, and a grade with no Common Core codes) with real Claude and scores structure, language, valid and relevant codes and completeness against `evals/thresholds.json`. It needs `ANTHROPIC_API_KEY` in `.env` and costs a small amount per run. In CI the `evals` job runs on pull requests once the `ANTHROPIC_API_KEY` repository secret is set (Settings → Secrets and variables → Actions); without it the job is skipped with a notice. The model defaults to `claude-opus-5-5`; set `ANTHROPIC_MODEL` to change it.
+
 ## Commands
 
 ```
@@ -102,7 +118,8 @@ pnpm test:int         # integration tests against a disposable Postgres (needs D
 pnpm test:e2e         # builds the web app and runs Playwright (needs `pnpm db:up && pnpm db:migrate`)
 pnpm test:e2e:stripe  # the Stripe test-mode journey (CI job e2e-stripe; needs a running app on :3000)
 pnpm stripe:setup     # creates the Stripe products and prices (STRIPE_SECRET_KEY)
-pnpm eval             # LLM evals (from step 8)
+pnpm eval             # lesson planner evals against Claude (needs ANTHROPIC_API_KEY)
+pnpm standards:import # re-imports the Common Core codes (network)
 pnpm typecheck
 pnpm lint             # zero warnings allowed
 pnpm check:forbidden  # the legacy-platform reference check CI runs

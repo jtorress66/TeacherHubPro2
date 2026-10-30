@@ -9,7 +9,6 @@ export interface LlmRequest {
   readonly system: string;
   readonly messages: readonly LlmMessage[];
   readonly maxTokens: number;
-  readonly temperature?: number;
 }
 
 export interface LlmResponse {

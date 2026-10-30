@@ -1,5 +1,5 @@
 import type { Kysely } from 'kysely';
-import type { LessonPlan, LessonPlanId, SchoolId, UserId } from '@thp/domain';
+import type { LessonPlan, LessonPlanId, PlanFolderId, SchoolId, UserId } from '@thp/domain';
 import type { LessonPlanRepository } from '@thp/ports';
 import { lessonPlanMapper } from '../mappers/school-mappers.ts';
 import type { Database } from '../schema.ts';
@@ -40,5 +40,14 @@ export class PostgresLessonPlanRepository implements LessonPlanRepository {
       .orderBy('id')
       .execute();
     return rows.map(lessonPlanMapper.fromRow);
+  }
+
+  async unfileFolder(schoolId: SchoolId, folderId: PlanFolderId): Promise<void> {
+    await this.db
+      .updateTable('lesson_plans')
+      .set({ folder_id: null })
+      .where('school_id', '=', schoolId)
+      .where('folder_id', '=', folderId)
+      .execute();
   }
 }

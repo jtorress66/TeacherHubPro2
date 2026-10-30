@@ -1,7 +1,13 @@
 import { sql } from 'kysely';
+import { Migrator } from 'kysely/migration';
 import { afterAll, describe, expect, it } from 'vitest';
+import { createLessonPlan, type UserId } from '@thp/domain';
+import { aSchool, aUser } from '@thp/testing';
 import { migrateDown, migrateToLatest } from '../../src/postgres/index.ts';
-import { connect } from './test-db.ts';
+import { schoolMapper, userMapper } from '../../src/postgres/mappers/school-mappers.ts';
+import { migrationProvider } from '../../src/postgres/migrations/index.ts';
+import { PostgresLessonPlanRepository } from '../../src/postgres/repositories/postgres-lesson-plan-repository.ts';
+import { connect, schoolA, truncateAll } from './test-db.ts';
 
 const db = connect();
 afterAll(() => db.destroy());
@@ -28,8 +34,11 @@ describe('migrations', () => {
       'games',
       'grade_categories',
       'grades',
+      'jobs',
       'lesson_plans',
       'password_credentials',
+      'plan_folders',
+      'plan_templates',
       'report_card_comments',
       'schools',
       'semesters',
@@ -47,6 +56,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0006_lesson_planner',
           '0005_gradebook',
           '0004_attendance_details',
           '0003_classes',
@@ -66,9 +76,45 @@ describe('migrations', () => {
           '0003_classes',
           '0004_attendance_details',
           '0005_gradebook',
+          '0006_lesson_planner',
         ],
       },
     });
-    expect(await tableNames()).toHaveLength(18);
+    expect(await tableNames()).toHaveLength(21);
+  });
+
+  it('turns plans saved before step 8 into valid plans of their kind', async () => {
+    const migrator = new Migrator({ db, provider: migrationProvider });
+    await truncateAll(db);
+    expect((await migrator.migrateTo('0005_gradebook')).error).toBeUndefined();
+    await db
+      .insertInto('schools')
+      .values(schoolMapper.toRow(aSchool({ id: schoolA })))
+      .execute();
+    await db
+      .insertInto('users')
+      .values(userMapper.toRow(aUser({ id: 'teacher-1' as UserId, schoolId: schoolA })))
+      .execute();
+    const old = (id: string, kind: string, title: string | null) =>
+      sql`INSERT INTO lesson_plans (id, school_id, teacher_id, kind, title, week_start, days, standards)
+          VALUES (${id}, ${schoolA}, 'teacher-1', ${kind}, ${title}, '2026-09-07', '[]', '["X"]')`.execute(
+        db,
+      );
+    await old('old-weekly', 'weekly', null);
+    await old('old-ce', 'conversational_english', 'Café');
+
+    expect((await migrateToLatest(db)).ok).toBe(true);
+    const plans = await new PostgresLessonPlanRepository(db).listByTeacher(
+      schoolA,
+      'teacher-1' as UserId,
+    );
+    expect(plans.map((plan) => plan.body.kind).sort()).toEqual([
+      'conversational_english',
+      'weekly',
+    ]);
+    for (const plan of plans) {
+      expect(createLessonPlan({ ...plan, body: plan.body }).ok, plan.id).toBe(true);
+    }
+    await truncateAll(db);
   });
 });
