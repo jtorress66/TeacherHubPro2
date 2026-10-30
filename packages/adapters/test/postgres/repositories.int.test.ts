@@ -7,6 +7,7 @@ import type {
   GradeCategoryId,
   GradeId,
   LessonPlanId,
+  ReportCardCommentId,
   SchoolId,
   SemesterId,
   StudentId,
@@ -30,7 +31,12 @@ import {
   attendanceLookupContract,
   classRepositoryContract,
   deletableContract,
+  assignmentLookupContract,
+  aReportCardComment,
+  fileStoreContract,
+  gradebookGradeContract,
   gradeRepositoryContract,
+  reportCardCommentContract,
   passwordCredentialRepositoryContract,
   schoolRepositoryContract,
   scopedRepositoryContract,
@@ -40,7 +46,7 @@ import {
   subscriptionLookupContract,
   userLookupContract,
 } from '@thp/testing';
-import { createPostgresRepositories } from '../../src/postgres/index.ts';
+import { createPostgresRepositories, PostgresFileStore } from '../../src/postgres/index.ts';
 import { connect, parentsFor, resetWith, type Parent } from './test-db.ts';
 
 const db = connect();
@@ -197,6 +203,7 @@ withParents(parentsFor.category, () => {
     ],
   });
   deletableContract('PostgresAssignmentRepository', assignments);
+  assignmentLookupContract('PostgresAssignmentRepository', () => repos.assignments);
 });
 
 withParents(parentsFor.attendance, () => {
@@ -229,6 +236,22 @@ withParents(parentsFor.grading, () => {
     ],
   });
   gradeRepositoryContract('PostgresGradeRepository', () => repos.grades);
+  gradebookGradeContract('PostgresGradeRepository', () => repos.grades);
+
+  scopedRepositoryContract('PostgresReportCardCommentRepository', {
+    make: () => repos.reportCardComments,
+    sample: (schoolId, id) =>
+      aReportCardComment({
+        schoolId,
+        id: id as ReportCardCommentId,
+        studentId: `student-${id}` as StudentId,
+      }),
+    change: (comment) => ({ ...comment, text: 'Changed' }),
+    lists: [
+      { name: 'listByClass', call: (repo, schoolId, c) => repo.listByClass(schoolId, c.classId) },
+    ],
+  });
+  reportCardCommentContract('PostgresReportCardCommentRepository', () => repos.reportCardComments);
 
   scopedRepositoryContract('PostgresSubmissionRepository', {
     make: () => repos.submissions,
@@ -241,4 +264,8 @@ withParents(parentsFor.grading, () => {
       },
     ],
   });
+});
+
+withParents(parentsFor.none, () => {
+  fileStoreContract('PostgresFileStore', () => new PostgresFileStore(db));
 });

@@ -14,6 +14,7 @@ export type GradeCategoryId = Id<'GradeCategory'>;
 export type AssignmentId = Id<'Assignment'>;
 export type QuestionId = Id<'Question'>;
 export type GradeId = Id<'Grade'>;
+export type ReportCardCommentId = Id<'ReportCardComment'>;
 export type SubmissionId = Id<'Submission'>;
 export type AttendanceSessionId = Id<'AttendanceSession'>;
 export type GameId = Id<'Game'>;

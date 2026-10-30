@@ -30,9 +30,11 @@ describe('migrations', () => {
       'grades',
       'lesson_plans',
       'password_credentials',
+      'report_card_comments',
       'schools',
       'semesters',
       'sessions',
+      'stored_files',
       'students',
       'submissions',
       'subscriptions',
@@ -44,7 +46,13 @@ describe('migrations', () => {
     expect(await migrateDown(db)).toEqual({
       ok: true,
       value: {
-        applied: ['0004_attendance_details', '0003_classes', '0002_accounts', '0001_initial'],
+        applied: [
+          '0005_gradebook',
+          '0004_attendance_details',
+          '0003_classes',
+          '0002_accounts',
+          '0001_initial',
+        ],
       },
     });
     expect(await tableNames()).toEqual([]);
@@ -52,9 +60,15 @@ describe('migrations', () => {
     expect(await migrateToLatest(db)).toEqual({
       ok: true,
       value: {
-        applied: ['0001_initial', '0002_accounts', '0003_classes', '0004_attendance_details'],
+        applied: [
+          '0001_initial',
+          '0002_accounts',
+          '0003_classes',
+          '0004_attendance_details',
+          '0005_gradebook',
+        ],
       },
     });
-    expect(await tableNames()).toHaveLength(16);
+    expect(await tableNames()).toHaveLength(18);
   });
 });

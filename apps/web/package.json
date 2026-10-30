@@ -27,6 +27,7 @@
     "@playwright/test": "1.64.1",
     "@thp/testing": "workspace:*",
     "@types/react": "19.3.0",
-    "@types/react-dom": "19.3.0"
+    "@types/react-dom": "19.3.0",
+    "unpdf": "2.0.0"
   }
 }

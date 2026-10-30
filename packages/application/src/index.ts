@@ -96,3 +96,39 @@ export {
   type ClassDay,
   type DayStatus,
 } from './attendance/attendance-overview.ts';
+export {
+  AddGradeCategory,
+  AddStandardCategories,
+  DeleteGradeCategory,
+  ListGradeCategories,
+  UpdateGradeCategory,
+} from './gradebook/categories.ts';
+export {
+  CreateAssignment,
+  DeleteAssignment,
+  ListAssignments,
+  UpdateAssignment,
+} from './gradebook/assignments.ts';
+export {
+  GetGradeEntry,
+  SaveGrades,
+  type GradeEntry,
+  type GradeEntryError,
+  type GradeEntryRow,
+  type GradeRowInput,
+  type InvalidGrades,
+} from './gradebook/grade-entry.ts';
+export {
+  GetGradebook,
+  GetGradebookReport,
+  type Gradebook,
+  type GradebookReport,
+  type GradebookRow,
+} from './gradebook/gradebook.ts';
+export {
+  GetReportCards,
+  SaveReportCardComment,
+  type ReportCard,
+  type ReportCards,
+} from './gradebook/report-cards.ts';
+export { GetSchoolLogo, RemoveSchoolLogo, UploadSchoolLogo } from './settings/school-logo.ts';

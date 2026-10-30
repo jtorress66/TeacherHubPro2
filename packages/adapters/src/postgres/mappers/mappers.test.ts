@@ -16,6 +16,7 @@ import {
   aClass,
   aGame,
   aGrade,
+  aReportCardComment,
   aGradeCategory,
   aLessonPlan,
   anAssignment,
@@ -33,6 +34,7 @@ import {
   assignmentMapper,
   gradeCategoryMapper,
   gradeMapper,
+  reportCardCommentMapper,
   submissionMapper,
 } from './gradebook-mappers.ts';
 import {
@@ -67,7 +69,7 @@ describe('row mappers round-trip every entity unchanged', () => {
       address: 'Calle 1',
       phone: '555',
       email: 'a@b.edu',
-      logoUrl: 'https://l/x.png',
+      logoKey: 'schools/s/logo',
     });
     expect(schoolMapper.fromRow(stored(schoolMapper.toRow(school)))).toEqual(school);
   });
@@ -145,6 +147,13 @@ describe('row mappers round-trip every entity unchanged', () => {
     expect(
       assignmentMapper.fromRow(stored(assignmentMapper.toRow(assignment), ['questions'])),
     ).toEqual(assignment);
+  });
+
+  it('report card comment', () => {
+    const comment = aReportCardComment();
+    expect(reportCardCommentMapper.fromRow(stored(reportCardCommentMapper.toRow(comment)))).toEqual(
+      comment,
+    );
   });
 
   it('grade', () => {

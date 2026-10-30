@@ -78,6 +78,21 @@ Seven interface languages: English, Spanish, French, Portuguese, German, Italian
   | 1 | Tests 50%: 45/50 (90%). Homework 30%: 7/10 and 9/10 (80%). Projects 20%: no grades yet. | (50×90 + 30×80) ÷ 80 = **86.25%** | 3.625 |
   | 2 | Homework 100%: 10/10 graded, one excused, one pending, one missing (all out of 10). | 10 ÷ 20 = **50%** | 0.83 |
   | 3 | Tests 100%: a 100-point assignment with three 10-point questions, scored 24. | 24 ÷ 30 = **80%** | 3.0 |
+- Kept from the old app: the total of the category weights is shown (with a warning when it is not 100), a category that still has assignments cannot be deleted, standard categories (Homework 25, Quiz 25, Test 30, Project 20), grade entry for a whole assignment at once, a gradebook grid, a report with the class average, GPA and A–F distribution, and report cards with the school logo, grades by category, overall grade, GPA, attendance, teacher comments and signature lines, for one student or the whole class. Letters: A from 90%, B from 80, C from 70, D from 60, otherwise F.
+- **Decided for the rebuild:**
+  - The report card is a **real PDF made on the server** (`ReportCardRenderer` port, `pdf-lib` adapter), one page per student. It uses the standard PDF font, which prints English, Spanish and the other Latin-alphabet languages; letters it cannot print lose their accents (ễ → e) and other scripts print as "?" until a full Unicode font is added.
+  - The school **logo is uploaded** in Settings (PNG or JPEG, at most 1 MB, checked by its bytes) and stored through the `FileStore` port (Postgres for now). The server never fetches a logo from a URL.
+  - **Questions and files on assignments wait for step 10.** Step 7 assignments have a title, category, points and due date; the maths already uses question points when questions exist.
+  - **Report card comments are saved** per student and class (so per semester), up to 1,000 characters.
+  - The standard categories are a button, not created silently, and are named in the teacher's language.
+  - Deleting an assignment deletes its grades. An archived class keeps its gradebook read-only.
+  - Report card attendance counts submitted days within the class's semester, or every submitted day when the class has none.
+- **Fixed from the old app:**
+  - The report card endpoint had no teacher or school check; every gradebook use case now checks that the caller manages the class, and tests prove another school's class is unreachable.
+  - Weights were stored but ignored, and excused work scored 0 (see "Overall grade" and "Which grades count" above).
+  - AI grades were matched to students by typed name or email; only grade rows tied to a roster student ID count (confirmed AI grades join them in step 10).
+  - The report page used a different GPA and letter scale from the report card; there is now one scale everywhere.
+  - Report card attendance counted unsubmitted days and ignored the chosen semester.
 - Old files: `server.py` (gradebook, report cards ~4800–4950), `frontend/src/pages/Gradebook.js`, `GradebookReports.js`, `ReportCards.js`.
 
 ## Step 8 — AI platform and lesson planner

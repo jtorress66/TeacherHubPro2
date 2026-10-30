@@ -57,6 +57,25 @@ export function createAssignment(input: AssignmentInput): Result<Assignment, Val
   });
 }
 
+export type AssignmentDetails = Pick<
+  AssignmentInput,
+  'title' | 'categoryId' | 'points' | 'dueDate'
+>;
+
+/** Replaces the editable fields with the same rules as creating; questions are kept. */
+export function updateAssignment(
+  assignment: Assignment,
+  details: AssignmentDetails,
+): Result<Assignment, ValidationError> {
+  return createAssignment({
+    id: assignment.id,
+    schoolId: assignment.schoolId,
+    classId: assignment.classId,
+    questions: assignment.questions,
+    ...details,
+  });
+}
+
 /** The maximum score: the sum of question points, or `points` when there are no questions. */
 export function maxPoints(assignment: Pick<Assignment, 'points' | 'questions'>): number {
   if (assignment.questions.length === 0) return assignment.points;

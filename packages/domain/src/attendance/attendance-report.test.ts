@@ -154,6 +154,15 @@ describe('classAttendanceReport', () => {
     expect(report.students[0]?.rate).toBe(100);
   });
 
+  it('counts every submitted day when no range is given', () => {
+    const sessions = [day('2026-08-31', [ana], { ana: 'absent' }), day('2026-09-01', [ana])];
+
+    const report = classAttendanceReport(sessions, [ana]);
+
+    expect(report.days).toBe(2);
+    expect(report.students[0]?.rate).toBe(50);
+  });
+
   it('has null rates when nothing was submitted in the range', () => {
     const report = classAttendanceReport([], [ana], september);
 

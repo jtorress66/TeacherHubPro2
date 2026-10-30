@@ -99,6 +99,8 @@ test('archiving a class hides it, keeps its roster and it can be restored', asyn
   await expect(page.getByRole('row', { name: /López/ })).toBeVisible();
 
   await page.getByRole('button', { name: t('classes.restore') }).click();
+  // Wait for the restore to finish before leaving the page.
+  await expect(page.getByRole('button', { name: t('classes.archive') })).toBeVisible();
   await page.getByRole('link', { name: t('nav.classes'), exact: true }).click();
   await expect(page.getByRole('link', { name: 'History 9' })).toBeVisible();
 });

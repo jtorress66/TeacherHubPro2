@@ -9,6 +9,8 @@ import {
   LocalCheckoutSimulator,
   LocalGoogleIdentity,
   NodeRandomTokenGenerator,
+  PdfLibReportCardRenderer,
+  PostgresFileStore,
   ScryptPasswordHasher,
   Sha256TokenHasher,
   StripeBillingEvents,
@@ -17,8 +19,26 @@ import {
   UuidIdGenerator,
 } from '@thp/adapters';
 import {
+  AddGradeCategory,
+  AddStandardCategories,
   AddStudent,
   ArchiveClass,
+  CreateAssignment,
+  DeleteAssignment,
+  DeleteGradeCategory,
+  GetGradebook,
+  GetGradebookReport,
+  GetGradeEntry,
+  GetReportCards,
+  GetSchoolLogo,
+  ListAssignments,
+  ListGradeCategories,
+  RemoveSchoolLogo,
+  SaveGrades,
+  SaveReportCardComment,
+  UpdateAssignment,
+  UpdateGradeCategory,
+  UploadSchoolLogo,
   AuthenticateSession,
   CreateClass,
   CreateSemester,
@@ -59,6 +79,7 @@ import type {
   GoogleIdentity,
   GoogleProfile,
   RandomTokenGenerator,
+  ReportCardRenderer,
 } from '@thp/ports';
 import {
   parseWebConfig,
@@ -105,6 +126,25 @@ export interface AppContainer {
   readonly listAttendanceDays: ListAttendanceDays;
   readonly getAttendanceOverview: GetAttendanceOverview;
   readonly getAttendanceReport: GetAttendanceReport;
+  readonly listGradeCategories: ListGradeCategories;
+  readonly addGradeCategory: AddGradeCategory;
+  readonly addStandardCategories: AddStandardCategories;
+  readonly updateGradeCategory: UpdateGradeCategory;
+  readonly deleteGradeCategory: DeleteGradeCategory;
+  readonly listAssignments: ListAssignments;
+  readonly createAssignment: CreateAssignment;
+  readonly updateAssignment: UpdateAssignment;
+  readonly deleteAssignment: DeleteAssignment;
+  readonly getGradeEntry: GetGradeEntry;
+  readonly saveGrades: SaveGrades;
+  readonly getGradebook: GetGradebook;
+  readonly getGradebookReport: GetGradebookReport;
+  readonly getReportCards: GetReportCards;
+  readonly saveReportCardComment: SaveReportCardComment;
+  readonly reportCardRenderer: ReportCardRenderer;
+  readonly uploadSchoolLogo: UploadSchoolLogo;
+  readonly removeSchoolLogo: RemoveSchoolLogo;
+  readonly getSchoolLogo: GetSchoolLogo;
   /** Today's date where the teacher is. */
   readonly today: (timeZone: string) => LocalDate;
   readonly google: GoogleIdentity;
@@ -174,6 +214,7 @@ export function createAppContainer(
     tokens: new NodeRandomTokenGenerator(),
     tokenHasher: new Sha256TokenHasher(),
     passwordHasher: new ScryptPasswordHasher(),
+    files: new PostgresFileStore(db),
     appUrl: config.appUrl,
   };
 
@@ -219,6 +260,25 @@ export function createAppContainer(
     listAttendanceDays: new ListAttendanceDays(deps),
     getAttendanceOverview: new GetAttendanceOverview(deps),
     getAttendanceReport: new GetAttendanceReport(deps),
+    listGradeCategories: new ListGradeCategories(deps),
+    addGradeCategory: new AddGradeCategory(deps),
+    addStandardCategories: new AddStandardCategories(deps),
+    updateGradeCategory: new UpdateGradeCategory(deps),
+    deleteGradeCategory: new DeleteGradeCategory(deps),
+    listAssignments: new ListAssignments(deps),
+    createAssignment: new CreateAssignment(deps),
+    updateAssignment: new UpdateAssignment(deps),
+    deleteAssignment: new DeleteAssignment(deps),
+    getGradeEntry: new GetGradeEntry(deps),
+    saveGrades: new SaveGrades(deps),
+    getGradebook: new GetGradebook(deps),
+    getGradebookReport: new GetGradebookReport(deps),
+    getReportCards: new GetReportCards(deps),
+    saveReportCardComment: new SaveReportCardComment(deps),
+    reportCardRenderer: new PdfLibReportCardRenderer(),
+    uploadSchoolLogo: new UploadSchoolLogo(deps),
+    removeSchoolLogo: new RemoveSchoolLogo(deps),
+    getSchoolLogo: new GetSchoolLogo(deps),
     today: (timeZone) => localDateIn(deps.clock.now(), timeZone),
     google: identity.google,
     tokens: deps.tokens,

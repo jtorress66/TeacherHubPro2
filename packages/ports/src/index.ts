@@ -7,6 +7,7 @@ export type * from './ai/llm-client.ts';
 export type * from './ai/text-to-speech.ts';
 export type * from './files/file-store.ts';
 export type * from './files/pdf-text-extractor.ts';
+export type * from './documents/report-card-renderer.ts';
 export type * from './comms/mailer.ts';
 export type * from './billing/checkout-sessions.ts';
 export type * from './billing/billing-events.ts';

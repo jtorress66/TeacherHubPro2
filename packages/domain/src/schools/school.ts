@@ -1,7 +1,6 @@
 import { parseOptionalEmail, type Email } from '../shared/email.ts';
 import type { SchoolId } from '../shared/ids.ts';
 import { ok, type Result } from '../shared/result.ts';
-import { optionalHttpsUrl } from '../shared/url.ts';
 import { optionalText, requiredText, type ValidationError } from '../shared/validation.ts';
 
 export interface School {
@@ -10,7 +9,8 @@ export interface School {
   readonly address: string | null;
   readonly phone: string | null;
   readonly email: Email | null;
-  readonly logoUrl: string | null;
+  /** Where the uploaded logo is kept in the file store; null when there is none. */
+  readonly logoKey: string | null;
 }
 
 export interface SchoolInput {
@@ -19,7 +19,7 @@ export interface SchoolInput {
   readonly address?: string | null;
   readonly phone?: string | null;
   readonly email?: string | null;
-  readonly logoUrl?: string | null;
+  readonly logoKey?: string | null;
 }
 
 export function createSchool(input: SchoolInput): Result<School, ValidationError> {
@@ -31,8 +31,6 @@ export function createSchool(input: SchoolInput): Result<School, ValidationError
   if (!phone.ok) return phone;
   const email = parseOptionalEmail('email', input.email);
   if (!email.ok) return email;
-  const logoUrl = optionalHttpsUrl('logoUrl', input.logoUrl);
-  if (!logoUrl.ok) return logoUrl;
 
   return ok({
     id: input.id,
@@ -40,11 +38,11 @@ export function createSchool(input: SchoolInput): Result<School, ValidationError
     address: address.value,
     phone: phone.value,
     email: email.value,
-    logoUrl: logoUrl.value,
+    logoKey: input.logoKey ?? null,
   });
 }
 
-export type SchoolDetails = Omit<SchoolInput, 'id'>;
+export type SchoolDetails = Omit<SchoolInput, 'id' | 'logoKey'>;
 
 /** Replaces the school's details, with the same rules as creating one. The logo is kept unless given. */
 export function updateSchoolDetails(
@@ -52,8 +50,13 @@ export function updateSchoolDetails(
   details: SchoolDetails,
 ): Result<School, ValidationError> {
   return createSchool({
-    logoUrl: school.logoUrl,
     ...details,
     id: school.id,
+    logoKey: school.logoKey,
   });
 }
+
+export const setSchoolLogo = (school: School, logoKey: string | null): School => ({
+  ...school,
+  logoKey,
+});

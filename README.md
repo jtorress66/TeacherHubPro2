@@ -90,6 +90,10 @@ Samples: `apps/web/public/samples/students-en.csv` and `students-es.csv`. At mos
 
 On a class page, **Take attendance** opens the sheet for a day (today by default). Everyone starts as present; set the others, add minutes late for tardies and a note if needed, then **Save** or **Submit**. A submitted day is read-only until it is reopened. **Attendance report** shows each student's counts and rate over submitted days (last 30 days by default). Tardy counts as present; excused days count in the total. **Attendance** in the menu shows every class and whether the day was taken.
 
+## Gradebook and report cards
+
+On a class page, **Gradebook** shows every student against every assignment with their weighted overall grade and letter. Start with **Use standard categories** (Homework 25%, Quiz 25%, Test 30%, Project 20%) or add your own, then create assignments (title, category, points, due date). Click an assignment to enter the whole class's scores at once: a score counts as graded unless you mark it late; leave it blank to keep it pending; missing counts as 0 and excused is left out. **Gradebook report** shows the class average, GPA and the A–F distribution. **Report cards** lets you save a comment per student and download one student's report card, or the whole class's, as a PDF with the school logo (uploaded in **Settings**, PNG or JPEG up to 1 MB), grades by category, overall grade and GPA, and attendance over the class's semester.
+
 ## Commands
 
 ```

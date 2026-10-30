@@ -3,6 +3,7 @@ import * as initial from './0001_initial.ts';
 import * as accounts from './0002_accounts.ts';
 import * as classes from './0003_classes.ts';
 import * as attendanceDetails from './0004_attendance_details.ts';
+import * as gradebook from './0005_gradebook.ts';
 
 /** Ordered list of migrations, bundled with the code (no filesystem lookups at runtime). */
 const migrations: Readonly<Record<string, Migration>> = {
@@ -10,6 +11,7 @@ const migrations: Readonly<Record<string, Migration>> = {
   '0002_accounts': accounts,
   '0003_classes': classes,
   '0004_attendance_details': attendanceDetails,
+  '0005_gradebook': gradebook,
 };
 
 export const migrationProvider: MigrationProvider = {

@@ -11,6 +11,7 @@ import {
   createSubmission,
   createUser,
   openAttendanceSession,
+  writeReportCardComment,
   startTrial,
   type AssignmentInput,
   type AttendanceSessionInput,
@@ -19,6 +20,8 @@ import {
   type GradeCategoryInput,
   type GradeInput,
   type LessonPlanInput,
+  type ReportCardComment,
+  type ReportCardCommentInput,
   type SchoolInput,
   type SemesterInput,
   type StudentInput,
@@ -35,6 +38,7 @@ import type {
   GradeCategoryId,
   GradeId,
   LessonPlanId,
+  ReportCardCommentId,
   SchoolId,
   SemesterId,
   StudentId,
@@ -141,6 +145,24 @@ export const aGrade = (overrides: Partial<GradeInput> = {}) =>
       ...overrides,
     }),
   );
+
+export const aReportCardComment = (
+  overrides: Partial<ReportCardCommentInput> = {},
+): ReportCardComment => {
+  const comment = unwrap(
+    writeReportCardComment({
+      id: 'comment-1' as ReportCardCommentId,
+      schoolId,
+      classId,
+      studentId: 'student-1' as StudentId,
+      text: 'Works hard and helps others.',
+      writtenBy: teacherId,
+      ...overrides,
+    }),
+  );
+  if (comment === null) throw new Error('A report card comment fixture needs text');
+  return comment;
+};
 
 export const aSubmission = (overrides: Partial<SubmissionInput> = {}) =>
   unwrap(

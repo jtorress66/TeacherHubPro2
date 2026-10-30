@@ -64,3 +64,23 @@ export async function continueWithGoogle(
   await page.getByRole('button', { name: t('localGoogle.continue') }).click();
   await expect(page).toHaveURL(appPath(locale));
 }
+
+/** Creates a class with Ana Zayas, Ben Acosta and Cara Morales; returns its page's path. */
+export async function classWithStudents(page: Page, locale: Locale): Promise<string> {
+  const t = createTranslator(locale);
+  await page.getByRole('link', { name: t('nav.classes'), exact: true }).click();
+  const form = page.getByRole('form', { name: t('classes.newClass') });
+  await form.getByLabel(t('classes.name')).fill('Historia 6');
+  await form.getByRole('button', { name: t('classes.create') }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Historia 6');
+
+  const importForm = page.getByRole('form', { name: t('students.importTitle') });
+  await importForm.getByLabel(t('students.file')).setInputFiles({
+    name: 'roster.csv',
+    mimeType: 'text/csv',
+    buffer: Buffer.from('First name,Last name\nAna,Zayas\nBen,Acosta\nCara,Morales\n', 'utf8'),
+  });
+  await importForm.getByRole('button', { name: t('students.import') }).click();
+  await expect(page.getByRole('status')).toHaveText(t('students.imported', { count: 3 }));
+  return new URL(page.url()).pathname;
+}

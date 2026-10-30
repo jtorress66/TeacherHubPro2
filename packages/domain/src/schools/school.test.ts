@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { type SchoolId } from '../shared/ids.ts';
 import { errorOf, valueOf } from '../test-support.ts';
-import { createSchool, updateSchoolDetails } from './school.ts';
+import { createSchool, setSchoolLogo, updateSchoolDetails } from './school.ts';
 
 const id = 'school-1' as SchoolId;
 
@@ -13,7 +13,7 @@ describe('createSchool', () => {
       address: null,
       phone: null,
       email: null,
-      logoUrl: null,
+      logoKey: null,
     });
   });
 
@@ -25,12 +25,12 @@ describe('createSchool', () => {
         address: 'Calle 1',
         phone: '555-0100',
         email: 'Office@Luz.edu',
-        logoUrl: 'https://cdn.example/logo.png',
+        logoKey: 'schools/school-1/logo',
       }),
     );
 
     expect(school.email).toBe('office@luz.edu');
-    expect(school.logoUrl).toBe('https://cdn.example/logo.png');
+    expect(school.logoKey).toBe('schools/school-1/logo');
   });
 
   it('rejects a blank name and a bad email', () => {
@@ -51,13 +51,6 @@ describe('createSchool', () => {
       code: 'too_long',
     });
   });
-
-  it('rejects a logo address that is not https', () => {
-    expect(errorOf(createSchool({ id, name: 'A', logoUrl: 'http://x/logo.png' }))).toEqual({
-      field: 'logoUrl',
-      code: 'invalid_format',
-    });
-  });
 });
 
 describe('updateSchoolDetails', () => {
@@ -73,16 +66,28 @@ describe('updateSchoolDetails', () => {
       address: null,
       phone: '555',
       email: 'a@luz.edu',
-      logoUrl: null,
+      logoKey: null,
     });
   });
 
   it('keeps the logo when none is given and rejects a blank name', () => {
-    const school = valueOf(createSchool({ id, name: 'A', logoUrl: 'https://cdn/l.png' }));
-    expect(valueOf(updateSchoolDetails(school, { name: 'B' })).logoUrl).toBe('https://cdn/l.png');
+    const school = valueOf(createSchool({ id, name: 'A', logoKey: 'schools/school-1/logo' }));
+    expect(valueOf(updateSchoolDetails(school, { name: 'B' })).logoKey).toBe(
+      'schools/school-1/logo',
+    );
     expect(errorOf(updateSchoolDetails(school, { name: ' ' }))).toEqual({
       field: 'name',
       code: 'required',
     });
+  });
+});
+
+describe('setSchoolLogo', () => {
+  it('sets and clears the stored logo', () => {
+    const school = valueOf(createSchool({ id, name: 'A' }));
+    const withLogo = setSchoolLogo(school, 'schools/school-1/logo');
+
+    expect(withLogo.logoKey).toBe('schools/school-1/logo');
+    expect(setSchoolLogo(withLogo, null)).toEqual(school);
   });
 });

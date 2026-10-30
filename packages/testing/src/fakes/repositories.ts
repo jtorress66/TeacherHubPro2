@@ -8,9 +8,11 @@ import type {
   Game,
   Grade,
   GradeCategory,
+  GradeCategoryId,
   LessonPlan,
   DateRange,
   LocalDate,
+  ReportCardComment,
   School,
   SchoolId,
   Semester,
@@ -31,6 +33,7 @@ import type {
   GradeCategoryRepository,
   GradeRepository,
   LessonPlanRepository,
+  ReportCardCommentRepository,
   SchoolOwned,
   SchoolRepository,
   ScopedRepository,
@@ -205,6 +208,11 @@ export class InMemoryAssignmentRepository
   listByClass(schoolId: SchoolId, classId: ClassId): Promise<readonly Assignment[]> {
     return this.listWhere(schoolId, (assignment) => assignment.classId === classId);
   }
+
+  async countByCategory(schoolId: SchoolId, categoryId: GradeCategoryId): Promise<number> {
+    return (await this.listWhere(schoolId, (assignment) => assignment.categoryId === categoryId))
+      .length;
+  }
 }
 
 export class InMemoryGradeRepository
@@ -239,6 +247,50 @@ export class InMemoryGradeRepository
 
   listByAssignment(schoolId: SchoolId, assignmentId: AssignmentId): Promise<readonly Grade[]> {
     return this.listWhere(schoolId, (grade) => grade.assignmentId === assignmentId);
+  }
+
+  listByAssignments(
+    schoolId: SchoolId,
+    assignmentIds: readonly AssignmentId[],
+  ): Promise<readonly Grade[]> {
+    const wanted = new Set(assignmentIds);
+    return this.listWhere(schoolId, (grade) => wanted.has(grade.assignmentId));
+  }
+
+  async deleteByAssignment(schoolId: SchoolId, assignmentId: AssignmentId): Promise<void> {
+    for (const grade of await this.listByAssignment(schoolId, assignmentId)) {
+      this.rows.delete(grade.id);
+    }
+  }
+}
+
+export class InMemoryReportCardCommentRepository
+  extends InMemoryScopedRepository<ReportCardComment>
+  implements ReportCardCommentRepository
+{
+  /** One comment per student and class: a new comment replaces the old one. */
+  override async save(comment: ReportCardComment): Promise<void> {
+    await this.deleteFor(comment.schoolId, comment.classId, comment.studentId);
+    return super.save(comment);
+  }
+
+  findFor(
+    schoolId: SchoolId,
+    classId: ClassId,
+    studentId: StudentId,
+  ): Promise<ReportCardComment | null> {
+    return this.findWhere(
+      (c) => c.schoolId === schoolId && c.classId === classId && c.studentId === studentId,
+    );
+  }
+
+  listByClass(schoolId: SchoolId, classId: ClassId): Promise<readonly ReportCardComment[]> {
+    return this.listWhere(schoolId, (comment) => comment.classId === classId);
+  }
+
+  async deleteFor(schoolId: SchoolId, classId: ClassId, studentId: StudentId): Promise<void> {
+    const comment = await this.findFor(schoolId, classId, studentId);
+    if (comment) this.rows.delete(comment.id);
   }
 }
 

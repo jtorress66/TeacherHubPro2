@@ -7,6 +7,7 @@ import type {
   GradeCategoryRepository,
   GradeRepository,
   LessonPlanRepository,
+  ReportCardCommentRepository,
   PasswordCredentialRepository,
   SchoolRepository,
   SemesterRepository,
@@ -23,6 +24,7 @@ import { PostgresGameRepository } from './repositories/postgres-game-repository.
 import { PostgresGradeCategoryRepository } from './repositories/postgres-grade-category-repository.ts';
 import { PostgresGradeRepository } from './repositories/postgres-grade-repository.ts';
 import { PostgresLessonPlanRepository } from './repositories/postgres-lesson-plan-repository.ts';
+import { PostgresReportCardCommentRepository } from './repositories/postgres-report-card-comment-repository.ts';
 import { PostgresSchoolRepository } from './repositories/postgres-school-repository.ts';
 import { PostgresSemesterRepository } from './repositories/postgres-semester-repository.ts';
 import { PostgresStudentRepository } from './repositories/postgres-student-repository.ts';
@@ -36,6 +38,7 @@ import type { Database } from './schema.ts';
 export { createDatabase } from './database.ts';
 export { migrateDown, migrateToLatest, type MigrationOutcome } from './migrate.ts';
 export type { Database } from './schema.ts';
+export { PostgresFileStore } from './repositories/postgres-file-store.ts';
 
 export interface PostgresRepositories {
   readonly schools: SchoolRepository;
@@ -47,6 +50,7 @@ export interface PostgresRepositories {
   readonly gradeCategories: GradeCategoryRepository;
   readonly assignments: AssignmentRepository;
   readonly grades: GradeRepository;
+  readonly reportCardComments: ReportCardCommentRepository;
   readonly submissions: SubmissionRepository;
   readonly attendanceSessions: AttendanceSessionRepository;
   readonly games: GameRepository;
@@ -67,6 +71,7 @@ export function createPostgresRepositories(db: Kysely<Database>): PostgresReposi
     gradeCategories: new PostgresGradeCategoryRepository(db),
     assignments: new PostgresAssignmentRepository(db),
     grades: new PostgresGradeRepository(db),
+    reportCardComments: new PostgresReportCardCommentRepository(db),
     submissions: new PostgresSubmissionRepository(db),
     attendanceSessions: new PostgresAttendanceSessionRepository(db),
     games: new PostgresGameRepository(db),

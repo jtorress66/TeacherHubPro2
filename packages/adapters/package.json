@@ -13,11 +13,13 @@
     "@thp/domain": "workspace:*",
     "@thp/ports": "workspace:*",
     "kysely": "0.29.7",
+    "pdf-lib": "1.17.1",
     "pg": "8.23.1",
     "stripe": "22.6.2"
   },
   "devDependencies": {
     "@thp/testing": "workspace:*",
-    "@types/pg": "8.23.1"
+    "@types/pg": "8.23.1",
+    "unpdf": "2.0.0"
   }
 }
