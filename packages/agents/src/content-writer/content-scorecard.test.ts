@@ -25,7 +25,21 @@ describe('countQuestions', () => {
     expect(countQuestions(quiz)).toBe(3);
   });
 
-  it('counts every numbered item when there is no Questions heading', () => {
+  it('counts only the first numbered section when the headings are in another language', () => {
+    const quiz = [
+      '# Cuestionario',
+      'Lee con atención.',
+      '## Preguntas',
+      '1. ¿Uno?',
+      '2. ¿Dos?',
+      '## Clave de respuestas',
+      '1. Sí',
+      '2. No',
+    ].join('\n');
+    expect(countQuestions(quiz)).toBe(2);
+  });
+
+  it('counts every numbered item when there are no headings around them', () => {
     expect(countQuestions('# Quiz\n1. a\n2. b')).toBe(2);
   });
 });

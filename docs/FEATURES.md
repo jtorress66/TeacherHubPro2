@@ -136,6 +136,7 @@ Seven interface languages: English, Spanish, French, Portuguese, German, Italian
   - A slide draft is saved only when the teacher keeps it.
   - The substitute packet's roster can hide accommodations; the teacher chooses.
   - Evals: `pnpm eval` also runs eight assistant cases (every type and language) and four presentation cases against real Claude, with thresholds in `evals/thresholds.json`.
+  - **Real-Claude evals only on request** (they cost money): every push scores hand-written saved replies (`evals/replays`) with the same scorecards and thresholds, in the unit tests; `pnpm eval` or CI's Run workflow scores real Claude.
 - **Fixed from the old app:**
   - `/tts/generate` had no login check, so anyone could spend the key: speech needs a signed-in teacher with AI access, and audio is cached in file storage per school (not base64 in the browser) and served only within the school.
   - Assistant and slide calls held HTTP requests open for up to 90 seconds: they are worker jobs the page polls.

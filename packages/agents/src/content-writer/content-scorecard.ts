@@ -8,14 +8,19 @@ export type ContentScores = Readonly<Record<ContentMetric, number>>;
 const codePattern = /CCSS\.[A-Za-z0-9.-]*[A-Za-z0-9]/g;
 const numbered = /^\s{0,3}\d+[.)]\s+\S/;
 
-/** Numbered items in the Questions section (or anywhere, when there is no such heading). */
+const heading = /^#{1,6}\s/;
+
+/**
+ * Numbered items in the first section that has any: the questions, whatever language the
+ * headings are in, and not the answer key that follows them.
+ */
 export function countQuestions(markdown: string): number {
   const lines = markdown.split('\n');
-  const start = lines.findIndex((line) => /^#{1,3}\s+.*question/i.test(line));
-  const from = start === -1 ? lines : lines.slice(start + 1);
-  const end = from.findIndex((line) => /^#{1,3}\s/.test(line));
-  const section = start === -1 || end === -1 ? from : from.slice(0, end);
-  return section.filter((line) => numbered.test(line)).length;
+  const first = lines.findIndex((line) => numbered.test(line));
+  if (first === -1) return 0;
+  const after = lines.slice(first);
+  const end = after.findIndex((line) => heading.test(line));
+  return (end === -1 ? after : after.slice(0, end)).filter((line) => numbered.test(line)).length;
 }
 
 /** Scores one eval case from the request, the writer's result and the model's raw reply. */

@@ -59,7 +59,7 @@ Dependency rule: `domain` ← `ports` ← `application` ← `agents` / `adapters
 | Contract | Vitest shared suites | Every adapter runs the suite for its port. |
 | Integration | Vitest + Testcontainers + MSW | Real Postgres; external HTTP via recorded responses. |
 | E2E | Playwright | Critical journeys: sign-up, attendance, grading, student assignment, live game, parent portal. Run in English and Spanish (the fully translated languages). |
-| LLM evals | `pnpm eval` | Run when any prompt changes; scores must not drop below `evals/thresholds.json`. |
+| LLM evals | `pnpm test` (replays), `pnpm eval` (real Claude) | Every push scores the saved model replies in `evals/replays` (free, part of the unit tests). Runs against real Claude cost money and happen only when the user asks (`pnpm eval`, or CI → Run workflow). When a prompt changes, update the saved replies to match its new shape. Scores must not drop below `evals/thresholds.json`. |
 
 Coverage thresholds (enforced in CI): `domain` and `agents` ≥ 90%, overall ≥ 80%.
 Test names describe behaviour: `it("counts a tardy as present in the attendance rate")`.
@@ -103,7 +103,7 @@ pnpm install
 pnpm test          # unit + contract
 pnpm test:int      # integration (needs Docker)
 pnpm test:e2e      # Playwright
-pnpm eval          # LLM evals
+pnpm eval          # LLM evals against real Claude (only when asked: costs money)
 pnpm typecheck
 pnpm lint
 ```
