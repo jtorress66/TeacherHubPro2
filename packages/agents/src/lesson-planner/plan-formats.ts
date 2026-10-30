@@ -2,6 +2,8 @@ import {
   activityTypes,
   dokLevels,
   materialTypes,
+  maxPlanTextLength,
+  maxShortTextLength,
   maxSkills,
   standardsFor,
   type ConversationalDraft,
@@ -35,18 +37,21 @@ function standardsList(standards: readonly Standard[]): string {
   return `Common Core codes you may cite (choose 1 to 4 that fit the topic):\n${lines.join('\n')}`;
 }
 
+const short = `string (at most ${String(maxShortTextLength)} characters)`;
+const long = `string (at most ${String(maxPlanTextLength)} characters)`;
+
 const weeklyShape = `{
-  "unit": string,
-  "objective": string,
-  "skills": [string] (at most ${String(maxSkills)}),
+  "unit": ${short},
+  "objective": ${long},
+  "skills": [${short}] (at most ${String(maxSkills)}),
   "standards": [code],
-  "expectations": string,
+  "expectations": ${long},
   "days": [5 objects, Monday to Friday: {
-    "theme": string,
+    "theme": ${short},
     "dok": [numbers from 1 to 4],
-    "activities": [{ "type": one of ${activityTypes.join(', ')}, "notes": string }],
+    "activities": [{ "type": one of ${activityTypes.join(', ')}, "notes": ${long} }],
     "materials": [any of ${materialTypes.join(', ')}],
-    "notes": string (the day's plan: activities with minutes, materials, success criteria)
+    "notes": ${long}: the day's plan (activities with minutes, materials, success criteria)
   }]
 }`;
 
@@ -98,14 +103,14 @@ const weekly: PlanFormat = {
 };
 
 const conversationalShape = `{
-  "title": string,
-  "topic": string,
-  "learningObjectives": string,
-  "materials": string,
-  "hook": string (warm-up / introduction),
-  "learningGoal": string (a student-friendly "I can" statement),
-  "closure": string,
-  "notes": string (the lesson's activities with minutes, useful phrases and practice dialogues)
+  "title": ${short},
+  "topic": ${short},
+  "learningObjectives": ${long},
+  "materials": ${long},
+  "hook": ${long}: warm-up / introduction,
+  "learningGoal": ${long}: a student-friendly "I can" statement,
+  "closure": ${long},
+  "notes": ${long}: the lesson's activities with minutes, useful phrases and practice dialogues
 }`;
 
 const conversational: PlanFormat = {

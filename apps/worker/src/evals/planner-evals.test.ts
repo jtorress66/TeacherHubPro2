@@ -42,6 +42,21 @@ describe('runPlannerEvals', () => {
 
     expect(report.average.structure).toBe(0);
     expect(formatReport(report)).toContain('Below threshold: structure');
+    expect(formatReport(report)).toContain(
+      `${first.name}: the model was unavailable (ai_unavailable)`,
+    );
+  });
+
+  it('says why a case failed when the reply could not be used', async () => {
+    const llm = new FakeLlmClient().replyWith('No JSON here').replyWith('Still none');
+    const [first] = plannerCases;
+    if (first === undefined) throw new Error('no cases');
+    const report = await runPlannerEvals(llm, thresholds, [first]);
+
+    expect(report.cases[0]?.problem).toMatch(/not one JSON object/);
+    expect(formatReport(report)).toMatch(
+      /Failed cases:\n.*math grade 4 \(en\): .*not one JSON object/,
+    );
   });
 
   it('reports a clean run', async () => {

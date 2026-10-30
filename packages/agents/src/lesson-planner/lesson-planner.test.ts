@@ -107,6 +107,17 @@ describe('LessonPlanner (weekly)', () => {
     expect(llm.requests[1]?.messages.map((m) => m.role)).toEqual(['user', 'assistant', 'user']);
   });
 
+  it('tells the model the length limits, and on a retry which field broke a rule', async () => {
+    const longTheme = weeklyReply({ days: ['x'.repeat(300), 'b', 'c', 'd', 'e'].map(day) });
+    const llm = new FakeLlmClient().replyWith(longTheme).replyWith(weeklyReply());
+    await new LessonPlanner(llm).draft(request());
+
+    expect(llm.requests[0]?.messages[0]?.content).toContain(
+      '"theme": string (at most 200 characters)',
+    );
+    expect(llm.requests[1]?.messages[2]?.content).toContain('"weeks.0.days.0.theme" is too long');
+  });
+
   it.each([
     ['text with no JSON', 'Sorry'],
     ['a JSON array', '[1, 2]'],

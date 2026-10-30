@@ -27,6 +27,7 @@ export * from './lesson-plans/plan-folder.ts';
 export * from './lesson-plans/plan-template.ts';
 export * from './lesson-plans/starter-templates.ts';
 export * from './lesson-plans/plan-draft.ts';
+export { maxPlanTextLength } from './lesson-plans/plan-fields.ts';
 export * from './standards/common-core.ts';
 export * from './jobs/job.ts';
 

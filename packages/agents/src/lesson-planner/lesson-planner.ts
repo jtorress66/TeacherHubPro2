@@ -1,34 +1,13 @@
-import {
-  createLessonPlan,
-  draftedPlan,
-  err,
-  ok,
-  type DraftRequest,
-  type LessonPlanDraft,
-  type LessonPlanId,
-  type Result,
-  type SchoolId,
-  type UserId,
-} from '@thp/domain';
+import { err, type DraftRequest, type LessonPlanDraft, type Result } from '@thp/domain';
 import type { DraftError, LessonPlanDrafter, LlmClient, LlmMessage } from '@thp/ports';
-import { parseJsonObject } from './json-reply.ts';
 import { planFormats, type PlanFormat } from './plan-formats.ts';
 import { systemPrompt } from './prompts.ts';
+import { reviewReply } from './reply-review.ts';
 
 // Room for the model's thinking as well as the plan itself.
 const maxTokens = 16000;
-const retryMessage =
-  'That reply was not valid JSON in the shape asked for. Reply again with only the JSON object.';
-
-/** The draft must also make a valid plan (lengths, codes, days), or it is not usable. */
-function isUsable(draft: LessonPlanDraft, request: DraftRequest): boolean {
-  return createLessonPlan({
-    id: 'draft' as LessonPlanId,
-    schoolId: 'draft' as SchoolId,
-    teacherId: 'draft' as UserId,
-    ...draftedPlan(draft, request.start),
-  }).ok;
-}
+const retryMessage = (problem: string) =>
+  `That reply could not be used: ${problem} Reply again with only the corrected JSON object.`;
 
 /**
  * Drafts lesson plans with a language model. It only drafts: the teacher reviews, edits and
@@ -52,12 +31,11 @@ export class LessonPlanner implements LessonPlanDrafter {
         maxTokens,
       });
       if (!reply.ok) return err({ code: 'ai_unavailable' });
-      const json = parseJsonObject(reply.value.text);
-      const draft = json === null ? null : format.parse(json, request);
-      if (draft !== null && isUsable(draft, request)) return ok(draft);
+      const draft = reviewReply(format, request, reply.value);
+      if (draft.ok) return draft;
       messages.push(
         { role: 'assistant', content: reply.value.text },
-        { role: 'user', content: retryMessage },
+        { role: 'user', content: retryMessage(draft.error) },
       );
     }
     return err({ code: 'invalid_output' });

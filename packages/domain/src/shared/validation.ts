@@ -19,13 +19,14 @@ export interface ValidationError {
 export const invalid = (field: string, code: ValidationCode): Err<ValidationError> =>
   err({ field, code });
 
-const defaultMaxLength = 200;
+/** The longest a short text (a name, a title, a theme) may be. */
+export const maxShortTextLength = 200;
 
 /** Trims the value; blank or over-long text is an error. */
 export function requiredText(
   field: string,
   value: string | undefined,
-  maxLength = defaultMaxLength,
+  maxLength = maxShortTextLength,
 ): Result<string, ValidationError> {
   const text = value?.trim() ?? '';
   if (text === '') return invalid(field, 'required');
@@ -37,7 +38,7 @@ export function requiredText(
 export function optionalText(
   field: string,
   value: string | null | undefined,
-  maxLength = defaultMaxLength,
+  maxLength = maxShortTextLength,
 ): Result<string | null, ValidationError> {
   const text = value?.trim() ?? '';
   if (text === '') return ok(null);
