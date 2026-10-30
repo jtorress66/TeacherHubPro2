@@ -27,6 +27,8 @@ export default async function AppLayout(props: LocaleParams & { readonly childre
         <nav aria-label={t('app.name')}>
           <Link href={`/${locale}/app`}>{t('nav.dashboard')}</Link>
           <Link href={`/${locale}/app/plans`}>{t('nav.lessonPlans')}</Link>
+          <Link href={`/${locale}/app/assistant`}>{t('nav.assistant')}</Link>
+          <Link href={`/${locale}/app/presentations`}>{t('nav.presentations')}</Link>
           <Link href={`/${locale}/app/classes`}>{t('nav.classes')}</Link>
           <Link href={`/${locale}/app/attendance`}>{t('nav.attendance')}</Link>
           <Link href={`/${locale}/app/gradebook`}>{t('nav.gradebook')}</Link>

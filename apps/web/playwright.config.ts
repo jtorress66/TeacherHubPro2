@@ -34,13 +34,13 @@ export default defineConfig({
       },
     },
     {
-      // The background worker, drafting plans with the scripted stand-in for Claude.
+      // The background worker, with the scripted stand-ins for Claude and the voice service.
       name: 'Worker',
       command: 'pnpm --filter @thp/worker start',
       wait: { stdout: /Worker started/ },
       stdout: 'pipe',
       timeout: 60_000,
-      env: { DATABASE_URL: databaseUrl, LLM_PROVIDER: 'local' },
+      env: { DATABASE_URL: databaseUrl, LLM_PROVIDER: 'local', TTS_PROVIDER: 'local' },
     },
   ],
 });

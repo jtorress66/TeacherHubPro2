@@ -172,3 +172,32 @@ export {
   RequestLessonPlanDraft,
   draftJobKind,
 } from './lesson-plans/drafts.ts';
+export { checkAiAccess } from './accounts/ai-access.ts';
+export {
+  RequestGeneration,
+  GenerationHandler,
+  ListGenerations,
+  GetGeneration,
+  DeleteGeneration,
+  generationJobKind,
+  type GenerationJobResult,
+} from './assistant/assistant.ts';
+export {
+  RequestPresentationDraft,
+  PresentationDraftHandler,
+  CreatePresentation,
+  ListPresentations,
+  GetPresentation,
+  UpdatePresentation,
+  DeletePresentation,
+  presentationDraftJobKind,
+  type NewPresentation,
+} from './presentations/presentations.ts';
+export {
+  RequestSpeech,
+  SpeechHandler,
+  GetSpeechClip,
+  speechJobKind,
+  type SpeechOutcome,
+} from './speech/speech.ts';
+export { GetSubPacket, SaveSubPacket, type SubPacketView } from './substitutes/sub-packets.ts';

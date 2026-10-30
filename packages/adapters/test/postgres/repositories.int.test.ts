@@ -35,6 +35,7 @@ import {
   gradebookGradeContract,
   jobQueueContract,
   plannerRepositoryContract,
+  assistantRepositoryContract,
   SequentialIdGenerator,
   gradeRepositoryContract,
   reportCardCommentContract,
@@ -65,6 +66,14 @@ function withParents(parents: readonly Parent[], register: () => void): void {
     register();
   });
 }
+
+withParents(parentsFor.assistant, () => {
+  assistantRepositoryContract('Postgres', () => ({
+    generations: repos.generations,
+    presentations: repos.presentations,
+    subPackets: repos.subPackets,
+  }));
+});
 
 withParents(parentsFor.none, () => {
   schoolRepositoryContract('PostgresSchoolRepository', () => repos.schools);

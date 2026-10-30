@@ -5,5 +5,17 @@
     "validCodes": 1,
     "complete": 1,
     "relevantCodes": 0.8
+  },
+  "assistant": {
+    "structure": 1,
+    "language": 1,
+    "validCodes": 1,
+    "questionCount": 0.9
+  },
+  "presentations": {
+    "structure": 1,
+    "language": 1,
+    "slideCount": 1,
+    "titles": 1
   }
 }

@@ -9,16 +9,11 @@ import {
   type Result,
   type SchoolId,
   type UserId,
-  type ValidationError,
 } from '@thp/domain';
 import type { LlmResponse } from '@thp/ports';
-import { parseJsonObject } from './json-reply.ts';
+import { parseJsonObject } from '../drafting/json-reply.ts';
+import { ruleBroken } from '../drafting/rule-broken.ts';
 import type { PlanFormat } from './plan-formats.ts';
-
-const ruleBroken = ({ field, code }: ValidationError): string =>
-  code === 'too_long'
-    ? `"${field}" is too long; keep it within the limit given in the shape.`
-    : `"${field}" breaks a plan rule (${code}).`;
 
 /**
  * Turns a model reply into a usable draft, or says in plain words what is wrong with it, so the

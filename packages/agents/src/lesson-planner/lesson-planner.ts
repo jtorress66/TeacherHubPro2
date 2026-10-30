@@ -1,5 +1,6 @@
-import { err, type DraftRequest, type LessonPlanDraft, type Result } from '@thp/domain';
-import type { DraftError, LessonPlanDrafter, LlmClient, LlmMessage } from '@thp/ports';
+import type { DraftRequest, LessonPlanDraft, Result } from '@thp/domain';
+import type { DraftError, LessonPlanDrafter, LlmClient } from '@thp/ports';
+import { draftWithReview } from '../drafting/draft-with-review.ts';
 import { planFormats, type PlanFormat } from './plan-formats.ts';
 import { systemPrompt } from './prompts.ts';
 import { reviewReply } from './reply-review.ts';
@@ -20,24 +21,14 @@ export class LessonPlanner implements LessonPlanDrafter {
     private readonly formats: Readonly<Record<DraftRequest['kind'], PlanFormat>> = planFormats,
   ) {}
 
-  async draft(request: DraftRequest): Promise<Result<LessonPlanDraft, DraftError>> {
+  draft(request: DraftRequest): Promise<Result<LessonPlanDraft, DraftError>> {
     const format = this.formats[request.kind];
-    const messages: LlmMessage[] = [{ role: 'user', content: format.prompt(request) }];
-
-    for (let attempt = 0; attempt < 2; attempt++) {
-      const reply = await this.llm.complete({
-        system: systemPrompt,
-        messages,
-        maxTokens,
-      });
-      if (!reply.ok) return err({ code: 'ai_unavailable' });
-      const draft = reviewReply(format, request, reply.value);
-      if (draft.ok) return draft;
-      messages.push(
-        { role: 'assistant', content: reply.value.text },
-        { role: 'user', content: retryMessage(draft.error) },
-      );
-    }
-    return err({ code: 'invalid_output' });
+    return draftWithReview(this.llm, {
+      system: systemPrompt,
+      prompt: format.prompt(request),
+      maxTokens,
+      review: (reply) => reviewReply(format, request, reply),
+      retry: retryMessage,
+    });
   }
 }

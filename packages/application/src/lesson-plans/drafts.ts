@@ -2,7 +2,6 @@ import {
   createDraftRequest,
   draftedPlan,
   err,
-  hasAccess,
   ok,
   type DraftRequestInput,
   type DraftedPlan,
@@ -21,7 +20,7 @@ import type {
   LessonPlanDrafter,
   SubscriptionRepository,
 } from '@thp/ports';
-import { findSchoolSubscription } from '../accounts/school-subscription.ts';
+import { checkAiAccess } from '../accounts/ai-access.ts';
 import { fail, type UseCaseError } from '../errors.ts';
 import type { JobHandler } from '../jobs/jobs.ts';
 import { checkClass } from './plan-access.ts';
@@ -50,10 +49,8 @@ export class RequestLessonPlanDraft {
 
   async execute(input: { actor: User } & DraftRequestInput): Promise<Result<Job, UseCaseError>> {
     const { actor, ...details } = input;
-    const subscription = await findSchoolSubscription(this.deps.subscriptions, actor.schoolId);
-    if (!subscription || !hasAccess(subscription, this.deps.clock.now())) {
-      return fail('subscription_required');
-    }
+    const access = await checkAiAccess(this.deps, actor.schoolId);
+    if (!access.ok) return access;
     const request = createDraftRequest(details);
     if (!request.ok) return request;
     const cls = await checkClass(this.deps.classes, actor, request.value.classId);

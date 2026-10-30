@@ -1,4 +1,7 @@
 import type {
+  AiGeneration,
+  GenerationSummary,
+  PresentationSummary,
   AssignmentId,
   AttendanceSession,
   Assignment,
@@ -13,6 +16,8 @@ import type {
   PlanFolder,
   PlanFolderId,
   PlanTemplate,
+  Presentation,
+  SubPacket,
   DateRange,
   LocalDate,
   ReportCardComment,
@@ -80,6 +85,24 @@ export interface PlanFolderRepository extends ScopedRepository<PlanFolder>, Dele
 export interface PlanTemplateRepository
   extends ScopedRepository<PlanTemplate>, Deletable<PlanTemplate> {
   listByTeacher(schoolId: SchoolId, teacherId: UserId): Promise<readonly PlanTemplate[]>;
+}
+
+export interface AiGenerationRepository
+  extends ScopedRepository<AiGeneration>, Deletable<AiGeneration> {
+  /** Newest first. */
+  listByTeacher(schoolId: SchoolId, teacherId: UserId): Promise<readonly GenerationSummary[]>;
+}
+
+export interface PresentationRepository
+  extends ScopedRepository<Presentation>, Deletable<Presentation> {
+  /** Most recently updated first. */
+  listByTeacher(schoolId: SchoolId, teacherId: UserId): Promise<readonly PresentationSummary[]>;
+}
+
+/** One substitute packet per class. */
+export interface SubPacketRepository {
+  findByClass(schoolId: SchoolId, classId: ClassId): Promise<SubPacket | null>;
+  save(packet: SubPacket): Promise<void>;
 }
 
 export interface GradeCategoryRepository

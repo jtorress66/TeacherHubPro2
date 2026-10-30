@@ -37,7 +37,14 @@ describe('parseWebConfig', () => {
         env: 'development',
         billing: { provider: 'local', secret: local.LOCAL_BILLING_SECRET },
         google: { provider: 'local', secret: local.LOCAL_GOOGLE_SECRET },
+        voice: 'nova',
       },
+    });
+  });
+
+  it('reads the voice that reads text aloud', () => {
+    expect(parseWebConfig({ ...local, OPENAI_TTS_VOICE: ' coral ' })).toMatchObject({
+      value: { voice: 'coral' },
     });
   });
 
@@ -58,6 +65,7 @@ describe('parseWebConfig', () => {
           clientId: production.GOOGLE_CLIENT_ID,
           clientSecret: 'google-secret',
         },
+        voice: 'nova',
       },
     });
   });

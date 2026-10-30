@@ -20,6 +20,20 @@ import {
   UuidIdGenerator,
 } from '@thp/adapters';
 import {
+  CreatePresentation,
+  DeleteGeneration,
+  DeletePresentation,
+  GetGeneration,
+  GetPresentation,
+  GetSpeechClip,
+  GetSubPacket,
+  ListGenerations,
+  ListPresentations,
+  RequestGeneration,
+  RequestPresentationDraft,
+  RequestSpeech,
+  SaveSubPacket,
+  UpdatePresentation,
   CreateFolder,
   CreatePlan,
   DeleteFolder,
@@ -111,6 +125,20 @@ import { localDateIn, type LocalDate } from '@thp/domain';
 
 export interface AppContainer {
   readonly appUrl: string;
+  readonly requestGeneration: RequestGeneration;
+  readonly listGenerations: ListGenerations;
+  readonly getGeneration: GetGeneration;
+  readonly deleteGeneration: DeleteGeneration;
+  readonly requestPresentationDraft: RequestPresentationDraft;
+  readonly createPresentation: CreatePresentation;
+  readonly listPresentations: ListPresentations;
+  readonly getPresentation: GetPresentation;
+  readonly updatePresentation: UpdatePresentation;
+  readonly deletePresentation: DeletePresentation;
+  readonly requestSpeech: RequestSpeech;
+  readonly getSpeechClip: GetSpeechClip;
+  readonly getSubPacket: GetSubPacket;
+  readonly saveSubPacket: SaveSubPacket;
   readonly signUp: SignUp;
   readonly logIn: LogIn;
   readonly logOut: LogOut;
@@ -258,6 +286,20 @@ export function createAppContainer(
 
   return {
     appUrl: config.appUrl,
+    requestGeneration: new RequestGeneration(deps),
+    listGenerations: new ListGenerations(deps),
+    getGeneration: new GetGeneration(deps),
+    deleteGeneration: new DeleteGeneration(deps),
+    requestPresentationDraft: new RequestPresentationDraft(deps),
+    createPresentation: new CreatePresentation(deps),
+    listPresentations: new ListPresentations(deps),
+    getPresentation: new GetPresentation(deps),
+    updatePresentation: new UpdatePresentation(deps),
+    deletePresentation: new DeletePresentation(deps),
+    requestSpeech: new RequestSpeech({ ...deps, voice: config.voice }),
+    getSpeechClip: new GetSpeechClip(deps),
+    getSubPacket: new GetSubPacket(deps),
+    saveSubPacket: new SaveSubPacket(deps),
     signUp: new SignUp(deps),
     logIn: new LogIn(deps),
     logOut: new LogOut(deps),

@@ -2,7 +2,7 @@
 
 Place this file at `docs/BUILD_STEPS.md`. Work on one step at a time. Tick a step only when its gate passes and the Definition of Done in `CLAUDE.md` is met. For each step, read its section in `docs/FEATURES.md` first.
 
-**Current step:** 8
+**Current step:** 9
 
 | # | Step | Scope | Gate (must pass before next step) | Done |
 | --- | --- | --- | --- | --- |
@@ -14,7 +14,7 @@ Place this file at `docs/BUILD_STEPS.md`. Work on one step at a time. Tick a ste
 | 6 | Attendance | Sessions per class and date, statuses (present, absent, tardy, excused), reports | E2E: take attendance → report shows correct rates | [x] |
 | 7 | Gradebook and report cards | Categories with weights, manual assignments and grades, GPA, gradebook report, report card PDF with school logo | Calculations match the recorded examples in `docs/FEATURES.md`; E2E: grade → report card PDF | [x] |
 | 8 | AI platform and lesson planner | `LlmClient` (Claude), job queue in the worker, standards (Common Core), weekly and Conversational English plans, templates, folders, duplicate, print/PDF | Evals for the planner meet thresholds; E2E: generate a plan as a job → edit → print | [x] |
-| 9 | AI assistant, presentations, voice | AI assistant content types, presentation creator, text-to-speech, substitute packet | Evals meet thresholds; E2E: generate a worksheet and a presentation | [ ] |
+| 9 | AI assistant, presentations, voice | AI assistant content types, presentation creator, text-to-speech, substitute packet | Evals meet thresholds; E2E: generate a worksheet and a presentation | [x] |
 | 10 | Assignments and AI grading | Question builder (all types), file uploads, PDF → online test, student assignment links, submissions, AI grading with teacher confirmation into the gradebook, Google Classroom share | E2E: PDF → test → student submits from link → AI grades → teacher confirms → grade appears in gradebook and report card | [ ] |
 | 11 | Educational games | Game creator with every mode via `GameModeRegistry`, validator, play page, scores, leaderboard, progress, grade settings, analytics | Each mode passes the game-mode contract; E2E: create, play and score one game per mode | [ ] |
 | 12 | Play to Learn (live) | Practice assignments, PIN join, host dashboard, live questions over `apps/realtime`, self-paced mode, insights | E2E: host + 3 students play a live session; scores and insights correct | [ ] |
@@ -27,6 +27,13 @@ Place this file at `docs/BUILD_STEPS.md`. Work on one step at a time. Tick a ste
 | 19 | Data migration | Importer from the old MongoDB export and uploaded files into Postgres and file storage; dry run report; old shared links keep working; bcrypt password hashes accepted and rehashed on login | Dry run on a copy of production data: every count matches, spot checks pass, a migrated teacher logs in with their old password | [ ] |
 | 20 | Hardening for beta | Security review, privacy review (FERPA/COPPA), rate limits, monitoring, audit log, eval thresholds guarded | Beta checklist complete | [ ] |
 | 21 | Launch and cutover | Deploy web, worker and realtime; final migration; DNS for teacherhubpro.com; Stripe webhooks; monitor; shut down the Emergent app | Live site passes the smoke checklist for a week; Emergent subscription cancelled | [ ] |
+
+## Paid checks deferred to go-live
+
+No paid API calls until launch. Steps that need real AI meet their gate with the free replay evals (`evals/replays`, part of `pnpm test`); these real checks run once before go-live (step 21):
+
+- `pnpm eval` against real Claude: planner, AI assistant and presentation suites (steps 8–9).
+- Listen with real OpenAI text-to-speech (`TTS_PROVIDER=openai`, `OPENAI_API_KEY`) (step 9).
 
 ## Prompt to start each step in Claude Code
 

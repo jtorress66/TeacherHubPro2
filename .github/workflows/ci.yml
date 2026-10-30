@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Run by hand (Actions → CI → Run workflow) to score the agents against real Claude.
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -175,10 +177,11 @@ jobs:
           retention-days: 7
 
   evals:
-    name: LLM evals (lesson planner)
+    name: LLM evals (planner, assistant, presentations)
     runs-on: ubuntu-latest
-    # Calls Claude, which costs money: only on pull requests, and only once the key is set.
-    if: github.event_name == 'pull_request'
+    # Calls Claude, which costs money: only when run by hand, and only once the key is set.
+    # Every push already scores the saved replies in evals/replays (part of the unit tests).
+    if: github.event_name == 'workflow_dispatch'
     env:
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
     steps:

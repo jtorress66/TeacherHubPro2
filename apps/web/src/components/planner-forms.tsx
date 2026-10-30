@@ -1,7 +1,6 @@
 'use client';
 
-import { useActionState, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useActionState, useState } from 'react';
 import {
   activityTypes,
   addDays,
@@ -28,123 +27,18 @@ import {
   type PlannerFormState,
 } from '../app/_lib/planner-actions.ts';
 import { Field, FormAlert, Submit } from './forms.tsx';
+import { JobProgress } from './job-progress.tsx';
+import {
+  Checks,
+  ErrorText,
+  Hidden,
+  Select,
+  TextArea,
+  type Errors,
+  type Option,
+} from './form-fields.tsx';
 
 const initial: PlannerFormState = {};
-
-interface Option {
-  readonly id: string;
-  readonly name: string;
-}
-
-function Hidden({ values }: { readonly values: Readonly<Record<string, string>> }) {
-  return (
-    <>
-      {Object.entries(values).map(([name, value]) => (
-        <input key={name} type="hidden" name={name} value={value} />
-      ))}
-    </>
-  );
-}
-
-function ErrorText({
-  id,
-  message,
-}: {
-  readonly id: string;
-  readonly message?: string | undefined;
-}) {
-  return message ? (
-    <p id={`${id}-error`} className="field-error">
-      {message}
-    </p>
-  ) : null;
-}
-
-function TextArea(props: {
-  readonly id: string;
-  readonly name: string;
-  readonly label: string;
-  readonly defaultValue?: string | null | undefined;
-  readonly error?: string | undefined;
-  readonly hint?: string;
-  readonly rows?: number;
-}) {
-  const { id, name, label, defaultValue, error, hint, rows = 3 } = props;
-  return (
-    <div className="field">
-      <label htmlFor={id}>{label}</label>
-      <textarea
-        id={id}
-        name={name}
-        rows={rows}
-        defaultValue={defaultValue ?? ''}
-        aria-invalid={error ? true : undefined}
-        aria-describedby={error ? `${id}-error` : hint ? `${id}-hint` : undefined}
-      />
-      {hint && !error ? (
-        <p id={`${id}-hint`} className="hint">
-          {hint}
-        </p>
-      ) : null}
-      <ErrorText id={id} message={error} />
-    </div>
-  );
-}
-
-function Checks<T extends string | number>(props: {
-  readonly legend: string;
-  readonly name: string;
-  readonly values: readonly T[];
-  readonly chosen: readonly (string | number)[] | undefined;
-  readonly label: (value: T) => string;
-  readonly error?: string | undefined;
-}) {
-  const chosen = new Set(props.chosen ?? []);
-  return (
-    <fieldset className="checks">
-      <legend>{props.legend}</legend>
-      {props.values.map((value) => (
-        <label key={String(value)} className="checkbox">
-          <input
-            type="checkbox"
-            name={props.name}
-            value={String(value)}
-            defaultChecked={chosen.has(value)}
-          />{' '}
-          {props.label(value)}
-        </label>
-      ))}
-      {props.error ? <p className="field-error">{props.error}</p> : null}
-    </fieldset>
-  );
-}
-
-function Select(props: {
-  readonly id: string;
-  readonly name: string;
-  readonly label: string;
-  readonly options: readonly Option[];
-  readonly empty?: string;
-  readonly defaultValue?: string | null | undefined;
-  readonly error?: string | undefined;
-}) {
-  return (
-    <div className="field">
-      <label htmlFor={props.id}>{props.label}</label>
-      <select id={props.id} name={props.name} defaultValue={props.defaultValue ?? ''}>
-        {props.empty === undefined ? null : <option value="">{props.empty}</option>}
-        {props.options.map((option) => (
-          <option key={option.id} value={option.id}>
-            {option.name}
-          </option>
-        ))}
-      </select>
-      <ErrorText id={props.id} message={props.error} />
-    </div>
-  );
-}
-
-type Errors = Readonly<Record<string, string>> | undefined;
 
 function DayFields(props: {
   readonly locale: Locale;
@@ -718,62 +612,26 @@ export function DraftForm(props: {
   );
 }
 
-interface JobStatusReply {
-  readonly status: 'queued' | 'running' | 'completed' | 'failed';
-  readonly message?: string;
-}
-
-/** Polls the draft job and opens the drafted plan when it is ready. */
 export function DraftProgress(props: {
   readonly locale: Locale;
   readonly jobId: string;
   readonly intervalMs?: number;
 }) {
   const t = createTranslator(props.locale);
-  const router = useRouter();
-  const [reply, setReply] = useState<JobStatusReply>({ status: 'queued' });
   const plans = `/${props.locale}/app/plans`;
-
-  useEffect(() => {
-    if (reply.status === 'completed' || reply.status === 'failed') return;
-    const timer = setTimeout(() => {
-      fetch(`/api/jobs/${props.jobId}?locale=${props.locale}`, { cache: 'no-store' })
-        .then((response) => (response.ok ? (response.json() as Promise<JobStatusReply>) : null))
-        .then((next) => {
-          if (next) setReply(next);
-        })
-        .catch(() => undefined);
-    }, props.intervalMs ?? 1500);
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [reply, props.jobId, props.locale, props.intervalMs]);
-
-  useEffect(() => {
-    if (reply.status === 'completed') router.push(`${plans}/new?draft=${props.jobId}`);
-  }, [reply.status, router, plans, props.jobId]);
-
-  if (reply.status === 'failed') {
-    return (
-      <div className="stack">
-        <p role="alert" className="alert">
-          {reply.message ?? t('drafts.failed')}
-        </p>
-        <p>
-          <a className="button" href={`${plans}/draft`}>
-            {t('drafts.tryAgain')}
-          </a>
-        </p>
-      </div>
-    );
-  }
   return (
-    <p role="status" className="notice" aria-live="polite">
-      {reply.status === 'completed' ? (
-        <a href={`${plans}/new?draft=${props.jobId}`}>{t('drafts.open')}</a>
-      ) : (
-        t('drafts.working')
-      )}
-    </p>
+    <JobProgress
+      locale={props.locale}
+      jobId={props.jobId}
+      doneHref={`${plans}/new?draft=${props.jobId}`}
+      retryHref={`${plans}/draft`}
+      labels={{
+        working: t('drafts.working'),
+        failed: t('drafts.failed'),
+        tryAgain: t('drafts.tryAgain'),
+        open: t('drafts.open'),
+      }}
+      {...(props.intervalMs === undefined ? {} : { intervalMs: props.intervalMs })}
+    />
   );
 }
