@@ -176,6 +176,7 @@ export interface AssignmentsTable {
   title: string;
   points: number;
   due_date: DateText | null;
+  instructions: string | null;
   questions: Json;
   created_at: CreatedAt;
 }
@@ -223,7 +224,38 @@ export interface SubmissionsTable {
   ai_failure: string | null;
   final_score: number | null;
   confirmed_by: string | null;
+  late: boolean;
+  question_scores: Json;
   created_at: CreatedAt;
+}
+
+export interface AssignmentAttachmentsTable {
+  id: string;
+  school_id: string;
+  assignment_id: string;
+  name: string;
+  content_type: string;
+  size: number;
+  key: string;
+  created_at: CreatedAt;
+}
+
+export interface StudentLinksTable {
+  id: string;
+  school_id: string;
+  class_id: string;
+  student_id: string;
+  token_hash: string;
+  expires_at: Date;
+  revoked_at: Date | null;
+  created_at: CreatedAt;
+}
+
+export interface ClassroomConnectionsTable {
+  teacher_id: string;
+  school_id: string;
+  encrypted_refresh_token: string;
+  connected_at: Date;
 }
 
 export interface AttendanceSessionsTable {
@@ -302,6 +334,9 @@ export interface Database {
   report_card_comments: ReportCardCommentsTable;
   stored_files: StoredFilesTable;
   submissions: SubmissionsTable;
+  assignment_attachments: AssignmentAttachmentsTable;
+  student_links: StudentLinksTable;
+  classroom_connections: ClassroomConnectionsTable;
   attendance_sessions: AttendanceSessionsTable;
   attendance_entries: AttendanceEntriesTable;
   games: GamesTable;

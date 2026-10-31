@@ -7,7 +7,13 @@ import {
   type SchoolId,
 } from '../shared/ids.ts';
 import { errorOf, valueOf } from '../test-support.ts';
-import { createAssignment, maxPoints, updateAssignment } from './assignment.ts';
+import {
+  createAssignment,
+  maxPoints,
+  replaceQuestions,
+  setInstructions,
+  updateAssignment,
+} from './assignment.ts';
 import { createGradeCategory, standardCategories, updateGradeCategory } from './grade-category.ts';
 import { createQuestion } from './question.ts';
 
@@ -29,6 +35,7 @@ describe('createAssignment', () => {
       ...base,
       points: 100,
       dueDate: null,
+      instructions: null,
       questions: [],
     });
   });
@@ -82,6 +89,34 @@ describe('updateAssignment', () => {
     expect(errorOf(updateAssignment(assignment, { ...base, points: -1 }))).toEqual({
       field: 'points',
       code: 'out_of_range',
+    });
+  });
+});
+
+describe('replaceQuestions and setInstructions', () => {
+  const assignment = valueOf(createAssignment({ ...base, questions: [question('q1', 4)] }));
+
+  it('replaces the questions, keeping the other details', () => {
+    const updated = valueOf(replaceQuestions(assignment, [question('q1', 2), question('q2', 3)]));
+    expect(updated.questions.map((q) => q.id)).toEqual(['q1', 'q2']);
+    expect(updated.title).toBe('Quiz 1');
+  });
+
+  it('refuses repeated question ids', () => {
+    expect(errorOf(replaceQuestions(assignment, [question('q1', 1), question('q1', 1)]))).toEqual({
+      field: 'questions',
+      code: 'duplicate',
+    });
+  });
+
+  it('keeps trimmed general instructions within the limit', () => {
+    expect(valueOf(setInstructions(assignment, ' Use a pencil. ')).instructions).toBe(
+      'Use a pencil.',
+    );
+    expect(valueOf(setInstructions(assignment, ' ')).instructions).toBeNull();
+    expect(errorOf(setInstructions(assignment, 'x'.repeat(5001)))).toEqual({
+      field: 'instructions',
+      code: 'too_long',
     });
   });
 });

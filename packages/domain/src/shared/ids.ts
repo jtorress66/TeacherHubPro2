@@ -24,3 +24,5 @@ export type JobId = Id<'Job'>;
 export type PlanTemplateId = Id<'PlanTemplate'>;
 export type GenerationId = Id<'Generation'>;
 export type PresentationId = Id<'Presentation'>;
+export type AttachmentId = Id<'Attachment'>;
+export type StudentLinkId = Id<'StudentLink'>;

@@ -39,6 +39,8 @@ describe('createSubmission', () => {
   it('starts as submitted, tied to a roster student id, with no grade yet', () => {
     expect(submitted()).toEqual({
       ...input,
+      late: false,
+      questionScores: {},
       status: 'submitted',
       aiDraft: null,
       aiFailure: null,

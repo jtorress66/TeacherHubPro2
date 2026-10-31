@@ -1,7 +1,7 @@
 import type { AssignmentId, ClassId, GradeCategoryId, SchoolId } from '../shared/ids.ts';
 import { parseLocalDate, type LocalDate } from '../shared/local-date.ts';
 import { ok, type Result } from '../shared/result.ts';
-import { invalid, requiredText, type ValidationError } from '../shared/validation.ts';
+import { invalid, optionalText, requiredText, type ValidationError } from '../shared/validation.ts';
 import type { Question } from './question.ts';
 
 /** Points for an assignment without questions (as in the original app). */
@@ -15,8 +15,12 @@ export interface Assignment {
   readonly title: string;
   readonly points: number;
   readonly dueDate: LocalDate | null;
+  /** General instructions shown to students above the questions. */
+  readonly instructions: string | null;
   readonly questions: readonly Question[];
 }
+
+export const maxAssignmentInstructionsLength = 5000;
 
 export interface AssignmentInput {
   readonly id: AssignmentId;
@@ -26,6 +30,7 @@ export interface AssignmentInput {
   readonly title: string;
   readonly points?: number;
   readonly dueDate?: string | null;
+  readonly instructions?: string | null;
   readonly questions?: readonly Question[];
 }
 
@@ -40,6 +45,12 @@ export function createAssignment(input: AssignmentInput): Result<Assignment, Val
     if (!parsed.ok) return parsed;
     dueDate = parsed.value;
   }
+  const instructions = optionalText(
+    'instructions',
+    input.instructions,
+    maxAssignmentInstructionsLength,
+  );
+  if (!instructions.ok) return instructions;
   const questions = input.questions ?? [];
   if (new Set(questions.map((question) => question.id)).size !== questions.length) {
     return invalid('questions', 'duplicate');
@@ -53,6 +64,7 @@ export function createAssignment(input: AssignmentInput): Result<Assignment, Val
     title: title.value,
     points,
     dueDate,
+    instructions: instructions.value,
     questions,
   });
 }
@@ -72,9 +84,24 @@ export function updateAssignment(
     schoolId: assignment.schoolId,
     classId: assignment.classId,
     questions: assignment.questions,
+    instructions: assignment.instructions,
     ...details,
   });
 }
+
+const rebuild = (assignment: Assignment, changes: Partial<AssignmentInput>) =>
+  createAssignment({ ...assignment, ...changes });
+
+/** The question builder saves the whole list at once; ids must stay unique. */
+export const replaceQuestions = (
+  assignment: Assignment,
+  questions: readonly Question[],
+): Result<Assignment, ValidationError> => rebuild(assignment, { questions });
+
+export const setInstructions = (
+  assignment: Assignment,
+  instructions: string | null,
+): Result<Assignment, ValidationError> => rebuild(assignment, { instructions });
 
 /** The maximum score: the sum of question points, or `points` when there are no questions. */
 export function maxPoints(assignment: Pick<Assignment, 'points' | 'questions'>): number {
