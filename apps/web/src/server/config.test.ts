@@ -11,6 +11,9 @@ const local = {
   LOCAL_GOOGLE_SECRET: 'local-google-secret-1234',
 };
 
+/** An obviously fake 32-byte key, built at run time so no key-like text is checked in. */
+const testEncryptionKey = Buffer.alloc(32, 1).toString('base64');
+
 const production = {
   DATABASE_URL: 'postgresql://app:pw@db.internal:5432/teacherhub',
   APP_URL: 'https://teacherhubpro.com',
@@ -22,7 +25,7 @@ const production = {
   GOOGLE_CLIENT_ID: 'client-123.apps.googleusercontent.com',
   GOOGLE_CLIENT_SECRET: 'google-secret',
   CLASSROOM_PROVIDER: 'google',
-  TOKEN_ENCRYPTION_KEY: 'MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=',
+  TOKEN_ENCRYPTION_KEY: testEncryptionKey,
 };
 
 /** A copy of the environment with one variable removed. */
@@ -72,7 +75,7 @@ describe('parseWebConfig', () => {
           provider: 'google',
           clientId: production.GOOGLE_CLIENT_ID,
           clientSecret: 'google-secret',
-          encryptionKey: 'MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=',
+          encryptionKey: testEncryptionKey,
         },
         voice: 'nova',
       },
