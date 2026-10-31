@@ -5,6 +5,7 @@ import {
   LocalTextToSpeech,
   OpenAiTextToSpeech,
   PostgresFileStore,
+  UnpdfTextExtractor,
   createStripeClient,
   ensureStripePrices,
   LocalLlmClient,
@@ -13,9 +14,17 @@ import {
   SystemClock,
   UuidIdGenerator,
 } from '@thp/adapters';
-import { ContentWriter, LessonPlanner, PresentationWriter } from '@thp/agents';
+import {
+  ContentWriter,
+  LessonPlanner,
+  PresentationWriter,
+  QuestionExtractor,
+  SubmissionGrader,
+} from '@thp/agents';
 import {
   GenerationHandler,
+  GradingHandler,
+  PdfImportHandler,
   JobHandlerRegistry,
   LessonPlanDraftHandler,
   PresentationDraftHandler,
@@ -49,13 +58,19 @@ export function createJobRunner(database: DatabaseConfig, llm: LlmConfig, tts: T
   const clock = new SystemClock();
   const jobs = new PostgresJobQueue(db, ids);
   const model = llmClient(llm);
-  const { generations } = createPostgresRepositories(db);
+  const { generations, assignments, submissions, classes } = createPostgresRepositories(db);
   const files = new PostgresFileStore(db);
   const handlers = new JobHandlerRegistry([
     new LessonPlanDraftHandler(new LessonPlanner(model)),
     new GenerationHandler({ writer: new ContentWriter(model), generations, ids, clock }),
     new PresentationDraftHandler(new PresentationWriter(model)),
     new SpeechHandler({ tts: textToSpeech(tts), files }),
+    new PdfImportHandler({
+      files,
+      pdfText: new UnpdfTextExtractor(),
+      questionExtractor: new QuestionExtractor(model),
+    }),
+    new GradingHandler({ assignments, submissions, classes, grader: new SubmissionGrader(model) }),
   ]);
   return {
     runNext: new RunNextJob({ jobs, handlers }),
