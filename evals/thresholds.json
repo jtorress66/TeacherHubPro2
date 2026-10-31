@@ -17,5 +17,16 @@
     "language": 1,
     "slideCount": 1,
     "titles": 1
+  },
+  "question-extractor": {
+    "structure": 1,
+    "questionCount": 1,
+    "types": 1,
+    "instructions": 0.75
+  },
+  "grader": {
+    "structure": 1,
+    "band": 0.9,
+    "language": 1
   }
 }
