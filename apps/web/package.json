@@ -28,6 +28,7 @@
     "@thp/testing": "workspace:*",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "pdf-lib": "1.17.1",
     "unpdf": "2.0.0"
   }
 }

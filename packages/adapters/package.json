@@ -23,6 +23,6 @@
     "@thp/testing": "workspace:*",
     "@types/pg": "8.23.1",
     "msw": "3.0.3",
-    "unpdf": "1.9.0"
+    "unpdf": "2.0.0"
   }
 }

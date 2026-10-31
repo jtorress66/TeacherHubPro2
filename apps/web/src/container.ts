@@ -1,4 +1,4 @@
-import { randomBytes } from 'node:crypto';
+import { createHash } from 'node:crypto';
 import {
   AesGcmCipher,
   GoogleClassroom,
@@ -289,14 +289,16 @@ interface Billing {
 }
 
 /**
- * Google Classroom, or its stand-in for development and tests. The stand-in's tokens are sealed
- * with a key made at start-up, so they last only while the server runs.
+ * Google Classroom, or its stand-in for development and tests. The stand-in's tokens are fake, so
+ * they are sealed with a fixed key (the same in every server instance); production refuses it.
  */
 function classroomFor(config: ClassroomConfig) {
   if (config.provider === 'local') {
     const classroom = new LocalClassroom();
     return {
-      cipher: new AesGcmCipher(randomBytes(32).toString('base64')),
+      cipher: new AesGcmCipher(
+        createHash('sha256').update('teacherhubpro-local-classroom').digest('base64'),
+      ),
       classroomAuth: new LocalClassroomAuthorization(),
       classroomCourses: classroom,
       classroomCoursework: classroom,
