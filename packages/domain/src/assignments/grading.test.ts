@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createAssignment, type Assignment } from '../gradebook/assignment.ts';
-import { createQuestion, type Question, type QuestionInput } from '../gradebook/question.ts';
+import { createQuestion, type Question } from '../gradebook/question.ts';
 import type {
   AssignmentId,
   ClassId,
@@ -14,7 +14,7 @@ import { gradingRequest, pendingOpenQuestions, recordAiScores, submitAnswers } f
 import type { ExtractedQuestionInput } from './extracted-test.ts';
 
 const q = (id: string, input: ExtractedQuestionInput): Question => {
-  const created = createQuestion({ id: id as QuestionId, ...input } as QuestionInput);
+  const created = createQuestion({ id: id as QuestionId, ...input });
   if (!created.ok) throw new Error('bad question');
   return created.value;
 };

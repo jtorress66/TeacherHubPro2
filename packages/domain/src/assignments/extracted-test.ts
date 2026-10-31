@@ -29,7 +29,7 @@ export function createExtractedTest(input: {
     const created = createQuestion({
       ...question,
       id: `q${String(index + 1)}` as QuestionId,
-    } as QuestionInput);
+    });
     if (!created.ok) {
       return invalid(`questions.${String(index)}.${created.error.field}`, created.error.code);
     }

@@ -2,7 +2,7 @@ import { maxPoints, type Assignment } from '../gradebook/assignment.ts';
 import type { Question } from '../gradebook/question.ts';
 import type { QuestionId, StudentId, SubmissionId } from '../shared/ids.ts';
 import { ok, type Result } from '../shared/result.ts';
-import { invalid, type ValidationError } from '../shared/validation.ts';
+import { invalid } from '../shared/validation.ts';
 import {
   createSubmission,
   recordAiGrade,

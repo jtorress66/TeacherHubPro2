@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { createQuestion, type Question, type QuestionInput } from '../gradebook/question.ts';
+import { createQuestion, type Question } from '../gradebook/question.ts';
 import type { QuestionId } from '../shared/ids.ts';
 import { autoScore, isOpenQuestion, normalizeBlank, parseAnswer } from './answers.ts';
 import type { ExtractedQuestionInput } from './extracted-test.ts';
 
 const question = (input: ExtractedQuestionInput): Question => {
-  const created = createQuestion({ id: 'q1' as QuestionId, ...input } as QuestionInput);
+  const created = createQuestion({ id: 'q1' as QuestionId, ...input });
   if (!created.ok) throw new Error(created.error.field);
   return created.value;
 };
