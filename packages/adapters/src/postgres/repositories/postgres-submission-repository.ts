@@ -1,5 +1,5 @@
 import type { Kysely } from 'kysely';
-import type { AssignmentId, SchoolId, Submission, SubmissionId } from '@thp/domain';
+import type { AssignmentId, SchoolId, StudentId, Submission, SubmissionId } from '@thp/domain';
 import type { SubmissionRepository } from '@thp/ports';
 import { submissionMapper } from '../mappers/gradebook-mappers.ts';
 import type { Database } from '../schema.ts';
@@ -35,5 +35,20 @@ export class PostgresSubmissionRepository implements SubmissionRepository {
       .orderBy('id')
       .execute();
     return rows.map(submissionMapper.fromRow);
+  }
+
+  async findFor(
+    schoolId: SchoolId,
+    studentId: StudentId,
+    assignmentId: AssignmentId,
+  ): Promise<Submission | null> {
+    const row = await this.db
+      .selectFrom('submissions')
+      .selectAll()
+      .where('school_id', '=', schoolId)
+      .where('student_id', '=', studentId)
+      .where('assignment_id', '=', assignmentId)
+      .executeTakeFirst();
+    return row === undefined ? null : submissionMapper.fromRow(row);
   }
 }

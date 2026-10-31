@@ -11,6 +11,9 @@ const local = {
   LOCAL_GOOGLE_SECRET: 'local-google-secret-1234',
 };
 
+/** An obviously fake 32-byte key, built at run time so no key-like text is checked in. */
+const testEncryptionKey = Buffer.alloc(32, 1).toString('base64');
+
 const production = {
   DATABASE_URL: 'postgresql://app:pw@db.internal:5432/teacherhub',
   APP_URL: 'https://teacherhubpro.com',
@@ -21,6 +24,8 @@ const production = {
   GOOGLE_AUTH_PROVIDER: 'google',
   GOOGLE_CLIENT_ID: 'client-123.apps.googleusercontent.com',
   GOOGLE_CLIENT_SECRET: 'google-secret',
+  CLASSROOM_PROVIDER: 'google',
+  TOKEN_ENCRYPTION_KEY: testEncryptionKey,
 };
 
 /** A copy of the environment with one variable removed. */
@@ -37,6 +42,7 @@ describe('parseWebConfig', () => {
         env: 'development',
         billing: { provider: 'local', secret: local.LOCAL_BILLING_SECRET },
         google: { provider: 'local', secret: local.LOCAL_GOOGLE_SECRET },
+        classroom: { provider: 'local' },
         voice: 'nova',
       },
     });
@@ -65,6 +71,12 @@ describe('parseWebConfig', () => {
           clientId: production.GOOGLE_CLIENT_ID,
           clientSecret: 'google-secret',
         },
+        classroom: {
+          provider: 'google',
+          clientId: production.GOOGLE_CLIENT_ID,
+          clientSecret: 'google-secret',
+          encryptionKey: testEncryptionKey,
+        },
         voice: 'nova',
       },
     });
@@ -91,6 +103,32 @@ describe('parseWebConfig', () => {
     ).toEqual({
       ok: false,
       error: 'GOOGLE_AUTH_PROVIDER=local is only allowed when APP_ENV is development or test',
+    });
+  });
+
+  it('uses the Classroom stand-in unless told otherwise, but never in production', () => {
+    expect(parseWebConfig({ ...local, CLASSROOM_PROVIDER: 'local' }).ok).toBe(true);
+    expect(parseWebConfig(without(production, 'CLASSROOM_PROVIDER'))).toEqual({
+      ok: false,
+      error: 'CLASSROOM_PROVIDER=local is only allowed when APP_ENV is development or test',
+    });
+  });
+
+  it('needs a 32-byte encryption key and the Google client for real Classroom', () => {
+    expect(parseWebConfig({ ...production, TOKEN_ENCRYPTION_KEY: 'c2hvcnQ=' })).toEqual({
+      ok: false,
+      error: 'TOKEN_ENCRYPTION_KEY must be 32 random bytes, base64 encoded',
+    });
+    expect(parseWebConfig(without(production, 'TOKEN_ENCRYPTION_KEY')).ok).toBe(false);
+    expect(
+      parseWebConfig({
+        ...local,
+        CLASSROOM_PROVIDER: 'google',
+        TOKEN_ENCRYPTION_KEY: production.TOKEN_ENCRYPTION_KEY,
+      }),
+    ).toEqual({
+      ok: false,
+      error: 'CLASSROOM_PROVIDER=google needs GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET',
     });
   });
 

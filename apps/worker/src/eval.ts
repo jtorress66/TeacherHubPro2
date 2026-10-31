@@ -1,8 +1,15 @@
 import { readFileSync } from 'node:fs';
 import { AnthropicLlmClient } from '@thp/adapters';
-import type { ContentMetric, PlanMetric, PresentationMetric } from '@thp/agents';
+import type {
+  ContentMetric,
+  ExtractorMetric,
+  GraderMetric,
+  PlanMetric,
+  PresentationMetric,
+} from '@thp/agents';
 import { runAssistantEvals } from './evals/assistant-evals.ts';
 import { formatReport, type EvalReport } from './evals/eval-report.ts';
+import { runExtractorEvals, runGraderEvals } from './evals/grading-evals.ts';
 import { runPlannerEvals } from './evals/planner-evals.ts';
 import { runPresentationEvals } from './evals/presentation-evals.ts';
 
@@ -22,6 +29,8 @@ const thresholds = JSON.parse(
   'lesson-planner': Record<PlanMetric, number>;
   assistant: Record<ContentMetric, number>;
   presentations: Record<PresentationMetric, number>;
+  'question-extractor': Record<ExtractorMetric, number>;
+  grader: Record<GraderMetric, number>;
 };
 
 const llm = new AnthropicLlmClient({
@@ -34,6 +43,8 @@ const suites: readonly [string, () => Promise<EvalReport<string>>][] = [
   ['Lesson planner evals', () => runPlannerEvals(llm, thresholds['lesson-planner'])],
   ['AI assistant evals', () => runAssistantEvals(llm, thresholds.assistant)],
   ['Presentation evals', () => runPresentationEvals(llm, thresholds.presentations)],
+  ['Question extractor evals', () => runExtractorEvals(llm, thresholds['question-extractor'])],
+  ['Grader evals', () => runGraderEvals(llm, thresholds.grader)],
 ];
 
 let failed = false;

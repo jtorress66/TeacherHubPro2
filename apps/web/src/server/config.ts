@@ -11,12 +11,23 @@ export type GoogleConfig =
   | { readonly provider: 'local'; readonly secret: string }
   | { readonly provider: 'google'; readonly clientId: string; readonly clientSecret: string };
 
+export type ClassroomConfig =
+  | { readonly provider: 'local' }
+  | {
+      readonly provider: 'google';
+      readonly clientId: string;
+      readonly clientSecret: string;
+      /** Encrypts teachers' Classroom refresh tokens at rest. */
+      readonly encryptionKey: string;
+    };
+
 export interface WebConfig {
   readonly databaseUrl: string;
   readonly appUrl: string;
   readonly env: AppEnv;
   readonly billing: BillingConfig;
   readonly google: GoogleConfig;
+  readonly classroom: ClassroomConfig;
   /** The voice that reads text aloud (the worker makes the audio with the same one). */
   readonly voice: string;
 }
@@ -88,6 +99,32 @@ const localOnly = (setting: string) =>
   `${setting}=local is only allowed when APP_ENV is development or test`;
 
 /**
+ * Google Classroom: the local stand-in unless CLASSROOM_PROVIDER=google, which needs the Google
+ * client and a 32-byte TOKEN_ENCRYPTION_KEY. The stand-in is refused in production.
+ */
+function classroomFrom(
+  env: Readonly<Record<string, string | undefined>>,
+  appEnv: AppEnv,
+): Result<ClassroomConfig, string> {
+  const chosen = env.CLASSROOM_PROVIDER?.trim() ?? '';
+  const provider = chosen === '' ? 'local' : chosen;
+  if (provider === 'local') {
+    return appEnv === 'production' ? err(localOnly('CLASSROOM_PROVIDER')) : ok({ provider });
+  }
+  if (provider !== 'google') return err('CLASSROOM_PROVIDER must be local or google');
+  const encryptionKey = env.TOKEN_ENCRYPTION_KEY?.trim() ?? '';
+  if (Buffer.from(encryptionKey, 'base64').length !== 32) {
+    return err('TOKEN_ENCRYPTION_KEY must be 32 random bytes, base64 encoded');
+  }
+  const clientId = env.GOOGLE_CLIENT_ID?.trim() ?? '';
+  const clientSecret = env.GOOGLE_CLIENT_SECRET?.trim() ?? '';
+  if (clientId === '' || clientSecret === '') {
+    return err('CLASSROOM_PROVIDER=google needs GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET');
+  }
+  return ok({ provider, clientId, clientSecret, encryptionKey });
+}
+
+/**
  * Validates the web app's environment once, at the edge. Every secret is required (there are no
  * defaults), APP_ENV defaults to production, and the local stand-ins are refused in production.
  */
@@ -101,6 +138,8 @@ export function parseWebConfig(
     return err(localOnly('BILLING_PROVIDER'));
   if (c.APP_ENV === 'production' && c.GOOGLE_AUTH_PROVIDER === 'local')
     return err(localOnly('GOOGLE_AUTH_PROVIDER'));
+  const classroom = classroomFrom(env, c.APP_ENV);
+  if (!classroom.ok) return classroom;
 
   return ok({
     databaseUrl: c.DATABASE_URL,
@@ -122,6 +161,7 @@ export function parseWebConfig(
             clientId: c.GOOGLE_CLIENT_ID,
             clientSecret: c.GOOGLE_CLIENT_SECRET,
           },
+    classroom: classroom.value,
     voice: voiceFrom(env),
   });
 }

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type {
   ClassroomCourse,
   ClassroomCourses,
+  ClassroomAuthorization,
   ClassroomCoursework,
   ClassroomStudent,
   GoogleIdentity,
@@ -102,6 +103,47 @@ export function classroomContract(
       });
 
       expect(result).toEqual({ ok: false, error: { code: 'unauthorized' } });
+    });
+  });
+}
+
+export interface ClassroomAuthorizationSetup {
+  readonly authorization: ClassroomAuthorization;
+  /** A code this authorization accepts. */
+  readonly code: string;
+}
+
+export function classroomAuthorizationContract(
+  name: string,
+  make: () => ClassroomAuthorizationSetup,
+): void {
+  describe(`${name} (ClassroomAuthorization contract)`, () => {
+    const redirectUri = 'https://app.test/api/classroom/callback';
+
+    it('builds a consent address that carries the state and the return address', () => {
+      const url = new URL(make().authorization.authorizationUrl('state-9', redirectUri));
+      expect(url.searchParams.get('state')).toBe('state-9');
+      expect(url.searchParams.get('redirect_uri')).toBe(redirectUri);
+    });
+
+    it('turns a valid code into a refresh token that yields access tokens', async () => {
+      const { authorization, code } = make();
+      const exchanged = await authorization.exchangeCode(code, redirectUri);
+      if (!exchanged.ok) throw new Error('exchange failed');
+      const access = await authorization.accessToken(exchanged.value.refreshToken);
+      expect(access.ok && access.value.length > 0).toBe(true);
+    });
+
+    it('refuses an invalid code and an unknown refresh token', async () => {
+      const { authorization } = make();
+      expect(await authorization.exchangeCode('bad-code', redirectUri)).toEqual({
+        ok: false,
+        error: { code: 'unauthorized' },
+      });
+      expect(await authorization.accessToken('unknown-refresh')).toEqual({
+        ok: false,
+        error: { code: 'unauthorized' },
+      });
     });
   });
 }

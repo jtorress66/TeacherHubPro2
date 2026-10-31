@@ -26,6 +26,13 @@ export type SubmissionAction =
 export type SubmissionError =
   ValidationError | InvalidTransition<SubmissionStatus, SubmissionAction>;
 
+/** A question's score in a submission: scored by code (objective) or suggested by the AI. */
+export interface QuestionScore {
+  readonly score: number;
+  readonly feedback: string | null;
+  readonly source: 'auto' | 'ai';
+}
+
 /** An AI suggestion. It never counts until a teacher confirms it. */
 export interface AiDraft {
   readonly score: number;
@@ -42,6 +49,10 @@ export interface Submission {
   readonly submittedAt: Date;
   /** The assignment's maximum score when the student submitted. */
   readonly maxPoints: number;
+  /** Submitted after the due date (still accepted). */
+  readonly late: boolean;
+  /** Per-question scores so far; the draft total is their sum. */
+  readonly questionScores: Readonly<Record<QuestionId, QuestionScore>>;
   readonly status: SubmissionStatus;
   readonly aiDraft: AiDraft | null;
   readonly aiFailure: string | null;
@@ -57,6 +68,8 @@ export interface SubmissionInput {
   readonly answers: Readonly<Record<QuestionId, string>>;
   readonly submittedAt: Date;
   readonly maxPoints: number;
+  readonly late?: boolean;
+  readonly questionScores?: Readonly<Record<QuestionId, QuestionScore>>;
 }
 
 export interface TeacherDecision {
@@ -84,6 +97,8 @@ export function createSubmission(input: SubmissionInput): Result<Submission, Val
   if (!(input.maxPoints > 0)) return invalid('maxPoints', 'out_of_range');
   return ok({
     ...input,
+    late: input.late ?? false,
+    questionScores: input.questionScores ?? {},
     status: 'submitted',
     aiDraft: null,
     aiFailure: null,

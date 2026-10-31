@@ -42,6 +42,20 @@ export default async function AssignmentPage(props: Props) {
       <h1>
         {t('gradebook.enterGrades')}: {assignment.title}
       </h1>
+      <p className="button-row">
+        <Link
+          className="button"
+          href={`/${locale}/app/classes/${classId}/assignments/${assignment.id}/questions`}
+        >
+          {t('questions.open')}
+        </Link>
+        <Link
+          className="button secondary"
+          href={`/${locale}/app/classes/${classId}/assignments/${assignment.id}/submissions`}
+        >
+          {t('questions.submissions')}
+        </Link>
+      </p>
       {editable ? null : (
         <p role="status" className="notice">
           {t('gradebook.archivedNotice')}

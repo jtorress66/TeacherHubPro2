@@ -2,7 +2,7 @@
 
 Place this file at `docs/BUILD_STEPS.md`. Work on one step at a time. Tick a step only when its gate passes and the Definition of Done in `CLAUDE.md` is met. For each step, read its section in `docs/FEATURES.md` first.
 
-**Current step:** 9
+**Current step:** 10
 
 | # | Step | Scope | Gate (must pass before next step) | Done |
 | --- | --- | --- | --- | --- |
@@ -15,7 +15,7 @@ Place this file at `docs/BUILD_STEPS.md`. Work on one step at a time. Tick a ste
 | 7 | Gradebook and report cards | Categories with weights, manual assignments and grades, GPA, gradebook report, report card PDF with school logo | Calculations match the recorded examples in `docs/FEATURES.md`; E2E: grade → report card PDF | [x] |
 | 8 | AI platform and lesson planner | `LlmClient` (Claude), job queue in the worker, standards (Common Core), weekly and Conversational English plans, templates, folders, duplicate, print/PDF | Evals for the planner meet thresholds; E2E: generate a plan as a job → edit → print | [x] |
 | 9 | AI assistant, presentations, voice | AI assistant content types, presentation creator, text-to-speech, substitute packet | Evals meet thresholds; E2E: generate a worksheet and a presentation | [x] |
-| 10 | Assignments and AI grading | Question builder (all types), file uploads, PDF → online test, student assignment links, submissions, AI grading with teacher confirmation into the gradebook, Google Classroom share | E2E: PDF → test → student submits from link → AI grades → teacher confirms → grade appears in gradebook and report card | [ ] |
+| 10 | Assignments and AI grading | Question builder (all types), file uploads, PDF → online test, student assignment links, submissions, AI grading with teacher confirmation into the gradebook, Google Classroom share | E2E: PDF → test → student submits from link → AI grades → teacher confirms → grade appears in gradebook and report card | [x] |
 | 11 | Educational games | Game creator with every mode via `GameModeRegistry`, validator, play page, scores, leaderboard, progress, grade settings, analytics | Each mode passes the game-mode contract; E2E: create, play and score one game per mode | [ ] |
 | 12 | Play to Learn (live) | Practice assignments, PIN join, host dashboard, live questions over `apps/realtime`, self-paced mode, insights | E2E: host + 3 students play a live session; scores and insights correct | [ ] |
 | 13 | Adaptive learning and student progress | AI learning paths, student learning links, lesson completion, progress dashboard | Evals meet thresholds; E2E: path generated → student completes a lesson → progress updates | [ ] |
@@ -34,6 +34,8 @@ No paid API calls until launch. Steps that need real AI meet their gate with the
 
 - `pnpm eval` against real Claude: planner, AI assistant and presentation suites (steps 8–9).
 - Listen with real OpenAI text-to-speech (`TTS_PROVIDER=openai`, `OPENAI_API_KEY`) (step 9).
+- Google Classroom with a real Google Cloud project: consent screen and verification for the Classroom scopes, `CLASSROOM_PROVIDER=google`, `TOKEN_ENCRYPTION_KEY` (step 10).
+- The question extractor and grader evals against real Claude (step 10).
 
 ## Prompt to start each step in Claude Code
 

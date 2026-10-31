@@ -1,4 +1,10 @@
 import {
+  connectClassroom,
+  createAttachment,
+  createStudentLink,
+  type Attachment,
+  type ClassroomConnection,
+  type StudentLink,
   createContentRequest,
   createGeneration,
   createPresentation,
@@ -43,6 +49,8 @@ import {
 import type {
   AssignmentId,
   AttendanceSessionId,
+  AttachmentId,
+  StudentLinkId,
   GenerationId,
   PresentationId,
   ClassId,
@@ -303,5 +311,43 @@ export const aSubPacket = (overrides: Partial<SubPacket> = {}): SubPacket => ({
       dailyRoutines: 'Line up at 8:00',
     }),
   ),
+  ...overrides,
+});
+
+export const anAttachment = (overrides: Partial<Attachment> = {}): Attachment => ({
+  ...unwrap(
+    createAttachment({
+      id: 'attachment-1' as AttachmentId,
+      schoolId,
+      assignmentId: 'assignment-1' as AssignmentId,
+      name: 'worksheet.pdf',
+      contentType: 'application/pdf',
+      size: 2048,
+    }),
+  ),
+  ...overrides,
+});
+
+export const aStudentLink = (overrides: Partial<StudentLink> = {}): StudentLink => ({
+  ...createStudentLink({
+    id: 'link-1' as StudentLinkId,
+    schoolId,
+    classId,
+    studentId: 'student-1' as StudentId,
+    tokenHash: 'hash-1',
+    expiresAt: new Date('2027-01-31T00:00:00Z'),
+  }),
+  ...overrides,
+});
+
+export const aClassroomConnection = (
+  overrides: Partial<ClassroomConnection> = {},
+): ClassroomConnection => ({
+  ...connectClassroom({
+    schoolId,
+    teacherId,
+    encryptedRefreshToken: 'sealed-1',
+    connectedAt: new Date('2026-09-01T12:00:00Z'),
+  }),
   ...overrides,
 });

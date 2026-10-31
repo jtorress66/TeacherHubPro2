@@ -1,5 +1,8 @@
 import type { Kysely } from 'kysely';
 import type {
+  AttachmentRepository,
+  ClassroomConnectionRepository,
+  StudentLinkRepository,
   AiGenerationRepository,
   PresentationRepository,
   SubPacketRepository,
@@ -31,6 +34,11 @@ import { PostgresGradeRepository } from './repositories/postgres-grade-repositor
 import { PostgresLessonPlanRepository } from './repositories/postgres-lesson-plan-repository.ts';
 import { PostgresPlanFolderRepository } from './repositories/postgres-plan-folder-repository.ts';
 import { PostgresPlanTemplateRepository } from './repositories/postgres-plan-template-repository.ts';
+import {
+  PostgresAttachmentRepository,
+  PostgresClassroomConnectionRepository,
+  PostgresStudentLinkRepository,
+} from './repositories/postgres-assignment-repositories.ts';
 import {
   PostgresAiGenerationRepository,
   PostgresPresentationRepository,
@@ -65,6 +73,9 @@ export interface PostgresRepositories {
   readonly generations: AiGenerationRepository;
   readonly presentations: PresentationRepository;
   readonly subPackets: SubPacketRepository;
+  readonly attachments: AttachmentRepository;
+  readonly studentLinks: StudentLinkRepository;
+  readonly classroomConnections: ClassroomConnectionRepository;
   readonly gradeCategories: GradeCategoryRepository;
   readonly assignments: AssignmentRepository;
   readonly grades: GradeRepository;
@@ -91,6 +102,9 @@ export function createPostgresRepositories(db: Kysely<Database>): PostgresReposi
     generations: new PostgresAiGenerationRepository(db),
     presentations: new PostgresPresentationRepository(db),
     subPackets: new PostgresSubPacketRepository(db),
+    attachments: new PostgresAttachmentRepository(db),
+    studentLinks: new PostgresStudentLinkRepository(db),
+    classroomConnections: new PostgresClassroomConnectionRepository(db),
     gradeCategories: new PostgresGradeCategoryRepository(db),
     assignments: new PostgresAssignmentRepository(db),
     grades: new PostgresGradeRepository(db),

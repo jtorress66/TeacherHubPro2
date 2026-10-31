@@ -28,10 +28,12 @@ describe('migrations', () => {
   it('creates every table', async () => {
     expect(await tableNames()).toEqual([
       'ai_generations',
+      'assignment_attachments',
       'assignments',
       'attendance_entries',
       'attendance_sessions',
       'classes',
+      'classroom_connections',
       'games',
       'grade_categories',
       'grades',
@@ -46,6 +48,7 @@ describe('migrations', () => {
       'semesters',
       'sessions',
       'stored_files',
+      'student_links',
       'students',
       'sub_packets',
       'submissions',
@@ -59,6 +62,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0008_assignments',
           '0007_assistant',
           '0006_lesson_planner',
           '0005_gradebook',
@@ -82,10 +86,11 @@ describe('migrations', () => {
           '0005_gradebook',
           '0006_lesson_planner',
           '0007_assistant',
+          '0008_assignments',
         ],
       },
     });
-    expect(await tableNames()).toHaveLength(24);
+    expect(await tableNames()).toHaveLength(27);
   });
 
   it('turns plans saved before step 8 into valid plans of their kind', async () => {

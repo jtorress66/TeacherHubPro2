@@ -50,6 +50,11 @@ describe('planErrors', () => {
 });
 
 describe('draftFailureMessage', () => {
+  it('explains a PDF without text or one that cannot be opened', () => {
+    expect(draftFailureMessage('pdf_no_text', 'en')).toMatch(/no text to read/);
+    expect(draftFailureMessage('pdf_unreadable', 'es')).toMatch(/No se pudo abrir este PDF/);
+  });
+
   it('explains each failure and treats anything else as a general failure', () => {
     expect(draftFailureMessage('timed_out', 'en')).toBe(
       'Drafting took too long. Please try again.',

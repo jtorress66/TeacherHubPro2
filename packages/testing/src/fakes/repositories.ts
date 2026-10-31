@@ -1,4 +1,7 @@
 import type {
+  Attachment,
+  ClassroomConnection,
+  StudentLink,
   AiGeneration,
   GenerationSummary,
   Presentation,
@@ -34,6 +37,9 @@ import type {
 } from '@thp/domain';
 import { compareDates, generationSummary, inRange, presentationSummary } from '@thp/domain';
 import type {
+  AttachmentRepository,
+  ClassroomConnectionRepository,
+  StudentLinkRepository,
   AiGenerationRepository,
   PresentationRepository,
   SubPacketRepository,
@@ -341,6 +347,31 @@ export class InMemorySubmissionRepository
   listByAssignment(schoolId: SchoolId, assignmentId: AssignmentId): Promise<readonly Submission[]> {
     return this.listWhere(schoolId, (submission) => submission.assignmentId === assignmentId);
   }
+
+  findFor(
+    schoolId: SchoolId,
+    studentId: StudentId,
+    assignmentId: AssignmentId,
+  ): Promise<Submission | null> {
+    return this.findWhere(
+      (row) =>
+        row.schoolId === schoolId &&
+        row.studentId === studentId &&
+        row.assignmentId === assignmentId,
+    );
+  }
+
+  /** One submission per student and assignment, as the database enforces. */
+  override save(submission: Submission): Promise<void> {
+    const taken = [...this.rows.values()].some(
+      (row) =>
+        row.id !== submission.id &&
+        row.schoolId === submission.schoolId &&
+        row.studentId === submission.studentId &&
+        row.assignmentId === submission.assignmentId,
+    );
+    return taken ? Promise.reject(new Error('duplicate submission')) : super.save(submission);
+  }
 }
 
 export class InMemoryAttendanceSessionRepository
@@ -434,6 +465,47 @@ export class InMemorySubPacketRepository implements SubPacketRepository {
 
   save(packet: SubPacket): Promise<void> {
     this.rows.set(packet.classId, packet);
+    return Promise.resolve();
+  }
+}
+
+export class InMemoryAttachmentRepository
+  extends InMemoryScopedRepository<Attachment>
+  implements AttachmentRepository
+{
+  listByAssignment(schoolId: SchoolId, assignmentId: AssignmentId): Promise<readonly Attachment[]> {
+    return this.listWhere(schoolId, (row) => row.assignmentId === assignmentId);
+  }
+}
+
+export class InMemoryStudentLinkRepository
+  extends InMemoryScopedRepository<StudentLink>
+  implements StudentLinkRepository
+{
+  findByTokenHash(tokenHash: string): Promise<StudentLink | null> {
+    return this.findWhere((row) => row.tokenHash === tokenHash);
+  }
+
+  listByClass(schoolId: SchoolId, classId: ClassId): Promise<readonly StudentLink[]> {
+    return this.listWhere(schoolId, (row) => row.classId === classId);
+  }
+}
+
+export class InMemoryClassroomConnectionRepository implements ClassroomConnectionRepository {
+  private readonly rows = new Map<UserId, ClassroomConnection>();
+
+  find(schoolId: SchoolId, teacherId: UserId): Promise<ClassroomConnection | null> {
+    const row = this.rows.get(teacherId);
+    return Promise.resolve(row?.schoolId === schoolId ? row : null);
+  }
+
+  save(connection: ClassroomConnection): Promise<void> {
+    this.rows.set(connection.teacherId, connection);
+    return Promise.resolve();
+  }
+
+  delete(schoolId: SchoolId, teacherId: UserId): Promise<void> {
+    if (this.rows.get(teacherId)?.schoolId === schoolId) this.rows.delete(teacherId);
     return Promise.resolve();
   }
 }

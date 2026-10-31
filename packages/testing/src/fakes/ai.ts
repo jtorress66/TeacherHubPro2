@@ -1,7 +1,11 @@
 import {
   err,
   ok,
+  type AiScores,
   type ContentRequest,
+  type ExtractedTest,
+  type GradingRequest,
+  type Language,
   type DraftRequest,
   type LessonPlanDraft,
   type PresentationDraft,
@@ -9,6 +13,8 @@ import {
   type Result,
 } from '@thp/domain';
 import type {
+  QuestionExtractor,
+  SubmissionGrader,
   ContentWriter,
   PresentationDrafter,
   DraftError,
@@ -125,3 +131,42 @@ export const aPresentationDraft = (
   ],
   ...overrides,
 });
+
+/** A scripted question extractor: returns the given test (or error) and records each input. */
+export class FakeQuestionExtractor implements QuestionExtractor {
+  readonly inputs: { readonly text: string; readonly language: Language }[] = [];
+
+  constructor(private readonly outcome: Result<ExtractedTest, DraftError>) {}
+
+  extract(input: { readonly text: string; readonly language: Language }) {
+    this.inputs.push(input);
+    return Promise.resolve(this.outcome);
+  }
+}
+
+/**
+ * A grader that gives every open answer the same share of its points (or fails), and records
+ * each request so tests can check what the AI would be sent.
+ */
+export class FakeSubmissionGrader implements SubmissionGrader {
+  readonly requests: GradingRequest[] = [];
+
+  constructor(private readonly share: number | DraftError['code'] = 0.5) {}
+
+  grade(request: GradingRequest): Promise<Result<AiScores, DraftError>> {
+    this.requests.push(request);
+    const share = this.share;
+    if (typeof share !== 'number') return Promise.resolve(err({ code: share }));
+    return Promise.resolve(
+      ok({
+        scores: Object.fromEntries(
+          request.questions.map((q) => [
+            q.id,
+            { score: q.points * share, feedback: 'Good effort' },
+          ]),
+        ),
+        feedback: 'Keep going',
+      }),
+    );
+  }
+}

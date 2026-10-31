@@ -1,8 +1,15 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import type { ContentMetric, PlanMetric, PresentationMetric } from '@thp/agents';
+import type {
+  ContentMetric,
+  ExtractorMetric,
+  GraderMetric,
+  PlanMetric,
+  PresentationMetric,
+} from '@thp/agents';
 import { assistantCases, runAssistantEvals } from './assistant-evals.ts';
 import { formatReport } from './eval-report.ts';
+import { extractorCases, graderCases, runExtractorEvals, runGraderEvals } from './grading-evals.ts';
 import { plannerCases, runPlannerEvals } from './planner-evals.ts';
 import { presentationCases, runPresentationEvals } from './presentation-evals.ts';
 import { loadReplays, ReplayLlmClient } from './replay-llm-client.ts';
@@ -17,6 +24,8 @@ const thresholds = JSON.parse(
   'lesson-planner': Record<PlanMetric, number>;
   assistant: Record<ContentMetric, number>;
   presentations: Record<PresentationMetric, number>;
+  'question-extractor': Record<ExtractorMetric, number>;
+  grader: Record<GraderMetric, number>;
 };
 
 const replay = (suite: string) => new ReplayLlmClient(loadReplays(suite));
@@ -36,6 +45,21 @@ describe('replay evals (saved replies, no API calls)', () => {
 
   it('the AI assistant meets its thresholds', async () => {
     const report = await runAssistantEvals(replay('assistant'), thresholds.assistant);
+    expect(report.failing, formatReport(report)).toEqual([]);
+  });
+
+  it('the question extractor and the grader have a saved reply for every case', () => {
+    expect(Object.keys(loadReplays('extractor'))).toHaveLength(extractorCases.length);
+    expect(Object.keys(loadReplays('grader'))).toHaveLength(graderCases.length);
+  });
+
+  it('the question extractor meets its thresholds', async () => {
+    const report = await runExtractorEvals(replay('extractor'), thresholds['question-extractor']);
+    expect(report.failing, formatReport(report)).toEqual([]);
+  });
+
+  it('the grader meets its thresholds', async () => {
+    const report = await runGraderEvals(replay('grader'), thresholds.grader);
     expect(report.failing, formatReport(report)).toEqual([]);
   });
 

@@ -55,6 +55,7 @@ export const assignmentMapper: RowMapper<Assignment, AssignmentsTable> = {
     title: assignment.title,
     points: assignment.points,
     due_date: assignment.dueDate,
+    instructions: assignment.instructions,
     questions: toJson(assignment.questions),
   }),
   fromRow: (row) => ({
@@ -65,6 +66,7 @@ export const assignmentMapper: RowMapper<Assignment, AssignmentsTable> = {
     title: row.title,
     points: row.points,
     dueDate: row.due_date === null ? null : localDate(row.due_date, 'assignments.due_date'),
+    instructions: row.instructions,
     questions: readJson(row.questions) as readonly Question[],
   }),
 };
@@ -108,6 +110,8 @@ export const submissionMapper: RowMapper<Submission, SubmissionsTable> = {
     ai_failure: submission.aiFailure,
     final_score: submission.finalScore,
     confirmed_by: submission.confirmedBy,
+    late: submission.late,
+    question_scores: toJson(submission.questionScores),
   }),
   fromRow: (row) => ({
     id: row.id as SubmissionId,
@@ -122,6 +126,8 @@ export const submissionMapper: RowMapper<Submission, SubmissionsTable> = {
     aiFailure: row.ai_failure,
     finalScore: row.final_score,
     confirmedBy: row.confirmed_by as UserId | null,
+    late: row.late,
+    questionScores: readJson(row.question_scores) as Submission['questionScores'],
   }),
 };
 

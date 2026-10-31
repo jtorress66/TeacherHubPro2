@@ -1,4 +1,10 @@
+import { createHash } from 'node:crypto';
 import {
+  AesGcmCipher,
+  GoogleClassroom,
+  GoogleClassroomAuthorization,
+  LocalClassroom,
+  LocalClassroomAuthorization,
   createDatabase,
   createPostgresRepositories,
   createStripeClient,
@@ -20,6 +26,32 @@ import {
   UuidIdGenerator,
 } from '@thp/adapters';
 import {
+  SaveQuestions,
+  SaveInstructions,
+  UploadAttachment,
+  DeleteAttachment,
+  ListAttachments,
+  GetAttachmentFile,
+  RequestPdfImport,
+  GetImportedTest,
+  IssueLinks,
+  ListLinks,
+  RevokeLink,
+  ReissueLink,
+  OpenStudentLink,
+  GetStudentAssignment,
+  SubmitAnswers,
+  GetStudentAttachment,
+  ListSubmissions,
+  RequestAiGrading,
+  ConfirmGrade,
+  GradeByHand,
+  StartClassroomConnect,
+  FinishClassroomConnect,
+  DisconnectClassroom,
+  ListClassroomCourses,
+  ImportClassroomRoster,
+  ShareAssignment,
   CreatePresentation,
   DeleteGeneration,
   DeletePresentation,
@@ -117,6 +149,7 @@ import type {
 import {
   parseWebConfig,
   type BillingConfig,
+  type ClassroomConfig,
   type GoogleConfig,
   type WebConfig,
 } from './server/config.ts';
@@ -136,6 +169,32 @@ export interface AppContainer {
   readonly updatePresentation: UpdatePresentation;
   readonly deletePresentation: DeletePresentation;
   readonly requestSpeech: RequestSpeech;
+  readonly saveQuestions: SaveQuestions;
+  readonly saveInstructions: SaveInstructions;
+  readonly uploadAttachment: UploadAttachment;
+  readonly deleteAttachment: DeleteAttachment;
+  readonly listAttachments: ListAttachments;
+  readonly getAttachmentFile: GetAttachmentFile;
+  readonly requestPdfImport: RequestPdfImport;
+  readonly getImportedTest: GetImportedTest;
+  readonly issueLinks: IssueLinks;
+  readonly listLinks: ListLinks;
+  readonly revokeLink: RevokeLink;
+  readonly reissueLink: ReissueLink;
+  readonly openStudentLink: OpenStudentLink;
+  readonly getStudentAssignment: GetStudentAssignment;
+  readonly submitAnswers: SubmitAnswers;
+  readonly getStudentAttachment: GetStudentAttachment;
+  readonly listSubmissions: ListSubmissions;
+  readonly requestAiGrading: RequestAiGrading;
+  readonly confirmGrade: ConfirmGrade;
+  readonly gradeByHand: GradeByHand;
+  readonly startClassroomConnect: StartClassroomConnect;
+  readonly finishClassroomConnect: FinishClassroomConnect;
+  readonly disconnectClassroom: DisconnectClassroom;
+  readonly listClassroomCourses: ListClassroomCourses;
+  readonly importClassroomRoster: ImportClassroomRoster;
+  readonly shareAssignment: ShareAssignment;
   readonly getSpeechClip: GetSpeechClip;
   readonly getSubPacket: GetSubPacket;
   readonly saveSubPacket: SaveSubPacket;
@@ -229,6 +288,34 @@ interface Billing {
   readonly localCheckout: LocalCheckoutSimulator | null;
 }
 
+/**
+ * Google Classroom, or its stand-in for development and tests. The stand-in's tokens are fake, so
+ * they are sealed with a fixed key (the same in every server instance); production refuses it.
+ */
+function classroomFor(config: ClassroomConfig) {
+  if (config.provider === 'local') {
+    const classroom = new LocalClassroom();
+    return {
+      cipher: new AesGcmCipher(
+        createHash('sha256').update('teacherhubpro-local-classroom').digest('base64'),
+      ),
+      classroomAuth: new LocalClassroomAuthorization(),
+      classroomCourses: classroom,
+      classroomCoursework: classroom,
+    };
+  }
+  const classroom = new GoogleClassroom();
+  return {
+    cipher: new AesGcmCipher(config.encryptionKey),
+    classroomAuth: new GoogleClassroomAuthorization({
+      clientId: config.clientId,
+      clientSecret: config.clientSecret,
+    }),
+    classroomCourses: classroom,
+    classroomCoursework: classroom,
+  };
+}
+
 function billingFor(config: BillingConfig, appUrl: string): Billing {
   if (config.provider === 'local') {
     return {
@@ -274,6 +361,7 @@ export function createAppContainer(
     ...createPostgresRepositories(db),
     ...billing,
     google: identity.google,
+    ...classroomFor(config.classroom),
     clock: new SystemClock(),
     ids: new UuidIdGenerator(),
     tokens: new NodeRandomTokenGenerator(),
@@ -297,6 +385,32 @@ export function createAppContainer(
     updatePresentation: new UpdatePresentation(deps),
     deletePresentation: new DeletePresentation(deps),
     requestSpeech: new RequestSpeech({ ...deps, voice: config.voice }),
+    saveQuestions: new SaveQuestions(deps),
+    saveInstructions: new SaveInstructions(deps),
+    uploadAttachment: new UploadAttachment(deps),
+    deleteAttachment: new DeleteAttachment(deps),
+    listAttachments: new ListAttachments(deps),
+    getAttachmentFile: new GetAttachmentFile(deps),
+    requestPdfImport: new RequestPdfImport(deps),
+    getImportedTest: new GetImportedTest(deps),
+    issueLinks: new IssueLinks(deps),
+    listLinks: new ListLinks(deps),
+    revokeLink: new RevokeLink(deps),
+    reissueLink: new ReissueLink(deps),
+    openStudentLink: new OpenStudentLink(deps),
+    getStudentAssignment: new GetStudentAssignment(deps),
+    submitAnswers: new SubmitAnswers(deps),
+    getStudentAttachment: new GetStudentAttachment(deps),
+    listSubmissions: new ListSubmissions(deps),
+    requestAiGrading: new RequestAiGrading(deps),
+    confirmGrade: new ConfirmGrade(deps),
+    gradeByHand: new GradeByHand(deps),
+    startClassroomConnect: new StartClassroomConnect(deps),
+    finishClassroomConnect: new FinishClassroomConnect(deps),
+    disconnectClassroom: new DisconnectClassroom(deps),
+    listClassroomCourses: new ListClassroomCourses(deps),
+    importClassroomRoster: new ImportClassroomRoster(deps),
+    shareAssignment: new ShareAssignment(deps),
     getSpeechClip: new GetSpeechClip(deps),
     getSubPacket: new GetSubPacket(deps),
     saveSubPacket: new SaveSubPacket(deps),

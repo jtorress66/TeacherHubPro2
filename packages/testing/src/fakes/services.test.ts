@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import type { Email } from '@thp/domain';
 import { fileStoreContract, pdfTextExtractorContract } from '../contracts/files.contract.ts';
-import { classroomContract, googleIdentityContract } from '../contracts/google.contract.ts';
+import {
+  classroomAuthorizationContract,
+  classroomContract,
+  googleIdentityContract,
+} from '../contracts/google.contract.ts';
 import { jobQueueContract } from '../contracts/job-queue.contract.ts';
 import { reportCardRendererContract } from '../contracts/gradebook.contract.ts';
 import { FakeReportCardRenderer } from './documents.ts';
@@ -9,6 +13,7 @@ import {
   passwordHasherContract,
   randomTokenGeneratorContract,
   tokenHasherContract,
+  secretCipherContract,
 } from '../contracts/security.contract.ts';
 import {
   billingEventsContract,
@@ -21,11 +26,16 @@ import { FixedClock } from '../fixed-clock.ts';
 import { SequentialIdGenerator } from '../sequential-id-generator.ts';
 import { FakeBillingEvents, FakeCheckoutSessions } from './billing.ts';
 import { InMemoryFileStore, FakePdfTextExtractor } from './files.ts';
-import { FakeClassroom, FakeGoogleIdentity } from './google.ts';
+import { FakeClassroom, FakeClassroomAuthorization, FakeGoogleIdentity } from './google.ts';
 import { InMemoryJobQueue } from './job-queue.ts';
 import { FakeLlmClient, FakeTextToSpeech } from './ai.ts';
 import { FakeMailer } from './mailer.ts';
-import { FakePasswordHasher, FakeTokenHasher, SequentialTokenGenerator } from './security.ts';
+import {
+  FakePasswordHasher,
+  FakeSecretCipher,
+  FakeTokenHasher,
+  SequentialTokenGenerator,
+} from './security.ts';
 
 llmClientContract('FakeLlmClient', {
   replying: (text) => new FakeLlmClient().replyWith(text),
@@ -201,3 +211,10 @@ describe('FakeClassroom', () => {
 });
 
 reportCardRendererContract('FakeReportCardRenderer', () => new FakeReportCardRenderer());
+
+secretCipherContract('FakeSecretCipher', () => new FakeSecretCipher());
+
+classroomAuthorizationContract('FakeClassroomAuthorization', () => ({
+  authorization: new FakeClassroomAuthorization(),
+  code: 'classroom-code',
+}));

@@ -12,3 +12,15 @@ export {
 export { reviewSlides } from './presentation-writer/slides-review.ts';
 export * from './presentation-writer/presentation-scorecard.ts';
 export { averageOf, failingMetrics, type Scores } from './drafting/scores.ts';
+export {
+  QuestionExtractor,
+  extractorSystemPrompt,
+  reviewExtraction,
+} from './question-extractor/question-extractor.ts';
+export * from './question-extractor/extractor-scorecard.ts';
+export {
+  SubmissionGrader,
+  graderSystemPrompt,
+  reviewScores,
+} from './submission-grader/submission-grader.ts';
+export * from './submission-grader/grader-scorecard.ts';
