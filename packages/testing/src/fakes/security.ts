@@ -1,5 +1,12 @@
 import { createHash } from 'node:crypto';
-import type { PasswordHasher, RandomTokenGenerator, TokenHasher } from '@thp/ports';
+import { err, ok, type Result } from '@thp/domain';
+import type {
+  PasswordHasher,
+  RandomTokenGenerator,
+  SecretCipher,
+  SecretCipherError,
+  TokenHasher,
+} from '@thp/ports';
 
 /**
  * Fast, readable password "hashing" for tests: `fake$<salt>$<sha256>`.
@@ -43,4 +50,23 @@ export class SequentialTokenGenerator implements RandomTokenGenerator {
 
 function digest(value: string): string {
   return createHash('sha256').update(value).digest('hex');
+}
+
+/** Readable "encryption" for tests: base64 with a counter and a check, so each seal differs. */
+export class FakeSecretCipher implements SecretCipher {
+  private count = 0;
+
+  encrypt(plain: string): Promise<string> {
+    this.count += 1;
+    const body = Buffer.from(plain, 'utf8').toString('base64');
+    return Promise.resolve(`fake.${String(this.count)}.${body}.${digest(body).slice(0, 8)}`);
+  }
+
+  decrypt(sealed: string): Promise<Result<string, SecretCipherError>> {
+    const [scheme, , body, check] = sealed.split('.');
+    if (scheme !== 'fake' || body === undefined || check !== digest(body).slice(0, 8)) {
+      return Promise.resolve(err({ code: 'invalid' }));
+    }
+    return Promise.resolve(ok(Buffer.from(body, 'base64').toString('utf8')));
+  }
 }

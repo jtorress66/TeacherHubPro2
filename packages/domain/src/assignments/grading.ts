@@ -10,7 +10,9 @@ import {
   type Submission,
   type SubmissionError,
 } from '../submissions/submission.ts';
+import type { Language } from '../shared/language.ts';
 import { autoScore, isOpenQuestion, parseAnswer } from './answers.ts';
+import { leniencyFor, type Leniency } from './leniency.ts';
 
 export interface StudentAnswers {
   readonly id: SubmissionId;
@@ -108,4 +110,47 @@ export function recordAiScores(
     scores[question.id] = { score: suggestion.score, feedback: suggestion.feedback, source: 'ai' };
   }
   return draftIfComplete(assignment, { ...submission, questionScores: scores }, ai.feedback);
+}
+
+/** One open answer for the AI to judge: the question, its guide and the answer, nothing else. */
+export interface AnswerToGrade {
+  readonly id: QuestionId;
+  readonly type: 'short_answer' | 'essay';
+  readonly prompt: string;
+  readonly points: number;
+  /** The model answer or rubric, when the teacher wrote one. */
+  readonly guide: string | null;
+  readonly answer: string;
+}
+
+/** What the grader is sent: no names, ids or other student data. */
+export interface GradingRequest {
+  readonly language: Language;
+  readonly leniency: Leniency;
+  readonly questions: readonly AnswerToGrade[];
+}
+
+const guideOf = (question: Question): string | null => {
+  if (question.type === 'short_answer') return question.modelAnswer;
+  if (question.type === 'essay') return question.rubric;
+  return null;
+};
+
+export function gradingRequest(
+  assignment: Assignment,
+  submission: Submission,
+  context: { readonly grade: string | null; readonly language: Language },
+): GradingRequest {
+  return {
+    language: context.language,
+    leniency: leniencyFor(context.grade),
+    questions: pendingOpenQuestions(assignment, submission).map((question) => ({
+      id: question.id,
+      type: question.type as AnswerToGrade['type'],
+      prompt: question.prompt,
+      points: question.points,
+      guide: guideOf(question),
+      answer: submission.answers[question.id] ?? '',
+    })),
+  };
 }

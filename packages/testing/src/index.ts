@@ -28,3 +28,4 @@ export * from './contracts/job-queue.contract.ts';
 export * from './contracts/gradebook.contract.ts';
 export * from './contracts/planner.contract.ts';
 export * from './contracts/assistant.contract.ts';
+export * from './contracts/assignments.contract.ts';

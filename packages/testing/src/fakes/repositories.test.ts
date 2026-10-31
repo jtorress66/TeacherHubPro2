@@ -35,6 +35,7 @@ import {
 } from '../contracts/gradebook.contract.ts';
 import { plannerRepositoryContract } from '../contracts/planner.contract.ts';
 import { assistantRepositoryContract } from '../contracts/assistant.contract.ts';
+import { assignmentRepositoryContract } from '../contracts/assignments.contract.ts';
 import {
   aClass,
   aGame,
@@ -61,6 +62,9 @@ import {
   InMemoryAiGenerationRepository,
   InMemoryPresentationRepository,
   InMemorySubPacketRepository,
+  InMemoryAttachmentRepository,
+  InMemoryStudentLinkRepository,
+  InMemoryClassroomConnectionRepository,
   InMemoryReportCardCommentRepository,
   InMemorySchoolRepository,
   InMemorySemesterRepository,
@@ -241,3 +245,10 @@ subscriptionLookupContract(
 classRepositoryContract('InMemoryClassRepository', () => new InMemoryClassRepository());
 studentRepositoryContract('InMemoryStudentRepository', () => new InMemoryStudentRepository());
 semesterRepositoryContract('InMemorySemesterRepository', () => new InMemorySemesterRepository());
+
+assignmentRepositoryContract('InMemory', () => ({
+  submissions: new InMemorySubmissionRepository(),
+  attachments: new InMemoryAttachmentRepository(),
+  studentLinks: new InMemoryStudentLinkRepository(),
+  classroomConnections: new InMemoryClassroomConnectionRepository(),
+}));

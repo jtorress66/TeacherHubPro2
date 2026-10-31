@@ -1,4 +1,7 @@
 import type {
+  Attachment,
+  ClassroomConnection,
+  StudentLink,
   AiGeneration,
   GenerationSummary,
   PresentationSummary,
@@ -134,6 +137,28 @@ export interface GradeRepository extends ScopedRepository<Grade> {
 
 export interface SubmissionRepository extends ScopedRepository<Submission> {
   listByAssignment(schoolId: SchoolId, assignmentId: AssignmentId): Promise<readonly Submission[]>;
+  /** A student's one submission for an assignment, if any. */
+  findFor(
+    schoolId: SchoolId,
+    studentId: StudentId,
+    assignmentId: AssignmentId,
+  ): Promise<Submission | null>;
+}
+
+export interface AttachmentRepository extends ScopedRepository<Attachment>, Deletable<Attachment> {
+  listByAssignment(schoolId: SchoolId, assignmentId: AssignmentId): Promise<readonly Attachment[]>;
+}
+
+export interface StudentLinkRepository extends ScopedRepository<StudentLink> {
+  /** The link behind a presented token (hashed); the school is not known until it is found. */
+  findByTokenHash(tokenHash: string): Promise<StudentLink | null>;
+  listByClass(schoolId: SchoolId, classId: ClassId): Promise<readonly StudentLink[]>;
+}
+
+export interface ClassroomConnectionRepository {
+  find(schoolId: SchoolId, teacherId: UserId): Promise<ClassroomConnection | null>;
+  save(connection: ClassroomConnection): Promise<void>;
+  delete(schoolId: SchoolId, teacherId: UserId): Promise<void>;
 }
 
 export interface AttendanceSessionRepository extends ScopedRepository<AttendanceSession> {

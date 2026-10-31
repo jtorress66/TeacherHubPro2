@@ -15,7 +15,7 @@ export async function up(db: Kysely<unknown>): Promise<void> {
   await db.schema
     .createIndex('submissions_assignment_id_student_id_key')
     .on('submissions')
-    .columns(['assignment_id', 'student_id'])
+    .columns(['school_id', 'assignment_id', 'student_id'])
     .unique()
     .execute();
 

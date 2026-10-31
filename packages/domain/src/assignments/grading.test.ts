@@ -10,7 +10,7 @@ import type {
   StudentId,
   SubmissionId,
 } from '../shared/ids.ts';
-import { pendingOpenQuestions, recordAiScores, submitAnswers } from './grading.ts';
+import { gradingRequest, pendingOpenQuestions, recordAiScores, submitAnswers } from './grading.ts';
 import type { ExtractedQuestionInput } from './extracted-test.ts';
 
 const q = (id: string, input: ExtractedQuestionInput): Question => {
@@ -112,6 +112,47 @@ describe('submitAnswers', () => {
       ok: false,
       error: { field: 'questions', code: 'required' },
     });
+  });
+});
+
+describe('gradingRequest', () => {
+  it('holds only the open answers to judge, with the grade’s leniency and the language', () => {
+    const assignment = assignmentWith([mc, short, essay]);
+    const submitted = submit(assignment, { q1: '1', q3: 'Because', q4: 'An essay' });
+    if (!submitted.ok) throw new Error('refused');
+
+    const request = gradingRequest(assignment, submitted.value, { grade: '3', language: 'es' });
+
+    expect(request).toEqual({
+      language: 'es',
+      leniency: { leniency: 'high', focus: 'comprehension', spellingMatters: false },
+      questions: [
+        {
+          id: 'q3',
+          type: 'short_answer',
+          prompt: 'Why?',
+          points: 5,
+          guide: null,
+          answer: 'Because',
+        },
+        { id: 'q4', type: 'essay', prompt: 'Write', points: 10, guide: null, answer: 'An essay' },
+      ],
+    });
+    expect(JSON.stringify(request)).not.toContain('student-1');
+  });
+
+  it('passes the model answer or rubric as the guide', () => {
+    const withGuides = assignmentWith([
+      q('q3', { type: 'short_answer', prompt: 'Why?', modelAnswer: 'Rain' }),
+      q('q4', { type: 'essay', prompt: 'Write', rubric: 'Clear ideas' }),
+    ]);
+    const submitted = submit(withGuides, { q3: 'Sun', q4: 'Text' });
+    if (!submitted.ok) throw new Error('refused');
+    expect(
+      gradingRequest(withGuides, submitted.value, { grade: null, language: 'en' }).questions.map(
+        (question) => question.guide,
+      ),
+    ).toEqual(['Rain', 'Clear ideas']);
   });
 });
 

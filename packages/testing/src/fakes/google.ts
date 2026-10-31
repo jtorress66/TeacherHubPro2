@@ -2,6 +2,7 @@ import { err, ok, type Result } from '@thp/domain';
 import type {
   ClassroomCourse,
   ClassroomCourses,
+  ClassroomAuthorization,
   ClassroomCoursework,
   ClassroomError,
   ClassroomStudent,
@@ -72,5 +73,38 @@ export class FakeClassroom implements ClassroomCourses, ClassroomCoursework {
   private access(accessToken: string, courseId: string): Result<true, ClassroomError> {
     if (!this.authorized(accessToken)) return err({ code: 'unauthorized' });
     return courseId === this.setup.course.id ? ok(true) : err({ code: 'not_found' });
+  }
+}
+
+/** Accepts one code; its refresh token yields the given access token. */
+export class FakeClassroomAuthorization implements ClassroomAuthorization {
+  constructor(
+    private readonly setup: { readonly code: string; readonly accessToken: string } = {
+      code: 'classroom-code',
+      accessToken: 'classroom-access',
+    },
+  ) {}
+
+  authorizationUrl(state: string, redirectUri: string): string {
+    const url = new URL('https://accounts.test/classroom');
+    url.searchParams.set('state', state);
+    url.searchParams.set('redirect_uri', redirectUri);
+    return url.toString();
+  }
+
+  exchangeCode(code: string): Promise<Result<{ readonly refreshToken: string }, ClassroomError>> {
+    return Promise.resolve(
+      code === this.setup.code
+        ? ok({ refreshToken: `refresh-for-${code}` })
+        : err({ code: 'unauthorized' }),
+    );
+  }
+
+  accessToken(refreshToken: string): Promise<Result<string, ClassroomError>> {
+    return Promise.resolve(
+      refreshToken === `refresh-for-${this.setup.code}`
+        ? ok(this.setup.accessToken)
+        : err({ code: 'unauthorized' }),
+    );
   }
 }
