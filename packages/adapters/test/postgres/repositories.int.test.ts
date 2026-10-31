@@ -36,6 +36,7 @@ import {
   jobQueueContract,
   plannerRepositoryContract,
   assistantRepositoryContract,
+  assignmentRepositoryContract,
   SequentialIdGenerator,
   gradeRepositoryContract,
   reportCardCommentContract,
@@ -72,6 +73,15 @@ withParents(parentsFor.assistant, () => {
     generations: repos.generations,
     presentations: repos.presentations,
     subPackets: repos.subPackets,
+  }));
+});
+
+withParents(parentsFor.grading, () => {
+  assignmentRepositoryContract('Postgres', () => ({
+    submissions: repos.submissions,
+    attachments: repos.attachments,
+    studentLinks: repos.studentLinks,
+    classroomConnections: repos.classroomConnections,
   }));
 });
 
