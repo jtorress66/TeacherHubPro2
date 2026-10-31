@@ -53,6 +53,13 @@ describe('scoreExtraction', () => {
     ).toEqual({ structure: 1, questionCount: 0, types: 0.5, instructions: 0 });
   });
 
+  it('passes a case that expects nothing in particular', () => {
+    expect(scoreExtraction({ types: [], instructionsContain: null }, test)).toMatchObject({
+      types: 1,
+      instructions: 1,
+    });
+  });
+
   it('scores a missing result as failing', () => {
     expect(scoreExtraction(expected, null)).toEqual({
       structure: 0,
@@ -95,5 +102,9 @@ describe('scoreGrading', () => {
     };
     expect(scoreGrading(request, bands, scores)).toMatchObject({ band: 0 });
     expect(scoreGrading(request, bands, null)).toEqual({ structure: 0, band: 0, language: 0 });
+    expect(scoreGrading(request, {}, scores)).toMatchObject({ band: 0 });
+    expect(
+      scoreGrading({ language: 'en', questions: [] }, bands, { scores: {}, feedback: 'The work.' }),
+    ).toMatchObject({ band: 1 });
   });
 });

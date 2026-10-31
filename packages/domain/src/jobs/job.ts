@@ -27,6 +27,8 @@ export const jobFailures = [
   'invalid_output',
   'unknown_kind',
   'failed',
+  'pdf_no_text',
+  'pdf_unreadable',
 ] as const;
 
 export type JobFailure = (typeof jobFailures)[number];

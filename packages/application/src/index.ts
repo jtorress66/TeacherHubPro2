@@ -201,3 +201,49 @@ export {
   type SpeechOutcome,
 } from './speech/speech.ts';
 export { GetSubPacket, SaveSubPacket, type SubPacketView } from './substitutes/sub-packets.ts';
+export { SaveQuestions, SaveInstructions } from './assignments/questions.ts';
+export {
+  UploadAttachment,
+  DeleteAttachment,
+  ListAttachments,
+  GetAttachmentFile,
+} from './assignments/attachments.ts';
+export {
+  RequestPdfImport,
+  PdfImportHandler,
+  GetImportedTest,
+  pdfImportJobKind,
+  type ImportedTest,
+} from './assignments/pdf-import.ts';
+export {
+  IssueLinks,
+  ListLinks,
+  RevokeLink,
+  ReissueLink,
+  type IssuedLink,
+} from './assignments/student-links.ts';
+export {
+  OpenStudentLink,
+  GetStudentAssignment,
+  SubmitAnswers,
+  GetStudentAttachment,
+  type StudentPortal,
+  type StudentAssignmentView,
+  type StudentAssignmentStatus,
+} from './assignments/student-portal.ts';
+export {
+  ListSubmissions,
+  RequestAiGrading,
+  GradingHandler,
+  ConfirmGrade,
+  GradeByHand,
+  gradingJobKind,
+} from './assignments/grading.ts';
+export {
+  StartClassroomConnect,
+  FinishClassroomConnect,
+  DisconnectClassroom,
+  ListClassroomCourses,
+  ImportClassroomRoster,
+  ShareAssignment,
+} from './assignments/classroom.ts';

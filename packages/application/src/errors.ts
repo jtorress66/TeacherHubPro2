@@ -1,4 +1,4 @@
-import { err, type Err, type ValidationError } from '@thp/domain';
+import { err, type Err, type SubmissionError, type ValidationError } from '@thp/domain';
 
 export type ApplicationErrorCode =
   | 'email_taken'
@@ -21,13 +21,23 @@ export type ApplicationErrorCode =
   | 'categories_exist'
   | 'category_in_use'
   | 'storage_unavailable'
-  | 'subscription_required';
+  | 'subscription_required'
+  | 'has_submissions'
+  | 'too_many_attachments'
+  | 'already_submitted'
+  | 'not_shareable'
+  | 'classroom_not_connected'
+  | 'classroom_failed';
 
 /**
  * What a use case can report: a broken validation rule (with its field) or an application-level
  * refusal. Codes only: the web app turns them into Spanish or English messages.
  */
 export type UseCaseError = ValidationError | { readonly code: ApplicationErrorCode };
+
+/** A submission rule broken: its field error, or a step out of order as a status error. */
+export const submissionFailure = (error: SubmissionError): Err<UseCaseError> =>
+  err('field' in error ? error : { field: 'status', code: 'not_allowed' });
 
 export const fail = (code: ApplicationErrorCode): Err<{ readonly code: ApplicationErrorCode }> =>
   err({ code });

@@ -103,3 +103,42 @@ describe('SubmissionGrader', () => {
     expect(Object.keys(graded.scores)).toEqual(['q3', 'q4']);
   });
 });
+
+describe('reviewScores', () => {
+  it('asks for shorter feedback when cut off, and needs a scores object', async () => {
+    const { reviewScores } = await import('./submission-grader.ts');
+    expect(reviewScores(request, { text: '{', stopReason: 'max_tokens' }).ok).toBe(false);
+    expect(reviewScores(request, { text: '{"scores": 3}', stopReason: 'end' })).toEqual({
+      ok: false,
+      error: 'Score every question: "q3" is missing.',
+    });
+    expect(
+      reviewScores(request, {
+        text: '{"scores": {"q3": {"score": "4"}, "q4": {"score": 1}}}',
+        stopReason: 'end',
+      }),
+    ).toEqual({ ok: false, error: 'The score for "q3" must be between 0 and 5.' });
+  });
+
+  it('keeps blank feedback as empty text', async () => {
+    const { reviewScores } = await import('./submission-grader.ts');
+    expect(
+      reviewScores(request, {
+        text: '{"scores": {"q3": {"score": 1}, "q4": {"score": 2}}}',
+        stopReason: 'end',
+      }),
+    ).toEqual({
+      ok: true,
+      value: {
+        scores: { q3: { score: 1, feedback: '' }, q4: { score: 2, feedback: '' } },
+        feedback: '',
+      },
+    });
+  });
+
+  it('tells the model that spelling counts from grade 4', async () => {
+    const llm = new FakeLlmClient().replyWith(reply());
+    await new SubmissionGrader(llm).grade({ ...request, leniency: leniencyFor('9') });
+    expect(llm.requests[0]?.messages[0]?.content).toContain('Spelling counts a little.');
+  });
+});

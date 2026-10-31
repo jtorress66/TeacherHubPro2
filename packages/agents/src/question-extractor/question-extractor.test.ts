@@ -117,3 +117,34 @@ describe('QuestionExtractor', () => {
     expect(llm.requests[1]?.messages[2]?.content).toContain('unknown question type "drawing"');
   });
 });
+
+describe('reviewExtraction', () => {
+  it('asks for a shorter reply when it was cut off, and ignores points that are not numbers', async () => {
+    const { reviewExtraction } = await import('./question-extractor.ts');
+    expect(reviewExtraction({ text: '{', stopReason: 'max_tokens' })).toEqual({
+      ok: false,
+      error: 'The reply was cut off before the end; keep the instructions shorter.',
+    });
+    const test = reviewExtraction({
+      text: JSON.stringify({
+        questions: [{ type: 'true_false', prompt: 'Sun is a star', answer: true, points: 'ten' }],
+      }),
+      stopReason: 'end',
+    });
+    expect(test.ok && test.value.questions[0]?.points).toBe(10);
+    expect(test.ok && test.value.instructions).toBeNull();
+  });
+
+  it('reports a matching pair with a blank side', async () => {
+    const { reviewExtraction } = await import('./question-extractor.ts');
+    const result = reviewExtraction({
+      text: JSON.stringify({
+        questions: [
+          { type: 'matching', prompt: 'Match', pairs: [{ left: 'a' }, { left: 'b', right: 'c' }] },
+        ],
+      }),
+      stopReason: 'end',
+    });
+    expect(result).toEqual({ ok: false, error: '"questions.0.pairs" breaks a rule (required).' });
+  });
+});

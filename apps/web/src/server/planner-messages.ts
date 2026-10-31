@@ -1,5 +1,5 @@
 import type { UseCaseError } from '@thp/application';
-import type { JobFailure, ValidationCode } from '@thp/domain';
+import { jobFailures, type JobFailure, type ValidationCode } from '@thp/domain';
 import { createTranslator, type Locale, type MessageKey } from '@thp/i18n';
 import { formErrors } from './error-messages.ts';
 import { planFieldName } from './plan-forms.ts';
@@ -24,15 +24,8 @@ export function planErrors(error: UseCaseError, locale: Locale): Record<string, 
     : formErrors({ ...error, field: name }, locale);
 }
 
-/** Why a draft job failed, in the teacher's language. */
+/** Why an AI job failed, in the teacher's language. */
 export const draftFailureMessage = (error: string | null, locale: Locale): string => {
-  const known: readonly JobFailure[] = [
-    'timed_out',
-    'ai_unavailable',
-    'invalid_output',
-    'unknown_kind',
-    'failed',
-  ];
-  const code = known.find((failure) => failure === error) ?? 'failed';
+  const code: JobFailure = jobFailures.find((failure) => failure === error) ?? 'failed';
   return createTranslator(locale)(`drafts.failed_${code}`);
 };

@@ -580,6 +580,9 @@ export const en = {
       'The AI’s draft was not usable. Please try again, perhaps with a more specific topic.',
     failed_unknown_kind: 'Something went wrong. Please try again.',
     failed_failed: 'Something went wrong. Please try again.',
+    failed_pdf_no_text:
+      'This PDF has no text to read (it may be a scan). Try a PDF exported from a document.',
+    failed_pdf_unreadable: 'This PDF could not be opened. Check that it is not password-protected.',
     tryAgain: 'Try again',
     open: 'Open the draft',
     subject_math: 'Mathematics',
@@ -747,6 +750,13 @@ export const en = {
     back: 'Back to the class',
   },
   errors: {
+    has_submissions:
+      'Students have already answered this assignment, so its questions can no longer change.',
+    too_many_attachments: 'An assignment can have at most 10 files.',
+    already_submitted: 'You have already handed in this assignment.',
+    not_shareable: 'Add questions or a file before sharing this assignment.',
+    classroom_not_connected: 'Connect Google Classroom in Settings first.',
+    classroom_failed: 'Google Classroom did not respond. Please try again.',
     subscription_required: 'Drafting with AI needs an active trial or plan.',
     required: 'This field is required.',
     invalid_format: 'Please check this value.',

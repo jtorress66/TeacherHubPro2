@@ -585,6 +585,9 @@ export const es: Messages = {
       'El borrador de la IA no se pudo usar. Inténtalo de nuevo, quizás con un tema más específico.',
     failed_unknown_kind: 'Algo salió mal. Inténtalo de nuevo.',
     failed_failed: 'Algo salió mal. Inténtalo de nuevo.',
+    failed_pdf_no_text:
+      'Este PDF no tiene texto para leer (puede ser un escaneo). Prueba con un PDF exportado de un documento.',
+    failed_pdf_unreadable: 'No se pudo abrir este PDF. Comprueba que no tenga contraseña.',
     tryAgain: 'Intentar de nuevo',
     open: 'Abrir el borrador',
     subject_math: 'Matemáticas',
@@ -753,6 +756,13 @@ export const es: Messages = {
     back: 'Volver a la clase',
   },
   errors: {
+    has_submissions:
+      'Los estudiantes ya respondieron esta asignación, así que sus preguntas no pueden cambiar.',
+    too_many_attachments: 'Una asignación puede tener como máximo 10 archivos.',
+    already_submitted: 'Ya entregaste esta asignación.',
+    not_shareable: 'Añade preguntas o un archivo antes de compartir esta asignación.',
+    classroom_not_connected: 'Primero conecta Google Classroom en Configuración.',
+    classroom_failed: 'Google Classroom no respondió. Inténtalo de nuevo.',
     subscription_required: 'Para crear borradores con IA necesitas una prueba o un plan activo.',
     required: 'Este campo es obligatorio.',
     invalid_format: 'Revisa este valor.',

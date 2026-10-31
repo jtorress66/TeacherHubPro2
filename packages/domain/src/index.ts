@@ -63,3 +63,4 @@ export * from './assignments/extracted-test.ts';
 export * from './assignments/leniency.ts';
 export * from './assignments/classroom-connection.ts';
 export * from './assignments/grading.ts';
+export * from './assignments/student-view.ts';
