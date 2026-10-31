@@ -29,3 +29,15 @@ export {
   defaultSpeechModel,
   type OpenAiSpeechConfig,
 } from './ai/openai-text-to-speech.ts';
+export { UnpdfTextExtractor } from './pdf/unpdf-text-extractor.ts';
+export { AesGcmCipher } from './crypto/aes-gcm-cipher.ts';
+export { GoogleClassroom } from './google/google-classroom.ts';
+export {
+  GoogleClassroomAuthorization,
+  classroomScopes,
+} from './google/google-classroom-authorization.ts';
+export {
+  LocalClassroom,
+  LocalClassroomAuthorization,
+  localClassroomFixture,
+} from './google/local-classroom.ts';
