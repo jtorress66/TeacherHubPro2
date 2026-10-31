@@ -8,6 +8,7 @@ import {
   ClassForm,
   ImportStudentsForm,
 } from '../../../../../components/roster-forms.tsx';
+import { ImportRosterForm } from '../../../../../components/assignment-tools.tsx';
 import { getAppContainer } from '../../../../../container.ts';
 import { scheduleSummary } from '../../../../../server/schedule-summary.ts';
 import { requireUser } from '../../../../_lib/auth.ts';
@@ -36,6 +37,7 @@ export default async function ClassPage(props: Props) {
     app.listSemesters.execute({ actor: user }),
   ]);
   const roster = students.ok ? students.value : [];
+  const courses = await app.listClassroomCourses.execute({ actor: user });
   const archived = cls.archivedAt !== null;
 
   return (
@@ -62,6 +64,9 @@ export default async function ClassPage(props: Props) {
         </Link>
         <Link href={`/${locale}/app/classes/${cls.id}/report-cards`} className="button secondary">
           {t('gradebook.reportCards')}
+        </Link>
+        <Link href={`/${locale}/app/classes/${cls.id}/student-links`} className="button secondary">
+          {t('studentLinks.open')}
         </Link>
         <Link href={`/${locale}/app/classes/${cls.id}/sub-packet`} className="button secondary">
           {t('subPacket.open')}
@@ -154,6 +159,16 @@ export default async function ClassPage(props: Props) {
           <ClassForm locale={locale} semesters={semesters} cls={cls} />
         </details>
       )}
+      {courses.ok && !archived ? (
+        <section className="card stack" aria-labelledby="classroom-import-heading">
+          <h2 id="classroom-import-heading">{t('classroom.importRoster')}</h2>
+          <ImportRosterForm
+            locale={locale}
+            classId={cls.id}
+            courses={courses.value.map((course) => ({ id: course.id, name: course.name }))}
+          />
+        </section>
+      ) : null}
     </section>
   );
 }
