@@ -1,6 +1,18 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { err, ok, type Result } from '@thp/domain';
-import type { LlmClient, LlmError, LlmRequest, LlmResponse } from '@thp/ports';
+import type {
+  BetaMessageParam,
+  BetaTextBlockParam,
+  BetaUsage,
+} from '@anthropic-ai/sdk/resources/beta/messages/messages';
+import type {
+  LlmClient,
+  LlmError,
+  LlmMessage,
+  LlmRequest,
+  LlmResponse,
+  LlmUsage,
+} from '@thp/ports';
 
 export const defaultClaudeModel = 'claude-sonnet-5-5';
 
@@ -13,6 +25,40 @@ export interface AnthropicConfig {
   readonly maxRetries?: number;
   readonly baseURL?: string;
 }
+
+/**
+ * Prompt caching: a breakpoint caches everything before it, so it goes on text that is the same
+ * on every request for a task. The 5-minute cache is refreshed by each read; Claude ignores
+ * breakpoints on prefixes too short to cache (512 tokens on Sonnet 5.5), at no charge.
+ */
+const cached = { type: 'ephemeral' } as const;
+
+/** The system prompt is fixed per agent, so it is always a cache breakpoint. */
+const systemBlocks = (system: string): BetaTextBlockParam[] => [
+  { type: 'text', text: system, cache_control: cached },
+];
+
+/** A message's stable prefix becomes its own cached block, with the rest after it. */
+function messageParam({ role, content, stablePrefix }: LlmMessage): BetaMessageParam {
+  if (stablePrefix === undefined || stablePrefix === '' || !content.startsWith(stablePrefix)) {
+    return { role, content };
+  }
+  const rest = content.slice(stablePrefix.length);
+  return {
+    role,
+    content: [
+      { type: 'text', text: stablePrefix, cache_control: cached },
+      ...(rest === '' ? [] : [{ type: 'text' as const, text: rest }]),
+    ],
+  };
+}
+
+const usageOf = (usage: BetaUsage): LlmUsage => ({
+  inputTokens: usage.input_tokens,
+  outputTokens: usage.output_tokens,
+  cacheReadTokens: usage.cache_read_input_tokens ?? 0,
+  cacheWriteTokens: usage.cache_creation_input_tokens ?? 0,
+});
 
 /** 4xx other than timeouts, conflicts and rate limits cannot succeed on retry. */
 function errorCode(error: unknown): LlmError['code'] {
@@ -50,8 +96,8 @@ export class AnthropicLlmClient implements LlmClient {
         .stream({
           model: this.model,
           max_tokens: request.maxTokens,
-          system: request.system,
-          messages: request.messages.map(({ role, content }) => ({ role, content })),
+          system: systemBlocks(request.system),
+          messages: request.messages.map(messageParam),
           betas: ['server-side-fallback-2026-07-01'],
           fallbacks: 'default',
         })
@@ -61,6 +107,7 @@ export class AnthropicLlmClient implements LlmClient {
       return ok({
         text: text.join(''),
         stopReason: response.stop_reason === 'max_tokens' ? 'max_tokens' : 'end',
+        usage: usageOf(response.usage),
       });
     } catch (error) {
       return err({ code: errorCode(error) });

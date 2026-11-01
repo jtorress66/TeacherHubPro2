@@ -93,6 +93,7 @@ Test names describe behaviour: `it("counts a tardy as present in the attendance 
 - Validate all external input with Zod at the edges.
 - Every user-facing string goes through `packages/i18n`. Every key must exist in `en` and `es`; `fr`, `pt`, `de`, `it` and `zh` may omit keys, which fall back to English. English is the default language; a `?lang=` link overrides the user's saved choice, which overrides the default. AI output follows the language the teacher chose.
 - Long AI work (generation, PDF parsing, grading, prep batches) runs as a job in `apps/worker`, stored in Postgres, polled or pushed to the UI. Never hold an HTTP request open for AI.
+- Prompt caching: an agent's system prompt is a fixed constant (no per-request data), and text that repeats across requests goes first in the prompt, passed as `stablePrefix`; per-request data comes after it.
 - Small files, small functions; prefer composition over inheritance.
 - Conventional commits; one build step per branch and PR.
 

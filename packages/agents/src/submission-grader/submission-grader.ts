@@ -24,10 +24,23 @@ const shape = `{
   "feedback": string (one or two encouraging sentences about the whole submission)
 }`;
 
-function prompt(request: GradingRequest): string {
+/**
+ * The prompt in two parts. The first is the same for every submission to an assignment (rules,
+ * reply shape, and each question with its points and rubric), so a grading run reads it from the
+ * cache after the first submission; only the second part, the student's answers, changes.
+ */
+function prompt(request: GradingRequest): { stablePrefix: string; text: string } {
   const { leniency } = request.leniency;
-  return [
-    'Suggest a score and feedback for each answer below.',
+  const questions = request.questions.map(({ id, type, prompt: question, points, guide }) => ({
+    id,
+    type,
+    prompt: question,
+    points,
+    guide,
+  }));
+  const answers = request.questions.map(({ id, answer }) => ({ id, answer }));
+  const stablePrefix = [
+    'Suggest a score and feedback for each answer to the questions below.',
     [
       `Write the feedback in ${languageNames[request.language]}.`,
       `Leniency: ${leniency.replace('_', ' ')}. Focus: ${request.leniency.focus}.`,
@@ -35,9 +48,13 @@ function prompt(request: GradingRequest): string {
         ? 'Spelling counts a little.'
         : 'Be lenient with spelling for this grade.',
     ].join('\n'),
-    `Answers (JSON):\n${JSON.stringify(request.questions, null, 2)}`,
     `Reply with JSON in this shape:\n${shape}`,
+    `Questions (JSON):\n${JSON.stringify(questions, null, 2)}`,
   ].join('\n\n');
+  return {
+    stablePrefix: `${stablePrefix}\n\n`,
+    text: `${stablePrefix}\n\nAnswers (JSON):\n${JSON.stringify(answers, null, 2)}`,
+  };
 }
 
 const scoreOf = (value: unknown): number | null =>
@@ -80,9 +97,11 @@ export class SubmissionGrader implements SubmissionGraderPort {
   constructor(private readonly llm: LlmClient) {}
 
   grade(request: GradingRequest): Promise<Result<AiScores, DraftError>> {
+    const { stablePrefix, text } = prompt(request);
     return draftWithReview(this.llm, {
       system: graderSystemPrompt,
-      prompt: prompt(request),
+      prompt: text,
+      stablePrefix,
       maxTokens,
       review: (reply) => reviewScores(request, reply),
       retry: (problem) =>

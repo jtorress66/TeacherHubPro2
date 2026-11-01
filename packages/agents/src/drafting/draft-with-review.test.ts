@@ -36,6 +36,36 @@ describe('draftWithReview', () => {
     ]);
   });
 
+  it('marks the prompt’s stable prefix on the first request and the retry', async () => {
+    const llm = new FakeLlmClient().replyWith('bad').replyWith('good three');
+    await draftWithReview(llm, {
+      system: 'You write good things.',
+      prompt: 'Shared rules. This request.',
+      stablePrefix: 'Shared rules. ',
+      maxTokens: 100,
+      review,
+      retry: (problem) => `Fix it: ${problem}`,
+    });
+    expect(llm.requests[1]?.messages[0]).toEqual({
+      role: 'user',
+      content: 'Shared rules. This request.',
+      stablePrefix: 'Shared rules. ',
+    });
+  });
+
+  it('refuses a stable prefix the prompt does not start with (a programmer error)', async () => {
+    await expect(
+      draftWithReview(new FakeLlmClient().replyWith('good'), {
+        system: 'S',
+        prompt: 'This request.',
+        stablePrefix: 'Shared rules.',
+        maxTokens: 100,
+        review,
+        retry: (problem) => problem,
+      }),
+    ).rejects.toThrow('stable prefix');
+  });
+
   it('gives up with invalid_output after two unusable replies', async () => {
     const llm = new FakeLlmClient().replyWith('bad').replyWith('worse');
     expect(await ask(llm)).toEqual(err({ code: 'invalid_output' }));

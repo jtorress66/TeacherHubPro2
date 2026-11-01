@@ -4,6 +4,8 @@ import type { DraftError, LlmClient, LlmMessage, LlmResponse } from '@thp/ports'
 export interface ReviewedDraft<T> {
   readonly system: string;
   readonly prompt: string;
+  /** The leading part of `prompt` that every request for this task repeats; it may be cached. */
+  readonly stablePrefix?: string;
   readonly maxTokens: number;
   /** The usable value in a reply, or what is wrong with it in plain words. */
   readonly review: (reply: LlmResponse) => Result<T, string>;
@@ -17,9 +19,14 @@ export interface ReviewedDraft<T> {
  */
 export async function draftWithReview<T>(
   llm: LlmClient,
-  { system, prompt, maxTokens, review, retry }: ReviewedDraft<T>,
+  { system, prompt, stablePrefix, maxTokens, review, retry }: ReviewedDraft<T>,
 ): Promise<Result<T, DraftError>> {
-  const messages: LlmMessage[] = [{ role: 'user', content: prompt }];
+  if (stablePrefix !== undefined && !prompt.startsWith(stablePrefix)) {
+    throw new Error('The prompt must start with its stable prefix');
+  }
+  const messages: LlmMessage[] = [
+    { role: 'user', content: prompt, ...(stablePrefix === undefined ? {} : { stablePrefix }) },
+  ];
   for (let attempt = 0; attempt < 2; attempt++) {
     const reply = await llm.complete({ system, messages, maxTokens });
     if (!reply.ok) return err({ code: 'ai_unavailable' });

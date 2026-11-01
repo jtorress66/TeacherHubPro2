@@ -35,6 +35,14 @@ export function llmClientContract(
       expect(result.ok && result.value.text).toBe('Hello!');
     });
 
+    it('accepts a message whose leading part repeats across requests', async () => {
+      const result = await setup.replying('Hello!').complete({
+        ...request,
+        messages: [{ role: 'user', content: 'Shared rules. Hi', stablePrefix: 'Shared rules. ' }],
+      });
+      expect(result.ok && result.value.text).toBe('Hello!');
+    });
+
     it.each(['rate_limited', 'unavailable', 'invalid_request', 'refused'] as const)(
       'maps a %s failure to a typed error',
       async (code) => {

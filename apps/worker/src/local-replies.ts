@@ -77,9 +77,9 @@ function extractorReply(): string {
   });
 }
 
-/** Half the points for every open answer the grader is asked about. */
+/** Half the points for every open question the grader is asked about. */
 function graderReply(request: LlmRequest): string {
-  const json = /Answers \(JSON\):\n(\[[\s\S]*?\n\])/.exec(promptOf(request))?.[1] ?? '[]';
+  const json = /Questions \(JSON\):\n(\[[\s\S]*?\n\])/.exec(promptOf(request))?.[1] ?? '[]';
   const questions = JSON.parse(json) as { id: string; points: number }[];
   return JSON.stringify({
     scores: Object.fromEntries(
