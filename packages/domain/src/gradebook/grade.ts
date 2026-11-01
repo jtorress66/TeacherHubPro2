@@ -8,9 +8,10 @@ export type GradeStatus = (typeof gradeStatuses)[number];
 
 /**
  * Who decided the grade. Every Grade is a teacher decision: AI scores live on the
- * submission as drafts until a teacher confirms them.
+ * submission as drafts until a teacher confirms them, and game scores stay plays until a
+ * teacher confirms them as grades.
  */
-export const gradeSources = ['manual', 'confirmed_ai'] as const;
+export const gradeSources = ['manual', 'confirmed_ai', 'game'] as const;
 
 export type GradeSource = (typeof gradeSources)[number];
 

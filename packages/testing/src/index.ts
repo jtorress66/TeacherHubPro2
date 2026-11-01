@@ -13,6 +13,7 @@ export * from './fakes/security.ts';
 export * from './fakes/job-queue.ts';
 export * from './fakes/google.ts';
 export * from './fakes/documents.ts';
+export * from './fakes/games.ts';
 
 export { clockContract } from './contracts/clock.contract.ts';
 export { idGeneratorContract } from './contracts/id-generator.contract.ts';
@@ -29,3 +30,6 @@ export * from './contracts/gradebook.contract.ts';
 export * from './contracts/planner.contract.ts';
 export * from './contracts/assistant.contract.ts';
 export * from './contracts/assignments.contract.ts';
+export { sampleGameContent } from './game-content.ts';
+export { gameModeContract } from './contracts/game-mode.contract.ts';
+export * from './contracts/games.contract.ts';

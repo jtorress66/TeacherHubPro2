@@ -1,7 +1,7 @@
 import type { Kysely } from 'kysely';
-import type { Game, GameId, SchoolId, UserId } from '@thp/domain';
+import type { ClassId, Game, GameId, SchoolId, UserId } from '@thp/domain';
 import type { GameRepository } from '@thp/ports';
-import { gameMapper } from '../mappers/school-mappers.ts';
+import { gameMapper } from '../mappers/game-mappers.ts';
 import type { Database } from '../schema.ts';
 import { upsert } from '../upsert.ts';
 
@@ -30,12 +30,24 @@ export class PostgresGameRepository implements GameRepository {
       .execute();
   }
 
-  async listByTeacher(schoolId: SchoolId, teacherId: UserId): Promise<readonly Game[]> {
+  listByTeacher(schoolId: SchoolId, teacherId: UserId): Promise<readonly Game[]> {
+    return this.list(schoolId, 'teacher_id', teacherId);
+  }
+
+  listByClass(schoolId: SchoolId, classId: ClassId): Promise<readonly Game[]> {
+    return this.list(schoolId, 'class_id', classId);
+  }
+
+  private async list(
+    schoolId: SchoolId,
+    column: 'teacher_id' | 'class_id',
+    value: string,
+  ): Promise<readonly Game[]> {
     const rows = await this.db
       .selectFrom('games')
       .selectAll()
       .where('school_id', '=', schoolId)
-      .where('teacher_id', '=', teacherId)
+      .where(column, '=', value)
       .orderBy('created_at')
       .orderBy('id')
       .execute();

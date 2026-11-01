@@ -15,6 +15,8 @@ import {
   createAssignment,
   createClass,
   createGame,
+  createGamePlay,
+  defaultGameModes,
   createGrade,
   createGradeCategory,
   createLessonPlan,
@@ -47,6 +49,8 @@ import {
   type UserInput,
 } from '@thp/domain';
 import type {
+  GamePlay,
+  GamePlayId,
   AssignmentId,
   AttendanceSessionId,
   AttachmentId,
@@ -55,7 +59,6 @@ import type {
   PresentationId,
   ClassId,
   GameId,
-  GameModeId,
   GradeCategoryId,
   GradeId,
   LessonPlanId,
@@ -69,6 +72,7 @@ import type {
   SubscriptionId,
   UserId,
 } from '@thp/domain';
+import { sampleGameContent } from './game-content.ts';
 import { unwrap } from './unwrap.ts';
 
 /** Builders for valid entities; pass only the fields a test cares about. */
@@ -230,15 +234,19 @@ export const anAttendanceSession = (overrides: Partial<AttendanceSessionInput> =
 
 export const aGame = (overrides: Partial<GameInput> = {}) =>
   unwrap(
-    createGame({
-      id: 'game-1' as GameId,
-      schoolId,
-      teacherId,
-      title: 'Planets',
-      modeId: 'quiz' as GameModeId,
-      items: [{ question: 'Largest planet?', answer: 'Jupiter' }],
-      ...overrides,
-    }),
+    createGame(
+      {
+        id: 'game-1' as GameId,
+        schoolId,
+        teacherId,
+        title: 'Planets',
+        mode: 'quiz',
+        content: sampleGameContent.questions,
+        createdAt: new Date('2026-11-01T12:00:00Z'),
+        ...overrides,
+      },
+      defaultGameModes,
+    ),
   );
 
 export const aSubscription = (overrides: Partial<TrialInput> = {}) =>
@@ -327,6 +335,24 @@ export const anAttachment = (overrides: Partial<Attachment> = {}): Attachment =>
   ),
   ...overrides,
 });
+
+export const aGamePlay = (overrides: Partial<GamePlay> = {}): GamePlay =>
+  unwrap(
+    createGamePlay({
+      id: 'play-1' as GamePlayId,
+      schoolId,
+      gameId: 'game-1' as GameId,
+      classId,
+      studentId: 'student-1' as StudentId,
+      mode: 'quiz',
+      seed: 7,
+      score: 3,
+      total: 4,
+      durationMs: 45_000,
+      playedAt: new Date('2026-11-01T10:00:00Z'),
+      ...overrides,
+    }),
+  );
 
 export const aStudentLink = (overrides: Partial<StudentLink> = {}): StudentLink => ({
   ...createStudentLink({

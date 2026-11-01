@@ -247,3 +247,38 @@ export {
   ImportClassroomRoster,
   ShareAssignment,
 } from './assignments/classroom.ts';
+export { findOwnGame, type GameRef } from './games/game-access.ts';
+export {
+  CreateGame,
+  UpdateGame,
+  ListGames,
+  GetGame,
+  DeleteGame,
+  type CreateGameInput,
+  type GameDetails,
+} from './games/games.ts';
+export {
+  RequestGameDraft,
+  GameDraftHandler,
+  GetGameDraft,
+  gameDraftJobKind,
+  type GameDraft,
+  type GameDraftInput,
+} from './games/game-drafts.ts';
+export { SaveGameGrading, type GameGradingInput } from './games/grade-settings.ts';
+export {
+  StartGameRound,
+  FinishGameRound,
+  StartPreviewRound,
+  FinishPreviewRound,
+  type GameRound,
+  type RoundResult,
+} from './games/play.ts';
+export {
+  GetGameLeaderboard,
+  GetGameResults,
+  ConfirmGameGrades,
+  type GameResults,
+  type StudentGameResult,
+  type StudentLeaderboardRow,
+} from './games/results.ts';

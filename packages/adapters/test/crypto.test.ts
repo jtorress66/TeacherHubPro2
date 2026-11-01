@@ -4,9 +4,11 @@ import {
   idGeneratorContract,
   passwordHasherContract,
   randomTokenGeneratorContract,
+  seedSourceContract,
   tokenHasherContract,
 } from '@thp/testing';
 import {
+  CryptoSeedSource,
   NodeRandomTokenGenerator,
   ScryptPasswordHasher,
   Sha256TokenHasher,
@@ -19,6 +21,7 @@ tokenHasherContract('Sha256TokenHasher', () => new Sha256TokenHasher());
 randomTokenGeneratorContract('NodeRandomTokenGenerator', () => new NodeRandomTokenGenerator());
 idGeneratorContract('UuidIdGenerator', () => new UuidIdGenerator());
 clockContract('SystemClock', () => new SystemClock());
+seedSourceContract('CryptoSeedSource', () => new CryptoSeedSource());
 
 describe('ScryptPasswordHasher', () => {
   const hasher = new ScryptPasswordHasher();

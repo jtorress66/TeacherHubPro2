@@ -17,6 +17,12 @@ export interface RowMapper<Entity, Table> {
   readonly fromRow: (row: Selectable<Table>) => Entity;
 }
 
+/** Like RowMapper, but these rows also carry the timestamps the domain sets. */
+export interface TimedRowMapper<Entity, Table> {
+  readonly toRow: (entity: Entity) => Required<Insertable<Table>>;
+  readonly fromRow: (row: Selectable<Table>) => Entity;
+}
+
 /**
  * Helpers for reading stored values back into domain types. A value that does not fit means the
  * database was changed outside this code, so it throws (rejecting the repository call).

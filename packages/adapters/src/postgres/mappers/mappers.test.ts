@@ -5,6 +5,9 @@ import {
   markAttendance,
   recordAiGrade,
   activateSubscription,
+  type AssignmentId,
+  type ClassId,
+  type GradeCategoryId,
   type GradeId,
   type PlanFolderId,
   type QuestionId,
@@ -15,6 +18,7 @@ import {
 import {
   aClass,
   aGame,
+  aGamePlay,
   aGrade,
   aReportCardComment,
   aGradeCategory,
@@ -29,9 +33,11 @@ import {
   aSubmission,
   aSubscription,
   aUser,
+  sampleGameContent,
   unwrap,
 } from '@thp/testing';
 import { attendanceMapper } from './attendance-mapper.ts';
+import { gameMapper, gamePlayMapper } from './game-mappers.ts';
 import {
   assignmentMapper,
   gradeCategoryMapper,
@@ -41,7 +47,6 @@ import {
 } from './gradebook-mappers.ts';
 import {
   classMapper,
-  gameMapper,
   lessonPlanMapper,
   planFolderMapper,
   planTemplateMapper,
@@ -226,9 +231,42 @@ describe('row mappers round-trip every entity unchanged', () => {
     expect(attendanceMapper.fromRows(stored(row), entries)).toEqual(session);
   });
 
-  it('game', () => {
-    const game = aGame({ language: 'fr' });
-    expect(gameMapper.fromRow(stored(gameMapper.toRow(game), ['items']))).toEqual(game);
+  it('game, with its content, class and grading', () => {
+    const game = {
+      ...aGame({ language: 'fr', mode: 'all', content: sampleGameContent.pairs }),
+      classId: 'class-1' as ClassId,
+      grading: {
+        countAsGrade: true,
+        method: 'average' as const,
+        points: 20,
+        categoryId: 'cat-1' as GradeCategoryId,
+        assignmentId: 'a-1' as AssignmentId,
+      },
+    };
+    const row = gameMapper.toRow(game);
+    expect(gameMapper.fromRow({ ...row, content: JSON.parse(row.content) as unknown })).toEqual(
+      game,
+    );
+    expect(gameMapper.fromRow(row)).toEqual(game);
+  });
+
+  it('game content of an unknown shape is rejected', () => {
+    const row = gameMapper.toRow(aGame());
+    expect(() => gameMapper.fromRow({ ...row, content: '{"kind":"riddles","items":[]}' })).toThrow(
+      'games.content',
+    );
+    expect(() => gameMapper.fromRow({ ...row, content: '{"kind":"steps"}' })).toThrow(
+      'games.content',
+    );
+    expect(() => gameMapper.fromRow({ ...row, mode: 'chess' })).toThrow('games.mode');
+  });
+
+  it('game play', () => {
+    const play = aGamePlay({ mode: 'word_search' });
+    expect(gamePlayMapper.fromRow(gamePlayMapper.toRow(play))).toEqual(play);
+    expect(() => gamePlayMapper.fromRow({ ...gamePlayMapper.toRow(play), mode: 'all' })).toThrow(
+      'game_plays.mode',
+    );
   });
 
   it('subscription', () => {

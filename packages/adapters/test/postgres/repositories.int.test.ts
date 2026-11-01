@@ -37,6 +37,7 @@ import {
   plannerRepositoryContract,
   assistantRepositoryContract,
   assignmentRepositoryContract,
+  gamePlayRepositoryContract,
   SequentialIdGenerator,
   gradeRepositoryContract,
   reportCardCommentContract,
@@ -137,22 +138,6 @@ withParents(parentsFor.teacher, () => {
     'PostgresJobQueue',
     () => new PostgresJobQueue(db, new SequentialIdGenerator('job')),
   );
-
-  const games = {
-    make: () => repos.games,
-    sample: (schoolId: SchoolId, id: string) => aGame({ schoolId, id: id as GameId }),
-  };
-  scopedRepositoryContract('PostgresGameRepository', {
-    ...games,
-    change: (game) => ({ ...game, title: 'Changed' }),
-    lists: [
-      {
-        name: 'listByTeacher',
-        call: (repo, schoolId, g) => repo.listByTeacher(schoolId, g.teacherId),
-      },
-    ],
-  });
-  deletableContract('PostgresGameRepository', games);
 
   scopedRepositoryContract('PostgresSubscriptionRepository', {
     make: () => repos.subscriptions,
@@ -286,4 +271,31 @@ withParents(parentsFor.grading, () => {
 
 withParents(parentsFor.none, () => {
   fileStoreContract('PostgresFileStore', () => new PostgresFileStore(db));
+});
+
+withParents(parentsFor.class, () => {
+  const games = {
+    make: () => repos.games,
+    sample: (schoolId: SchoolId, id: string) =>
+      aGame({ schoolId, id: id as GameId, classId: 'class-1' as ClassId }),
+  };
+  scopedRepositoryContract('PostgresGameRepository', {
+    ...games,
+    change: (game) => ({ ...game, title: 'Changed' }),
+    lists: [
+      {
+        name: 'listByTeacher',
+        call: (repo, schoolId, g) => repo.listByTeacher(schoolId, g.teacherId),
+      },
+      {
+        name: 'listByClass',
+        call: (repo, schoolId, g) => repo.listByClass(schoolId, g.classId ?? ('none' as ClassId)),
+      },
+    ],
+  });
+  deletableContract('PostgresGameRepository', games);
+});
+
+withParents(parentsFor.games, () => {
+  gamePlayRepositoryContract('Postgres', () => repos.gamePlays);
 });

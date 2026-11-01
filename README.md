@@ -116,6 +116,10 @@ Each assignment can be an online test (`…/assignments/<id>/questions`): build 
 
 **Google Classroom.** Connect it in Settings to import a course's roster into a class and share an assignment (title, instructions, due date). `CLASSROOM_PROVIDER=local` (the default, development and test only) uses a stand-in; `CLASSROOM_PROVIDER=google` needs `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` and `TOKEN_ENCRYPTION_KEY` (32 random bytes, base64: `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"`).
 
+## Educational games
+
+**Games** (`/app/games`) come in eleven modes (quiz, time attack, true or false, fill in the blanks, flashcards, matching, memory, word search, crossword, sequence, drag and drop) or "all modes", where students choose. Type the items one per line or have the AI write them from a topic, then share the game with a class: students play it from their personal link, every round is scored on the server and saved with their roster ID, and play again reshuffles for free. Teachers can preview a game (never saved), see each student's attempts and the class leaderboard, and turn on "count as a grade": each student's grade (best, first or average attempt) is a draft until the teacher confirms the game's grades.
+
 ## AI assistant, presentations and voice
 
 The **AI assistant** (`/app/assistant`) writes worksheets, quizzes, topic summaries, class activities and free-form lesson plans as Markdown, in the language the teacher picks; everything it writes is kept in the teacher's history, with copy, print and Listen. **Presentations** (`/app/presentations`) are drafted by Claude or started blank, edited slide by slide (layouts, emoji, themes, transitions), shown full screen in present mode and printed one slide per page. Each class has a **substitute packet** (`/app/classes/<id>/sub-packet`) with saved notes and a print page.

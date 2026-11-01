@@ -14,6 +14,8 @@ import type {
   ClassId,
   Email,
   Game,
+  GameId,
+  GamePlay,
   Grade,
   GradeCategory,
   GradeCategoryId,
@@ -47,6 +49,7 @@ import type {
   AttendanceSessionRepository,
   ClassRepository,
   GameRepository,
+  GamePlayRepository,
   GradeCategoryRepository,
   GradeRepository,
   LessonPlanRepository,
@@ -409,6 +412,27 @@ export class InMemoryGameRepository
 {
   listByTeacher(schoolId: SchoolId, teacherId: UserId): Promise<readonly Game[]> {
     return this.listWhere(schoolId, (game) => game.teacherId === teacherId);
+  }
+
+  listByClass(schoolId: SchoolId, classId: ClassId): Promise<readonly Game[]> {
+    return this.listWhere(schoolId, (game) => game.classId === classId);
+  }
+}
+
+export class InMemoryGamePlayRepository
+  extends InMemoryScopedRepository<GamePlay>
+  implements GamePlayRepository
+{
+  async listByGame(schoolId: SchoolId, gameId: GameId): Promise<readonly GamePlay[]> {
+    const plays = await this.listWhere(schoolId, (play) => play.gameId === gameId);
+    return [...plays].sort((a, b) => a.playedAt.getTime() - b.playedAt.getTime());
+  }
+
+  deleteByGame(schoolId: SchoolId, gameId: GameId): Promise<void> {
+    for (const play of this.rows.values()) {
+      if (play.schoolId === schoolId && play.gameId === gameId) this.rows.delete(play.id);
+    }
+    return Promise.resolve();
   }
 }
 

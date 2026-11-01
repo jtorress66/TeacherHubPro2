@@ -1,4 +1,4 @@
-import type { Insertable, Selectable } from 'kysely';
+import type { Selectable } from 'kysely';
 import {
   assistantSubjects,
   contentTypes,
@@ -16,13 +16,7 @@ import {
   type UserId,
 } from '@thp/domain';
 import type { AiGenerationsTable, PresentationsTable, SubPacketsTable } from '../schema.ts';
-import { oneOf, readJson, toJson, type Row } from './columns.ts';
-
-/** Like RowMapper, but these rows also carry the timestamps the domain sets. */
-interface TimedRowMapper<Entity, Table> {
-  readonly toRow: (entity: Entity) => Required<Insertable<Table>>;
-  readonly fromRow: (row: Selectable<Table>) => Entity;
-}
+import { oneOf, readJson, toJson, type Row, type TimedRowMapper } from './columns.ts';
 
 const nullableOneOf = <T extends string>(allowed: readonly T[], value: unknown, column: string) =>
   value === null ? null : oneOf(allowed, value, column);

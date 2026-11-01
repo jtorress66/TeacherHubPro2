@@ -1,18 +1,49 @@
 import { describe, expect, it } from 'vitest';
 import {
   ContentWriter,
+  GameWriter,
   PresentationWriter,
   QuestionExtractor,
   SubmissionGrader,
 } from '@thp/agents';
 import { LocalLlmClient } from '@thp/adapters';
-import { createPresentationRequest, leniencyFor, type QuestionId } from '@thp/domain';
+import {
+  contentKinds,
+  createGameRequest,
+  createPresentationRequest,
+  defaultGameModes,
+  gameCountRange,
+  leniencyFor,
+  type QuestionId,
+} from '@thp/domain';
 import { aContentRequest, unwrap } from '@thp/testing';
 import { localReply } from './local-replies.ts';
 
 const local = () => new LocalLlmClient(localReply);
 
 describe('the local stand-in replies', () => {
+  it('writes game content of every kind, with the count asked for, that every mode can play', async () => {
+    for (const kind of contentKinds) {
+      const count = gameCountRange(kind).max;
+      const request = unwrap(
+        createGameRequest({
+          kind,
+          subject: 'science',
+          grade: '4',
+          topic: 'Space',
+          language: 'en',
+          count,
+        }),
+      );
+      const content = unwrap(await new GameWriter(local()).write(request));
+      expect(content.kind).toBe(kind);
+      expect(content.items).toHaveLength(count);
+      for (const mode of defaultGameModes.modesFor(kind)) {
+        expect(mode.unsuitable(content), `${mode.id} with ${kind}`).toBeNull();
+      }
+    }
+  });
+
   it('writes a usable worksheet with a table and blanks', async () => {
     const content = unwrap(await new ContentWriter(local()).write(aContentRequest()));
     expect(content).toMatch(/^# /);

@@ -1,8 +1,12 @@
-import type { Email } from '@thp/domain';
+import { defaultGameModes, type Email } from '@thp/domain';
 import {
   FakeBillingEvents,
   InMemoryAttendanceSessionRepository,
   FakeCheckoutSessions,
+  FakeGameWriter,
+  InMemoryGameRepository,
+  InMemoryGamePlayRepository,
+  SequentialSeedSource,
   FakeGoogleIdentity,
   FakePasswordHasher,
   FakeTokenHasher,
@@ -76,6 +80,11 @@ export const makeWorld = () => {
     assignments: new InMemoryAssignmentRepository(),
     grades: new InMemoryGradeRepository(),
     reportCardComments: new InMemoryReportCardCommentRepository(),
+    games: new InMemoryGameRepository(),
+    gamePlays: new InMemoryGamePlayRepository(),
+    seeds: new SequentialSeedSource(),
+    gameModes: defaultGameModes,
+    gameWriter: new FakeGameWriter(),
     files: new InMemoryFileStore(),
     google: new FakeGoogleIdentity({
       'good-code': googleProfile,

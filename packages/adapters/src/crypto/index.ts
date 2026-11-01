@@ -1,5 +1,5 @@
-import { createHash, randomBytes, randomUUID } from 'node:crypto';
-import type { Clock, IdGenerator, RandomTokenGenerator, TokenHasher } from '@thp/ports';
+import { createHash, randomBytes, randomInt, randomUUID } from 'node:crypto';
+import type { Clock, IdGenerator, RandomTokenGenerator, SeedSource, TokenHasher } from '@thp/ports';
 
 export { ScryptPasswordHasher } from './scrypt-password-hasher.ts';
 
@@ -14,6 +14,13 @@ export class Sha256TokenHasher implements TokenHasher {
 export class NodeRandomTokenGenerator implements RandomTokenGenerator {
   generate(): string {
     return randomBytes(32).toString('base64url');
+  }
+}
+
+/** Game round seeds from the system's random source. */
+export class CryptoSeedSource implements SeedSource {
+  next(): number {
+    return randomInt(2 ** 31);
   }
 }
 

@@ -36,6 +36,7 @@ import {
 import { plannerRepositoryContract } from '../contracts/planner.contract.ts';
 import { assistantRepositoryContract } from '../contracts/assistant.contract.ts';
 import { assignmentRepositoryContract } from '../contracts/assignments.contract.ts';
+import { gamePlayRepositoryContract } from '../contracts/games.contract.ts';
 import {
   aClass,
   aGame,
@@ -54,6 +55,7 @@ import {
   InMemoryAttendanceSessionRepository,
   InMemoryClassRepository,
   InMemoryGameRepository,
+  InMemoryGamePlayRepository,
   InMemoryGradeCategoryRepository,
   InMemoryGradeRepository,
   InMemoryLessonPlanRepository,
@@ -217,7 +219,8 @@ attendanceLookupContract(
 
 const games = {
   make: () => new InMemoryGameRepository(),
-  sample: (schoolId: SchoolId, id: string) => aGame({ schoolId, id: id as GameId }),
+  sample: (schoolId: SchoolId, id: string) =>
+    aGame({ schoolId, id: id as GameId, classId: 'class-1' as ClassId }),
 };
 scopedRepositoryContract('InMemoryGameRepository', {
   ...games,
@@ -227,9 +230,14 @@ scopedRepositoryContract('InMemoryGameRepository', {
       name: 'listByTeacher',
       call: (repo, schoolId, g) => repo.listByTeacher(schoolId, g.teacherId),
     },
+    {
+      name: 'listByClass',
+      call: (repo, schoolId, g) => repo.listByClass(schoolId, g.classId ?? ('none' as ClassId)),
+    },
   ],
 });
 deletableContract('InMemoryGameRepository', games);
+gamePlayRepositoryContract('InMemory', () => new InMemoryGamePlayRepository());
 
 scopedRepositoryContract('InMemorySubscriptionRepository', {
   make: () => new InMemorySubscriptionRepository(),

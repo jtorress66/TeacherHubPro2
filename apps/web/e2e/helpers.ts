@@ -84,3 +84,18 @@ export async function classWithStudents(page: Page, locale: Locale): Promise<str
   await expect(page.getByRole('status')).toHaveText(t('students.imported', { count: 3 }));
   return new URL(page.url()).pathname;
 }
+
+/** Issues the class's links and returns the one for the named student. */
+export async function studentLink(
+  page: Page,
+  locale: Locale,
+  classPath: string,
+  name: string,
+): Promise<string> {
+  const t = createTranslator(locale);
+  await page.goto(`${classPath}/student-links`);
+  await page.getByRole('button', { name: t('studentLinks.issue') }).click();
+  const issued = page.getByRole('region', { name: t('studentLinks.issuedTitle') });
+  const link = issued.getByRole('row').filter({ hasText: name }).getByTestId('student-link');
+  return (await link.getAttribute('href')) ?? '';
+}

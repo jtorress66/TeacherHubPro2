@@ -18,10 +18,12 @@ import {
   ContentWriter,
   LessonPlanner,
   PresentationWriter,
+  GameWriter,
   QuestionExtractor,
   SubmissionGrader,
 } from '@thp/agents';
 import {
+  GameDraftHandler,
   GenerationHandler,
   GradingHandler,
   PdfImportHandler,
@@ -71,6 +73,7 @@ export function createJobRunner(database: DatabaseConfig, llm: LlmConfig, tts: T
       questionExtractor: new QuestionExtractor(model),
     }),
     new GradingHandler({ assignments, submissions, classes, grader: new SubmissionGrader(model) }),
+    new GameDraftHandler({ gameWriter: new GameWriter(model) }),
   ]);
   return {
     runNext: new RunNextJob({ jobs, handlers }),
