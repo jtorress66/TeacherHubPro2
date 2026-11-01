@@ -1,6 +1,10 @@
 import {
   isUsable,
   ok,
+  playableModes,
+  type GameId,
+  type GameModeId,
+  type GameModeRegistry,
   questionForStudent,
   submitAnswers,
   type Assignment,
@@ -19,6 +23,7 @@ import type {
   ClassRepository,
   Clock,
   FileStore,
+  GameRepository,
   IdGenerator,
   SchoolRepository,
   StudentLinkRepository,
@@ -31,7 +36,7 @@ import { fail, submissionFailure, type UseCaseError } from '../errors.ts';
 // The pages a student opens from their personal link. Students have no accounts: the link's
 // token is the key, and everything it opens is limited to that student and their class.
 
-interface LinkDeps {
+export interface LinkDeps {
   readonly studentLinks: StudentLinkRepository;
   readonly tokenHasher: TokenHasher;
   readonly students: StudentRepository;
@@ -46,13 +51,16 @@ interface PortalDeps extends LinkDeps {
   readonly submissions: SubmissionRepository;
 }
 
-interface Holder {
+export interface Holder {
   readonly link: StudentLink;
   readonly student: Student;
 }
 
 /** The student behind a working link; anything else is simply not found. */
-async function openLink(deps: LinkDeps, token: string): Promise<Result<Holder, UseCaseError>> {
+export async function openLink(
+  deps: LinkDeps,
+  token: string,
+): Promise<Result<Holder, UseCaseError>> {
   const link = await deps.studentLinks.findByTokenHash(await deps.tokenHasher.hash(token));
   if (link === null || !isUsable(link, deps.clock.now())) return fail('not_found');
   const student = await deps.students.findById(link.schoolId, link.studentId);
@@ -87,11 +95,21 @@ export interface StudentPortal {
     readonly dueDate: LocalDate | null;
     readonly status: StudentAssignmentStatus;
   }[];
+  readonly games: readonly {
+    readonly id: GameId;
+    readonly title: string;
+    readonly modes: readonly GameModeId[];
+  }[];
 }
 
-/** The student's first name and the assignments ready for them, with what they have done. */
+/** The student's first name, the assignments ready for them and their class's games. */
 export class OpenStudentLink {
-  constructor(private readonly deps: PortalDeps) {}
+  constructor(
+    private readonly deps: PortalDeps & {
+      readonly games: GameRepository;
+      readonly gameModes: GameModeRegistry;
+    },
+  ) {}
 
   async execute(input: { readonly token: string }): Promise<Result<StudentPortal, UseCaseError>> {
     const holder = await openLink(this.deps, input.token);
@@ -118,11 +136,19 @@ export class OpenStudentLink {
         status,
       });
     }
+    const games = (await this.deps.games.listByClass(link.schoolId, link.classId))
+      .map((game) => ({
+        id: game.id,
+        title: game.title,
+        modes: playableModes(game, this.deps.gameModes).map((mode) => mode.id),
+      }))
+      .filter((game) => game.modes.length > 0);
     return ok({
       firstName: student.firstName,
       className: cls.name,
       schoolName: school.name,
       assignments: ready,
+      games,
     });
   }
 }

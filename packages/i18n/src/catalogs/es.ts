@@ -908,6 +908,7 @@ export const es: Messages = {
     not_shareable: 'Añade preguntas o un archivo antes de compartir esta asignación.',
     classroom_not_connected: 'Primero conecta Google Classroom en Configuración.',
     classroom_failed: 'Google Classroom no respondió. Inténtalo de nuevo.',
+    grading_off: 'Primero activa «Cuenta como nota» para este juego.',
     subscription_required: 'Para crear borradores con IA necesitas una prueba o un plan activo.',
     required: 'Este campo es obligatorio.',
     invalid_format: 'Revisa este valor.',

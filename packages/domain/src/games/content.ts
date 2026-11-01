@@ -193,6 +193,24 @@ const rulesByKind: { readonly [K in ContentKind]: KindRules<K> } = {
   groups: groupRules,
 };
 
+const labelByKind: { readonly [K in ContentKind]: (item: ItemOf<K>) => string } = {
+  questions: (item) => item.prompt,
+  statements: (item) => item.statement,
+  sentences: (item) => item.text,
+  pairs: (item) => item.term,
+  steps: (item) => item,
+  groups: (item) => item.name,
+};
+
+function labelsOf<K extends ContentKind>(kind: K, items: readonly ItemOf<K>[]): string[] {
+  const label: (item: ItemOf<K>) => string = labelByKind[kind];
+  return items.map(label);
+}
+
+/** One short label per item (a question's prompt, a pair's term, …). */
+export const contentLabels = (content: GameContent): string[] =>
+  labelsOf(content.kind, content.items as readonly ItemOf<ContentKind>[]);
+
 /** The fewest items a kind needs. */
 export const minItemsFor = (kind: ContentKind): number => rulesByKind[kind].minItems;
 

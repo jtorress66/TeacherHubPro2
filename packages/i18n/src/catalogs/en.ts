@@ -901,6 +901,7 @@ export const en = {
     not_shareable: 'Add questions or a file before sharing this assignment.',
     classroom_not_connected: 'Connect Google Classroom in Settings first.',
     classroom_failed: 'Google Classroom did not respond. Please try again.',
+    grading_off: 'Turn on “Count as a grade” for this game first.',
     subscription_required: 'Drafting with AI needs an active trial or plan.',
     required: 'This field is required.',
     invalid_format: 'Please check this value.',

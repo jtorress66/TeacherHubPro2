@@ -25,9 +25,10 @@ describe('createGameRequest', () => {
 
   it('keeps the count within the kind’s range', () => {
     expect(gameCountRange('groups')).toEqual({ min: 2, max: 4, default: 3 });
-    expect(gameCountRange('pairs')).toEqual({ min: 4, max: 20, default: 8 });
+    expect(gameCountRange('pairs')).toEqual({ min: 4, max: 15, default: 8 });
+    expect(gameCountRange('steps')).toEqual({ min: 3, max: 12, default: 8 });
     expect(valueOf(createGameRequest({ ...input, count: 12 })).count).toBe(12);
-    for (const count of [3, 21, 6.5]) {
+    for (const count of [3, 16, 6.5]) {
       expect(errorOf(createGameRequest({ ...input, count }))).toEqual({
         field: 'count',
         code: 'out_of_range',

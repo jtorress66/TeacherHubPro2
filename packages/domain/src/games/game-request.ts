@@ -4,6 +4,7 @@ import { ok, type Result } from '../shared/result.ts';
 import { invalid, requiredText, type ValidationError } from '../shared/validation.ts';
 import { isGradeLevel, type GradeLevel } from '../standards/common-core.ts';
 import { isContentKind, maxItemTextLength, minItemsFor, type ContentKind } from './content.ts';
+import { wordSearchLimits } from './modes/word-search.ts';
 
 /** What a teacher asks the game writer for. It holds no class or student data. */
 export interface GameRequest {
@@ -34,15 +35,22 @@ export interface CountRange {
   readonly default: number;
 }
 
-const groupRange: CountRange = { min: 2, max: 4, default: 3 };
-const maxItems = 20;
 const defaultItems = 8;
 const maxAvoid = 30;
 
+/** Pairs stop at what a word search holds, so every pairs mode can play what is written. */
+const maxItems: Readonly<Record<Exclude<ContentKind, 'groups'>, number>> = {
+  questions: 20,
+  statements: 20,
+  sentences: 20,
+  pairs: wordSearchLimits.maxWords,
+  steps: 12,
+};
+
 export const gameCountRange = (kind: ContentKind): CountRange =>
   kind === 'groups'
-    ? groupRange
-    : { min: minItemsFor(kind), max: maxItems, default: Math.max(defaultItems, minItemsFor(kind)) };
+    ? { min: 2, max: 4, default: 3 }
+    : { min: minItemsFor(kind), max: maxItems[kind], default: defaultItems };
 
 const isSubject = (value: string): value is AssistantSubject =>
   (assistantSubjects as readonly string[]).includes(value);

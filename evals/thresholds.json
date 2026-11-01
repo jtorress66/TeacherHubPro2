@@ -28,5 +28,11 @@
     "structure": 1,
     "band": 0.9,
     "language": 1
+  },
+  "game-writer": {
+    "structure": 1,
+    "count": 1,
+    "language": 1,
+    "playable": 1
   }
 }

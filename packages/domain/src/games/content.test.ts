@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { errorOf, valueOf } from '../test-support.ts';
-import { validateContent, type GameContent } from './content.ts';
+import { contentLabels, validateContent, type GameContent } from './content.ts';
 
 const questions: GameContent = {
   kind: 'questions',
@@ -195,5 +195,26 @@ describe('validateContent', () => {
       field: 'items.2',
       code: 'too_long',
     });
+  });
+});
+
+describe('contentLabels', () => {
+  it('gives one short label per item of any kind', () => {
+    expect(contentLabels(questions)).toEqual([
+      'Largest planet?',
+      'Closest to the Sun?',
+      'The red planet?',
+    ]);
+    expect(contentLabels(pairs)).toEqual(['Sun', 'Moon', 'Comet', 'Orbit']);
+    expect(contentLabels({ kind: 'steps', items: ['Mix', 'Bake'] })).toEqual(['Mix', 'Bake']);
+    expect(
+      contentLabels({ kind: 'statements', items: [{ statement: 'Hot', isTrue: true }] }),
+    ).toEqual(['Hot']);
+    expect(contentLabels({ kind: 'sentences', items: [{ text: 'A ___.', answer: 'b' }] })).toEqual([
+      'A ___.',
+    ]);
+    expect(contentLabels({ kind: 'groups', items: [{ name: 'Birds', members: [] }] })).toEqual([
+      'Birds',
+    ]);
   });
 });

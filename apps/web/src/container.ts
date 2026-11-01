@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import {
   AesGcmCipher,
+  CryptoSeedSource,
   GoogleClassroom,
   GoogleClassroomAuthorization,
   LocalClassroom,
@@ -26,6 +27,21 @@ import {
   UuidIdGenerator,
 } from '@thp/adapters';
 import {
+  CreateGame,
+  UpdateGame,
+  ListGames,
+  GetGame,
+  DeleteGame,
+  RequestGameDraft,
+  GetGameDraft,
+  SaveGameGrading,
+  StartGameRound,
+  FinishGameRound,
+  StartPreviewRound,
+  FinishPreviewRound,
+  GetGameLeaderboard,
+  GetGameResults,
+  ConfirmGameGrades,
   SaveQuestions,
   SaveInstructions,
   UploadAttachment,
@@ -154,7 +170,7 @@ import {
   type WebConfig,
 } from './server/config.ts';
 import { createTranslator, locales } from '@thp/i18n';
-import { localDateIn, type LocalDate } from '@thp/domain';
+import { defaultGameModes, localDateIn, type LocalDate } from '@thp/domain';
 
 export interface AppContainer {
   readonly appUrl: string;
@@ -195,6 +211,21 @@ export interface AppContainer {
   readonly listClassroomCourses: ListClassroomCourses;
   readonly importClassroomRoster: ImportClassroomRoster;
   readonly shareAssignment: ShareAssignment;
+  readonly createGame: CreateGame;
+  readonly updateGame: UpdateGame;
+  readonly listGames: ListGames;
+  readonly getGame: GetGame;
+  readonly deleteGame: DeleteGame;
+  readonly requestGameDraft: RequestGameDraft;
+  readonly getGameDraft: GetGameDraft;
+  readonly saveGameGrading: SaveGameGrading;
+  readonly startGameRound: StartGameRound;
+  readonly finishGameRound: FinishGameRound;
+  readonly startPreviewRound: StartPreviewRound;
+  readonly finishPreviewRound: FinishPreviewRound;
+  readonly getGameLeaderboard: GetGameLeaderboard;
+  readonly getGameResults: GetGameResults;
+  readonly confirmGameGrades: ConfirmGameGrades;
   readonly getSpeechClip: GetSpeechClip;
   readonly getSubPacket: GetSubPacket;
   readonly saveSubPacket: SaveSubPacket;
@@ -369,6 +400,8 @@ export function createAppContainer(
     passwordHasher: new ScryptPasswordHasher(),
     files: new PostgresFileStore(db),
     jobs: new PostgresJobQueue(db, new UuidIdGenerator()),
+    seeds: new CryptoSeedSource(),
+    gameModes: defaultGameModes,
     appUrl: config.appUrl,
   };
 
@@ -411,6 +444,21 @@ export function createAppContainer(
     listClassroomCourses: new ListClassroomCourses(deps),
     importClassroomRoster: new ImportClassroomRoster(deps),
     shareAssignment: new ShareAssignment(deps),
+    createGame: new CreateGame(deps),
+    updateGame: new UpdateGame(deps),
+    listGames: new ListGames(deps),
+    getGame: new GetGame(deps),
+    deleteGame: new DeleteGame(deps),
+    requestGameDraft: new RequestGameDraft(deps),
+    getGameDraft: new GetGameDraft(deps),
+    saveGameGrading: new SaveGameGrading(deps),
+    startGameRound: new StartGameRound(deps),
+    finishGameRound: new FinishGameRound(deps),
+    startPreviewRound: new StartPreviewRound(deps),
+    finishPreviewRound: new FinishPreviewRound(deps),
+    getGameLeaderboard: new GetGameLeaderboard(deps),
+    getGameResults: new GetGameResults(deps),
+    confirmGameGrades: new ConfirmGameGrades(deps),
     getSpeechClip: new GetSpeechClip(deps),
     getSubPacket: new GetSubPacket(deps),
     saveSubPacket: new SaveSubPacket(deps),
