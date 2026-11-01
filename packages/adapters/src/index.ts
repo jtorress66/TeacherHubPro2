@@ -23,6 +23,7 @@ export {
   type AnthropicConfig,
 } from './ai/anthropic-llm-client.ts';
 export { LocalLlmClient } from './ai/local-llm-client.ts';
+export { formatUsage, UsageReportingLlmClient } from './ai/usage-reporting-llm-client.ts';
 export { LocalTextToSpeech } from './ai/local-text-to-speech.ts';
 export {
   OpenAiTextToSpeech,

@@ -9,6 +9,8 @@ import {
   createStripeClient,
   ensureStripePrices,
   LocalLlmClient,
+  UsageReportingLlmClient,
+  formatUsage,
   migrateToLatest,
   PostgresJobQueue,
   SystemClock,
@@ -40,11 +42,15 @@ import { localReply } from './local-replies.ts';
 
 // Composition root: the only place in the worker where concrete adapters are created.
 
+/** Claude reports each call's token usage (numbers only) to stdout, to watch cache hit rates. */
 function llmClient(config: LlmConfig): LlmClient {
   if (config.provider === 'local') return new LocalLlmClient(localReply);
-  return new AnthropicLlmClient({
+  const claude = new AnthropicLlmClient({
     apiKey: config.apiKey,
     ...(config.model === null ? {} : { model: config.model }),
+  });
+  return new UsageReportingLlmClient(claude, (usage) => {
+    process.stdout.write(`${formatUsage(usage)}\n`);
   });
 }
 

@@ -52,6 +52,25 @@ describe('SubmissionGrader', () => {
     expect(prompt).toContain('El agua de las nubes cae');
   });
 
+  it('puts the rules and the questions with their rubrics first, as a prefix every submission shares', async () => {
+    const llm = new FakeLlmClient().replyWith(reply()).replyWith(reply());
+    const grader = new SubmissionGrader(llm);
+    await grader.grade(request);
+    const other = request.questions.map((q) => ({ ...q, answer: 'Otra respuesta' }));
+    await grader.grade({ ...request, questions: other });
+
+    const [first, second] = llm.requests.map((r) => r.messages[0]);
+    const shared = first?.stablePrefix ?? '';
+    expect(shared).toContain('El agua de las nubes cae');
+    expect(shared).toContain('"points": 10');
+    expect(shared).toContain('Reply with JSON in this shape');
+    expect(shared).not.toContain('Porque las nubes tienen mucha agua');
+    expect(second?.stablePrefix).toBe(shared);
+    expect(first?.content.startsWith(shared)).toBe(true);
+    expect(first?.content.slice(shared.length)).toContain('Porque las nubes tienen mucha agua');
+    expect(second?.content.slice(shared.length)).toContain('Otra respuesta');
+  });
+
   it('returns a score and feedback for every open question', async () => {
     const llm = new FakeLlmClient().replyWith(reply());
     expect(unwrap(await new SubmissionGrader(llm).grade(request))).toEqual({

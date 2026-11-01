@@ -24,7 +24,11 @@ const sse = (event: string, data: object) => `event: ${event}\ndata: ${JSON.stri
  * A recorded streamed Messages API reply: a thinking block (empty) then the text, as the
  * server-sent events the API sends.
  */
-const streamEvents = (text: string, stopReason = 'end_turn'): string[] => [
+const streamEvents = (
+  text: string,
+  stopReason = 'end_turn',
+  usage: object = { input_tokens: 10, output_tokens: 0 },
+): string[] => [
   sse('message_start', {
     type: 'message_start',
     message: {
@@ -35,7 +39,7 @@ const streamEvents = (text: string, stopReason = 'end_turn'): string[] => [
       content: [],
       stop_reason: null,
       stop_sequence: null,
-      usage: { input_tokens: 10, output_tokens: 0 },
+      usage,
     },
   }),
   sse('content_block_start', {
@@ -84,6 +88,9 @@ const streamed = (events: string[], pauseMs = 0) => {
 
 const reply = (text: string, stopReason?: string) => streamed(streamEvents(text, stopReason));
 
+const noCache = { inputTokens: 10, outputTokens: 5, cacheReadTokens: 0, cacheWriteTokens: 0 };
+const cached = { type: 'ephemeral' };
+
 const statusFor: Readonly<Record<LlmError['code'], number>> = {
   rate_limited: 429,
   unavailable: 529,
@@ -120,7 +127,7 @@ describe('AnthropicLlmClient', () => {
     maxTokens: 100,
   };
 
-  it('streams from Sonnet by default, with the system prompt, messages and server-side fallbacks', async () => {
+  it('streams from Sonnet by default, with the cached system prompt, messages and server-side fallbacks', async () => {
     let sent: { body: unknown; beta: string | null } | null = null;
     server.use(
       http.post(endpoint, async ({ request: req }) => {
@@ -131,7 +138,7 @@ describe('AnthropicLlmClient', () => {
 
     expect(await client().complete(request)).toEqual({
       ok: true,
-      value: { text: 'ok', stopReason: 'end' },
+      value: { text: 'ok', stopReason: 'end', usage: noCache },
     });
     expect(defaultClaudeModel).toBe('claude-sonnet-5-5');
     expect(sent).toMatchObject({
@@ -139,13 +146,81 @@ describe('AnthropicLlmClient', () => {
       body: {
         model: 'claude-sonnet-5-5',
         max_tokens: 100,
-        system: 'Be brief.',
+        system: [{ type: 'text', text: 'Be brief.', cache_control: cached }],
         messages: [{ role: 'user', content: 'Hi' }],
         fallbacks: 'default',
         stream: true,
       },
     });
     expect(Object.keys((sent as unknown as { body: object }).body)).not.toContain('temperature');
+  });
+
+  it('sends a message’s stable prefix as its own cached block, and the rest after it', async () => {
+    const bodies: { messages: unknown }[] = [];
+    server.use(
+      http.post(endpoint, async ({ request: req }) => {
+        bodies.push((await req.json()) as { messages: unknown });
+        return reply('ok');
+      }),
+    );
+    const prefixed = (content: string, stablePrefix: string) => ({
+      ...request,
+      messages: [
+        { role: 'user' as const, content, stablePrefix },
+        { role: 'assistant' as const, content: 'Draft' },
+        { role: 'user' as const, content: 'Fix it' },
+      ],
+    });
+
+    await client().complete(prefixed('Rules and questions. Answers', 'Rules and questions. '));
+    await client().complete(prefixed('Only shared', 'Only shared'));
+    await client().complete(prefixed('Answers first', 'Not a prefix'));
+
+    expect(bodies.map((body) => body.messages)).toEqual([
+      [
+        {
+          role: 'user',
+          content: [
+            { type: 'text', text: 'Rules and questions. ', cache_control: cached },
+            { type: 'text', text: 'Answers' },
+          ],
+        },
+        { role: 'assistant', content: 'Draft' },
+        { role: 'user', content: 'Fix it' },
+      ],
+      [
+        { role: 'user', content: [{ type: 'text', text: 'Only shared', cache_control: cached }] },
+        { role: 'assistant', content: 'Draft' },
+        { role: 'user', content: 'Fix it' },
+      ],
+      [
+        { role: 'user', content: 'Answers first' },
+        { role: 'assistant', content: 'Draft' },
+        { role: 'user', content: 'Fix it' },
+      ],
+    ]);
+  });
+
+  it('reports the tokens read from and written to the cache', async () => {
+    server.use(
+      http.post(endpoint, () =>
+        streamed(
+          streamEvents('ok', 'end_turn', {
+            input_tokens: 40,
+            output_tokens: 0,
+            cache_read_input_tokens: 900,
+            cache_creation_input_tokens: 0,
+          }),
+        ),
+      ),
+    );
+    const result = await client().complete(request);
+    expect(result.ok && result.value.usage).toEqual({
+      inputTokens: 40,
+      outputTokens: 5,
+      cacheReadTokens: 900,
+      cacheWriteTokens: 0,
+    });
   });
 
   it('uses the configured model and reports a cut-off reply', async () => {
@@ -165,7 +240,7 @@ describe('AnthropicLlmClient', () => {
 
     expect(await custom.complete(request)).toEqual({
       ok: true,
-      value: { text: 'partial', stopReason: 'max_tokens' },
+      value: { text: 'partial', stopReason: 'max_tokens', usage: noCache },
     });
     expect(model).toBe('claude-opus-5-5');
   });
@@ -182,7 +257,7 @@ describe('AnthropicLlmClient', () => {
 
     expect(await patient.complete(request)).toEqual({
       ok: true,
-      value: { text: 'a long draft', stopReason: 'end' },
+      value: { text: 'a long draft', stopReason: 'end', usage: noCache },
     });
     expect(requests).toBe(1);
   });
@@ -204,7 +279,7 @@ describe('AnthropicLlmClient', () => {
 
     expect(await retrying.complete(request)).toEqual({
       ok: true,
-      value: { text: 'ok', stopReason: 'end' },
+      value: { text: 'ok', stopReason: 'end', usage: noCache },
     });
     expect(requests).toBe(2);
   });
