@@ -1,0 +1,107 @@
+# Render Blueprint for TeacherHubPro: the Next.js web app and the background worker.
+#
+# pnpm workspace notes:
+# - No `rootDir`: Render hides files outside a service's root directory at build and run time,
+#   and both apps need the shared `packages/*`, the root `pnpm-lock.yaml` and
+#   `pnpm-workspace.yaml`. Each service builds from the repo root and runs its own package with
+#   `pnpm --filter`; `buildFilter` keeps deploys to the paths a service actually uses.
+# - `corepack enable` provides the pnpm version pinned in package.json (`packageManager`).
+#   Node comes from `.nvmrc` (24).
+# - The install keeps dev dependencies (Next's TypeScript build, `tsx` for the worker), so do not
+#   set NODE_ENV=production as an environment variable.
+#
+# Postgres: the services read DATABASE_URL from the existing Render Postgres instance
+# (database `teacherhubpro_db`, user `teacherhubpro_db_user`). `fromDatabase.name` is the
+# instance's name on Render; it must match exactly, and the services must be in its region.
+#
+# Secrets (`sync: false`) are asked for once, when the Blueprint is first created; enter them in
+# the Render dashboard. Never put secret values in this file.
+
+services:
+  - type: web
+    name: teacherhubpro-web
+    runtime: node
+    plan: starter # always on; `free` sleeps when idle (prototyping only)
+    region: virginia # the Postgres instance's region (cannot change later)
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm --filter @thp/web build
+    # Applies new migrations before each release of the web app.
+    preDeployCommand: corepack enable && pnpm db:migrate
+    startCommand: corepack enable && pnpm --filter @thp/web start
+    healthCheckPath: /api/health
+    buildFilter:
+      paths:
+        - apps/web/**
+        - packages/**
+        - package.json
+        - pnpm-lock.yaml
+        - pnpm-workspace.yaml
+        - tsconfig.base.json
+        - .nvmrc
+        - .npmrc
+      ignoredPaths:
+        - '**/*.test.ts'
+        - '**/*.int.test.ts'
+        - apps/web/e2e/**
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: teacherhubpro-db
+          property: connectionString
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      # Also required: the web app refuses to start in production without these.
+      - key: APP_ENV
+        value: production
+      - key: APP_URL # the public address, e.g. https://teacherhubpro-web.onrender.com
+        sync: false
+      - key: BILLING_PROVIDER
+        value: stripe
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: GOOGLE_AUTH_PROVIDER
+        value: google
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: CLASSROOM_PROVIDER
+        value: google
+      - key: TOKEN_ENCRYPTION_KEY # 32 random bytes, base64: encrypts Classroom tokens at rest
+        generateValue: true
+
+  - type: worker
+    name: teacherhubpro-worker
+    runtime: node
+    plan: starter # background workers have no free plan
+    region: virginia # same region as the web app and Postgres
+    # The worker runs its TypeScript directly with tsx, so there is nothing to build.
+    buildCommand: corepack enable && pnpm install --frozen-lockfile
+    startCommand: corepack enable && pnpm --filter @thp/worker start
+    buildFilter:
+      paths:
+        - apps/worker/**
+        - packages/**
+        - evals/**
+        - package.json
+        - pnpm-lock.yaml
+        - pnpm-workspace.yaml
+        - tsconfig.base.json
+        - .nvmrc
+        - .npmrc
+      ignoredPaths:
+        - '**/*.test.ts'
+        - '**/*.int.test.ts'
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: teacherhubpro-db
+          property: connectionString
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      # Fail loudly if the key is missing, rather than drafting with the local stand-in.
+      - key: LLM_PROVIDER
+        value: anthropic
