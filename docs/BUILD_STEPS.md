@@ -2,7 +2,7 @@
 
 Place this file at `docs/BUILD_STEPS.md`. Work on one step at a time. Tick a step only when its gate passes and the Definition of Done in `CLAUDE.md` is met. For each step, read its section in `docs/FEATURES.md` first.
 
-**Current step:** 10
+**Current step:** 11
 
 | # | Step | Scope | Gate (must pass before next step) | Done |
 | --- | --- | --- | --- | --- |
@@ -36,6 +36,7 @@ No paid API calls until launch. Steps that need real AI meet their gate with the
 - Listen with real OpenAI text-to-speech (`TTS_PROVIDER=openai`, `OPENAI_API_KEY`) (step 9).
 - Google Classroom with a real Google Cloud project: consent screen and verification for the Classroom scopes, `CLASSROOM_PROVIDER=google`, `TOKEN_ENCRYPTION_KEY` (step 10).
 - The question extractor and grader evals against real Claude (step 10).
+- The game writer evals against real Claude (step 11).
 
 ## Prompt to start each step in Claude Code
 

@@ -2,7 +2,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 import { PDFDocument, StandardFonts } from 'pdf-lib';
 import { createTranslator, type Locale } from '@thp/i18n';
 import { formatPercent } from '../src/server/gradebook-display.ts';
-import { classWithStudents, signUp } from './helpers.ts';
+import { classWithStudents, signUp, studentLink } from './helpers.ts';
 
 /** A small typed test, as a teacher's PDF would be. */
 async function quizPdf(): Promise<Buffer> {
@@ -49,21 +49,6 @@ async function importQuestions(page: Page, locale: Locale): Promise<void> {
   await expect(
     page.getByRole('form', { name: t('questions.title') }).getByRole('listitem'),
   ).toHaveCount(3);
-}
-
-/** Issues the class's links and returns the one for the named student. */
-async function studentLink(
-  page: Page,
-  locale: Locale,
-  classPath: string,
-  name: string,
-): Promise<string> {
-  const t = createTranslator(locale);
-  await page.goto(`${classPath}/student-links`);
-  await page.getByRole('button', { name: t('studentLinks.issue') }).click();
-  const issued = page.getByRole('region', { name: t('studentLinks.issuedTitle') });
-  const link = issued.getByRole('row').filter({ hasText: name }).getByTestId('student-link');
-  return (await link.getAttribute('href')) ?? '';
 }
 
 /** The student opens their link in their own browser, answers and hands in. */

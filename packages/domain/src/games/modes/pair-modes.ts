@@ -53,9 +53,15 @@ export interface MemoryCard {
   readonly side: 'term' | 'definition';
 }
 
+/**
+ * Memory is about remembering where cards are: once two cards are turned, both texts show, so the
+ * view says which cards belong together and the player can keep the pairs found face up.
+ */
 export interface MemoryView {
   readonly mode: 'memory';
   readonly cards: readonly MemoryCard[];
+  /** For each card, the number of its pair. */
+  readonly pairOf: readonly number[];
 }
 
 const isCardPair = (value: unknown): value is readonly [number, number] =>
@@ -76,7 +82,11 @@ export const memoryMode = defineMode({
       ]),
       random,
     );
-    const view: MemoryView = { mode: 'memory', cards: cards.map((c) => c.card) };
+    const view: MemoryView = {
+      mode: 'memory',
+      cards: cards.map((c) => c.card),
+      pairOf: cards.map((c) => c.pair),
+    };
     return { view, key: { pairs: content.items.length, cardPairs: cards.map((c) => c.pair) } };
   },
   solve: (key) =>

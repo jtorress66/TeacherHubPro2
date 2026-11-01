@@ -132,6 +132,7 @@ describe('flashcards, matching and memory', () => {
     const view = memoryMode.prepare(pairs, 2);
     expect(view.cards).toHaveLength(10);
     expect(view.cards.filter((c) => c.side === 'term')).toHaveLength(5);
+    expect([...view.pairOf].sort()).toEqual([0, 0, 1, 1, 2, 2, 3, 3, 4, 4]);
   });
 
   it('memory counts each pair once and ignores a card paired with itself or a mismatch', () => {

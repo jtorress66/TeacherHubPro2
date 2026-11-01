@@ -28,7 +28,7 @@ export default async function StudentPortalPage(props: Props) {
       </main>
     );
   }
-  const { firstName, className, schoolName, assignments } = portal.value;
+  const { firstName, className, schoolName, assignments, games } = portal.value;
   const day = new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeZone: 'UTC' });
 
   return (
@@ -57,6 +57,18 @@ export default async function StudentPortalPage(props: Props) {
             </li>
           ))}
         </ul>
+      )}
+      {games.length === 0 ? null : (
+        <>
+          <h2>{t('student.games')}</h2>
+          <ul className="list" aria-label={t('student.games')}>
+            {games.map((game) => (
+              <li key={game.id}>
+                <Link href={`/${locale}/s/${token}/games/${game.id}`}>{game.title}</Link>
+              </li>
+            ))}
+          </ul>
+        </>
       )}
     </main>
   );

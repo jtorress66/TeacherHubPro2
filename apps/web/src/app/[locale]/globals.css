@@ -1099,3 +1099,135 @@ details[open] > summary {
     border: 0;
   }
 }
+
+/* Games */
+.game-player .button-row .button {
+  min-width: 8rem;
+}
+
+.game-result {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.blank-input {
+  width: 9rem;
+  margin: 0 0.25rem;
+}
+
+.flashcard {
+  padding: 1.5rem;
+  border: 1px solid var(--muted);
+  border-radius: 0.75rem;
+  text-align: center;
+}
+
+.flashcard-term {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.memory-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+  gap: 0.5rem;
+}
+
+.memory-card {
+  min-height: 5rem;
+  padding: 0.5rem;
+  border: 1px solid var(--muted);
+  border-radius: 0.5rem;
+  background: var(--bg);
+  color: var(--fg);
+  font: inherit;
+  cursor: pointer;
+}
+
+.memory-card[aria-pressed='true'] {
+  border-color: var(--accent);
+}
+
+.memory-card.found,
+.letter-cell.found,
+.word-list .found {
+  background: color-mix(in srgb, var(--accent) 25%, var(--bg));
+}
+
+.word-list .found {
+  text-decoration: line-through;
+}
+
+.letter-grid,
+.crossword-grid {
+  display: grid;
+  gap: 2px;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.letter-cell,
+.crossword-cell,
+.crossword-block {
+  width: 2rem;
+  height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.letter-cell {
+  border: 1px solid var(--muted);
+  background: var(--bg);
+  color: var(--fg);
+  font: inherit;
+  cursor: pointer;
+}
+
+.letter-cell[aria-pressed='true'] {
+  outline: 2px solid var(--accent);
+}
+
+.crossword-cell {
+  position: relative;
+  border: 1px solid var(--fg);
+  text-transform: uppercase;
+}
+
+.crossword-cell sup {
+  position: absolute;
+  top: 1px;
+  left: 2px;
+  font-size: 0.55rem;
+}
+
+.crossword-block {
+  background: transparent;
+}
+
+.sequence-list li {
+  margin-bottom: 0.5rem;
+}
+
+.drop-zones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.drop-zone {
+  flex: 1 1 12rem;
+  min-height: 6rem;
+  padding: 0.5rem 1rem;
+  border: 2px dashed var(--muted);
+  border-radius: 0.5rem;
+}
+
+.drag-item {
+  cursor: grab;
+}
+
+tr[aria-current='true'] {
+  font-weight: 700;
+}
