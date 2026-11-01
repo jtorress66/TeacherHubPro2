@@ -1,6 +1,7 @@
 export type { Clock } from './system/clock.ts';
 export type { IdGenerator } from './system/id-generator.ts';
 export type { RandomTokenGenerator } from './system/random-token-generator.ts';
+export type { SeedSource } from './system/seed-source.ts';
 export type { TokenHasher } from './security/token-hasher.ts';
 export type { PasswordHasher } from './security/password-hasher.ts';
 export type * from './security/secret-cipher.ts';
@@ -11,6 +12,7 @@ export type * from './ai/content-writer.ts';
 export type * from './ai/presentation-drafter.ts';
 export type * from './ai/question-extractor.ts';
 export type * from './ai/submission-grader.ts';
+export type * from './ai/game-writer.ts';
 export type * from './files/file-store.ts';
 export type * from './files/pdf-text-extractor.ts';
 export type * from './documents/report-card-renderer.ts';

@@ -3,6 +3,7 @@ import { inject } from 'vitest';
 import type {
   AssignmentId,
   ClassId,
+  GameId,
   GradeCategoryId,
   SchoolId,
   SemesterId,
@@ -11,6 +12,7 @@ import type {
 } from '@thp/domain';
 import {
   aClass,
+  aGame,
   aGradeCategory,
   anAssignment,
   aSchool,
@@ -19,6 +21,7 @@ import {
   aUser,
 } from '@thp/testing';
 import { createDatabase, type Database } from '../../src/postgres/index.ts';
+import { gameMapper } from '../../src/postgres/mappers/game-mappers.ts';
 import {
   assignmentMapper,
   gradeCategoryMapper,
@@ -34,6 +37,7 @@ import {
 export const connect = (): Kysely<Database> => createDatabase(inject('databaseUrl'));
 
 const tables = [
+  'game_plays',
   'student_links',
   'assignment_attachments',
   'classroom_connections',
@@ -138,6 +142,15 @@ const seeds = {
         ),
       )
       .execute(),
+  game: (db: Kysely<Database>) =>
+    db
+      .insertInto('games')
+      .values(
+        gameMapper.toRow(
+          aGame({ id: 'game-1' as GameId, schoolId: schoolA, classId: 'class-1' as ClassId }),
+        ),
+      )
+      .execute(),
 };
 
 export type Parent = keyof typeof seeds;
@@ -156,6 +169,7 @@ export const parentsFor = {
   roster: ['schools', 'teacher', 'class', 'students'],
   attendance: ['schools', 'teacher', 'class', 'secondClass', 'students'],
   grading: ['schools', 'teacher', 'class', 'category', 'students', 'assignments'],
+  games: ['schools', 'teacher', 'class', 'students', 'game'],
 } as const satisfies Record<string, readonly Parent[]>;
 
 /** A clean database with the given parents, for one test. */

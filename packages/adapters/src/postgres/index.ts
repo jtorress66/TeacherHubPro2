@@ -10,6 +10,7 @@ import type {
   AttendanceSessionRepository,
   ClassRepository,
   GameRepository,
+  GamePlayRepository,
   GradeCategoryRepository,
   GradeRepository,
   LessonPlanRepository,
@@ -29,6 +30,7 @@ import { PostgresAssignmentRepository } from './repositories/postgres-assignment
 import { PostgresAttendanceSessionRepository } from './repositories/postgres-attendance-session-repository.ts';
 import { PostgresClassRepository } from './repositories/postgres-class-repository.ts';
 import { PostgresGameRepository } from './repositories/postgres-game-repository.ts';
+import { PostgresGamePlayRepository } from './repositories/postgres-game-play-repository.ts';
 import { PostgresGradeCategoryRepository } from './repositories/postgres-grade-category-repository.ts';
 import { PostgresGradeRepository } from './repositories/postgres-grade-repository.ts';
 import { PostgresLessonPlanRepository } from './repositories/postgres-lesson-plan-repository.ts';
@@ -83,6 +85,7 @@ export interface PostgresRepositories {
   readonly submissions: SubmissionRepository;
   readonly attendanceSessions: AttendanceSessionRepository;
   readonly games: GameRepository;
+  readonly gamePlays: GamePlayRepository;
   readonly subscriptions: SubscriptionRepository;
   readonly sessions: SessionRepository;
   readonly credentials: PasswordCredentialRepository;
@@ -112,6 +115,7 @@ export function createPostgresRepositories(db: Kysely<Database>): PostgresReposi
     submissions: new PostgresSubmissionRepository(db),
     attendanceSessions: new PostgresAttendanceSessionRepository(db),
     games: new PostgresGameRepository(db),
+    gamePlays: new PostgresGamePlayRepository(db),
     subscriptions: new PostgresSubscriptionRepository(db),
     sessions: new PostgresSessionRepository(db),
     credentials: new PostgresPasswordCredentialRepository(db),

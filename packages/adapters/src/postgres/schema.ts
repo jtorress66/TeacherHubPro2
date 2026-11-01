@@ -282,10 +282,31 @@ export interface GamesTable {
   school_id: string;
   teacher_id: string;
   title: string;
-  mode_id: string;
+  mode: string;
   language: string;
-  items: Json;
-  created_at: CreatedAt;
+  content: Json;
+  class_id: string | null;
+  count_as_grade: boolean;
+  grade_method: string;
+  grade_points: number;
+  grade_category_id: string | null;
+  grade_assignment_id: string | null;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface GamePlaysTable {
+  id: string;
+  school_id: string;
+  game_id: string;
+  class_id: string;
+  student_id: string;
+  mode: string;
+  seed: number;
+  score: number;
+  total: number;
+  duration_ms: number;
+  played_at: Date;
 }
 
 export interface SubscriptionsTable {
@@ -340,6 +361,7 @@ export interface Database {
   attendance_sessions: AttendanceSessionsTable;
   attendance_entries: AttendanceEntriesTable;
   games: GamesTable;
+  game_plays: GamePlaysTable;
   subscriptions: SubscriptionsTable;
   sessions: SessionsTable;
   password_credentials: PasswordCredentialsTable;

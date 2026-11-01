@@ -10,6 +10,7 @@ import type {
 } from '@thp/domain';
 import {
   aClass,
+  aGamePlay,
   aGrade,
   aGradeCategory,
   anAttendanceSession,
@@ -20,6 +21,7 @@ import {
   aUser,
 } from '@thp/testing';
 import { attendanceMapper } from '../../src/postgres/mappers/attendance-mapper.ts';
+import { gameMapper, gamePlayMapper } from '../../src/postgres/mappers/game-mappers.ts';
 import {
   gradeCategoryMapper,
   gradeMapper,
@@ -93,6 +95,49 @@ describe('grades', () => {
         .values(grade({ source: 'ai' }))
         .execute(),
     ).rejects.toThrow(/grades_source_check/);
+  });
+
+  it('accept a grade confirmed from a game', async () => {
+    await db
+      .insertInto('grades')
+      .values(grade({ source: 'game' }))
+      .execute();
+  });
+});
+
+describe('games and game plays', () => {
+  beforeEach(() => resetWith(db, parentsFor.games));
+
+  const play = (overrides: Partial<ReturnType<typeof gamePlayMapper.toRow>> = {}) => ({
+    ...gamePlayMapper.toRow(aGamePlay({ schoolId: schoolA })),
+    ...overrides,
+  });
+
+  it('a play needs a positive total, a score within it and a time of zero or more', async () => {
+    for (const bad of [{ total: 0, score: 0 }, { score: 5 }, { score: -1 }]) {
+      await expect(db.insertInto('game_plays').values(play(bad)).execute()).rejects.toThrow(
+        /game_plays_score_check/,
+      );
+    }
+    await expect(
+      db
+        .insertInto('game_plays')
+        .values(play({ duration_ms: -1 }))
+        .execute(),
+    ).rejects.toThrow(/game_plays_duration_check/);
+  });
+
+  it("a game's plays go with it", async () => {
+    await db.insertInto('game_plays').values(play()).execute();
+    await db.deleteFrom('games').where('id', '=', 'game-1').execute();
+    expect(await db.selectFrom('game_plays').selectAll().execute()).toEqual([]);
+  });
+
+  it('a game grades by best, first or average, for 1 to 1000 points', async () => {
+    const game = (overrides: Partial<ReturnType<typeof gameMapper.toRow>>) =>
+      db.updateTable('games').set(overrides).where('id', '=', 'game-1').execute();
+    await expect(game({ grade_method: 'last' })).rejects.toThrow(/games_grade_method_check/);
+    await expect(game({ grade_points: 0 })).rejects.toThrow(/games_grade_points_check/);
   });
 });
 

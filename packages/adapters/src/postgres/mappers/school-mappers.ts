@@ -8,9 +8,6 @@ import {
   type Class,
   type ClassId,
   type Email,
-  type Game,
-  type GameId,
-  type GameModeId,
   type LessonPlan,
   type PlanBody,
   type PlanFolder,
@@ -31,7 +28,6 @@ import {
 } from '@thp/domain';
 import type {
   ClassesTable,
-  GamesTable,
   LessonPlansTable,
   PlanFoldersTable,
   PlanTemplatesTable,
@@ -234,27 +230,6 @@ export const planTemplateMapper: RowMapper<PlanTemplate, PlanTemplatesTable> = {
     name: row.name,
     title: row.title,
     body: readJson(row.body) as PlanBody,
-  }),
-};
-
-export const gameMapper: RowMapper<Game, GamesTable> = {
-  toRow: (game) => ({
-    id: game.id,
-    school_id: game.schoolId,
-    teacher_id: game.teacherId,
-    title: game.title,
-    mode_id: game.modeId,
-    language: game.language,
-    items: toJson(game.items),
-  }),
-  fromRow: (row) => ({
-    id: row.id as GameId,
-    schoolId: row.school_id as SchoolId,
-    teacherId: row.teacher_id as UserId,
-    title: row.title,
-    modeId: row.mode_id as GameModeId,
-    language: oneOf(languages, row.language, 'games.language'),
-    items: readJson(row.items) as readonly unknown[],
   }),
 };
 

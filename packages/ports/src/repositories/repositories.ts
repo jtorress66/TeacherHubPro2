@@ -12,6 +12,8 @@ import type {
   ClassId,
   Email,
   Game,
+  GameId,
+  GamePlay,
   Grade,
   GradeCategory,
   GradeCategoryId,
@@ -177,6 +179,15 @@ export interface AttendanceSessionRepository extends ScopedRepository<Attendance
 
 export interface GameRepository extends ScopedRepository<Game>, Deletable<Game> {
   listByTeacher(schoolId: SchoolId, teacherId: UserId): Promise<readonly Game[]>;
+  /** The games shared with a class, as its students' links list them. */
+  listByClass(schoolId: SchoolId, classId: ClassId): Promise<readonly Game[]>;
+}
+
+/** Finished plays by roster students; teacher previews are never saved. */
+export interface GamePlayRepository extends ScopedRepository<GamePlay> {
+  /** Oldest first. */
+  listByGame(schoolId: SchoolId, gameId: GameId): Promise<readonly GamePlay[]>;
+  deleteByGame(schoolId: SchoolId, gameId: GameId): Promise<void>;
 }
 
 export interface SubscriptionRepository extends ScopedRepository<Subscription> {
