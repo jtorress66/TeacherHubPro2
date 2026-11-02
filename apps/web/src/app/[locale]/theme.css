@@ -1240,6 +1240,161 @@ input[type='radio'] {
   }
 }
 
+/* Illustrations in the drawing's cards: a lesson plan, an elementary class, a parent portal. */
+
+.hero-tile {
+  display: grid;
+  place-items: center;
+  height: 6.25rem;
+  padding: 0.3rem;
+}
+
+.hero-tile .ill {
+  width: 100%;
+  height: 100%;
+}
+
+.ill-paper {
+  fill: var(--surface);
+  stroke: var(--border-strong);
+  stroke-width: 1;
+}
+
+.ill-paper-soft {
+  fill: var(--surface-2);
+}
+
+.ill-accent {
+  fill: var(--accent);
+}
+
+.ill-green {
+  fill: var(--green);
+}
+
+.ill-amber,
+.ill-star {
+  fill: var(--amber);
+}
+
+.ill-box {
+  fill: none;
+  stroke: var(--border-strong);
+  stroke-width: 1.5;
+}
+
+.ill-check {
+  fill: none;
+  stroke: var(--green-text);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 12;
+  stroke-dashoffset: 0;
+  animation: hero-ill-check 6s ease-in-out infinite;
+}
+
+.ill-line {
+  fill: color-mix(in srgb, var(--accent) 22%, var(--surface));
+}
+
+.ill-board {
+  fill: #1f5135;
+}
+
+.ill-board-frame,
+.ill-desk {
+  fill: #b45309;
+}
+
+.ill-chalk {
+  fill: none;
+  stroke: #e7f5e9;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ill-skin {
+  fill: #f1c6a3;
+}
+
+.ill-hair {
+  fill: #5b3a29;
+}
+
+.ill-apple {
+  fill: #dc2626;
+}
+
+.ill-leaf {
+  fill: var(--green);
+}
+
+.ill-dot {
+  fill: var(--border-strong);
+}
+
+.ill-kid {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: hero-ill-bob 2.4s ease-in-out infinite;
+}
+
+.ill-bar {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: hero-ill-grow 6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+.ill-star {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: hero-twinkle 3s ease-in-out infinite;
+}
+
+@keyframes hero-ill-check {
+  0%,
+  20% {
+    stroke-dashoffset: 12;
+  }
+
+  35%,
+  90% {
+    stroke-dashoffset: 0;
+  }
+
+  100% {
+    stroke-dashoffset: 12;
+  }
+}
+
+@keyframes hero-ill-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes hero-ill-grow {
+  0% {
+    transform: scaleY(0.15);
+  }
+
+  30%,
+  85% {
+    transform: scaleY(1);
+  }
+
+  100% {
+    transform: scaleY(0.15);
+  }
+}
+
 /* No motion for people who ask for less: the drawing shows its finished state, still. */
 @media (prefers-reduced-motion: reduce) {
   .hero-art,
