@@ -14,6 +14,24 @@ async function violations(page: Page) {
   }));
 }
 
+test('the home page drawing moves, and stays still for people who ask for reduced motion', async ({
+  browser,
+}) => {
+  const animationOf = async (reducedMotion: 'reduce' | 'no-preference') => {
+    const context = await browser.newContext({ reducedMotion });
+    const page = await context.newPage();
+    await page.goto('/en');
+    const names = await page
+      .locator('.hero-art .hero-window, .hero-art .hero-bars span')
+      .evaluateAll((elements) => elements.map((e) => getComputedStyle(e).animationName));
+    await context.close();
+    return names;
+  };
+
+  expect((await animationOf('no-preference')).every((name) => name !== 'none')).toBe(true);
+  expect(new Set(await animationOf('reduce'))).toEqual(new Set(['none']));
+});
+
 for (const colorScheme of ['light', 'dark'] as const) {
   test.describe(`${colorScheme} theme`, () => {
     test.beforeEach(async ({ page }) => {
