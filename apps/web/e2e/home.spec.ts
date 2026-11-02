@@ -48,6 +48,17 @@ test.describe('home page languages', () => {
     }
   });
 
+  test('the drawing’s three cards show a lesson plan, a class and a parent portal', async ({
+    page,
+  }) => {
+    await page.goto('/en');
+    await expect(page.locator('.hero-tile svg')).toHaveCount(3);
+    const shown = await page
+      .locator('.hero-tile')
+      .evaluateAll((tiles) => tiles.map((tile) => tile.getAttribute('data-illustration')));
+    expect(shown).toEqual(['lesson-plan', 'classroom', 'parent-portal']);
+  });
+
   test('/fr renders English text with html lang=fr', async ({ page }) => {
     await page.goto('/fr');
 

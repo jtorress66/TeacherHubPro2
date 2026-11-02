@@ -1,10 +1,15 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { createTranslator, isLocale } from '@thp/i18n';
+import {
+  ClassroomIllustration,
+  LessonPlanIllustration,
+  ParentPortalIllustration,
+} from '../../components/hero-illustrations.tsx';
 import { Logo } from '../../components/logo.tsx';
 import { LanguagePicker } from './language-picker.tsx';
 
-/** An animated drawing of the workspace (cards, feature phrases, a finished task). */
+/** An animated drawing of the workspace: illustrated cards, feature phrases, a finished task. */
 function HeroArt({ phrases }: { readonly phrases: readonly string[] }) {
   return (
     <div className="hero-art">
@@ -16,9 +21,15 @@ function HeroArt({ phrases }: { readonly phrases: readonly string[] }) {
           <span />
         </div>
         <div className="hero-tiles" aria-hidden="true">
-          <div className="hero-tile" />
-          <div className="hero-tile" />
-          <div className="hero-tile accent" />
+          <div className="hero-tile" data-illustration="lesson-plan">
+            <LessonPlanIllustration />
+          </div>
+          <div className="hero-tile" data-illustration="classroom">
+            <ClassroomIllustration />
+          </div>
+          <div className="hero-tile accent" data-illustration="parent-portal">
+            <ParentPortalIllustration />
+          </div>
         </div>
         <ul className="hero-phrases">
           {phrases.map((phrase) => (
