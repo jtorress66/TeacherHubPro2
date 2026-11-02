@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { createTranslator } from '@thp/i18n';
+import { AppNav, type NavGroup } from '../../../components/app-nav.tsx';
 import { TimeZoneCookie } from '../../../components/browser-helpers.tsx';
-import { logOutAction } from '../../_lib/actions.ts';
+import { Logo } from '../../../components/logo.tsx';
 import { requireUser } from '../../_lib/auth.ts';
 import { localeFrom, type LocaleParams } from '../locale-param.ts';
 
@@ -12,38 +13,55 @@ export default async function AppLayout(props: LocaleParams & { readonly childre
   const locale = await localeFrom(props);
   const t = createTranslator(locale);
   const { school } = await requireUser(locale, { needsAccess: false });
+  const base = `/${locale}/app`;
+  const groups: NavGroup[] = [
+    {
+      title: t('nav.groupPlan'),
+      links: [
+        { href: base, label: t('nav.dashboard'), icon: 'dashboard' },
+        { href: `${base}/plans`, label: t('nav.lessonPlans'), icon: 'plans' },
+        { href: `${base}/assistant`, label: t('nav.assistant'), icon: 'assistant' },
+        { href: `${base}/presentations`, label: t('nav.presentations'), icon: 'presentations' },
+      ],
+    },
+    {
+      title: t('nav.groupTeach'),
+      links: [
+        { href: `${base}/classes`, label: t('nav.classes'), icon: 'classes' },
+        { href: `${base}/attendance`, label: t('nav.attendance'), icon: 'attendance' },
+        { href: `${base}/gradebook`, label: t('nav.gradebook'), icon: 'gradebook' },
+        { href: `${base}/games`, label: t('nav.games'), icon: 'games' },
+      ],
+    },
+    {
+      title: t('nav.groupAccount'),
+      links: [
+        { href: `${base}/semesters`, label: t('nav.semesters'), icon: 'semesters' },
+        { href: `${base}/billing`, label: t('nav.billing'), icon: 'billing' },
+        { href: `${base}/settings`, label: t('nav.settings'), icon: 'settings' },
+      ],
+    },
+  ];
 
   return (
     <div className="app">
-      <header className="app-header no-print">
-        <div>
-          <Link href={`/${locale}/app`} className="brand">
-            {t('app.name')}
+      <aside className="sidebar no-print">
+        <div className="sidebar-top">
+          <Link href={base} className="brand">
+            <Logo />
           </Link>
-          <span className="school-name" data-testid="school-name">
+          <p className="school-name" data-testid="school-name">
             {school.name}
-          </span>
+          </p>
         </div>
-        <nav aria-label={t('app.name')}>
-          <Link href={`/${locale}/app`}>{t('nav.dashboard')}</Link>
-          <Link href={`/${locale}/app/plans`}>{t('nav.lessonPlans')}</Link>
-          <Link href={`/${locale}/app/assistant`}>{t('nav.assistant')}</Link>
-          <Link href={`/${locale}/app/presentations`}>{t('nav.presentations')}</Link>
-          <Link href={`/${locale}/app/classes`}>{t('nav.classes')}</Link>
-          <Link href={`/${locale}/app/attendance`}>{t('nav.attendance')}</Link>
-          <Link href={`/${locale}/app/gradebook`}>{t('nav.gradebook')}</Link>
-          <Link href={`/${locale}/app/games`}>{t('nav.games')}</Link>
-          <Link href={`/${locale}/app/semesters`}>{t('nav.semesters')}</Link>
-          <Link href={`/${locale}/app/billing`}>{t('nav.billing')}</Link>
-          <Link href={`/${locale}/app/settings`}>{t('nav.settings')}</Link>
-          <form action={logOutAction}>
-            <input type="hidden" name="locale" value={locale} />
-            <button type="submit" className="link-button">
-              {t('nav.logOut')}
-            </button>
-          </form>
-        </nav>
-      </header>
+        <AppNav
+          locale={locale}
+          label={t('app.name')}
+          menuLabel={t('nav.menu')}
+          logOutLabel={t('nav.logOut')}
+          groups={groups}
+        />
+      </aside>
       <main className="app-main">{props.children}</main>
       <TimeZoneCookie />
     </div>

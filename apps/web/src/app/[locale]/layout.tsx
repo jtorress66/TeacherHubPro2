@@ -2,7 +2,11 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { createTranslator, isLocale, locales } from '@thp/i18n';
+import '@fontsource-variable/manrope';
+import '@fontsource/playfair-display/600.css';
+import '@fontsource/playfair-display/700.css';
 import './globals.css';
+import './theme.css';
 
 interface LocaleParams {
   readonly params: Promise<{ locale: string }>;

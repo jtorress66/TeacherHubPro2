@@ -121,7 +121,9 @@ test('a teacher starts from a starter template and writes a Conversational Engli
   const t = createTranslator('es');
   await signUp(page, 'es');
   await page.goto('/es/app/templates');
+  // The starter list, not "template of the week": that one rotates and may be the same template.
   await page
+    .getByTestId('starter-templates')
     .getByRole('button', { name: `${t('templates.use')}: Introducción a las fracciones` })
     .click();
   await expect(page.getByLabel(t('planner.unit'))).toHaveValue('Introducción a las fracciones');
