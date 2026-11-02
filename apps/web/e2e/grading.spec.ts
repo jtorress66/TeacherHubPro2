@@ -79,6 +79,8 @@ for (const locale of ['es', 'en'] as const satisfies readonly Locale[]) {
     page,
     browser,
   }) => {
+    // The journey waits for two worker jobs (reading the PDF, then AI grading).
+    test.setTimeout(90_000);
     await signUp(page, locale);
     const classPath = await classWithAssignment(page, locale, 'Quiz espacial');
     await importQuestions(page, locale);

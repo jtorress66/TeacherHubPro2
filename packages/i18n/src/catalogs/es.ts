@@ -10,6 +10,9 @@ export const es: Messages = {
       'Planes de clase, grupos, asistencia, calificaciones y portales para padres en un solo lugar, para maestros, escuelas y familias que educan en casa.',
     getStarted: 'Empieza tu prueba gratis',
     logIn: 'Iniciar sesión',
+    phraseLessons: 'Planificación de clases',
+    phraseAi: 'Herramientas de IA para enseñar',
+    phraseWorkflow: 'Flujo de trabajo pensado para docentes',
   },
   language: {
     label: 'Idioma',

@@ -8,6 +8,9 @@ export const en = {
       'Lesson plans, classes, attendance, grades and parent portals in one place, for teachers, schools and homeschool families.',
     getStarted: 'Start your free trial',
     logIn: 'Log in',
+    phraseLessons: 'Lesson Planning',
+    phraseAi: 'AI Teaching Tools',
+    phraseWorkflow: 'Teacher-Friendly Workflow',
   },
   language: {
     label: 'Language',

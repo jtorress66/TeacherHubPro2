@@ -4,30 +4,31 @@ import { createTranslator, isLocale } from '@thp/i18n';
 import { Logo } from '../../components/logo.tsx';
 import { LanguagePicker } from './language-picker.tsx';
 
-/** An animated drawing of the workspace (cards, progress, a finished task), for decoration only. */
-function HeroArt() {
+/** An animated drawing of the workspace (cards, feature phrases, a finished task). */
+function HeroArt({ phrases }: { readonly phrases: readonly string[] }) {
   return (
-    <div className="hero-art" aria-hidden="true">
-      <span className="hero-sparkle" />
+    <div className="hero-art">
+      <span className="hero-sparkle" aria-hidden="true" />
       <div className="hero-window">
-        <div className="hero-window-bar">
+        <div className="hero-window-bar" aria-hidden="true">
           <span />
           <span />
           <span />
         </div>
-        <div className="hero-tiles">
+        <div className="hero-tiles" aria-hidden="true">
           <div className="hero-tile" />
           <div className="hero-tile" />
           <div className="hero-tile accent" />
         </div>
-        <div className="hero-bars">
-          <span style={{ width: '82%' }} />
-          <span style={{ width: '64%' }} />
-          <span style={{ width: '91%' }} />
-          <span style={{ width: '48%' }} />
-        </div>
+        <ul className="hero-phrases">
+          {phrases.map((phrase) => (
+            <li key={phrase} className="hero-phrase">
+              {phrase}
+            </li>
+          ))}
+        </ul>
       </div>
-      <div className="hero-badge">
+      <div className="hero-badge" aria-hidden="true">
         <span className="hero-badge-dot">
           <svg viewBox="0 0 24 24" width="22" height="22" focusable="false">
             <path d="M5 12.5l4.5 4.5L19 7.5" />
@@ -69,7 +70,9 @@ export default async function HomePage({
           </p>
           <LanguagePicker current={locale} label={t('language.label')} />
         </div>
-        <HeroArt />
+        <HeroArt
+          phrases={[t('home.phraseLessons'), t('home.phraseAi'), t('home.phraseWorkflow')]}
+        />
       </main>
     </div>
   );

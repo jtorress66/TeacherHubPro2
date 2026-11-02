@@ -34,6 +34,20 @@ test.describe('home page languages', () => {
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(catalogs.es.home.title);
   });
 
+  test('the workspace drawing shows the three feature phrases in the page’s language', async ({
+    page,
+  }) => {
+    for (const locale of ['en', 'es'] as const) {
+      const home = catalogs[locale].home;
+      await page.goto(`/${locale}`);
+      await expect(page.locator('.hero-phrase')).toHaveText([
+        home.phraseLessons,
+        home.phraseAi,
+        home.phraseWorkflow,
+      ]);
+    }
+  });
+
   test('/fr renders English text with html lang=fr', async ({ page }) => {
     await page.goto('/fr');
 
