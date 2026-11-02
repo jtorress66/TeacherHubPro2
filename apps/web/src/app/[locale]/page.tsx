@@ -4,10 +4,11 @@ import { createTranslator, isLocale } from '@thp/i18n';
 import { Logo } from '../../components/logo.tsx';
 import { LanguagePicker } from './language-picker.tsx';
 
-/** A drawing of the workspace (cards and a chart), for decoration only. */
+/** An animated drawing of the workspace (cards, progress, a finished task), for decoration only. */
 function HeroArt() {
   return (
     <div className="hero-art" aria-hidden="true">
+      <span className="hero-sparkle" />
       <div className="hero-window">
         <div className="hero-window-bar">
           <span />
@@ -27,7 +28,11 @@ function HeroArt() {
         </div>
       </div>
       <div className="hero-badge">
-        <span className="hero-badge-dot" />
+        <span className="hero-badge-dot">
+          <svg viewBox="0 0 24 24" width="22" height="22" focusable="false">
+            <path d="M5 12.5l4.5 4.5L19 7.5" />
+          </svg>
+        </span>
         <span className="hero-badge-line" />
       </div>
     </div>
