@@ -27,7 +27,7 @@ export function FillBlanksRound({ view, locale, onDone }: RendererProps<FillBlan
       <ol className="stack">
         {view.sentences.map((sentence, i) => (
           <li key={`${sentence.before}-${String(i)}`}>
-            <label htmlFor={`blank-${String(i)}`} className="sr-only">
+            <label htmlFor={`blank-${String(i)}`} className="visually-hidden">
               {t('gamePlay.answerFor', { n: i + 1 })}
             </label>
             {sentence.before}

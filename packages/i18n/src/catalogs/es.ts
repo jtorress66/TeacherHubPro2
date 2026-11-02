@@ -31,6 +31,10 @@ export const es: Messages = {
     billing: 'Planes y pagos',
     settings: 'Configuración',
     logOut: 'Cerrar sesión',
+    menu: 'Menú',
+    groupPlan: 'Planificar',
+    groupTeach: 'Enseñar',
+    groupAccount: 'Cuenta',
   },
   auth: {
     signUpTitle: 'Crea tu cuenta',

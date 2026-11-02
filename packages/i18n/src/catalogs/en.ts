@@ -29,6 +29,10 @@ export const en = {
     billing: 'Plans and billing',
     settings: 'Settings',
     logOut: 'Log out',
+    menu: 'Menu',
+    groupPlan: 'Plan',
+    groupTeach: 'Teach',
+    groupAccount: 'Account',
   },
   auth: {
     signUpTitle: 'Create your account',
