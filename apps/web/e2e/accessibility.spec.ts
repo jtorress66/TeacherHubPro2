@@ -22,7 +22,7 @@ test('the home page drawing moves, and stays still for people who ask for reduce
     const page = await context.newPage();
     await page.goto('/en');
     const names = await page
-      .locator('.hero-art .hero-window, .hero-art .hero-bars span')
+      .locator('.hero-art .hero-window, .hero-art .hero-phrase')
       .evaluateAll((elements) => elements.map((e) => getComputedStyle(e).animationName));
     await context.close();
     return names;
