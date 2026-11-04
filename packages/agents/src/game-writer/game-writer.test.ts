@@ -50,6 +50,21 @@ describe('GameWriter', () => {
     expect(prompt).not.toMatch(/student name|roster/i);
   });
 
+  it('asks for the difficulty, and aligns to a standard with its official wording when given', async () => {
+    const llm = new FakeLlmClient().replyWith(pairsReply).replyWith(pairsReply);
+    await new GameWriter(llm).write(requestOf({ subject: 'math', difficulty: 'hard' }));
+    await new GameWriter(llm).write(
+      requestOf({ subject: 'math', standard: 'CCSS.Math.Content.4.NF.A.1' }),
+    );
+    const [plain, aimed] = llm.requests.map((r) => r.messages[0]?.content ?? '');
+    expect(plain).toContain('Difficulty: hard.');
+    expect(plain).not.toContain('Common Core');
+    expect(aimed).toContain('Difficulty: medium.');
+    expect(aimed).toMatch(
+      /Align every item with the Common Core standard CCSS\.Math\.Content\.4\.NF\.A\.1: \S/,
+    );
+  });
+
   it('returns the checked content, trimmed to the count asked for', async () => {
     const llm = new FakeLlmClient().replyWith(pairsReply);
     const content = unwrap(await new GameWriter(llm).write(requestOf()));

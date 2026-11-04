@@ -1,4 +1,5 @@
-# Render Blueprint for TeacherHubPro: the Next.js web app and the background worker.
+# Render Blueprint for TeacherHubPro: the Next.js web app, the background worker and the realtime
+# WebSocket server for live games.
 #
 # pnpm workspace notes:
 # - No `rootDir`: Render hides files outside a service's root directory at build and run time,
@@ -70,6 +71,12 @@ services:
         value: google
       - key: TOKEN_ENCRYPTION_KEY # 32 random bytes, base64: encrypts Classroom tokens at rest
         generateValue: true
+      # Live games. The realtime service's public address, e.g.
+      # https://teacherhubpro-realtime.onrender.com (shown on that service's page once created).
+      - key: REALTIME_URL
+        sync: false
+      - key: REALTIME_TICKET_SECRET # signs host and player tickets; the realtime service reads it from here
+        generateValue: true
 
   - type: worker
     name: teacherhubpro-worker
@@ -105,3 +112,43 @@ services:
       # Fail loudly if the key is missing, rather than drafting with the local stand-in.
       - key: LLM_PROVIDER
         value: anthropic
+
+  - type: web
+    name: teacherhubpro-realtime
+    runtime: node
+    plan: starter # always on: a live game must not wait for a sleeping server
+    region: virginia # same region as the web app and Postgres
+    # Runs its TypeScript directly with tsx, like the worker.
+    buildCommand: corepack enable && pnpm install --frozen-lockfile
+    startCommand: corepack enable && pnpm --filter @thp/realtime start
+    healthCheckPath: /health
+    buildFilter:
+      paths:
+        - apps/realtime/**
+        - packages/**
+        - package.json
+        - pnpm-lock.yaml
+        - pnpm-workspace.yaml
+        - tsconfig.base.json
+        - .nvmrc
+        - .npmrc
+      ignoredPaths:
+        - '**/*.test.ts'
+        - '**/*.int.test.ts'
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: teacherhubpro-db
+          property: connectionString
+      # The same secret as the web app, which signs the tickets this server checks.
+      - key: REALTIME_TICKET_SECRET
+        fromService:
+          type: web
+          name: teacherhubpro-web
+          envVarKey: REALTIME_TICKET_SECRET
+      # Browsers may connect only from the web app's address.
+      - key: APP_URL
+        fromService:
+          type: web
+          name: teacherhubpro-web
+          envVarKey: APP_URL

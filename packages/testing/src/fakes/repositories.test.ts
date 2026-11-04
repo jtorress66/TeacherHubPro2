@@ -37,6 +37,7 @@ import { plannerRepositoryContract } from '../contracts/planner.contract.ts';
 import { assistantRepositoryContract } from '../contracts/assistant.contract.ts';
 import { assignmentRepositoryContract } from '../contracts/assignments.contract.ts';
 import { gamePlayRepositoryContract } from '../contracts/games.contract.ts';
+import { liveRepositoryContract } from '../contracts/live.contract.ts';
 import {
   aClass,
   aGame,
@@ -56,6 +57,9 @@ import {
   InMemoryClassRepository,
   InMemoryGameRepository,
   InMemoryGamePlayRepository,
+  InMemoryLiveAnswerRepository,
+  InMemoryLivePlayerRepository,
+  InMemoryLiveSessionRepository,
   InMemoryGradeCategoryRepository,
   InMemoryGradeRepository,
   InMemoryLessonPlanRepository,
@@ -259,4 +263,10 @@ assignmentRepositoryContract('InMemory', () => ({
   attachments: new InMemoryAttachmentRepository(),
   studentLinks: new InMemoryStudentLinkRepository(),
   classroomConnections: new InMemoryClassroomConnectionRepository(),
+}));
+
+liveRepositoryContract('InMemory', () => ({
+  sessions: new InMemoryLiveSessionRepository(),
+  players: new InMemoryLivePlayerRepository(),
+  answers: new InMemoryLiveAnswerRepository(),
 }));

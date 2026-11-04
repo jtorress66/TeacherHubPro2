@@ -282,3 +282,39 @@ export {
   type StudentGameResult,
   type StudentLeaderboardRow,
 } from './games/results.ts';
+export {
+  hostTicket,
+  playerTicket,
+  readTicket,
+  liveTicketLifetimeMs,
+  type LiveActor,
+} from './live/live-tickets.ts';
+export {
+  StartLiveSession,
+  ListLiveSessions,
+  OpenLiveHost,
+  DeleteLiveSession,
+  GetLiveInsights,
+  findOwnLiveSession,
+  type LiveHost,
+  type StartLiveInput,
+} from './live/live-sessions.ts';
+export {
+  FindLiveSessionByPin,
+  JoinLiveSession,
+  VerifyLiveTicket,
+  type LiveJoin,
+  type LiveLobby,
+} from './live/live-join.ts';
+export {
+  StartLiveGame,
+  NextLiveQuestion,
+  EndLiveSession,
+  RevealLiveAnswer,
+  RemoveLivePlayer,
+  SubmitLiveAnswer,
+  StartSelfPacedRound,
+  FinishSelfPacedRound,
+  type SubmittedAnswer,
+} from './live/live-game.ts';
+export { GetLiveView, type LiveView, type LiveBoardRow } from './live/live-view.ts';

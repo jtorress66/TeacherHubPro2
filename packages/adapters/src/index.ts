@@ -32,6 +32,7 @@ export {
 } from './ai/openai-text-to-speech.ts';
 export { UnpdfTextExtractor } from './pdf/unpdf-text-extractor.ts';
 export { AesGcmCipher } from './crypto/aes-gcm-cipher.ts';
+export { HmacTicketSigner, minTicketSecretLength } from './crypto/hmac-ticket-signer.ts';
 export { GoogleClassroom } from './google/google-classroom.ts';
 export {
   GoogleClassroomAuthorization,

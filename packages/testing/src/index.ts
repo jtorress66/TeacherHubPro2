@@ -33,3 +33,4 @@ export * from './contracts/assignments.contract.ts';
 export { sampleGameContent } from './game-content.ts';
 export { gameModeContract } from './contracts/game-mode.contract.ts';
 export * from './contracts/games.contract.ts';
+export * from './contracts/live.contract.ts';

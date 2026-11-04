@@ -30,6 +30,8 @@ export interface WebConfig {
   readonly classroom: ClassroomConfig;
   /** The voice that reads text aloud (the worker makes the audio with the same one). */
   readonly voice: string;
+  /** Live games: the realtime server's address, and the secret both use to sign tickets. */
+  readonly realtime: { readonly url: string; readonly ticketSecret: string };
 }
 
 const required = (name: string) => ({ error: `${name} is required` });
@@ -51,6 +53,12 @@ const shared = z.object({
     .string(required('APP_URL'))
     .regex(/^https?:\/\/\S+$/, 'APP_URL must be an absolute http(s) URL'),
   APP_ENV: z.enum(['development', 'test', 'production']).default('production'),
+  REALTIME_URL: z
+    .string(required('REALTIME_URL'))
+    .regex(/^https?:\/\/\S+$/, 'REALTIME_URL must be an absolute http(s) URL'),
+  REALTIME_TICKET_SECRET: z
+    .string(required('REALTIME_TICKET_SECRET'))
+    .min(32, 'REALTIME_TICKET_SECRET must be at least 32 characters'),
 });
 
 const billing = z.discriminatedUnion(
@@ -163,5 +171,9 @@ export function parseWebConfig(
           },
     classroom: classroom.value,
     voice: voiceFrom(env),
+    realtime: {
+      url: c.REALTIME_URL.replace(/\/$/, ''),
+      ticketSecret: c.REALTIME_TICKET_SECRET,
+    },
   });
 }

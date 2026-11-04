@@ -16,6 +16,10 @@ const config: WebConfig = {
   google: { provider: 'local', secret: 'google-secret-for-int-tests' },
   classroom: { provider: 'local' },
   voice: 'nova',
+  realtime: {
+    url: 'http://localhost:3998',
+    ticketSecret: 'realtime-ticket-secret-for-int-tests',
+  },
 };
 const db = createDatabase(config.databaseUrl);
 const app = createAppContainer(config, db);

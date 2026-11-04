@@ -42,6 +42,7 @@ export default async function GamePage(props: Props) {
     ? categories.value.map((c) => ({ id: c.id, name: c.name }))
     : [];
   const results = await app.getGameResults.execute({ actor: user, gameId: game.id });
+  const insights = await app.getLiveInsights.execute({ actor: user, gameId: game.id });
   const day = new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short' });
 
   return (
@@ -54,6 +55,9 @@ export default async function GamePage(props: Props) {
       <p>
         <Link className="button secondary" href={`/${locale}/app/games/${game.id}/play`}>
           {t('games.preview')}
+        </Link>{' '}
+        <Link className="button secondary" href={`/${locale}/app/live?game=${game.id}`}>
+          {t('nav.live')}
         </Link>
       </p>
       <GameEditor
@@ -126,6 +130,61 @@ export default async function GamePage(props: Props) {
                   <td>{entry.name}</td>
                   <td>{entry.percent}%</td>
                   <td>{formatDuration(entry.durationMs)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
+      )}
+
+      <h2>{t('live.insightsTitle')}</h2>
+      {!insights.ok || insights.value.sessions === 0 ? (
+        <p>{t('live.noInsights')}</p>
+      ) : (
+        <>
+          <p>
+            {t('live.insightsSummary', {
+              sessions: insights.value.sessions,
+              participants: insights.value.participants,
+              accuracy: insights.value.averageAccuracy ?? 0,
+            })}
+          </p>
+          <p className="hint">{t('live.practiceNote')}</p>
+          <h3>{t('live.hardest')}</h3>
+          <table className="table" aria-label={t('live.hardest')}>
+            <thead>
+              <tr>
+                <th scope="col">{t('live.question')}</th>
+                <th scope="col">{t('live.answered')}</th>
+                <th scope="col">{t('live.accuracy')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {insights.value.questions.map((q) => (
+                <tr key={q.prompt}>
+                  <td>{q.prompt}</td>
+                  <td>{q.answered}</td>
+                  <td>{q.percentCorrect}%</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <table className="table" aria-label={t('live.student')}>
+            <thead>
+              <tr>
+                <th scope="col">{t('live.student')}</th>
+                <th scope="col">{t('live.sessionsCount')}</th>
+                <th scope="col">{t('live.answered')}</th>
+                <th scope="col">{t('live.accuracy')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {insights.value.students.map((s) => (
+                <tr key={s.studentId}>
+                  <td>{s.firstName}</td>
+                  <td>{s.sessions}</td>
+                  <td>{s.answered}</td>
+                  <td>{s.accuracy}%</td>
                 </tr>
               ))}
             </tbody>

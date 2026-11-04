@@ -38,6 +38,7 @@ import {
   assistantRepositoryContract,
   assignmentRepositoryContract,
   gamePlayRepositoryContract,
+  liveRepositoryContract,
   SequentialIdGenerator,
   gradeRepositoryContract,
   reportCardCommentContract,
@@ -298,4 +299,9 @@ withParents(parentsFor.class, () => {
 
 withParents(parentsFor.games, () => {
   gamePlayRepositoryContract('Postgres', () => repos.gamePlays);
+  liveRepositoryContract('Postgres', () => ({
+    sessions: repos.liveSessions,
+    players: repos.livePlayers,
+    answers: repos.liveAnswers,
+  }));
 });

@@ -11,6 +11,9 @@ import type {
   ClassRepository,
   GameRepository,
   GamePlayRepository,
+  LiveAnswerRepository,
+  LivePlayerRepository,
+  LiveSessionRepository,
   GradeCategoryRepository,
   GradeRepository,
   LessonPlanRepository,
@@ -31,6 +34,11 @@ import { PostgresAttendanceSessionRepository } from './repositories/postgres-att
 import { PostgresClassRepository } from './repositories/postgres-class-repository.ts';
 import { PostgresGameRepository } from './repositories/postgres-game-repository.ts';
 import { PostgresGamePlayRepository } from './repositories/postgres-game-play-repository.ts';
+import {
+  PostgresLiveAnswerRepository,
+  PostgresLivePlayerRepository,
+  PostgresLiveSessionRepository,
+} from './repositories/postgres-live-repositories.ts';
 import { PostgresGradeCategoryRepository } from './repositories/postgres-grade-category-repository.ts';
 import { PostgresGradeRepository } from './repositories/postgres-grade-repository.ts';
 import { PostgresLessonPlanRepository } from './repositories/postgres-lesson-plan-repository.ts';
@@ -86,6 +94,9 @@ export interface PostgresRepositories {
   readonly attendanceSessions: AttendanceSessionRepository;
   readonly games: GameRepository;
   readonly gamePlays: GamePlayRepository;
+  readonly liveSessions: LiveSessionRepository;
+  readonly livePlayers: LivePlayerRepository;
+  readonly liveAnswers: LiveAnswerRepository;
   readonly subscriptions: SubscriptionRepository;
   readonly sessions: SessionRepository;
   readonly credentials: PasswordCredentialRepository;
@@ -116,6 +127,9 @@ export function createPostgresRepositories(db: Kysely<Database>): PostgresReposi
     attendanceSessions: new PostgresAttendanceSessionRepository(db),
     games: new PostgresGameRepository(db),
     gamePlays: new PostgresGamePlayRepository(db),
+    liveSessions: new PostgresLiveSessionRepository(db),
+    livePlayers: new PostgresLivePlayerRepository(db),
+    liveAnswers: new PostgresLiveAnswerRepository(db),
     subscriptions: new PostgresSubscriptionRepository(db),
     sessions: new PostgresSessionRepository(db),
     credentials: new PostgresPasswordCredentialRepository(db),

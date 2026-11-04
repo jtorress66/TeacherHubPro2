@@ -9,6 +9,8 @@ const local = {
   LOCAL_BILLING_SECRET: 'local-billing-secret-123',
   GOOGLE_AUTH_PROVIDER: 'local',
   LOCAL_GOOGLE_SECRET: 'local-google-secret-1234',
+  REALTIME_URL: 'http://localhost:3200/',
+  REALTIME_TICKET_SECRET: 'local-realtime-ticket-secret-1234567',
 };
 
 /** An obviously fake 32-byte key, built at run time so no key-like text is checked in. */
@@ -26,6 +28,8 @@ const production = {
   GOOGLE_CLIENT_SECRET: 'google-secret',
   CLASSROOM_PROVIDER: 'google',
   TOKEN_ENCRYPTION_KEY: testEncryptionKey,
+  REALTIME_URL: 'https://teacherhubpro-realtime.onrender.com',
+  REALTIME_TICKET_SECRET: 'r'.repeat(32),
 };
 
 /** A copy of the environment with one variable removed. */
@@ -44,7 +48,26 @@ describe('parseWebConfig', () => {
         google: { provider: 'local', secret: local.LOCAL_GOOGLE_SECRET },
         classroom: { provider: 'local' },
         voice: 'nova',
+        realtime: {
+          url: 'http://localhost:3200',
+          ticketSecret: local.REALTIME_TICKET_SECRET,
+        },
       },
+    });
+  });
+
+  it('needs the realtime server’s address and a ticket secret of at least 32 characters', () => {
+    expect(parseWebConfig(without(local, 'REALTIME_URL'))).toEqual({
+      ok: false,
+      error: 'REALTIME_URL is required',
+    });
+    expect(parseWebConfig({ ...local, REALTIME_URL: 'ws://x' })).toEqual({
+      ok: false,
+      error: 'REALTIME_URL must be an absolute http(s) URL',
+    });
+    expect(parseWebConfig({ ...local, REALTIME_TICKET_SECRET: 'short' })).toEqual({
+      ok: false,
+      error: 'REALTIME_TICKET_SECRET must be at least 32 characters',
     });
   });
 
@@ -78,6 +101,10 @@ describe('parseWebConfig', () => {
           encryptionKey: testEncryptionKey,
         },
         voice: 'nova',
+        realtime: {
+          url: 'https://teacherhubpro-realtime.onrender.com',
+          ticketSecret: production.REALTIME_TICKET_SECRET,
+        },
       },
     });
   });

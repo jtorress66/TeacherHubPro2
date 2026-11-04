@@ -1395,6 +1395,189 @@ input[type='radio'] {
   }
 }
 
+/* Play to Learn: big, high-contrast tiles readable across a classroom. */
+
+.live-pin {
+  margin: 0;
+  color: var(--heading);
+  font-size: clamp(3rem, 2rem + 6vw, 6rem);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
+.live-join {
+  display: grid;
+  gap: 0.25rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.live-players,
+.name-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.live-players li {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.name-grid .button {
+  flex-direction: column;
+  min-width: 8rem;
+}
+
+.pin-input {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-align: center;
+  max-width: 14rem;
+}
+
+.live-question {
+  font-family: var(--font-body);
+  font-size: clamp(1.4rem, 1.1rem + 1.5vw, 2.2rem);
+  font-weight: 800;
+}
+
+.answer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 0.75rem;
+}
+
+.answer {
+  display: flex;
+  gap: 0.85rem;
+  align-items: center;
+  min-height: 4.5rem;
+  padding: 0.9rem 1.1rem;
+  border: 0;
+  border-radius: var(--radius-lg);
+  color: #ffffff;
+  font: inherit;
+  font-size: 1.15rem;
+  font-weight: 800;
+  text-align: left;
+  box-shadow: var(--shadow);
+  transition:
+    transform 0.12s ease,
+    opacity 0.2s ease;
+}
+
+button.answer {
+  cursor: pointer;
+}
+
+button.answer:hover {
+  transform: translateY(-2px);
+}
+
+.answer-0 {
+  background: #b91c1c;
+}
+
+.answer-1 {
+  background: #1d4ed8;
+}
+
+.answer-2 {
+  background: #a16207;
+}
+
+.answer-3 {
+  background: #15803d;
+}
+
+.answer-4 {
+  background: #7e22ce;
+}
+
+.answer-5 {
+  background: #0f766e;
+}
+
+.answer.faded {
+  opacity: 0.35;
+}
+
+.answer.right {
+  outline: 4px solid var(--green);
+  outline-offset: 3px;
+}
+
+.answer-shape {
+  font-size: 1.4rem;
+}
+
+.answer-text {
+  flex: 1;
+}
+
+.answer-count {
+  min-width: 2rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 25%);
+  text-align: center;
+}
+
+.live-board {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.live-board li {
+  display: flex;
+  gap: 0.9rem;
+  align-items: center;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  font-weight: 700;
+}
+
+.live-board li:first-child {
+  border-color: var(--green);
+  background: var(--green-soft);
+  color: var(--green-text);
+}
+
+.live-rank {
+  min-width: 1.5rem;
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.live-name {
+  flex: 1;
+}
+
+.live-standing {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
 /* No motion for people who ask for less: the drawing shows its finished state, still. */
 @media (prefers-reduced-motion: reduce) {
   .hero-art,

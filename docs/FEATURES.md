@@ -201,6 +201,20 @@ Seven interface languages: English, Spanish, French, Portuguese, German, Italian
 - Live session (like Kahoot): PIN to join, host selects a mode, starts, advances questions; students submit answers; complete, close. Real-time updates over WebSocket.
 - Self-paced mode, teacher's session list, insights per assignment.
 - Old files: `backend/routes/play_to_learn.py`, `frontend/src/pages/PlayToLearnLanding.js`, `PlayToLearnTeacher.js`, `PlayToLearnHost.js`, `PlayToLearnGame.js`.
+- **Decided for the rebuild:**
+  - **Live games reuse step 11 games.** The teacher runs any game of theirs with one of its classes, live or self-paced. Live play uses the question modes (quiz, and pairs games played as a quiz; true/false); self-paced plays any mode with the regular game player. AI drafts gain an optional Common Core standard (checked against the real codes) and a difficulty (easy, medium, hard).
+  - **Joining:** the teacher's screen shows a 6-digit PIN. Students open `/play`, enter it and tap their first name from the class list (a last initial is added when two share a first name); a taken name is greyed out, and the teacher can remove a player, which frees the name. No typed nicknames and no accounts: every answer is tied to a roster student.
+  - **Scoring is practice only, never a grade:** a right answer earns up to 1000 points, more the faster it comes (`1000 × (1 − t/T ÷ 2)`), plus 100 per answer in a row after the first, capped at +500. The leaderboard shows after each question, and each student sees their rank and streak.
+  - **A realtime service** (`apps/realtime`, a third Render service) carries the game over WebSocket. Messages are handled one at a time per session, so answers that arrive together cannot miss each other. The answer is revealed when everyone has answered or the time is up.
+  - **Insights** on each game's page: sessions, participants, average accuracy, the questions from hardest to easiest, and each student's accuracy.
+- **Kept from the old app:** PIN and lobby; the host starts, advances and ends the game; answers over WebSocket; streaks; the self-paced mode; the teacher's session list and delete; insights per game with no grades.
+- **Fixed from the old app:**
+  - The WebSocket trusted `role=host` and a participant ID from the URL: host and player tickets are now HMAC-signed, expire after 4 hours, and every command is checked on the server.
+  - The browser sent its own `time_taken_ms` and score: the server now times each question and scores every answer; a player never receives the answer before the reveal.
+  - Typed nicknames: replaced by first names from the roster.
+  - A PIN pointed at any session that wasn't complete: a PIN is now unique among open sessions only, and an open session closes by itself after 3 hours.
+  - A student could hold two seats: a student has at most one active seat per session (enforced by the database).
+- **Dropped (agreed in the step 12 plan):** the separate "practice assignment" entity (games cover it, now with a standard and a difficulty); live variants of the non-question modes (they are played self-paced).
 
 ## Step 13 — Adaptive learning and student progress
 

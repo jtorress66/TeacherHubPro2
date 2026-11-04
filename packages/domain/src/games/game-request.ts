@@ -2,7 +2,8 @@ import { assistantSubjects, type AssistantSubject } from '../assistant/content-r
 import { isLanguage, type Language } from '../shared/language.ts';
 import { ok, type Result } from '../shared/result.ts';
 import { invalid, requiredText, type ValidationError } from '../shared/validation.ts';
-import { isGradeLevel, type GradeLevel } from '../standards/common-core.ts';
+import { draftDifficulties, type DraftDifficulty } from '../lesson-plans/plan-draft.ts';
+import { findStandard, isGradeLevel, type GradeLevel } from '../standards/common-core.ts';
 import { isContentKind, maxItemTextLength, minItemsFor, type ContentKind } from './content.ts';
 import { wordSearchLimits } from './modes/word-search.ts';
 
@@ -17,6 +18,9 @@ export interface GameRequest {
   readonly language: Language;
   /** Items already in the game, so asking again writes fresh ones. */
   readonly avoid: readonly string[];
+  /** An official Common Core code to aim at, or none. */
+  readonly standard: string | null;
+  readonly difficulty: DraftDifficulty;
 }
 
 export interface GameRequestInput {
@@ -27,6 +31,8 @@ export interface GameRequestInput {
   readonly language: string;
   readonly count?: number;
   readonly avoid?: readonly string[];
+  readonly standard?: string | null;
+  readonly difficulty?: string;
 }
 
 export interface CountRange {
@@ -52,6 +58,9 @@ export const gameCountRange = (kind: ContentKind): CountRange =>
     ? { min: 2, max: 4, default: 3 }
     : { min: minItemsFor(kind), max: maxItems[kind], default: defaultItems };
 
+const isDifficulty = (value: string): value is DraftDifficulty =>
+  (draftDifficulties as readonly string[]).includes(value);
+
 const isSubject = (value: string): value is AssistantSubject =>
   (assistantSubjects as readonly string[]).includes(value);
 
@@ -67,6 +76,12 @@ export function createGameRequest(input: GameRequestInput): Result<GameRequest, 
   if (!Number.isInteger(count) || count < range.min || count > range.max) {
     return invalid('count', 'out_of_range');
   }
+  const standard = input.standard?.trim() ?? '';
+  if (standard !== '' && findStandard(standard) === null) {
+    return invalid('standard', 'invalid_format');
+  }
+  const difficulty = input.difficulty ?? 'medium';
+  if (!isDifficulty(difficulty)) return invalid('difficulty', 'invalid_format');
   const avoid = (input.avoid ?? [])
     .map((item) => item.trim().slice(0, maxItemTextLength))
     .filter((item) => item !== '')
@@ -79,5 +94,7 @@ export function createGameRequest(input: GameRequestInput): Result<GameRequest, 
     count,
     language: input.language,
     avoid,
+    standard: standard === '' ? null : standard,
+    difficulty,
   });
 }

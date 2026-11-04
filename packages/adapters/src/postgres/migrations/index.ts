@@ -8,6 +8,7 @@ import * as lessonPlanner from './0006_lesson_planner.ts';
 import * as assistant from './0007_assistant.ts';
 import * as assignments from './0008_assignments.ts';
 import * as games from './0009_games.ts';
+import * as live from './0010_live.ts';
 
 /** Ordered list of migrations, bundled with the code (no filesystem lookups at runtime). */
 const migrations: Readonly<Record<string, Migration>> = {
@@ -20,6 +21,7 @@ const migrations: Readonly<Record<string, Migration>> = {
   '0007_assistant': assistant,
   '0008_assignments': assignments,
   '0009_games': games,
+  '0010_live': live,
 };
 
 export const migrationProvider: MigrationProvider = {

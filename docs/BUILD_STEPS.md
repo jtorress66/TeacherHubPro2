@@ -2,7 +2,7 @@
 
 Place this file at `docs/BUILD_STEPS.md`. Work on one step at a time. Tick a step only when its gate passes and the Definition of Done in `CLAUDE.md` is met. For each step, read its section in `docs/FEATURES.md` first.
 
-**Current step:** 11
+**Current step:** 12
 
 | # | Step | Scope | Gate (must pass before next step) | Done |
 | --- | --- | --- | --- | --- |
@@ -17,7 +17,7 @@ Place this file at `docs/BUILD_STEPS.md`. Work on one step at a time. Tick a ste
 | 9 | AI assistant, presentations, voice | AI assistant content types, presentation creator, text-to-speech, substitute packet | Evals meet thresholds; E2E: generate a worksheet and a presentation | [x] |
 | 10 | Assignments and AI grading | Question builder (all types), file uploads, PDF → online test, student assignment links, submissions, AI grading with teacher confirmation into the gradebook, Google Classroom share | E2E: PDF → test → student submits from link → AI grades → teacher confirms → grade appears in gradebook and report card | [x] |
 | 11 | Educational games | Game creator with every mode via `GameModeRegistry`, validator, play page, scores, leaderboard, progress, grade settings, analytics | Each mode passes the game-mode contract; E2E: create, play and score one game per mode | [x] |
-| 12 | Play to Learn (live) | Practice assignments, PIN join, host dashboard, live questions over `apps/realtime`, self-paced mode, insights | E2E: host + 3 students play a live session; scores and insights correct | [ ] |
+| 12 | Play to Learn (live) | Practice assignments, PIN join, host dashboard, live questions over `apps/realtime`, self-paced mode, insights | E2E: host + 3 students play a live session; scores and insights correct | [x] |
 | 13 | Adaptive learning and student progress | AI learning paths, student learning links, lesson completion, progress dashboard | Evals meet thresholds; E2E: path generated → student completes a lesson → progress updates | [ ] |
 | 14 | Parent and homeschool portals, email | Portal links, homeschool portal and reports, emailing portal links (Resend), trial reminder emails | E2E: teacher emails a portal link → parent sees only confirmed grades and attendance | [ ] |
 | 15 | Command Center and Student 360 | Daily dashboard, at-risk detection, to-grade list, recommendations, Student 360 timeline, private notes, AI insight | At-risk rules match `docs/FEATURES.md` examples; E2E: dashboard shows today's classes and an at-risk student | [ ] |

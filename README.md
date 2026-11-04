@@ -37,12 +37,13 @@ pnpm db:up                # starts Postgres on localhost:5433 (set POSTGRES_PORT
 pnpm db:migrate           # applies pending migrations ("Database is up to date." when none)
 ```
 
-| Variable                                                                                    | Used by     | Example                                                      |
-| ------------------------------------------------------------------------------------------- | ----------- | ------------------------------------------------------------ |
-| `DATABASE_URL`                                                                              | web, worker | `postgres://teacherhub:teacherhub@localhost:5433/teacherhub` |
-| `APP_URL`, `APP_ENV`                                                                        | web         | `http://localhost:3000`, `development`                       |
-| `BILLING_PROVIDER` + `LOCAL_BILLING_SECRET` or `STRIPE_SECRET_KEY`/`STRIPE_WEBHOOK_SECRET`  | web         | see `.env.example`                                           |
-| `GOOGLE_AUTH_PROVIDER` + `LOCAL_GOOGLE_SECRET` or `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` | web         | see `.env.example`                                           |
+| Variable                                                                                    | Used by               | Example                                                      |
+| ------------------------------------------------------------------------------------------- | --------------------- | ------------------------------------------------------------ |
+| `DATABASE_URL`                                                                              | web, worker, realtime | `postgres://teacherhub:teacherhub@localhost:5433/teacherhub` |
+| `REALTIME_URL`, `REALTIME_TICKET_SECRET`                                                    | web, realtime         | `http://localhost:3200`, 32+ random characters (shared)      |
+| `APP_URL`, `APP_ENV`                                                                        | web                   | `http://localhost:3000`, `development`                       |
+| `BILLING_PROVIDER` + `LOCAL_BILLING_SECRET` or `STRIPE_SECRET_KEY`/`STRIPE_WEBHOOK_SECRET`  | web                   | see `.env.example`                                           |
+| `GOOGLE_AUTH_PROVIDER` + `LOCAL_GOOGLE_SECRET` or `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` | web                   | see `.env.example`                                           |
 
 The schema lives in `packages/adapters/src/postgres/migrations/`. Each change is a new numbered migration; never edit one that has been merged.
 
@@ -122,6 +123,18 @@ Each assignment can be an online test (`…/assignments/<id>/questions`): build 
 
 **Games** (`/app/games`) come in eleven modes (quiz, time attack, true or false, fill in the blanks, flashcards, matching, memory, word search, crossword, sequence, drag and drop) or "all modes", where students choose. Type the items one per line or have the AI write them from a topic, then share the game with a class: students play it from their personal link, every round is scored on the server and saved with their roster ID, and play again reshuffles for free. Teachers can preview a game (never saved), see each student's attempts and the class leaderboard, and turn on "count as a grade": each student's grade (best, first or average attempt) is a draft until the teacher confirms the game's grades.
 
+## Play to Learn (live games)
+
+**Play to Learn** (`/app/live`) runs any game live with a class, like a quiz show, or self-paced. The teacher's screen shows a PIN; students open `/play` on their own devices, enter it and tap their first name from the class list. Each question has a countdown; answers are timed and scored on the server (more points for a faster right answer, plus a streak bonus), and the leaderboard shows after each question. It is practice only: nothing reaches the gradebook. Each game's page shows its live insights: the hardest questions and each student's accuracy.
+
+The game runs over the realtime WebSocket server, a third process next to the web app and the worker:
+
+```
+pnpm --filter @thp/realtime start   # port 3200; needs DATABASE_URL, REALTIME_TICKET_SECRET and APP_URL
+```
+
+The web app signs host and player tickets with `REALTIME_TICKET_SECRET` and the realtime server checks them, so both need the same value. E2E tests start it automatically.
+
 ## AI assistant, presentations and voice
 
 The **AI assistant** (`/app/assistant`) writes worksheets, quizzes, topic summaries, class activities and free-form lesson plans as Markdown, in the language the teacher picks; everything it writes is kept in the teacher's history, with copy, print and Listen. **Presentations** (`/app/presentations`) are drafted by Claude or started blank, edited slide by slide (layouts, emoji, themes, transitions), shown full screen in present mode and printed one slide per page. Each class has a **substitute packet** (`/app/classes/<id>/sub-packet`) with saved notes and a print page.
@@ -148,7 +161,7 @@ pnpm check:forbidden  # the legacy-platform reference check CI runs
 ```
 apps/web        Next.js app; routes are prefixed with the language (/en, /es, ...)
 apps/worker     background jobs; `pnpm db:migrate` CLI
-apps/realtime   live game WebSocket server (stub)
+apps/realtime   live game WebSocket server
 packages/*      domain, ports, application, agents, adapters (Postgres via Kysely), i18n, testing
 tests/          architecture tests (dependency rule, SDK boundaries)
 scripts/        repository checks

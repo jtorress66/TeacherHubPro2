@@ -1,6 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const port = 3100;
+const realtimePort = 3200;
+const ticketSecret = 'e2e-realtime-ticket-secret-0123456789';
 const appUrl = `http://localhost:${String(port)}`;
 const databaseUrl =
   process.env.DATABASE_URL ?? 'postgres://teacherhub:teacherhub@localhost:5433/teacherhub';
@@ -33,6 +35,22 @@ export default defineConfig({
         LOCAL_BILLING_SECRET: 'e2e-local-billing-secret',
         GOOGLE_AUTH_PROVIDER: 'local',
         LOCAL_GOOGLE_SECRET: 'e2e-local-google-secret',
+        REALTIME_URL: `http://localhost:${String(realtimePort)}`,
+        REALTIME_TICKET_SECRET: ticketSecret,
+      },
+    },
+    {
+      // Live games over WebSockets, sharing the ticket secret with the web app.
+      name: 'Realtime',
+      command: 'pnpm --filter @thp/realtime start',
+      url: `http://localhost:${String(realtimePort)}/health`,
+      reuseExistingServer: !process.env.CI,
+      timeout: 60_000,
+      env: {
+        DATABASE_URL: databaseUrl,
+        APP_URL: appUrl,
+        PORT: String(realtimePort),
+        REALTIME_TICKET_SECRET: ticketSecret,
       },
     },
     {

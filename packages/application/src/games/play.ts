@@ -49,7 +49,8 @@ function modeFor(
   return mode === undefined ? err({ field: 'mode', code: 'not_allowed' }) : ok({ mode, all });
 }
 
-function roundOf(
+/** A round of the game in the requested mode (or its first playable one) from a seed. */
+export function roundOf(
   game: Game,
   modes: GameModeRegistry,
   requested: string | undefined,
@@ -77,7 +78,8 @@ export interface FinishInput {
   readonly answers: unknown;
 }
 
-function scoreOf(
+/** Scores answers to the round the seed rebuilds, by the mode's own rules. */
+export function scoreOf(
   game: Game,
   modes: GameModeRegistry,
   input: FinishInput,
@@ -91,7 +93,7 @@ function scoreOf(
   return ok({ mode: found.value.mode.id, score: { ...score, percent: percentOf(score) } });
 }
 
-const clampDuration = (ms: number): number =>
+export const clampDuration = (ms: number): number =>
   Number.isFinite(ms) ? Math.min(maxDurationMs, Math.max(0, Math.round(ms))) : 0;
 
 interface StudentGameDeps extends LinkDeps {
