@@ -17,6 +17,11 @@ import {
   createGame,
   createGamePlay,
   createLiveSession,
+  createLearningPath,
+  type LearningLesson,
+  type LearningPath,
+  type LearningPathInput,
+  type LessonAttempt,
   joinPlayer,
   defaultGameModes,
   createGrade,
@@ -58,6 +63,8 @@ import type {
   LiveSession,
   LiveSessionId,
   LiveSessionInput,
+  LearningPathId,
+  LessonAttemptId,
   GamePlayId,
   AssignmentId,
   AttendanceSessionId,
@@ -430,5 +437,64 @@ export const aClassroomConnection = (
     encryptedRefreshToken: 'sealed-1',
     connectedAt: new Date('2026-09-01T12:00:00Z'),
   }),
+  ...overrides,
+});
+
+/** A valid lesson; its checks' right answers are options 1, 0 and 1. */
+export const aLearningLesson = (
+  n = 1,
+  overrides: Partial<LearningLesson> = {},
+): LearningLesson => ({
+  title: `Comparing fractions, part ${String(n)}`,
+  objective: `Compare fractions with like denominators (${String(n)})`,
+  minutes: 15,
+  content: 'A fraction names part of a whole. When the bottom numbers match, compare the tops.',
+  checks: [
+    { prompt: `Which is larger: 3/8 or 5/8? (${String(n)})`, options: ['3/8', '5/8'], answer: 1 },
+    { prompt: `Which is smaller: 1/4 or 3/4? (${String(n)})`, options: ['1/4', '3/4'], answer: 0 },
+    { prompt: `Is 2/6 less than 4/6? (${String(n)})`, options: ['No', 'Yes'], answer: 1 },
+  ],
+  ...overrides,
+});
+
+/** A draft path for student-1 in math; pass `status` and `assignedAt` for an assigned one. */
+export const aLearningPath = (
+  overrides: Partial<LearningPathInput> & Partial<Pick<LearningPath, 'status' | 'assignedAt'>> = {},
+): LearningPath => {
+  const { status, assignedAt, ...input } = overrides;
+  return {
+    ...unwrap(
+      createLearningPath({
+        id: 'path-1' as LearningPathId,
+        schoolId,
+        teacherId,
+        studentId: 'student-1' as StudentId,
+        classId,
+        subject: 'math',
+        grade: '4',
+        language: 'en',
+        level: 3,
+        title: 'Fractions, step by step',
+        description: 'Comparing and ordering fractions.',
+        lessons: [aLearningLesson(1), aLearningLesson(2), aLearningLesson(3)],
+        createdAt: new Date('2026-11-04T10:00:00Z'),
+        ...input,
+      }),
+    ),
+    ...(status === undefined ? {} : { status }),
+    ...(assignedAt === undefined ? {} : { assignedAt }),
+  };
+};
+
+export const aLessonAttempt = (overrides: Partial<LessonAttempt> = {}): LessonAttempt => ({
+  id: 'attempt-1' as LessonAttemptId,
+  schoolId,
+  pathId: 'path-1' as LearningPathId,
+  studentId: 'student-1' as StudentId,
+  lesson: 0,
+  answers: [1, 0, 1],
+  score: 2,
+  total: 3,
+  at: new Date('2026-11-04T11:00:00Z'),
   ...overrides,
 });

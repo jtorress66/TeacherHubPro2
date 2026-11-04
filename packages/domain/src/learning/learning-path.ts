@@ -110,17 +110,14 @@ function checkLesson(field: string, lesson: LearningLesson): Checked<LearningLes
   });
 }
 
-interface CheckedText {
+/** What the path writer returns: everything the teacher reviews. */
+export interface PathDraft {
   readonly title: string;
   readonly description: string;
   readonly lessons: readonly LearningLesson[];
 }
 
-function checkText(input: {
-  title: string;
-  description: string;
-  lessons: readonly LearningLesson[];
-}): Checked<CheckedText> {
+function checkText(input: PathDraft): Checked<PathDraft> {
   const title = text('title', input.title);
   if (!title.ok) return title;
   const description = input.description.trim();
@@ -135,6 +132,9 @@ function checkText(input: {
   }
   return ok({ title: title.value, description, lessons });
 }
+
+/** Checks a writer's draft with the rules every path follows. */
+export const validatePathDraft = (draft: PathDraft): Checked<PathDraft> => checkText(draft);
 
 export function createLearningPath(input: LearningPathInput): Checked<LearningPath> {
   if (!isSubject(input.subject)) return invalid('subject', 'invalid_format');

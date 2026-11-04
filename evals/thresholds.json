@@ -34,5 +34,12 @@
     "count": 1,
     "language": 1,
     "playable": 1
+  },
+  "path-writer": {
+    "structure": 1,
+    "count": 1,
+    "language": 1,
+    "playable": 1,
+    "focus": 0.8
   }
 }

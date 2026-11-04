@@ -4,6 +4,7 @@ import type {
   ContentMetric,
   ExtractorMetric,
   GameMetric,
+  PathMetric,
   GraderMetric,
   PlanMetric,
   PresentationMetric,
@@ -11,6 +12,7 @@ import type {
 import { assistantCases, runAssistantEvals } from './assistant-evals.ts';
 import { formatReport } from './eval-report.ts';
 import { gameCases, runGameEvals } from './game-evals.ts';
+import { pathCases, runPathEvals } from './path-evals.ts';
 import { extractorCases, graderCases, runExtractorEvals, runGraderEvals } from './grading-evals.ts';
 import { plannerCases, runPlannerEvals } from './planner-evals.ts';
 import { presentationCases, runPresentationEvals } from './presentation-evals.ts';
@@ -29,6 +31,7 @@ const thresholds = JSON.parse(
   'question-extractor': Record<ExtractorMetric, number>;
   grader: Record<GraderMetric, number>;
   'game-writer': Record<GameMetric, number>;
+  'path-writer': Record<PathMetric, number>;
 };
 
 const replay = (suite: string) => new ReplayLlmClient(loadReplays(suite));
@@ -40,6 +43,7 @@ describe('replay evals (saved replies, no API calls)', () => {
     expect(topics('assistant')).toEqual(assistantCases.map((c) => c.topic).sort());
     expect(topics('presentations')).toEqual(presentationCases.map((c) => c.topic).sort());
     expect(topics('games')).toEqual(gameCases.map((c) => c.topic).sort());
+    expect(topics('paths')).toEqual(pathCases.map((c) => c.topic).sort());
   });
 
   it('the lesson planner meets its thresholds', async () => {
@@ -71,6 +75,12 @@ describe('replay evals (saved replies, no API calls)', () => {
     const report = await runGameEvals(replay('games'), thresholds['game-writer']);
     expect(report.failing, formatReport(report)).toEqual([]);
     expect(report.average).toEqual({ structure: 1, count: 1, language: 1, playable: 1 });
+  });
+
+  it('the path writer meets its thresholds', async () => {
+    const report = await runPathEvals(replay('paths'), thresholds['path-writer']);
+    expect(report.failing, formatReport(report)).toEqual([]);
+    expect(report.average).toEqual({ structure: 1, count: 1, language: 1, playable: 1, focus: 1 });
   });
 
   it('presentations meet their thresholds', async () => {

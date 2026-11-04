@@ -6,6 +6,7 @@ import {
   createLearningPath,
   editPath,
   learnerLesson,
+  validatePathDraft,
   type LearningLesson,
   type LearningPathInput,
 } from './learning-path.ts';
@@ -191,5 +192,16 @@ describe('createPathRequest', () => {
     const capped = createPathRequest({ ...request, review: many, mastered: many });
     expect(capped.ok && capped.value.review).toHaveLength(8);
     expect(capped.ok && capped.value.mastered).toHaveLength(8);
+  });
+});
+
+describe('validatePathDraft', () => {
+  it('checks what the writer returns with the same rules, and trims it', () => {
+    const draft = { title: ' Fractions ', description: '', lessons: [lesson(1), lesson(2), lesson(3)] };
+    expect(validatePathDraft(draft)).toMatchObject({ ok: true, value: { title: 'Fractions' } });
+    expect(validatePathDraft({ ...draft, lessons: [lesson(1)] })).toMatchObject({
+      ok: false,
+      error: { field: 'lessons', code: 'too_short' },
+    });
   });
 });

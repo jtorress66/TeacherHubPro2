@@ -38,6 +38,7 @@ import { assistantRepositoryContract } from '../contracts/assistant.contract.ts'
 import { assignmentRepositoryContract } from '../contracts/assignments.contract.ts';
 import { gamePlayRepositoryContract } from '../contracts/games.contract.ts';
 import { liveRepositoryContract } from '../contracts/live.contract.ts';
+import { learningRepositoryContract } from '../contracts/learning.contract.ts';
 import {
   aClass,
   aGame,
@@ -58,6 +59,8 @@ import {
   InMemoryGameRepository,
   InMemoryGamePlayRepository,
   InMemoryLiveAnswerRepository,
+  InMemoryLearningPathRepository,
+  InMemoryLessonAttemptRepository,
   InMemoryLivePlayerRepository,
   InMemoryLiveSessionRepository,
   InMemoryGradeCategoryRepository,
@@ -269,4 +272,9 @@ liveRepositoryContract('InMemory', () => ({
   sessions: new InMemoryLiveSessionRepository(),
   players: new InMemoryLivePlayerRepository(),
   answers: new InMemoryLiveAnswerRepository(),
+}));
+
+learningRepositoryContract('InMemory', () => ({
+  paths: new InMemoryLearningPathRepository(),
+  attempts: new InMemoryLessonAttemptRepository(),
 }));

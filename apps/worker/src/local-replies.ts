@@ -4,6 +4,7 @@ import {
   gameFormats,
   gameWriterSystemPrompt,
   graderSystemPrompt,
+  pathWriterSystemPrompt,
   slidesSystemPrompt,
 } from '@thp/agents';
 import type { ContentKind } from '@thp/domain';
@@ -155,12 +156,34 @@ function gameReply(request: LlmRequest): string {
   return JSON.stringify({ items: localGameItems[kind](count) });
 }
 
+/** The lessons asked for; every check asks which of two numbers is larger, so tests know the answer. */
+function pathReply(request: LlmRequest): string {
+  const count = Number(/Write (\d+) lessons\./.exec(promptOf(request))?.[1] ?? 3);
+  const lessons = Array.from({ length: count }, (_, l) => ({
+    title: `Local lesson ${nth(l)}`,
+    objective: `Compare numbers, part ${nth(l)}`,
+    minutes: 10,
+    content: `In lesson ${nth(l)} we compare numbers: the larger number is the one further along the number line.`,
+    checks: [0, 1, 2].map((c) => {
+      const larger = (l + 1) * 10 + c + 2;
+      const smaller = larger - 1;
+      return {
+        prompt: `Which number is larger: ${String(smaller)} or ${String(larger)}?`,
+        options: [String(smaller), String(larger)],
+        correct: String(larger),
+      };
+    }),
+  }));
+  return JSON.stringify({ title: 'Local learning path', description: 'A local draft.', lessons });
+}
+
 const repliesBySystem: ReadonlyMap<string, (request: LlmRequest) => string> = new Map([
   [contentSystemPrompt, contentReply],
   [slidesSystemPrompt, slidesReply],
   [extractorSystemPrompt, extractorReply],
   [graderSystemPrompt, graderReply],
   [gameWriterSystemPrompt, gameReply],
+  [pathWriterSystemPrompt, pathReply],
 ]);
 
 export function localReply(request: LlmRequest): string {
