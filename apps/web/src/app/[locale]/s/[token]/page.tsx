@@ -18,7 +18,8 @@ export default async function StudentPortalPage(props: Props) {
   const locale = await localeFrom(props);
   const t = createTranslator(locale);
   const { token } = await props.params;
-  const portal = await getAppContainer().openStudentLink.execute({ token });
+  const app = getAppContainer();
+  const portal = await app.openStudentLink.execute({ token });
   if (!portal.ok) {
     return (
       <main className="student-page">
@@ -29,6 +30,8 @@ export default async function StudentPortalPage(props: Props) {
     );
   }
   const { firstName, className, schoolName, assignments, games } = portal.value;
+  const learning = await app.listStudentPaths.execute({ token });
+  const paths = learning.ok ? learning.value : [];
   const day = new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeZone: 'UTC' });
 
   return (
@@ -57,6 +60,26 @@ export default async function StudentPortalPage(props: Props) {
             </li>
           ))}
         </ul>
+      )}
+      {paths.length === 0 ? null : (
+        <>
+          <h2>{t('learning.yourPaths')}</h2>
+          <ul className="list" aria-label={t('learning.yourPaths')}>
+            {paths.map((path) => (
+              <li key={path.id} className="stack">
+                <Link href={`/${locale}/s/${token}/learn/${path.id}`}>{path.title}</Link>
+                <progress
+                  max={path.total}
+                  value={path.done}
+                  aria-label={t('learning.progressLabel', { done: path.done, total: path.total })}
+                />
+                <span className="muted small">
+                  {t('learning.progressLabel', { done: path.done, total: path.total })}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </>
       )}
       {games.length === 0 ? null : (
         <>

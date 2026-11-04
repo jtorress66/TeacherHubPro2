@@ -1578,6 +1578,36 @@ button.answer:hover {
   font-weight: 700;
 }
 
+/* Learning paths: a reading that is easy on young eyes, and room between check questions. */
+
+.lesson-reading {
+  max-width: 65ch;
+  font-size: 1.15rem;
+  line-height: 1.75;
+  white-space: pre-line;
+}
+
+.lesson-question {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.lesson-list li {
+  padding: 0.35rem 0;
+}
+
+.check-fields {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+progress {
+  width: min(100%, 24rem);
+  height: 0.75rem;
+  accent-color: var(--green);
+}
+
 /* No motion for people who ask for less: the drawing shows its finished state, still. */
 @media (prefers-reduced-motion: reduce) {
   .hero-art,

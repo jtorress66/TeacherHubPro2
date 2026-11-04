@@ -51,7 +51,12 @@ for (const colorScheme of ['light', 'dark'] as const) {
       expect(await violations(page), 'dashboard').toEqual([]);
       const classPath = await classWithStudents(page, 'es');
       expect(await violations(page), 'class').toEqual([]);
-      for (const path of ['/es/app/classes', '/es/app/games', `${classPath}/gradebook`]) {
+      for (const path of [
+        '/es/app/classes',
+        '/es/app/games',
+        '/es/app/learning',
+        `${classPath}/gradebook`,
+      ]) {
         await page.goto(path);
         expect(await violations(page), path).toEqual([]);
       }
