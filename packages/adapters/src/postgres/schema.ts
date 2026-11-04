@@ -286,6 +286,15 @@ export interface ClassroomConnectionsTable {
   connected_at: Date;
 }
 
+export interface FormsExportsTable {
+  assignment_id: string;
+  school_id: string;
+  form_id: string;
+  edit_url: string;
+  responder_url: string;
+  made_at: Date;
+}
+
 export interface AttendanceSessionsTable {
   id: string;
   school_id: string;
@@ -458,6 +467,7 @@ export interface Database {
   assignment_attachments: AssignmentAttachmentsTable;
   student_links: StudentLinksTable;
   classroom_connections: ClassroomConnectionsTable;
+  forms_exports: FormsExportsTable;
   attendance_sessions: AttendanceSessionsTable;
   attendance_entries: AttendanceEntriesTable;
   games: GamesTable;

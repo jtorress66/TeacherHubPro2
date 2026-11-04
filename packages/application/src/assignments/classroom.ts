@@ -29,14 +29,14 @@ import {
   type AssignmentRef,
 } from './assignment-access.ts';
 
-interface ConnectionDeps {
+export interface ConnectionDeps {
   readonly classroomConnections: ClassroomConnectionRepository;
   readonly cipher: SecretCipher;
   readonly classroomAuth: ClassroomAuthorization;
 }
 
 /** A fresh access token from the teacher's stored (encrypted) refresh token. */
-async function accessToken(
+export async function accessToken(
   deps: ConnectionDeps,
   actor: User,
 ): Promise<Result<string, UseCaseError>> {

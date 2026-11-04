@@ -34,7 +34,7 @@ No paid API calls until launch. Steps that need real AI meet their gate with the
 
 - `pnpm eval` against real Claude: planner, AI assistant and presentation suites (steps 8–9).
 - Listen with real OpenAI text-to-speech (`TTS_PROVIDER=openai`, `OPENAI_API_KEY`) (step 9).
-- Google Classroom with a real Google Cloud project: consent screen and verification for the Classroom scopes, `CLASSROOM_PROVIDER=google`, `TOKEN_ENCRYPTION_KEY` (step 10).
+- Google Classroom with a real Google Cloud project: consent screen and verification for the Classroom scopes plus `drive.file` (Google Forms quizzes), the Google Forms API enabled, `CLASSROOM_PROVIDER=google`, `TOKEN_ENCRYPTION_KEY` (step 10); make one Forms quiz from a test PDF and open it.
 - The question extractor and grader evals against real Claude (step 10).
 - The game writer evals against real Claude (step 11).
 - The path writer evals against real Claude (step 13).

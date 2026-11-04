@@ -4,12 +4,15 @@ import { describe, expect, it } from 'vitest';
 import {
   classroomAuthorizationContract,
   classroomContract,
+  googleFormsContract,
   pdfTextExtractorContract,
   secretCipherContract,
 } from '@thp/testing';
 import { AesGcmCipher } from '../src/crypto/aes-gcm-cipher.ts';
 import { GoogleClassroom } from '../src/google/google-classroom.ts';
 import { GoogleClassroomAuthorization } from '../src/google/google-classroom-authorization.ts';
+import { GoogleFormsApi } from '../src/google/google-forms.ts';
+import { LocalForms } from '../src/google/local-forms.ts';
 import {
   LocalClassroom,
   LocalClassroomAuthorization,
@@ -180,7 +183,7 @@ classroomAuthorizationContract('LocalClassroomAuthorization', () => ({
 }));
 
 describe('GoogleClassroomAuthorization', () => {
-  it('asks for offline access with only the Classroom scopes it needs', () => {
+  it('asks for offline access with only the Classroom and Forms scopes it needs', () => {
     const url = new URL(
       new GoogleClassroomAuthorization(credentials, tokenEndpoint('x')).authorizationUrl(
         's',
@@ -193,6 +196,7 @@ describe('GoogleClassroomAuthorization', () => {
       'https://www.googleapis.com/auth/classroom.courses.readonly',
       'https://www.googleapis.com/auth/classroom.rosters.readonly',
       'https://www.googleapis.com/auth/classroom.coursework.students',
+      'https://www.googleapis.com/auth/drive.file',
     ]);
   });
 
@@ -217,5 +221,194 @@ describe('GoogleClassroomAuthorization', () => {
     );
     expect(url.origin + url.pathname).toBe('https://app.test/cb');
     expect(url.searchParams.get('code')).toBe('local-classroom-code');
+  });
+});
+
+/** Google Forms' REST API, answering like the recorded real responses. */
+function formsApi(accessToken: string, status = 200) {
+  const calls: { path: string; body: unknown }[] = [];
+  const fetchFn = (input: string | URL | Request, init?: RequestInit): Promise<Response> => {
+    const url = new URL(input instanceof Request ? input.url : input.toString());
+    const body: unknown = JSON.parse(typeof init?.body === 'string' ? init.body : '{}');
+    calls.push({ path: url.pathname, body });
+    if (new Headers(init?.headers).get('authorization') !== `Bearer ${accessToken}`) {
+      return Promise.resolve(Response.json({ error: { code: 401 } }, { status: 401 }));
+    }
+    if (status !== 200) return Promise.resolve(Response.json({ error: {} }, { status }));
+    if (url.pathname === '/v1/forms' && init?.method === 'POST') {
+      return Promise.resolve(
+        Response.json({
+          formId: 'f-1',
+          info: { title: 'Fractions quiz', documentTitle: 'Fractions quiz' },
+          responderUri: 'https://docs.google.com/forms/d/e/1FAIp-f-1/viewform',
+        }),
+      );
+    }
+    if (url.pathname === '/v1/forms/f-1:batchUpdate' && init?.method === 'POST') {
+      return Promise.resolve(Response.json({ replies: [] }));
+    }
+    return Promise.resolve(Response.json({ error: { code: 404 } }, { status: 404 }));
+  };
+  return { fetchFn, calls };
+}
+
+googleFormsContract(
+  'GoogleFormsApi',
+  (token) => new GoogleFormsApi(formsApi(token).fetchFn),
+  'ya29.recorded',
+);
+googleFormsContract('LocalForms', () => new LocalForms(), localClassroomFixture.accessToken);
+
+describe('GoogleFormsApi', () => {
+  const quiz = {
+    title: 'Fractions quiz',
+    description: 'Show your work.',
+    items: [
+      {
+        kind: 'choice' as const,
+        title: '1/2 + 1/4?',
+        description: 'Simplify.',
+        points: 5,
+        options: ['3/4', '2/6'],
+        correct: ['3/4'],
+      },
+      {
+        kind: 'text' as const,
+        title: 'Half of 8',
+        description: null,
+        points: 2,
+        paragraph: false,
+        correct: ['4'],
+      },
+      {
+        kind: 'text' as const,
+        title: 'Explain',
+        description: null,
+        points: 10,
+        paragraph: true,
+        correct: [],
+      },
+      {
+        kind: 'grid' as const,
+        title: 'Match',
+        description: null,
+        rows: ['1/2', '1/4'],
+        columns: ['half', 'quarter'],
+      },
+    ],
+  };
+
+  it('creates the form, then makes it a quiz with every question in order', async () => {
+    const api = formsApi('t');
+    const result = await new GoogleFormsApi(api.fetchFn).createQuiz('t', quiz);
+
+    expect(result).toEqual({
+      ok: true,
+      value: {
+        id: 'f-1',
+        editUrl: 'https://docs.google.com/forms/d/f-1/edit',
+        responderUrl: 'https://docs.google.com/forms/d/e/1FAIp-f-1/viewform',
+      },
+    });
+    expect(api.calls[0]).toEqual({
+      path: '/v1/forms',
+      body: { info: { title: 'Fractions quiz', documentTitle: 'Fractions quiz' } },
+    });
+    expect(api.calls[1]).toEqual({
+      path: '/v1/forms/f-1:batchUpdate',
+      body: {
+        requests: [
+          {
+            updateSettings: {
+              settings: { quizSettings: { isQuiz: true } },
+              updateMask: 'quizSettings.isQuiz',
+            },
+          },
+          {
+            updateFormInfo: { info: { description: 'Show your work.' }, updateMask: 'description' },
+          },
+          {
+            createItem: {
+              item: {
+                title: '1/2 + 1/4?',
+                description: 'Simplify.',
+                questionItem: {
+                  question: {
+                    required: true,
+                    grading: { pointValue: 5, correctAnswers: { answers: [{ value: '3/4' }] } },
+                    choiceQuestion: {
+                      type: 'RADIO',
+                      options: [{ value: '3/4' }, { value: '2/6' }],
+                    },
+                  },
+                },
+              },
+              location: { index: 0 },
+            },
+          },
+          {
+            createItem: {
+              item: {
+                title: 'Half of 8',
+                questionItem: {
+                  question: {
+                    required: true,
+                    grading: { pointValue: 2, correctAnswers: { answers: [{ value: '4' }] } },
+                    textQuestion: { paragraph: false },
+                  },
+                },
+              },
+              location: { index: 1 },
+            },
+          },
+          {
+            createItem: {
+              item: {
+                title: 'Explain',
+                questionItem: { question: { required: true, textQuestion: { paragraph: true } } },
+              },
+              location: { index: 2 },
+            },
+          },
+          {
+            createItem: {
+              item: {
+                title: 'Match',
+                questionGroupItem: {
+                  questions: [
+                    { required: true, rowQuestion: { title: '1/2' } },
+                    { required: true, rowQuestion: { title: '1/4' } },
+                  ],
+                  grid: {
+                    columns: { type: 'RADIO', options: [{ value: 'half' }, { value: 'quarter' }] },
+                  },
+                },
+              },
+              location: { index: 3 },
+            },
+          },
+        ],
+      },
+    });
+  });
+
+  it('asks the teacher to reconnect when Google refuses the Forms scope', async () => {
+    const api = formsApi('t', 403);
+    expect(await new GoogleFormsApi(api.fetchFn).createQuiz('t', quiz)).toEqual({
+      ok: false,
+      error: { code: 'insufficient_scope' },
+    });
+  });
+
+  it('reports a server error or an unreachable Google as unavailable', async () => {
+    expect(await new GoogleFormsApi(formsApi('t', 503).fetchFn).createQuiz('t', quiz)).toEqual({
+      ok: false,
+      error: { code: 'unavailable' },
+    });
+    const offline = () => Promise.reject(new Error('offline'));
+    expect(await new GoogleFormsApi(offline).createQuiz('t', quiz)).toEqual({
+      ok: false,
+      error: { code: 'unavailable' },
+    });
   });
 });

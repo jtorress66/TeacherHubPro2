@@ -1,6 +1,7 @@
 import type {
   Attachment,
   ClassroomConnection,
+  FormsExport,
   StudentLink,
   AiGeneration,
   GenerationSummary,
@@ -51,6 +52,7 @@ import { compareDates, generationSummary, inRange, presentationSummary } from '@
 import type {
   AttachmentRepository,
   ClassroomConnectionRepository,
+  FormsExportRepository,
   StudentLinkRepository,
   AiGenerationRepository,
   PresentationRepository,
@@ -559,6 +561,20 @@ export class InMemoryClassroomConnectionRepository implements ClassroomConnectio
 
   delete(schoolId: SchoolId, teacherId: UserId): Promise<void> {
     if (this.rows.get(teacherId)?.schoolId === schoolId) this.rows.delete(teacherId);
+    return Promise.resolve();
+  }
+}
+
+export class InMemoryFormsExportRepository implements FormsExportRepository {
+  private readonly rows = new Map<AssignmentId, FormsExport>();
+
+  find(schoolId: SchoolId, assignmentId: AssignmentId): Promise<FormsExport | null> {
+    const row = this.rows.get(assignmentId);
+    return Promise.resolve(row?.schoolId === schoolId ? row : null);
+  }
+
+  save(formsExport: FormsExport): Promise<void> {
+    this.rows.set(formsExport.assignmentId, formsExport);
     return Promise.resolve();
   }
 }

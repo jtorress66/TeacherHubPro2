@@ -2,18 +2,32 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { createTranslator } from '@thp/i18n';
 import { ContentForm } from '../../../../components/assistant-forms.tsx';
+import { PdfTestForm } from '../../../../components/assignment-tools.tsx';
 import { getAppContainer } from '../../../../container.ts';
 import { requireUser } from '../../../_lib/auth.ts';
 import { localeFrom, type LocaleParams } from '../../locale-param.ts';
 
 export const metadata: Metadata = { title: 'TeacherHubPro' };
 
-/** The AI assistant: ask for content, and see everything made so far. */
+/** The AI assistant: ask for content, send a test PDF to Google, and see everything made so far. */
 export default async function AssistantPage(props: LocaleParams) {
   const locale = await localeFrom(props);
   const t = createTranslator(locale);
   const { user } = await requireUser(locale);
-  const history = await getAppContainer().listGenerations.execute({ actor: user });
+  const app = getAppContainer();
+  const history = await app.listGenerations.execute({ actor: user });
+  const classes = await app.listClasses.execute({ actor: user });
+  const targets = (
+    await Promise.all(
+      classes.map(async (cls) => {
+        const categories = await app.listGradeCategories.execute({ actor: user, classId: cls.id });
+        return (categories.ok ? categories.value : []).map((category) => ({
+          id: `${cls.id}|${category.id}`,
+          name: `${cls.name} · ${category.name}`,
+        }));
+      }),
+    )
+  ).flat();
   const items = history.ok ? history.value : [];
   const day = new Intl.DateTimeFormat(locale, { dateStyle: 'medium' });
 
@@ -22,6 +36,18 @@ export default async function AssistantPage(props: LocaleParams) {
       <h1>{t('assistant.title')}</h1>
       <p>{t('assistant.intro')}</p>
       <ContentForm locale={locale} />
+      <section id="pdf-test-card" className="card stack" aria-labelledby="pdf-test-heading">
+        <h2 id="pdf-test-heading">{t('pdfTest.title')}</h2>
+        <p>{t('pdfTest.intro')}</p>
+        {targets.length > 0 ? (
+          <PdfTestForm locale={locale} targets={targets} />
+        ) : (
+          <p>
+            {t('pdfTest.noClasses')}{' '}
+            <Link href={`/${locale}/app/classes`}>{t('pdfTest.createClass')}</Link>
+          </p>
+        )}
+      </section>
       <h2>{t('assistant.history')}</h2>
       {items.length === 0 ? (
         <p>{t('assistant.historyEmpty')}</p>

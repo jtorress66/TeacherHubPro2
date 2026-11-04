@@ -5,9 +5,11 @@ import type {
   ClassroomAuthorization,
   ClassroomCoursework,
   ClassroomStudent,
+  GoogleForms,
   GoogleIdentity,
   GoogleProfile,
 } from '@thp/ports';
+import type { FormsQuiz } from '@thp/domain';
 
 export interface GoogleIdentitySetup {
   readonly identity: GoogleIdentity;
@@ -141,6 +143,47 @@ export function classroomAuthorizationContract(
         error: { code: 'unauthorized' },
       });
       expect(await authorization.accessToken('unknown-refresh')).toEqual({
+        ok: false,
+        error: { code: 'unauthorized' },
+      });
+    });
+  });
+}
+
+const sampleQuiz: FormsQuiz = {
+  title: 'Fractions quiz',
+  description: 'Show your work.',
+  items: [
+    {
+      kind: 'choice',
+      title: '1/2 + 1/4?',
+      description: null,
+      points: 5,
+      options: ['3/4', '2/6'],
+      correct: ['3/4'],
+    },
+    { kind: 'text', title: 'Why?', description: null, points: 5, paragraph: true, correct: [] },
+    { kind: 'grid', title: 'Match', description: 'Each once', rows: ['1/2'], columns: ['half'] },
+  ],
+};
+
+export function googleFormsContract(
+  name: string,
+  make: (accessToken: string) => GoogleForms,
+  accessToken: string,
+): void {
+  describe(`${name} (GoogleForms contract)`, () => {
+    it('creates a quiz and returns where to edit it and where students answer it', async () => {
+      const result = await make(accessToken).createQuiz(accessToken, sampleQuiz);
+      if (!result.ok) throw new Error(`createQuiz failed: ${result.error.code}`);
+      expect(result.value.id).not.toBe('');
+      expect(result.value.editUrl.startsWith('https://')).toBe(true);
+      expect(result.value.responderUrl.startsWith('https://')).toBe(true);
+      expect(result.value.editUrl).not.toBe(result.value.responderUrl);
+    });
+
+    it('cannot create a quiz without access', async () => {
+      expect(await make(accessToken).createQuiz('expired', sampleQuiz)).toEqual({
         ok: false,
         error: { code: 'unauthorized' },
       });

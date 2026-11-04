@@ -1,6 +1,7 @@
 import type {
   Attachment,
   ClassroomConnection,
+  FormsExport,
   StudentLink,
   AiGeneration,
   GenerationSummary,
@@ -171,6 +172,12 @@ export interface ClassroomConnectionRepository {
   find(schoolId: SchoolId, teacherId: UserId): Promise<ClassroomConnection | null>;
   save(connection: ClassroomConnection): Promise<void>;
   delete(schoolId: SchoolId, teacherId: UserId): Promise<void>;
+}
+
+/** One Forms quiz per assignment: making another replaces it. */
+export interface FormsExportRepository {
+  find(schoolId: SchoolId, assignmentId: AssignmentId): Promise<FormsExport | null>;
+  save(formsExport: FormsExport): Promise<void>;
 }
 
 export interface AttendanceSessionRepository extends ScopedRepository<AttendanceSession> {

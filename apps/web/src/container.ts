@@ -7,7 +7,9 @@ import {
   HmacTicketSigner,
   GoogleClassroom,
   GoogleClassroomAuthorization,
+  GoogleFormsApi,
   LocalClassroom,
+  LocalForms,
   LocalClassroomAuthorization,
   createDatabase,
   createPostgresRepositories,
@@ -97,6 +99,9 @@ import {
   ListClassroomCourses,
   ImportClassroomRoster,
   ShareAssignment,
+  StartPdfTest,
+  MakeFormsQuiz,
+  FindFormsQuiz,
   CreatePresentation,
   DeleteGeneration,
   DeletePresentation,
@@ -273,6 +278,9 @@ export interface AppContainer {
   readonly listClassroomCourses: ListClassroomCourses;
   readonly importClassroomRoster: ImportClassroomRoster;
   readonly shareAssignment: ShareAssignment;
+  readonly startPdfTest: StartPdfTest;
+  readonly makeFormsQuiz: MakeFormsQuiz;
+  readonly findFormsQuiz: FindFormsQuiz;
   readonly createGame: CreateGame;
   readonly updateGame: UpdateGame;
   readonly listGames: ListGames;
@@ -382,7 +390,7 @@ interface Billing {
 }
 
 /**
- * Google Classroom, or its stand-in for development and tests. The stand-in's tokens are fake, so
+ * Google Classroom and Forms, or their stand-ins for development and tests. The stand-in's tokens are fake, so
  * they are sealed with a fixed key (the same in every server instance); production refuses it.
  */
 function classroomFor(config: ClassroomConfig) {
@@ -395,6 +403,7 @@ function classroomFor(config: ClassroomConfig) {
       classroomAuth: new LocalClassroomAuthorization(),
       classroomCourses: classroom,
       classroomCoursework: classroom,
+      googleForms: new LocalForms(),
     };
   }
   const classroom = new GoogleClassroom();
@@ -406,6 +415,7 @@ function classroomFor(config: ClassroomConfig) {
     }),
     classroomCourses: classroom,
     classroomCoursework: classroom,
+    googleForms: new GoogleFormsApi(),
   };
 }
 
@@ -543,6 +553,9 @@ export function createAppContainer(
     listClassroomCourses: new ListClassroomCourses(deps),
     importClassroomRoster: new ImportClassroomRoster(deps),
     shareAssignment: new ShareAssignment(deps),
+    startPdfTest: new StartPdfTest(deps),
+    makeFormsQuiz: new MakeFormsQuiz(deps),
+    findFormsQuiz: new FindFormsQuiz(deps),
     createGame: new CreateGame(deps),
     updateGame: new UpdateGame(deps),
     listGames: new ListGames(deps),

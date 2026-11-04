@@ -264,6 +264,15 @@ Seven interface languages: English, Spanish, French, Portuguese, German, Italian
   - Reminders were deduplicated only within 24 hours, and the cron trigger accepted a default key: one record per trial and reminder, and the worker runs them itself with no public trigger.
 - **Dropped (agreed in the step 14 plan):** the separate homeschool token and portal (one family portal); student photos (not collected).
 
+## After step 14 — Send a test PDF to Google
+
+Added at the teacher's request, between steps 14 and 15 (not in the old app).
+
+- **AI assistant card "Send a test PDF to Google":** the teacher picks a class and grade category, gives a title, points and an optional due date, and uploads the PDF. This makes the assignment and runs the step 10 PDF import into it; the teacher reviews and saves the questions, then lands on the assignment's **Send to Google** section.
+- **Google Classroom** gets a link to the online test (the step 10 share), so answers are tied to roster students and grades reach the gradebook.
+- **Google Forms (one-way):** "Make a Google Forms quiz" builds a self-scoring quiz in the teacher's Drive from the reviewed questions. Multiple choice, true/false (labels in the teacher's language) and fill-in-the-blank keep their answer keys and points; short answers and essays are left for the teacher to score in Forms; matching becomes a grid (Forms cannot score grids), with the right-hand side sorted so the pairs do not show. **Forms scores are not brought back** into the gradebook: Forms identifies students by email, not roster ID. The last quiz made is kept on the assignment (edit link and student link); making another replaces it.
+- **Google access:** the Classroom connection now also asks for `drive.file` (only files the app creates; the narrowest scope Forms accepts). Teachers connected before are asked to reconnect when they first make a Forms quiz.
+
 ## Step 15 — Command Center and Student 360
 
 - Command Center (`/dashboard`): today's classes for the current weekday, sorted by period and time, with attendance done or to take; stats (classes today, attendance done/total, to grade, at-risk); assignments to grade with progress and overdue highlight; recommendations; quick actions; lessons for the next 7 days.

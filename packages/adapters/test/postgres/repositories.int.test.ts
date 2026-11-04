@@ -89,6 +89,7 @@ withParents(parentsFor.grading, () => {
     attachments: repos.attachments,
     studentLinks: repos.studentLinks,
     classroomConnections: repos.classroomConnections,
+    formsExports: repos.formsExports,
   }));
 });
 

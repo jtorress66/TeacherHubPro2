@@ -6,6 +6,7 @@ import type {
   AssignmentId,
   AttachmentId,
   ClassId,
+  GradeCategoryId,
   StudentId,
   StudentLinkId,
   SubmissionId,
@@ -24,6 +25,8 @@ export interface AssignmentFormState {
   /** Links just issued: shown once, never stored. */
   readonly links?: readonly { readonly name: string; readonly url: string }[];
   readonly url?: string;
+  /** Google refused Forms: the teacher's connection predates the Forms scope. */
+  readonly reconnect?: boolean;
   /** Changes after each success so the form can clear itself. */
   readonly version?: number;
 }
@@ -141,6 +144,33 @@ export async function requestPdfImportAction(
   redirect(`${assignmentPath(locale, classId, assignmentId)}/import/${job.value.id}`);
 }
 
+/** Makes the assignment from the AI assistant's PDF card, then follows the import like the class page. */
+export async function startPdfTestAction(
+  _state: AssignmentFormState,
+  data: FormData,
+): Promise<AssignmentFormState> {
+  const locale = localeOf(data);
+  const t = createTranslator(locale);
+  const { user } = await requireUser(locale);
+  const [classId = '', categoryId = ''] = text(data, 'target').split('|');
+  const file = fileOf(data, 'pdf');
+  if (file === null) return { errors: { pdf: t('attachments.noFile') } };
+  const started = await getAppContainer().startPdfTest.execute({
+    actor: user,
+    classId: classId as ClassId,
+    details: {
+      title: text(data, 'title'),
+      categoryId: categoryId as GradeCategoryId,
+      points: Number(text(data, 'points') || '100'),
+      dueDate: orNull(text(data, 'dueDate')),
+    },
+    pdf: new Uint8Array(await file.arrayBuffer()),
+  });
+  if (!started.ok) return { errors: formErrors(started.error, locale) };
+  const { assignment, job } = started.value;
+  redirect(`${assignmentPath(locale, classId, assignment.id)}/import/${job.id}`);
+}
+
 /** Queues AI suggestions for waiting written answers, then follows the job on the page. */
 export async function requestAiGradingAction(
   _state: AssignmentFormState,
@@ -189,6 +219,25 @@ export async function shareAssignmentAction(
   });
   if (!shared.ok) return { errors: formErrors(shared.error, locale) };
   return done(state, { url: shared.value.url });
+}
+
+/** Makes a Google Forms quiz from the questions, with true/false in the teacher's language. */
+export async function makeFormsQuizAction(
+  state: AssignmentFormState,
+  data: FormData,
+): Promise<AssignmentFormState> {
+  const { locale, classId, assignmentId, ref } = await refOf(data);
+  const t = createTranslator(locale);
+  const made = await getAppContainer().makeFormsQuiz.execute({
+    ...ref,
+    labels: { true: t('forms.true'), false: t('forms.false') },
+  });
+  if (!made.ok) {
+    const reconnect = 'code' in made.error && made.error.code === 'google_reconnect';
+    return { errors: formErrors(made.error, locale), reconnect };
+  }
+  revalidatePath(`${assignmentPath(locale, classId, assignmentId)}/questions`);
+  return done(state, { url: made.value.editUrl });
 }
 
 /** New links for students without one; the addresses are returned once to show and print. */

@@ -11,6 +11,7 @@ import * as games from './0009_games.ts';
 import * as live from './0010_live.ts';
 import * as learning from './0011_learning.ts';
 import * as portals from './0012_portals.ts';
+import * as formsExports from './0013_forms_exports.ts';
 
 /** Ordered list of migrations, bundled with the code (no filesystem lookups at runtime). */
 const migrations: Readonly<Record<string, Migration>> = {
@@ -26,6 +27,7 @@ const migrations: Readonly<Record<string, Migration>> = {
   '0010_live': live,
   '0011_learning': learning,
   '0012_portals': portals,
+  '0013_forms_exports': formsExports,
 };
 
 export const migrationProvider: MigrationProvider = {

@@ -7,11 +7,15 @@ type Fetch = (input: string | URL | Request, init?: RequestInit) => Promise<Resp
 const authorizeEndpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
 const tokenEndpoint = 'https://oauth2.googleapis.com/token';
 
-/** Only what sharing and roster import need. */
+/**
+ * Only what sharing, roster import and Forms quizzes need: `drive.file` reaches just the files
+ * the app creates, the narrowest scope Forms accepts.
+ */
 export const classroomScopes = [
   'https://www.googleapis.com/auth/classroom.courses.readonly',
   'https://www.googleapis.com/auth/classroom.rosters.readonly',
   'https://www.googleapis.com/auth/classroom.coursework.students',
+  'https://www.googleapis.com/auth/drive.file',
 ] as const;
 
 /**

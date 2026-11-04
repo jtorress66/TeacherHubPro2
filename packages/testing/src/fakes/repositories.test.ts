@@ -77,6 +77,7 @@ import {
   InMemoryAttachmentRepository,
   InMemoryStudentLinkRepository,
   InMemoryClassroomConnectionRepository,
+  InMemoryFormsExportRepository,
   InMemoryReportCardCommentRepository,
   InMemorySchoolRepository,
   InMemorySemesterRepository,
@@ -269,6 +270,7 @@ assignmentRepositoryContract('InMemory', () => ({
   attachments: new InMemoryAttachmentRepository(),
   studentLinks: new InMemoryStudentLinkRepository(),
   classroomConnections: new InMemoryClassroomConnectionRepository(),
+  formsExports: new InMemoryFormsExportRepository(),
 }));
 
 liveRepositoryContract('InMemory', () => ({
