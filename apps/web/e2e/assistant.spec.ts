@@ -123,6 +123,47 @@ test('slides can be reordered, duplicated and removed before saving', async ({ p
   await expect(page.getByText(t('presentations.slides', { count: 2 }))).toBeVisible();
 });
 
+test('a slide with a lot of text shrinks to fit inside its card', async ({ page }) => {
+  const t = createTranslator('en');
+  await signUp(page, 'en');
+  await page.getByRole('link', { name: t('nav.presentations'), exact: true }).click();
+  const create = page.getByRole('form', { name: t('presentations.newBlank') });
+  await create.getByLabel(t('presentations.name')).fill('Adjectives');
+  await create.getByRole('button', { name: t('presentations.create') }).click();
+
+  const editor = page.getByRole('form', { name: t('presentations.edit') });
+  await editor.getByRole('button', { name: t('presentations.addSlide') }).click();
+  await editor.getByLabel(t('presentations.layout')).selectOption('two_column');
+  await editor
+    .getByLabel(t('presentations.slideTitle'), { exact: true })
+    .fill('Plain Sentence vs. Sentence with Adjectives');
+  await editor
+    .getByLabel(t('presentations.subtitle'))
+    .fill('See how adjectives make writing better');
+  await editor
+    .getByLabel(t('presentations.content'))
+    .fill('Compare the two sentences. Which one helps you see the picture?');
+  await editor
+    .getByLabel(t('presentations.bullets'))
+    .fill(
+      [
+        'Plain: The cat sat on the mat.',
+        'With adjectives: The fluffy, orange cat sat on the soft mat.',
+        'Fluffy, orange, and soft are adjectives.',
+        'Adjectives add details to help readers picture what is happening.',
+      ].join('\n'),
+    );
+
+  const slide = page.locator('.slide').filter({ hasText: 'Plain Sentence vs.' });
+  await expect(slide).toBeVisible();
+  await expect
+    .poll(() => slide.evaluate((e) => e.scrollHeight - e.clientHeight))
+    .toBeLessThanOrEqual(1);
+  // The title takes the slide theme's text color, not the page's heading color.
+  const color = await slide.evaluate((e) => getComputedStyle(e).color);
+  await expect(slide.locator('.slide-title')).toHaveCSS('color', color);
+});
+
 test('generations and presentations are visible only to their owner', async ({ page, browser }) => {
   await signUp(page, 'en');
   const generation = await writeWorksheet(page, 'en', 'Fractions');
