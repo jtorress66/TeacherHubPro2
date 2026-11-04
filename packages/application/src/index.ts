@@ -342,3 +342,13 @@ export {
   type LearnerLessonView,
   type StudentPathSummary,
 } from './learning/student-learning.ts';
+export {
+  EmailPortalLink,
+  IssuePortalLink,
+  ListPortalLinks,
+  RevokePortalLink,
+  type IssuedPortalLink,
+  type PortalLinkRow,
+} from './portals/portal-links.ts';
+export { OpenFamilyPortal, type FamilyPortal } from './portals/family-portal.ts';
+export { SendTrialReminders } from './billing/trial-reminders.ts';
