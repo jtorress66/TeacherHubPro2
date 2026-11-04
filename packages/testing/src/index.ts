@@ -14,6 +14,7 @@ export * from './fakes/job-queue.ts';
 export * from './fakes/google.ts';
 export * from './fakes/documents.ts';
 export * from './fakes/games.ts';
+export * from './fakes/learning.ts';
 
 export { clockContract } from './contracts/clock.contract.ts';
 export { idGeneratorContract } from './contracts/id-generator.contract.ts';

@@ -318,3 +318,27 @@ export {
   type SubmittedAnswer,
 } from './live/live-game.ts';
 export { GetLiveView, type LiveView, type LiveBoardRow } from './live/live-view.ts';
+export {
+  ArchiveLearningPath,
+  AssignLearningPath,
+  DeleteLearningPath,
+  GetClassLearning,
+  GetLearningPath,
+  GetStudentLearning,
+  LearningPathHandler,
+  learningPathJobKind,
+  RequestLearningPath,
+  UpdateLearningPath,
+  type ClassLearning,
+  type LearningPathInput,
+  type StudentLearning,
+  type StudentLearningRow,
+} from './learning/learning-paths.ts';
+export {
+  ListStudentPaths,
+  OpenLearnerLesson,
+  SubmitLessonCheck,
+  type CheckResult,
+  type LearnerLessonView,
+  type StudentPathSummary,
+} from './learning/student-learning.ts';
