@@ -15,6 +15,7 @@
     "@thp/agents": "workspace:*",
     "@thp/application": "workspace:*",
     "@thp/domain": "workspace:*",
+    "@thp/i18n": "workspace:*",
     "@thp/ports": "workspace:*",
     "zod": "4.6.7"
   },

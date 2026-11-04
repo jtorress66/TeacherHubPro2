@@ -36,3 +36,4 @@ export { gameModeContract } from './contracts/game-mode.contract.ts';
 export * from './contracts/games.contract.ts';
 export * from './contracts/live.contract.ts';
 export * from './contracts/learning.contract.ts';
+export * from './contracts/portals.contract.ts';

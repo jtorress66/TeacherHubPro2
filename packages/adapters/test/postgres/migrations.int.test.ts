@@ -48,10 +48,12 @@ describe('migrations', () => {
       'password_credentials',
       'plan_folders',
       'plan_templates',
+      'portal_links',
       'presentations',
       'report_card_comments',
       'schools',
       'semesters',
+      'sent_mail',
       'sessions',
       'stored_files',
       'student_links',
@@ -59,6 +61,7 @@ describe('migrations', () => {
       'sub_packets',
       'submissions',
       'subscriptions',
+      'trial_reminders',
       'users',
     ]);
   });
@@ -68,6 +71,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0012_portals',
           '0011_learning',
           '0010_live',
           '0009_games',
@@ -99,10 +103,11 @@ describe('migrations', () => {
           '0009_games',
           '0010_live',
           '0011_learning',
+          '0012_portals',
         ],
       },
     });
-    expect(await tableNames()).toHaveLength(33);
+    expect(await tableNames()).toHaveLength(36);
   });
 
   it('turns plans saved before step 8 into valid plans of their kind', async () => {

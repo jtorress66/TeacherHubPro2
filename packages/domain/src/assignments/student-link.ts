@@ -23,12 +23,18 @@ export const createStudentLink = (input: Omit<StudentLink, 'revokedAt'>): Studen
   revokedAt: null,
 });
 
-export const revokeLink = (link: StudentLink, now: Date): StudentLink => ({
+/** What every link (a student's or a family's) has: it can be revoked and it expires. */
+export interface ExpiringLink {
+  readonly expiresAt: Date;
+  readonly revokedAt: Date | null;
+}
+
+export const revokeLink = <L extends ExpiringLink>(link: L, now: Date): L => ({
   ...link,
   revokedAt: link.revokedAt ?? now,
 });
 
-export const isUsable = (link: StudentLink, now: Date): boolean =>
+export const isUsable = (link: ExpiringLink, now: Date): boolean =>
   link.revokedAt === null && now.getTime() < link.expiresAt.getTime();
 
 /** The day after the semester ends (UTC), or 180 days from now when that is past or unknown. */

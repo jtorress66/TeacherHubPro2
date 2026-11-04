@@ -13,7 +13,13 @@ export function TimeZoneCookie() {
   return null;
 }
 
-export function PrintButton({ locale }: { readonly locale: Locale }) {
+export function PrintButton({
+  locale,
+  label,
+}: {
+  readonly locale: Locale;
+  readonly label?: string;
+}) {
   const t = createTranslator(locale);
   return (
     <button
@@ -23,7 +29,7 @@ export function PrintButton({ locale }: { readonly locale: Locale }) {
         window.print();
       }}
     >
-      {t('attendance.print')}
+      {label ?? t('attendance.print')}
     </button>
   );
 }

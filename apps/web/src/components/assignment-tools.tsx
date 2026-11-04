@@ -221,7 +221,7 @@ export function ReviewForm(
   );
 }
 
-function CopyLink({ locale, url }: { readonly locale: Locale; readonly url: string }) {
+export function CopyLink({ locale, url }: { readonly locale: Locale; readonly url: string }) {
   const t = createTranslator(locale);
   const [copied, setCopied] = useState(false);
   return (

@@ -87,3 +87,40 @@ export function parseTtsConfig(
   if (apiKey === '') return err('OPENAI_API_KEY is required when TTS_PROVIDER is "openai".');
   return ok({ provider, apiKey, voice });
 }
+
+export type MailConfig = (
+  | { readonly provider: 'local' }
+  | { readonly provider: 'resend'; readonly apiKey: string; readonly from: string }
+) & {
+  /** The site address, for links in emails (empty when not set: then nothing is sent). */
+  readonly appUrl: string;
+  /**
+   * Whether sent mail reaches a person: always with Resend; with the stand-in, only outside
+   * production (where the development mail page shows it). Reminders wait until it does.
+   */
+  readonly delivers: boolean;
+};
+
+/**
+ * How email goes out. `MAIL_PROVIDER=local` (the default until go-live) keeps mail in the
+ * database; `resend` sends it with RESEND_API_KEY from the verified MAIL_FROM address.
+ */
+export function parseMailConfig(
+  env: Readonly<Record<string, string | undefined>>,
+): Result<MailConfig, string> {
+  const appUrl = (env.APP_URL?.trim() ?? '').replace(/\/$/u, '');
+  // Without the site address emails would carry broken links: start anyway, sending nothing.
+  if (appUrl === '') return ok({ provider: 'local', appUrl, delivers: false });
+  const chosen = env.MAIL_PROVIDER?.trim() ?? '';
+  const provider = chosen === '' ? 'local' : chosen;
+  if (provider === 'local') {
+    return ok({ provider, appUrl, delivers: env.APP_ENV?.trim() !== 'production' });
+  }
+  if (provider !== 'resend') return err('MAIL_PROVIDER must be "resend" or "local".');
+  const apiKey = env.RESEND_API_KEY?.trim() ?? '';
+  const from = env.MAIL_FROM?.trim() ?? '';
+  if (apiKey === '' || from === '') {
+    return err('RESEND_API_KEY and MAIL_FROM are required when MAIL_PROVIDER is "resend".');
+  }
+  return ok({ provider, apiKey, from, appUrl, delivers: true });
+}

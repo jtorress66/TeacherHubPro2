@@ -1608,6 +1608,18 @@ progress {
   accent-color: var(--green);
 }
 
+/* Family portal and development mail */
+
+.portal-links > li {
+  list-style: none;
+}
+
+.mail-text {
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: var(--font-body);
+}
+
 /* No motion for people who ask for less: the drawing shows its finished state, still. */
 @media (prefers-reduced-motion: reduce) {
   .hero-art,

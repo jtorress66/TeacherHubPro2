@@ -18,6 +18,8 @@ import {
   createGamePlay,
   createLiveSession,
   createLearningPath,
+  createPortalLink,
+  type PortalLink,
   type LearningLesson,
   type LearningPath,
   type LearningPathInput,
@@ -65,6 +67,7 @@ import type {
   LiveSessionInput,
   LearningPathId,
   LessonAttemptId,
+  PortalLinkId,
   GamePlayId,
   AssignmentId,
   AttendanceSessionId,
@@ -496,5 +499,18 @@ export const aLessonAttempt = (overrides: Partial<LessonAttempt> = {}): LessonAt
   score: 2,
   total: 3,
   at: new Date('2026-11-04T11:00:00Z'),
+  ...overrides,
+});
+
+export const aPortalLink = (overrides: Partial<PortalLink> = {}): PortalLink => ({
+  ...createPortalLink({
+    id: 'portal-1' as PortalLinkId,
+    schoolId,
+    classId,
+    studentId: 'student-1' as StudentId,
+    tokenHash: 'portal-hash-1',
+    sentTo: null,
+    expiresAt: new Date('2027-01-31T00:00:00Z'),
+  }),
   ...overrides,
 });

@@ -20,6 +20,7 @@ const config: WebConfig = {
     url: 'http://localhost:3998',
     ticketSecret: 'realtime-ticket-secret-for-int-tests',
   },
+  mail: { provider: 'local', delivers: true },
 };
 const db = createDatabase(config.databaseUrl);
 const app = createAppContainer(config, db);

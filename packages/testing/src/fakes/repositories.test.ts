@@ -39,6 +39,7 @@ import { assignmentRepositoryContract } from '../contracts/assignments.contract.
 import { gamePlayRepositoryContract } from '../contracts/games.contract.ts';
 import { liveRepositoryContract } from '../contracts/live.contract.ts';
 import { learningRepositoryContract } from '../contracts/learning.contract.ts';
+import { portalRepositoryContract } from '../contracts/portals.contract.ts';
 import {
   aClass,
   aGame,
@@ -60,6 +61,8 @@ import {
   InMemoryGamePlayRepository,
   InMemoryLiveAnswerRepository,
   InMemoryLearningPathRepository,
+  InMemoryPortalLinkRepository,
+  InMemoryTrialReminderRepository,
   InMemoryLessonAttemptRepository,
   InMemoryLivePlayerRepository,
   InMemoryLiveSessionRepository,
@@ -277,4 +280,10 @@ liveRepositoryContract('InMemory', () => ({
 learningRepositoryContract('InMemory', () => ({
   paths: new InMemoryLearningPathRepository(),
   attempts: new InMemoryLessonAttemptRepository(),
+}));
+
+portalRepositoryContract('InMemory', () => ({
+  portalLinks: new InMemoryPortalLinkRepository(),
+  trialReminders: new InMemoryTrialReminderRepository(),
+  subscriptions: new InMemorySubscriptionRepository(),
 }));

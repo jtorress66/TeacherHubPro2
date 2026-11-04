@@ -23,6 +23,9 @@ import type {
   LearningPath,
   LearningPathId,
   LessonAttempt,
+  PortalLink,
+  SubscriptionId,
+  TrialReminderKind,
   Grade,
   GradeCategory,
   GradeCategoryId,
@@ -61,6 +64,9 @@ import type {
   LivePlayerRepository,
   LearningPathRepository,
   LessonAttemptRepository,
+  PortalLinkRepository,
+  TrialEndingLookup,
+  TrialReminderRepository,
   LiveSessionRepository,
   GradeCategoryRepository,
   GradeRepository,
@@ -450,8 +456,19 @@ export class InMemoryGamePlayRepository
 
 export class InMemorySubscriptionRepository
   extends InMemoryScopedRepository<Subscription>
-  implements SubscriptionRepository
+  implements SubscriptionRepository, TrialEndingLookup
 {
+  listTrialsEnding(from: Date, until: Date): Promise<readonly Subscription[]> {
+    return Promise.resolve(
+      [...this.rows.values()].filter(
+        (row) =>
+          row.status === 'trialing' &&
+          row.trialEndsAt.getTime() > from.getTime() &&
+          row.trialEndsAt.getTime() <= until.getTime(),
+      ),
+    );
+  }
+
   listBySchool(schoolId: SchoolId): Promise<readonly Subscription[]> {
     return this.listWhere(schoolId);
   }
@@ -683,6 +700,37 @@ export class InMemoryLessonAttemptRepository implements LessonAttemptRepository 
 
   deleteByPath(schoolId: SchoolId, pathId: LearningPathId): Promise<void> {
     this.rows = this.rows.filter((row) => row.schoolId !== schoolId || row.pathId !== pathId);
+    return Promise.resolve();
+  }
+}
+
+export class InMemoryPortalLinkRepository
+  extends InMemoryScopedRepository<PortalLink>
+  implements PortalLinkRepository
+{
+  findByTokenHash(tokenHash: string): Promise<PortalLink | null> {
+    return this.findWhere((row) => row.tokenHash === tokenHash);
+  }
+
+  listByClass(schoolId: SchoolId, classId: ClassId): Promise<readonly PortalLink[]> {
+    return this.listWhere(schoolId, (row) => row.classId === classId);
+  }
+}
+
+export class InMemoryTrialReminderRepository implements TrialReminderRepository {
+  private readonly sent = new Map<SubscriptionId, Set<TrialReminderKind>>();
+
+  sentKinds(subscriptionId: SubscriptionId): Promise<readonly TrialReminderKind[]> {
+    return Promise.resolve([...(this.sent.get(subscriptionId) ?? [])]);
+  }
+
+  record(reminder: {
+    readonly subscriptionId: SubscriptionId;
+    readonly kind: TrialReminderKind;
+  }): Promise<void> {
+    const kinds = this.sent.get(reminder.subscriptionId) ?? new Set<TrialReminderKind>();
+    kinds.add(reminder.kind);
+    this.sent.set(reminder.subscriptionId, kinds);
     return Promise.resolve();
   }
 }

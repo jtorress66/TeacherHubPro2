@@ -1,5 +1,5 @@
 import { err, ok, type Result } from '@thp/domain';
-import type { MailMessage, Mailer, MailerError } from '@thp/ports';
+import type { MailContent, MailMessage, Mailer, MailerError, MailTemplates } from '@thp/ports';
 
 /** Keeps sent mail in an outbox instead of sending it. */
 export class FakeMailer implements Mailer {
@@ -13,3 +13,17 @@ export class FakeMailer implements Mailer {
     return Promise.resolve(ok({ messageId: `message-${String(this.outbox.length)}` }));
   }
 }
+
+/** Plain, predictable wording, so tests can read what was sent. */
+export const fakeMailTemplates: MailTemplates = {
+  portalLink: (input): MailContent => ({
+    subject: `[${input.language}] ${input.firstName} at ${input.schoolName}`,
+    html: `<a href="${input.url}">${input.className}</a>`,
+    text: `${input.className}: ${input.url}`,
+  }),
+  trialReminder: (input): MailContent => ({
+    subject: `[${input.language}] ${String(input.daysLeft)} days left`,
+    html: `<a href="${input.billingUrl}">${input.name}</a>`,
+    text: `${input.name}: ${input.billingUrl}`,
+  }),
+};

@@ -32,6 +32,33 @@ export interface WebConfig {
   readonly voice: string;
   /** Live games: the realtime server's address, and the secret both use to sign tickets. */
   readonly realtime: { readonly url: string; readonly ticketSecret: string };
+  readonly mail: MailConfig;
+}
+
+/**
+ * How email goes out: the local stand-in until go-live (kept in the database for the development
+ * mail page), or Resend. `delivers` says whether mail reaches a person; the stand-in in
+ * production does not, so the app offers no email until Resend is set up.
+ */
+export type MailConfig = (
+  | { readonly provider: 'local' }
+  | { readonly provider: 'resend'; readonly apiKey: string; readonly from: string }
+) & { readonly delivers: boolean };
+
+function mailFrom(
+  env: Readonly<Record<string, string | undefined>>,
+  appEnv: AppEnv,
+): Result<MailConfig, string> {
+  const chosen = env.MAIL_PROVIDER?.trim() ?? '';
+  const provider = chosen === '' ? 'local' : chosen;
+  if (provider === 'local') return ok({ provider, delivers: appEnv !== 'production' });
+  if (provider !== 'resend') return err('MAIL_PROVIDER must be local or resend');
+  const apiKey = env.RESEND_API_KEY?.trim() ?? '';
+  const from = env.MAIL_FROM?.trim() ?? '';
+  if (apiKey === '' || from === '') {
+    return err('RESEND_API_KEY and MAIL_FROM are required when MAIL_PROVIDER is resend');
+  }
+  return ok({ provider, apiKey, from, delivers: true });
 }
 
 const required = (name: string) => ({ error: `${name} is required` });
@@ -148,6 +175,8 @@ export function parseWebConfig(
     return err(localOnly('GOOGLE_AUTH_PROVIDER'));
   const classroom = classroomFrom(env, c.APP_ENV);
   if (!classroom.ok) return classroom;
+  const mail = mailFrom(env, c.APP_ENV);
+  if (!mail.ok) return mail;
 
   return ok({
     databaseUrl: c.DATABASE_URL,
@@ -175,5 +204,6 @@ export function parseWebConfig(
       url: c.REALTIME_URL.replace(/\/$/, ''),
       ticketSecret: c.REALTIME_TICKET_SECRET,
     },
+    mail: mail.value,
   });
 }

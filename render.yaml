@@ -77,6 +77,14 @@ services:
         sync: false
       - key: REALTIME_TICKET_SECRET # signs host and player tickets; the realtime service reads it from here
         generateValue: true
+      # Email (Resend) is switched on at go-live: until MAIL_PROVIDER is "resend" with a key and a
+      # verified sender, the app offers no email in production and sends no trial reminders.
+      - key: MAIL_PROVIDER
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: MAIL_FROM # e.g. TeacherHubPro <hello@teacherhubpro.com>, on a domain verified in Resend
+        sync: false
 
   - type: worker
     name: teacherhubpro-worker
@@ -112,6 +120,22 @@ services:
       # Fail loudly if the key is missing, rather than drafting with the local stand-in.
       - key: LLM_PROVIDER
         value: anthropic
+      # Trial reminder emails link to the site; production keeps them off until real email is on.
+      - key: APP_ENV
+        value: production
+      - key: APP_URL
+        fromService:
+          type: web
+          name: teacherhubpro-web
+          envVarKey: APP_URL
+      # Email (Resend) is switched on at go-live: until MAIL_PROVIDER is "resend" with a key and a
+      # verified sender, the app offers no email in production and sends no trial reminders.
+      - key: MAIL_PROVIDER
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: MAIL_FROM # e.g. TeacherHubPro <hello@teacherhubpro.com>, on a domain verified in Resend
+        sync: false
 
   - type: web
     name: teacherhubpro-realtime

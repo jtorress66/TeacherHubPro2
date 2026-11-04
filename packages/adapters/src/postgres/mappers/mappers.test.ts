@@ -7,6 +7,7 @@ import {
   activateSubscription,
   type AssignmentId,
   type ClassId,
+  type Email,
   type GradeCategoryId,
   type GradeId,
   type PlanFolderId,
@@ -22,6 +23,7 @@ import {
   aLiveAnswer,
   aLearningPath,
   aLessonAttempt,
+  aPortalLink,
   aLivePlayer,
   aLiveSession,
   aGrade,
@@ -45,6 +47,7 @@ import { attendanceMapper } from './attendance-mapper.ts';
 import { gameMapper, gamePlayMapper } from './game-mappers.ts';
 import { liveAnswerMapper, livePlayerMapper, liveSessionMapper } from './live-mappers.ts';
 import { learningPathMapper, lessonAttemptMapper } from './learning-mappers.ts';
+import { portalLinkMapper } from './portal-mappers.ts';
 import {
   assignmentMapper,
   gradeCategoryMapper,
@@ -306,6 +309,14 @@ describe('row mappers round-trip every entity unchanged', () => {
     ).toThrow('learning_paths.lessons');
     const attempt = aLessonAttempt({ answers: [1, null, 0] });
     expect(lessonAttemptMapper.fromRow(lessonAttemptMapper.toRow(attempt))).toEqual(attempt);
+  });
+
+  it('portal link', () => {
+    const link = aPortalLink({
+      sentTo: 'parent@example.com' as Email,
+      revokedAt: new Date('2026-11-04T12:00:00Z'),
+    });
+    expect(portalLinkMapper.fromRow(stored(portalLinkMapper.toRow(link)))).toEqual(link);
   });
 
   it('subscription', () => {
