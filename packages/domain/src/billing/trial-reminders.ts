@@ -24,8 +24,7 @@ export function reminderDue(
   const left = subscription.trialEndsAt.getTime() - now.getTime();
   if (subscription.status !== 'trialing' || left <= 0) return null;
   const window = windows.find((w) => left <= w.withinDays * dayMs);
+  // The windows are checked latest first, so once the last day comes the 3-day one is skipped.
   if (window === undefined || sent.includes(window.kind)) return null;
-  // Once the last-day reminder is due, the 3-day one is no longer worth sending.
-  if (window.kind === 'three_days' && sent.includes('last_day')) return null;
   return window.kind;
 }

@@ -26,9 +26,10 @@ describe('reminderDue', () => {
     expect(reminderDue(trial, daysBefore(0.25), [])).toBe('last_day');
   });
 
-  it('never sends a reminder twice, nor the 3-day one after the last-day one', () => {
+  it('never sends a reminder twice, and skips the 3-day one if the last day has come', () => {
     expect(reminderDue(trial, daysBefore(2), ['three_days'])).toBeNull();
     expect(reminderDue(trial, daysBefore(1), ['three_days'])).toBe('last_day');
+    expect(reminderDue(trial, daysBefore(0.5), [])).toBe('last_day');
     expect(reminderDue(trial, daysBefore(0.5), ['three_days', 'last_day'])).toBeNull();
   });
 
