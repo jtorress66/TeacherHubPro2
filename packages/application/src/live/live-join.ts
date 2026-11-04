@@ -136,7 +136,12 @@ export class JoinLiveSession {
       joinedAt: now,
     });
     if (!player.ok) return player;
-    await this.deps.livePlayers.save(player.value);
+    try {
+      await this.deps.livePlayers.save(player.value);
+    } catch {
+      // Another device took the name between our check and this save.
+      return fail('name_taken');
+    }
     return ok({
       sessionId: session.id,
       playerId: player.value.id,

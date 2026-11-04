@@ -5,6 +5,7 @@ import {
   passwordHasherContract,
   randomTokenGeneratorContract,
   seedSourceContract,
+  ticketSignerContract,
   tokenHasherContract,
 } from '@thp/testing';
 import {
@@ -15,6 +16,7 @@ import {
   SystemClock,
   UuidIdGenerator,
 } from '../src/crypto/index.ts';
+import { HmacTicketSigner } from '../src/crypto/hmac-ticket-signer.ts';
 
 passwordHasherContract('ScryptPasswordHasher', () => new ScryptPasswordHasher());
 tokenHasherContract('Sha256TokenHasher', () => new Sha256TokenHasher());
@@ -22,6 +24,24 @@ randomTokenGeneratorContract('NodeRandomTokenGenerator', () => new NodeRandomTok
 idGeneratorContract('UuidIdGenerator', () => new UuidIdGenerator());
 clockContract('SystemClock', () => new SystemClock());
 seedSourceContract('CryptoSeedSource', () => new CryptoSeedSource());
+ticketSignerContract('HmacTicketSigner', () => new HmacTicketSigner('x'.repeat(32)));
+
+describe('HmacTicketSigner', () => {
+  it('needs a secret of at least 32 characters', () => {
+    expect(() => new HmacTicketSigner('short')).toThrow('at least 32');
+  });
+
+  it('refuses a ticket signed with another secret, or carrying a non-text payload', () => {
+    const now = new Date('2026-11-04T10:00:00Z');
+    const later = new Date('2026-11-04T11:00:00Z');
+    const ours = new HmacTicketSigner('a'.repeat(32));
+    const theirs = new HmacTicketSigner('b'.repeat(32));
+    expect(ours.verify(theirs.sign({ role: 'host' }, later), now)).toBeNull();
+    const odd = `${Buffer.from('[1,2]').toString('base64url')}.${String(later.getTime())}`;
+    const signature = ours.sign({ x: 'y' }, later).split('.')[2] ?? '';
+    expect(ours.verify(`${odd}.${signature}`, now)).toBeNull();
+  });
+});
 
 describe('ScryptPasswordHasher', () => {
   const hasher = new ScryptPasswordHasher();

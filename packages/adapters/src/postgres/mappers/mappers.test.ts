@@ -19,6 +19,9 @@ import {
   aClass,
   aGame,
   aGamePlay,
+  aLiveAnswer,
+  aLivePlayer,
+  aLiveSession,
   aGrade,
   aReportCardComment,
   aGradeCategory,
@@ -38,6 +41,7 @@ import {
 } from '@thp/testing';
 import { attendanceMapper } from './attendance-mapper.ts';
 import { gameMapper, gamePlayMapper } from './game-mappers.ts';
+import { liveAnswerMapper, livePlayerMapper, liveSessionMapper } from './live-mappers.ts';
 import {
   assignmentMapper,
   gradeCategoryMapper,
@@ -267,6 +271,21 @@ describe('row mappers round-trip every entity unchanged', () => {
     expect(() => gamePlayMapper.fromRow({ ...gamePlayMapper.toRow(play), mode: 'all' })).toThrow(
       'game_plays.mode',
     );
+  });
+
+  it('live session, player and answer', () => {
+    const session = aLiveSession({ kind: 'self_paced', mode: 'memory' });
+    expect(liveSessionMapper.fromRow(liveSessionMapper.toRow(session))).toEqual(session);
+    expect(() =>
+      liveSessionMapper.fromRow({ ...liveSessionMapper.toRow(session), status: 'paused' }),
+    ).toThrow('live_sessions.status');
+    expect(() =>
+      liveSessionMapper.fromRow({ ...liveSessionMapper.toRow(session), mode: 'all' }),
+    ).toThrow('live_sessions.mode');
+    const player = aLivePlayer({ removedAt: new Date('2026-11-04T10:05:00Z') });
+    expect(livePlayerMapper.fromRow(livePlayerMapper.toRow(player))).toEqual(player);
+    const answer = aLiveAnswer({ correct: false, points: 0 });
+    expect(liveAnswerMapper.fromRow(liveAnswerMapper.toRow(answer))).toEqual(answer);
   });
 
   it('subscription', () => {

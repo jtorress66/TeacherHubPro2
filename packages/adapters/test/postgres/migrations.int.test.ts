@@ -40,6 +40,9 @@ describe('migrations', () => {
       'grades',
       'jobs',
       'lesson_plans',
+      'live_answers',
+      'live_players',
+      'live_sessions',
       'password_credentials',
       'plan_folders',
       'plan_templates',
@@ -63,6 +66,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0010_live',
           '0009_games',
           '0008_assignments',
           '0007_assistant',
@@ -90,10 +94,11 @@ describe('migrations', () => {
           '0007_assistant',
           '0008_assignments',
           '0009_games',
+          '0010_live',
         ],
       },
     });
-    expect(await tableNames()).toHaveLength(28);
+    expect(await tableNames()).toHaveLength(31);
   });
 
   it('turns plans saved before step 8 into valid plans of their kind', async () => {

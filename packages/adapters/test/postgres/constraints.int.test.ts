@@ -11,6 +11,8 @@ import type {
 import {
   aClass,
   aGamePlay,
+  aLivePlayer,
+  aLiveSession,
   aGrade,
   aGradeCategory,
   anAttendanceSession,
@@ -22,6 +24,7 @@ import {
 } from '@thp/testing';
 import { attendanceMapper } from '../../src/postgres/mappers/attendance-mapper.ts';
 import { gameMapper, gamePlayMapper } from '../../src/postgres/mappers/game-mappers.ts';
+import { livePlayerMapper, liveSessionMapper } from '../../src/postgres/mappers/live-mappers.ts';
 import {
   gradeCategoryMapper,
   gradeMapper,
@@ -304,5 +307,73 @@ describe('gradebook', () => {
     await expect(
       db.insertInto('report_card_comments').values(comment('c2')).execute(),
     ).rejects.toThrow(/report_card_comments_class_student_key/);
+  });
+});
+
+describe('live sessions', () => {
+  beforeEach(() => resetWith(db, parentsFor.games));
+
+  const session = (overrides: Partial<ReturnType<typeof liveSessionMapper.toRow>> = {}) => ({
+    ...liveSessionMapper.toRow(aLiveSession({ schoolId: schoolA })),
+    ...overrides,
+  });
+
+  it('need a 6-digit PIN, a known status and 5 to 120 seconds per question', async () => {
+    await expect(
+      db
+        .insertInto('live_sessions')
+        .values(session({ pin: '12ab56' }))
+        .execute(),
+    ).rejects.toThrow(/live_sessions_pin_check/);
+    await expect(
+      db
+        .insertInto('live_sessions')
+        .values(session({ status: 'paused' }))
+        .execute(),
+    ).rejects.toThrow(/live_sessions_status_check/);
+    await expect(
+      db
+        .insertInto('live_sessions')
+        .values(session({ question_seconds: 200 }))
+        .execute(),
+    ).rejects.toThrow(/live_sessions_seconds_check/);
+  });
+
+  it('allow a PIN on one open session at a time; ended sessions free it', async () => {
+    await db.insertInto('live_sessions').values(session()).execute();
+    await expect(
+      db
+        .insertInto('live_sessions')
+        .values(session({ id: 'live-2' }))
+        .execute(),
+    ).rejects.toThrow(/live_sessions_open_pin_key/);
+    await db
+      .insertInto('live_sessions')
+      .values(session({ id: 'live-3', status: 'ended', ended_at: new Date() }))
+      .execute();
+  });
+
+  it('let a student play once per session, until removed', async () => {
+    await db.insertInto('live_sessions').values(session()).execute();
+    const player = (overrides: Partial<ReturnType<typeof livePlayerMapper.toRow>> = {}) => ({
+      ...livePlayerMapper.toRow(aLivePlayer({ schoolId: schoolA })),
+      ...overrides,
+    });
+    await db.insertInto('live_players').values(player()).execute();
+    await expect(
+      db
+        .insertInto('live_players')
+        .values(player({ id: 'player-2' }))
+        .execute(),
+    ).rejects.toThrow(/live_players_active_student_key/);
+    await db
+      .updateTable('live_players')
+      .set({ removed_at: new Date() })
+      .where('id', '=', 'player-1')
+      .execute();
+    await db
+      .insertInto('live_players')
+      .values(player({ id: 'player-3' }))
+      .execute();
   });
 });

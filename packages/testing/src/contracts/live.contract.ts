@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { GameId, LivePlayerId, LiveSessionId, SchoolId, UserId } from '@thp/domain';
+import type { GameId, LivePlayerId, LiveSessionId, SchoolId, StudentId, UserId } from '@thp/domain';
 import type {
   LiveAnswerRepository,
   LivePlayerRepository,
@@ -99,6 +99,7 @@ export function liveRepositoryContract(name: string, make: () => LiveRepositorie
       const ben = aLivePlayer({
         schoolId: schoolA,
         id: 'player-2' as LivePlayerId,
+        studentId: 'student-one' as StudentId,
         firstName: 'Ben',
         joinedAt: new Date('2026-11-04T10:00:30Z'),
       });
@@ -119,6 +120,21 @@ export function liveRepositoryContract(name: string, make: () => LiveRepositorie
       expect(await players.listBySessions(schoolA, [ana.sessionId])).toHaveLength(2);
       await players.deleteBySession(schoolA, ana.sessionId);
       expect(await players.listBySessions(schoolA, [ana.sessionId])).toEqual([]);
+    });
+  });
+
+  describe(`${name} (LivePlayerRepository: one seat per student)`, () => {
+    it('lets a student play once per session, and again only after being removed', async () => {
+      const { sessions: sessionRepo, players } = make();
+      await sessionRepo.save(aLiveSession({ schoolId: schoolA }));
+      const ana = aLivePlayer({ schoolId: schoolA });
+      await players.save(ana);
+      await expect(
+        players.save(aLivePlayer({ schoolId: schoolA, id: 'player-2' as LivePlayerId })),
+      ).rejects.toThrow();
+      await players.save({ ...ana, removedAt: new Date('2026-11-04T10:05:00Z') });
+      await players.save(aLivePlayer({ schoolId: schoolA, id: 'player-3' as LivePlayerId }));
+      expect(await players.listBySessions(schoolA, [ana.sessionId])).toHaveLength(2);
     });
   });
 

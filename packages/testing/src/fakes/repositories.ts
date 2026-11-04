@@ -564,6 +564,20 @@ export class InMemoryLivePlayerRepository
   extends InMemoryScopedRepository<LivePlayer>
   implements LivePlayerRepository
 {
+  /** One active seat per student and session, as the database enforces. */
+  override save(player: LivePlayer): Promise<void> {
+    const taken = [...this.rows.values()].some(
+      (row) =>
+        row.id !== player.id &&
+        row.sessionId === player.sessionId &&
+        row.studentId === player.studentId &&
+        row.removedAt === null &&
+        player.removedAt === null,
+    );
+    if (taken) return Promise.reject(new Error('This student is already playing'));
+    return super.save(player);
+  }
+
   async listBySessions(
     schoolId: SchoolId,
     sessionIds: readonly LiveSessionId[],

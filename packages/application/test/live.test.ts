@@ -163,6 +163,20 @@ describe('Live sessions: starting and joining', () => {
     expect(again.playerId).toBe(ana.playerId);
   });
 
+  it('two devices tapping the same name at once: the second is told the name is taken', async () => {
+    const world = makeWorld();
+    const s = await setUp(world);
+    const racing = {
+      ...world,
+      livePlayers: Object.assign(Object.create(world.livePlayers) as typeof world.livePlayers, {
+        save: () => Promise.reject(new Error('duplicate key')),
+      }),
+    };
+    expect(
+      await new JoinLiveSession(racing).execute({ pin: s.session.pin, studentId: s.ben.id }),
+    ).toEqual({ ok: false, error: { code: 'name_taken' } });
+  });
+
   it('only the class’s students can join, and only an open session', async () => {
     const world = makeWorld();
     const s = await setUp(world);

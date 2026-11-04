@@ -295,6 +295,48 @@ export interface GamesTable {
   updated_at: Date;
 }
 
+export interface LiveSessionsTable {
+  id: string;
+  school_id: string;
+  teacher_id: string;
+  game_id: string;
+  class_id: string;
+  kind: string;
+  mode: string;
+  pin: string;
+  seed: number;
+  question_count: number;
+  question_seconds: number;
+  status: string;
+  current: number;
+  question_started_at: Date | null;
+  created_at: Date;
+  ended_at: Date | null;
+}
+
+export interface LivePlayersTable {
+  id: string;
+  school_id: string;
+  session_id: string;
+  student_id: string;
+  first_name: string;
+  token_hash: string;
+  joined_at: Date;
+  removed_at: Date | null;
+}
+
+export interface LiveAnswersTable {
+  school_id: string;
+  session_id: string;
+  player_id: string;
+  question: number;
+  prompt: string;
+  choice: number;
+  correct: boolean;
+  ms: number;
+  points: number;
+}
+
 export interface GamePlaysTable {
   id: string;
   school_id: string;
@@ -362,6 +404,9 @@ export interface Database {
   attendance_entries: AttendanceEntriesTable;
   games: GamesTable;
   game_plays: GamePlaysTable;
+  live_sessions: LiveSessionsTable;
+  live_players: LivePlayersTable;
+  live_answers: LiveAnswersTable;
   subscriptions: SubscriptionsTable;
   sessions: SessionsTable;
   password_credentials: PasswordCredentialsTable;
