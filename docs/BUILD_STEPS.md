@@ -2,7 +2,7 @@
 
 Place this file at `docs/BUILD_STEPS.md`. Work on one step at a time. Tick a step only when its gate passes and the Definition of Done in `CLAUDE.md` is met. For each step, read its section in `docs/FEATURES.md` first.
 
-**Current step:** 12
+**Current step:** 13
 
 | # | Step | Scope | Gate (must pass before next step) | Done |
 | --- | --- | --- | --- | --- |
@@ -37,6 +37,7 @@ No paid API calls until launch. Steps that need real AI meet their gate with the
 - Google Classroom with a real Google Cloud project: consent screen and verification for the Classroom scopes, `CLASSROOM_PROVIDER=google`, `TOKEN_ENCRYPTION_KEY` (step 10).
 - The question extractor and grader evals against real Claude (step 10).
 - The game writer evals against real Claude (step 11).
+- The path writer evals against real Claude (step 13).
 - Prompt caching with real Claude: grade a class of several submissions with open questions and rubrics; the worker log should show `cache read` above 0 from the second submission on.
 
 ## Prompt to start each step in Claude Code
