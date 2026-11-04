@@ -1029,6 +1029,20 @@ export const en = {
     error: "Something went wrong. Please try again.",
     notFound: "This game is not available.",
   },
+  emails: {
+    portalSubject: '{name}’s progress at {school}',
+    portalHello: 'Hello,',
+    portalBody: 'You can follow {name}’s grades, attendance and learning in {className} at {school} here:',
+    portalButton: 'Open the family portal',
+    portalReadOnly: 'This page is read-only and private to your family: please don’t share the link. For any question, contact the teacher.',
+    trialSubject: 'Your TeacherHubPro trial ends in {days} days',
+    trialSubjectLastDay: 'Your TeacherHubPro trial ends today',
+    trialHello: 'Hi {name},',
+    trialBody: 'Your free trial ends in {days} days. Choose a plan to keep your classes, gradebook and AI tools without interruption.',
+    trialBodyLastDay: 'Your free trial ends today. Choose a plan to keep your classes, gradebook and AI tools without interruption.',
+    trialButton: 'Choose a plan',
+    signature: 'The TeacherHubPro team',
+  },
   learning: {
     title: 'Learning paths',
     intro:

@@ -1036,6 +1036,20 @@ export const es: Messages = {
     error: "Algo salió mal. Inténtalo de nuevo.",
     notFound: "Este juego no está disponible.",
   },
+  emails: {
+    portalSubject: 'Progreso de {name} en {school}',
+    portalHello: 'Hola:',
+    portalBody: 'Puede seguir las calificaciones, la asistencia y el aprendizaje de {name} en {className} de {school} aquí:',
+    portalButton: 'Abrir el portal familiar',
+    portalReadOnly: 'Esta página es de solo lectura y privada para su familia: no comparta el enlace. Para cualquier pregunta, contacte al maestro.',
+    trialSubject: 'Su prueba de TeacherHubPro termina en {days} días',
+    trialSubjectLastDay: 'Su prueba de TeacherHubPro termina hoy',
+    trialHello: 'Hola, {name}:',
+    trialBody: 'Su prueba gratuita termina en {days} días. Elija un plan para conservar sus clases, su registro de calificaciones y las herramientas de IA sin interrupción.',
+    trialBodyLastDay: 'Su prueba gratuita termina hoy. Elija un plan para conservar sus clases, su registro de calificaciones y las herramientas de IA sin interrupción.',
+    trialButton: 'Elegir un plan',
+    signature: 'El equipo de TeacherHubPro',
+  },
   learning: {
     title: 'Rutas de aprendizaje',
     intro:
