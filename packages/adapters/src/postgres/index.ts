@@ -14,6 +14,8 @@ import type {
   LiveAnswerRepository,
   LivePlayerRepository,
   LiveSessionRepository,
+  LearningPathRepository,
+  LessonAttemptRepository,
   GradeCategoryRepository,
   GradeRepository,
   LessonPlanRepository,
@@ -39,6 +41,10 @@ import {
   PostgresLivePlayerRepository,
   PostgresLiveSessionRepository,
 } from './repositories/postgres-live-repositories.ts';
+import {
+  PostgresLearningPathRepository,
+  PostgresLessonAttemptRepository,
+} from './repositories/postgres-learning-repositories.ts';
 import { PostgresGradeCategoryRepository } from './repositories/postgres-grade-category-repository.ts';
 import { PostgresGradeRepository } from './repositories/postgres-grade-repository.ts';
 import { PostgresLessonPlanRepository } from './repositories/postgres-lesson-plan-repository.ts';
@@ -97,6 +103,8 @@ export interface PostgresRepositories {
   readonly liveSessions: LiveSessionRepository;
   readonly livePlayers: LivePlayerRepository;
   readonly liveAnswers: LiveAnswerRepository;
+  readonly learningPaths: LearningPathRepository;
+  readonly lessonAttempts: LessonAttemptRepository;
   readonly subscriptions: SubscriptionRepository;
   readonly sessions: SessionRepository;
   readonly credentials: PasswordCredentialRepository;
@@ -130,6 +138,8 @@ export function createPostgresRepositories(db: Kysely<Database>): PostgresReposi
     liveSessions: new PostgresLiveSessionRepository(db),
     livePlayers: new PostgresLivePlayerRepository(db),
     liveAnswers: new PostgresLiveAnswerRepository(db),
+    learningPaths: new PostgresLearningPathRepository(db),
+    lessonAttempts: new PostgresLessonAttemptRepository(db),
     subscriptions: new PostgresSubscriptionRepository(db),
     sessions: new PostgresSessionRepository(db),
     credentials: new PostgresPasswordCredentialRepository(db),

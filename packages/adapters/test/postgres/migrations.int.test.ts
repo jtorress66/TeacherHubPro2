@@ -39,6 +39,8 @@ describe('migrations', () => {
       'grade_categories',
       'grades',
       'jobs',
+      'learning_paths',
+      'lesson_attempts',
       'lesson_plans',
       'live_answers',
       'live_players',
@@ -66,6 +68,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0011_learning',
           '0010_live',
           '0009_games',
           '0008_assignments',
@@ -95,10 +98,11 @@ describe('migrations', () => {
           '0008_assignments',
           '0009_games',
           '0010_live',
+          '0011_learning',
         ],
       },
     });
-    expect(await tableNames()).toHaveLength(31);
+    expect(await tableNames()).toHaveLength(33);
   });
 
   it('turns plans saved before step 8 into valid plans of their kind', async () => {
