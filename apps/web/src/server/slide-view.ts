@@ -22,6 +22,25 @@ export const slideLook = (layout: SlideLayout): SlideLook => ({
   ...looks[layout],
 });
 
+/** The smallest a slide's text may shrink to, as a share of its full size. */
+const minFitScale = 0.4;
+
+/**
+ * The largest text scale, between 0.4 and 1, at which a slide fits its card (`fits` lays the slide
+ * out at a scale and says whether it fits). A bisection: a few layouts, whatever the content.
+ */
+export function fitScale(fits: (scale: number) => boolean): number {
+  if (fits(1)) return 1;
+  let low = minFitScale;
+  let high = 1;
+  for (let step = 0; step < 7; step += 1) {
+    const middle = (low + high) / 2;
+    if (fits(middle)) low = middle;
+    else high = middle;
+  }
+  return low;
+}
+
 /** The editor shows points one per line. */
 export const bulletLines = (text: string): string[] =>
   text

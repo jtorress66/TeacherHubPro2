@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { blankSlide, slideLayouts } from '@thp/domain';
-import { bulletLines, bulletsText, slideLook, slideSpeech } from './slide-view.ts';
+import { bulletLines, bulletsText, fitScale, slideLook, slideSpeech } from './slide-view.ts';
 
 describe('slideLook', () => {
   it('describes every layout', () => {
@@ -34,5 +34,21 @@ describe('slideSpeech', () => {
       }),
     ).toBe('Plants\n\nParts\n\nEvery plant has parts.\n\nRoots\nStem');
     expect(slideSpeech(blankSlide('title'))).toBe('');
+  });
+});
+
+describe('fitScale', () => {
+  it('keeps full size when the slide already fits', () => {
+    expect(fitScale(() => true)).toBe(1);
+  });
+
+  it('finds nearly the largest size that fits', () => {
+    const scale = fitScale((k) => k <= 0.63);
+    expect(scale).toBeLessThanOrEqual(0.63);
+    expect(scale).toBeGreaterThan(0.6);
+  });
+
+  it('stops at the smallest size when nothing fits', () => {
+    expect(fitScale(() => false)).toBe(0.4);
   });
 });
