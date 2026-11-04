@@ -1,5 +1,6 @@
-import { afterAll, beforeEach, describe } from 'vitest';
+import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import type {
+  Email,
   AssignmentId,
   AttendanceSessionId,
   ClassId,
@@ -40,6 +41,8 @@ import {
   gamePlayRepositoryContract,
   liveRepositoryContract,
   learningRepositoryContract,
+  mailerContract,
+  portalRepositoryContract,
   SequentialIdGenerator,
   gradeRepositoryContract,
   reportCardCommentContract,
@@ -57,6 +60,7 @@ import {
   PostgresFileStore,
   PostgresJobQueue,
 } from '../../src/postgres/index.ts';
+import { LocalMailer } from '../../src/mail/local-mailer.ts';
 import { connect, parentsFor, resetWith, type Parent } from './test-db.ts';
 
 const db = connect();
@@ -312,4 +316,37 @@ withParents(parentsFor.roster, () => {
     paths: repos.learningPaths,
     attempts: repos.lessonAttempts,
   }));
+});
+
+withParents(parentsFor.roster, () => {
+  portalRepositoryContract('Postgres', () => ({
+    portalLinks: repos.portalLinks,
+    trialReminders: repos.trialReminders,
+    subscriptions: repos.subscriptions,
+  }));
+});
+
+withParents(parentsFor.none, () => {
+  const local = () => new LocalMailer(db);
+  mailerContract('LocalMailer', {
+    accepting: local,
+    // The stand-in refuses addresses on the reserved .invalid domain.
+    rejecting: () => ({
+      send: (message) => local().send({ ...message, to: 'nobody@school.invalid' as Email }),
+    }),
+  });
+
+  describe('LocalMailer (development mailbox)', () => {
+    it('keeps what it sent, newest first, for the development mail page', async () => {
+      let tick = Date.parse('2026-11-04T10:00:00Z');
+      const mailer = new LocalMailer(db, { now: () => new Date((tick += 1000)) });
+      const message = { to: 'parent@example.com' as Email, html: '<p>Hi</p>', text: 'Hi' };
+      await mailer.send({ ...message, subject: 'First' });
+      await mailer.send({ ...message, subject: 'Second' });
+      const sent = await mailer.list(10);
+      expect(sent.map((m) => m.subject)).toEqual(['Second', 'First']);
+      expect(sent[0]).toMatchObject({ to: 'parent@example.com', text: 'Hi' });
+      expect(await mailer.list(1)).toHaveLength(1);
+    });
+  });
 });

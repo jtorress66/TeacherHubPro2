@@ -16,6 +16,9 @@ import type {
   LiveSessionRepository,
   LearningPathRepository,
   LessonAttemptRepository,
+  PortalLinkRepository,
+  TrialEndingLookup,
+  TrialReminderRepository,
   GradeCategoryRepository,
   GradeRepository,
   LessonPlanRepository,
@@ -45,6 +48,10 @@ import {
   PostgresLearningPathRepository,
   PostgresLessonAttemptRepository,
 } from './repositories/postgres-learning-repositories.ts';
+import {
+  PostgresPortalLinkRepository,
+  PostgresTrialReminderRepository,
+} from './repositories/postgres-portal-repositories.ts';
 import { PostgresGradeCategoryRepository } from './repositories/postgres-grade-category-repository.ts';
 import { PostgresGradeRepository } from './repositories/postgres-grade-repository.ts';
 import { PostgresLessonPlanRepository } from './repositories/postgres-lesson-plan-repository.ts';
@@ -105,7 +112,9 @@ export interface PostgresRepositories {
   readonly liveAnswers: LiveAnswerRepository;
   readonly learningPaths: LearningPathRepository;
   readonly lessonAttempts: LessonAttemptRepository;
-  readonly subscriptions: SubscriptionRepository;
+  readonly portalLinks: PortalLinkRepository;
+  readonly trialReminders: TrialReminderRepository;
+  readonly subscriptions: SubscriptionRepository & TrialEndingLookup;
   readonly sessions: SessionRepository;
   readonly credentials: PasswordCredentialRepository;
 }
@@ -140,6 +149,8 @@ export function createPostgresRepositories(db: Kysely<Database>): PostgresReposi
     liveAnswers: new PostgresLiveAnswerRepository(db),
     learningPaths: new PostgresLearningPathRepository(db),
     lessonAttempts: new PostgresLessonAttemptRepository(db),
+    portalLinks: new PostgresPortalLinkRepository(db),
+    trialReminders: new PostgresTrialReminderRepository(db),
     subscriptions: new PostgresSubscriptionRepository(db),
     sessions: new PostgresSessionRepository(db),
     credentials: new PostgresPasswordCredentialRepository(db),

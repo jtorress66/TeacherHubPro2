@@ -240,6 +240,34 @@ export interface AssignmentAttachmentsTable {
   created_at: CreatedAt;
 }
 
+export interface PortalLinksTable {
+  id: string;
+  school_id: string;
+  class_id: string;
+  student_id: string;
+  token_hash: string;
+  sent_to: string | null;
+  expires_at: Date;
+  revoked_at: Date | null;
+  created_at: CreatedAt;
+}
+
+export interface TrialRemindersTable {
+  subscription_id: string;
+  school_id: string;
+  kind: string;
+  sent_at: Date;
+}
+
+export interface SentMailTable {
+  id: string;
+  to_address: string;
+  subject: string;
+  html: string;
+  text_body: string;
+  sent_at: Date;
+}
+
 export interface StudentLinksTable {
   id: string;
   school_id: string;
@@ -439,6 +467,9 @@ export interface Database {
   live_answers: LiveAnswersTable;
   learning_paths: LearningPathsTable;
   lesson_attempts: LessonAttemptsTable;
+  portal_links: PortalLinksTable;
+  trial_reminders: TrialRemindersTable;
+  sent_mail: SentMailTable;
   subscriptions: SubscriptionsTable;
   sessions: SessionsTable;
   password_credentials: PasswordCredentialsTable;

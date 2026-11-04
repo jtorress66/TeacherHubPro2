@@ -43,3 +43,5 @@ export {
   LocalClassroomAuthorization,
   localClassroomFixture,
 } from './google/local-classroom.ts';
+export { ResendMailer, type ResendConfig } from './mail/resend-mailer.ts';
+export { LocalMailer } from './mail/local-mailer.ts';
