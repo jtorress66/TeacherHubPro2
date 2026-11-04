@@ -239,8 +239,7 @@ Seven interface languages: English, Spanish, French, Portuguese, German, Italian
   - The level rose on the teacher route but not the student route (and only counted lessons): one domain rule sets it, from check scores.
   - A new path overwrote the old one, and "completed" counted lessons of overwritten paths, so it could pass 100%: paths are kept, and progress counts real attempts on real lessons.
   - A separate learning token per subject, unhashed and valid 30 days: the student's existing link, stored as a hash and revocable.
-- **Dropped (agreed in the step 13 plan):** the fixed subject list (math, language, science, reading), replaced by the app's subjects; the old separate student progress page (folded into the learning pages; Student 360 is step 15).
-- **Proposed, waiting for the user:** dropping the teacher's button that marked a lesson complete without the check (completion now means answering the check).
+- **Dropped (agreed with the user in step 13):** the fixed subject list (math, language, science, reading), replaced by the app's subjects; the old separate student progress page (folded into the learning pages; Student 360 is step 15); the teacher's button that marked a lesson complete without the check (completion means answering the check, so progress always reflects real answers).
 
 ## Step 14 — Parent and homeschool portals, email
 
