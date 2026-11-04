@@ -1,5 +1,5 @@
 import type { LiveActor, LiveView, UseCaseError } from '@thp/application';
-import type { LivePlayerId, Result } from '@thp/domain';
+import { ok, type LivePlayerId, type Result } from '@thp/domain';
 import type { LiveCommands } from './commands.ts';
 import { readMessage, type CommandMessage, type ServerMessage } from './messages.ts';
 
@@ -29,6 +29,7 @@ const handlers: { readonly [K in CommandMessage['type']]: Handler<K> } = {
   next: (c, actor) => c.next.execute({ actor }),
   reveal: (c, actor) => c.reveal.execute({ actor }),
   end: (c, actor) => c.end.execute({ actor }),
+  refresh: () => Promise.resolve(ok(undefined)),
   remove: (c, actor, m) => c.remove.execute({ actor, playerId: m.playerId as LivePlayerId }),
   answer: (c, actor, m) => c.answer.execute({ actor, question: m.question, choice: m.choice }),
 };
@@ -43,6 +44,8 @@ export class LiveHub {
   private readonly actors = new Map<Connection, LiveActor>();
   private readonly rooms = new Map<string, Set<Connection>>();
   private readonly timers = new Map<string, () => void>();
+  /** Each session's work runs one task at a time: answers from many players must not interleave. */
+  private readonly queues = new Map<string, Promise<void>>();
 
   constructor(
     private readonly commands: LiveCommands,
@@ -60,17 +63,19 @@ export class LiveHub {
       connection.send({ type: 'error', code: 'invalid_message' });
       return;
     }
-    const handle = handlers[message.type] as Handler<typeof message.type>;
-    const result = await handle(this.commands, actor, message);
-    if (!result.ok) {
-      connection.send({
-        type: 'error',
-        code: result.error.code,
-        ...('field' in result.error ? { field: result.error.field } : {}),
-      });
-      return;
-    }
-    await this.changed(actor);
+    await this.inSession(actor, async () => {
+      const handle = handlers[message.type] as Handler<typeof message.type>;
+      const result = await handle(this.commands, actor, message);
+      if (!result.ok) {
+        connection.send({
+          type: 'error',
+          code: result.error.code,
+          ...('field' in result.error ? { field: result.error.field } : {}),
+        });
+        return;
+      }
+      await this.changed(actor);
+    });
   }
 
   disconnect(connection: Connection): void {
@@ -91,7 +96,20 @@ export class LiveHub {
     const room = this.rooms.get(roomOf(actor.value)) ?? new Set<Connection>();
     room.add(connection);
     this.rooms.set(roomOf(actor.value), room);
-    await this.sendView(connection, actor.value);
+    // Everyone, not just the newcomer: the host's lobby lists who has joined.
+    await this.inSession(actor.value, () => this.changed(actor.value));
+  }
+
+  /** Runs the task after the session's earlier tasks; a failure does not block later ones. */
+  private inSession(actor: LiveActor, task: () => Promise<void>): Promise<void> {
+    const key = roomOf(actor);
+    const run = (this.queues.get(key) ?? Promise.resolve()).then(task);
+    const settled = run.catch(() => undefined);
+    this.queues.set(key, settled);
+    void settled.then(() => {
+      if (this.queues.get(key) === settled) this.queues.delete(key);
+    });
+    return run;
   }
 
   /** Sends every screen in the session its view, and sets the timer for the question shown. */
@@ -124,9 +142,10 @@ export class LiveHub {
     const question = view.current;
     const cancel = this.scheduler.schedule(view.timeLeftMs + revealGraceMs, () => {
       this.timers.delete(key);
-      void this.commands.reveal
-        .execute({ actor: system, question })
-        .then((result) => (result.ok ? this.changed(system) : undefined));
+      void this.inSession(system, async () => {
+        const result = await this.commands.reveal.execute({ actor: system, question });
+        if (result.ok) await this.changed(system);
+      }).catch(() => undefined);
     });
     this.timers.set(key, cancel);
   }

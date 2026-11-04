@@ -120,6 +120,30 @@ describe('LiveHub', () => {
     expect(s.anaScreen.lastView()?.you).toMatchObject({ firstName: 'Ana' });
   });
 
+  it('tells everyone in the session when a player connects, so the host sees them join', async () => {
+    const s = await setUp();
+    const cara = aLivePlayer({
+      id: 'p-cara' as LivePlayerId,
+      studentId: 's-cara' as StudentId,
+      firstName: 'Cara',
+    });
+    await s.deps.livePlayers.save(cara);
+    const before = s.host.sent.length;
+    await s.send(new FakeConnection(), {
+      type: 'hello',
+      ticket: playerTicket(s.deps.ticketSigner, cara, s.clock.now()),
+    });
+    expect(s.host.sent.length).toBeGreaterThan(before);
+    expect(s.host.lastView()?.players.map((p) => p.firstName)).toContain('Cara');
+  });
+
+  it('a refresh resends every screen its view (after a self-paced round is saved)', async () => {
+    const s = await setUp();
+    const before = s.host.sent.length;
+    await s.send(s.anaScreen, { type: 'refresh' });
+    expect(s.host.sent.length).toBe(before + 1);
+  });
+
   it('turns away a bad ticket, and anything before hello', async () => {
     const s = await setUp();
     const stranger = new FakeConnection();
@@ -161,6 +185,16 @@ describe('LiveHub', () => {
     s.scheduler.tasks[0]?.run();
     await settle();
     expect(s.host.lastView()).toMatchObject({ status: 'question', current: 1 });
+  });
+
+  it('answers that arrive at the same moment are handled one at a time, so the last one reveals', async () => {
+    const s = await setUp();
+    await s.send(s.host, { type: 'start' });
+    await Promise.all([
+      s.send(s.anaScreen, { type: 'answer', question: 0, choice: s.right(0) }),
+      s.send(s.benScreen, { type: 'answer', question: 0, choice: s.right(0) }),
+    ]);
+    expect(s.host.lastView()?.status).toBe('reveal');
   });
 
   it('a player cannot run the game, and a malformed message is refused', async () => {

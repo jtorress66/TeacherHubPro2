@@ -8,6 +8,8 @@ export const clientMessage = z.discriminatedUnion('type', [
   z.object({ type: z.literal('next') }),
   z.object({ type: z.literal('reveal') }),
   z.object({ type: z.literal('end') }),
+  // Something changed over HTTP (a self-paced round saved): resend everyone their view.
+  z.object({ type: z.literal('refresh') }),
   z.object({ type: z.literal('remove'), playerId: z.string().min(1).max(200) }),
   z.object({
     type: z.literal('answer'),
