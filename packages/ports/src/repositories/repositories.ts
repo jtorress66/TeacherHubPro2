@@ -18,6 +18,9 @@ import type {
   LearningPath,
   LearningPathId,
   LessonAttempt,
+  PortalLink,
+  SubscriptionId,
+  TrialReminderKind,
   LivePlayer,
   LiveSession,
   LiveSessionId,
@@ -260,4 +263,29 @@ export interface LessonAttemptRepository {
     pathIds: readonly LearningPathId[],
   ): Promise<readonly LessonAttempt[]>;
   deleteByPath(schoolId: SchoolId, pathId: LearningPathId): Promise<void>;
+}
+
+/** Families' portal links; like student links, only the hash of a token is stored. */
+export interface PortalLinkRepository extends ScopedRepository<PortalLink> {
+  /** The link behind a presented token (hashed); the school is not known until it is found. */
+  findByTokenHash(tokenHash: string): Promise<PortalLink | null>;
+  listByClass(schoolId: SchoolId, classId: ClassId): Promise<readonly PortalLink[]>;
+}
+
+/** Which trial reminders went out, so none is sent twice. */
+export interface TrialReminderRepository {
+  sentKinds(subscriptionId: SubscriptionId): Promise<readonly TrialReminderKind[]>;
+  /** Records a reminder; recording the same one again changes nothing. */
+  record(reminder: {
+    readonly subscriptionId: SubscriptionId;
+    readonly schoolId: SchoolId;
+    readonly kind: TrialReminderKind;
+    readonly sentAt: Date;
+  }): Promise<void>;
+}
+
+/** Unscoped on purpose: the worker looks across schools for trials about to end. */
+export interface TrialEndingLookup {
+  /** Trialing subscriptions whose trial ends after `from` and by `until`. */
+  listTrialsEnding(from: Date, until: Date): Promise<readonly Subscription[]>;
 }
