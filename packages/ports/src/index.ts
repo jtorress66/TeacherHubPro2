@@ -5,6 +5,7 @@ export type { SeedSource } from './system/seed-source.ts';
 export type { TokenHasher } from './security/token-hasher.ts';
 export type { PasswordHasher } from './security/password-hasher.ts';
 export type * from './security/secret-cipher.ts';
+export type { TicketSigner } from './security/ticket-signer.ts';
 export type * from './ai/llm-client.ts';
 export type * from './ai/text-to-speech.ts';
 export type * from './ai/lesson-plan-drafter.ts';

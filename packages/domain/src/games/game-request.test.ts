@@ -20,6 +20,29 @@ describe('createGameRequest', () => {
       count: 8,
       language: 'es',
       avoid: [],
+      standard: null,
+      difficulty: 'medium',
+    });
+  });
+
+  it('can aim at an official Common Core standard and a difficulty', () => {
+    const aimed = valueOf(
+      createGameRequest({
+        ...input,
+        subject: 'math',
+        standard: ' CCSS.Math.Content.4.NF.A.1 ',
+        difficulty: 'hard',
+      }),
+    );
+    expect(aimed).toMatchObject({ standard: 'CCSS.Math.Content.4.NF.A.1', difficulty: 'hard' });
+    expect(valueOf(createGameRequest({ ...input, standard: '' })).standard).toBeNull();
+    expect(errorOf(createGameRequest({ ...input, standard: 'CCSS.Made.Up.1' }))).toEqual({
+      field: 'standard',
+      code: 'invalid_format',
+    });
+    expect(errorOf(createGameRequest({ ...input, difficulty: 'extreme' }))).toEqual({
+      field: 'difficulty',
+      code: 'invalid_format',
     });
   });
 

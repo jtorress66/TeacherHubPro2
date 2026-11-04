@@ -1036,6 +1036,7 @@ export const en = {
     classroom_not_connected: 'Connect Google Classroom in Settings first.',
     classroom_failed: 'Google Classroom did not respond. Please try again.',
     grading_off: 'Turn on “Count as a grade” for this game first.',
+    name_taken: 'That name is already playing. Pick your own name.',
     subscription_required: 'Drafting with AI needs an active trial or plan.',
     required: 'This field is required.',
     invalid_format: 'Please check this value.',

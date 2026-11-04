@@ -28,7 +28,8 @@ export type ApplicationErrorCode =
   | 'not_shareable'
   | 'classroom_not_connected'
   | 'classroom_failed'
-  | 'grading_off';
+  | 'grading_off'
+  | 'name_taken';
 
 /**
  * What a use case can report: a broken validation rule (with its field) or an application-level

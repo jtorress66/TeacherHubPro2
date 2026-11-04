@@ -16,6 +16,10 @@ import type {
   Game,
   GameId,
   GamePlay,
+  LiveAnswer,
+  LivePlayer,
+  LiveSession,
+  LiveSessionId,
   Grade,
   GradeCategory,
   GradeCategoryId,
@@ -50,6 +54,9 @@ import type {
   ClassRepository,
   GameRepository,
   GamePlayRepository,
+  LiveAnswerRepository,
+  LivePlayerRepository,
+  LiveSessionRepository,
   GradeCategoryRepository,
   GradeRepository,
   LessonPlanRepository,
@@ -530,6 +537,77 @@ export class InMemoryClassroomConnectionRepository implements ClassroomConnectio
 
   delete(schoolId: SchoolId, teacherId: UserId): Promise<void> {
     if (this.rows.get(teacherId)?.schoolId === schoolId) this.rows.delete(teacherId);
+    return Promise.resolve();
+  }
+}
+
+export class InMemoryLiveSessionRepository
+  extends InMemoryScopedRepository<LiveSession>
+  implements LiveSessionRepository
+{
+  findOpenByPin(pin: string): Promise<LiveSession | null> {
+    return this.findWhere((row) => row.pin === pin && row.status !== 'ended');
+  }
+
+  async listByTeacher(schoolId: SchoolId, teacherId: UserId): Promise<readonly LiveSession[]> {
+    const rows = await this.listWhere(schoolId, (row) => row.teacherId === teacherId);
+    return [...rows].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  }
+
+  async listByGame(schoolId: SchoolId, gameId: GameId): Promise<readonly LiveSession[]> {
+    const rows = await this.listWhere(schoolId, (row) => row.gameId === gameId);
+    return [...rows].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  }
+}
+
+export class InMemoryLivePlayerRepository
+  extends InMemoryScopedRepository<LivePlayer>
+  implements LivePlayerRepository
+{
+  async listBySessions(
+    schoolId: SchoolId,
+    sessionIds: readonly LiveSessionId[],
+  ): Promise<readonly LivePlayer[]> {
+    const rows = await this.listWhere(schoolId, (row) => sessionIds.includes(row.sessionId));
+    return [...rows].sort((a, b) => a.joinedAt.getTime() - b.joinedAt.getTime());
+  }
+
+  deleteBySession(schoolId: SchoolId, sessionId: LiveSessionId): Promise<void> {
+    for (const row of this.rows.values()) {
+      if (row.schoolId === schoolId && row.sessionId === sessionId) this.rows.delete(row.id);
+    }
+    return Promise.resolve();
+  }
+}
+
+export class InMemoryLiveAnswerRepository implements LiveAnswerRepository {
+  private readonly rows: LiveAnswer[] = [];
+
+  save(answer: LiveAnswer): Promise<void> {
+    const taken = this.rows.some(
+      (row) => row.playerId === answer.playerId && row.question === answer.question,
+    );
+    if (taken) return Promise.reject(new Error('This question is already answered'));
+    this.rows.push(answer);
+    return Promise.resolve();
+  }
+
+  listBySessions(
+    schoolId: SchoolId,
+    sessionIds: readonly LiveSessionId[],
+  ): Promise<readonly LiveAnswer[]> {
+    return Promise.resolve(
+      this.rows
+        .filter((row) => row.schoolId === schoolId && sessionIds.includes(row.sessionId))
+        .sort((a, b) => a.question - b.question),
+    );
+  }
+
+  deleteBySession(schoolId: SchoolId, sessionId: LiveSessionId): Promise<void> {
+    const kept = this.rows.filter(
+      (row) => row.schoolId !== schoolId || row.sessionId !== sessionId,
+    );
+    this.rows.splice(0, this.rows.length, ...kept);
     return Promise.resolve();
   }
 }

@@ -16,6 +16,8 @@ import {
   createClass,
   createGame,
   createGamePlay,
+  createLiveSession,
+  joinPlayer,
   defaultGameModes,
   createGrade,
   createGradeCategory,
@@ -50,6 +52,12 @@ import {
 } from '@thp/domain';
 import type {
   GamePlay,
+  LiveAnswer,
+  LivePlayer,
+  LivePlayerId,
+  LiveSession,
+  LiveSessionId,
+  LiveSessionInput,
   GamePlayId,
   AssignmentId,
   AttendanceSessionId,
@@ -353,6 +361,53 @@ export const aGamePlay = (overrides: Partial<GamePlay> = {}): GamePlay =>
       ...overrides,
     }),
   );
+
+export const aLiveSession = (overrides: Partial<LiveSessionInput> = {}): LiveSession =>
+  unwrap(
+    createLiveSession({
+      id: 'live-1' as LiveSessionId,
+      schoolId,
+      teacherId,
+      gameId: 'game-1' as GameId,
+      classId,
+      kind: 'live',
+      mode: 'quiz',
+      pin: '482913',
+      seed: 11,
+      questionCount: 4,
+      questionSeconds: 20,
+      createdAt: new Date('2026-11-04T10:00:00Z'),
+      ...overrides,
+    }),
+  );
+
+export const aLivePlayer = (overrides: Partial<LivePlayer> = {}): LivePlayer => ({
+  ...unwrap(
+    joinPlayer({
+      id: 'player-1' as LivePlayerId,
+      schoolId,
+      sessionId: 'live-1' as LiveSessionId,
+      studentId: 'student-1' as StudentId,
+      firstName: 'Ana',
+      tokenHash: 'hash-player-1',
+      joinedAt: new Date('2026-11-04T10:01:00Z'),
+    }),
+  ),
+  ...overrides,
+});
+
+export const aLiveAnswer = (overrides: Partial<LiveAnswer> = {}): LiveAnswer => ({
+  schoolId,
+  sessionId: 'live-1' as LiveSessionId,
+  playerId: 'player-1' as LivePlayerId,
+  question: 0,
+  prompt: 'Which is the largest planet?',
+  choice: 1,
+  correct: true,
+  ms: 4000,
+  points: 900,
+  ...overrides,
+});
 
 export const aStudentLink = (overrides: Partial<StudentLink> = {}): StudentLink => ({
   ...createStudentLink({

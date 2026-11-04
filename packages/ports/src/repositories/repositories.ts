@@ -14,6 +14,10 @@ import type {
   Game,
   GameId,
   GamePlay,
+  LiveAnswer,
+  LivePlayer,
+  LiveSession,
+  LiveSessionId,
   Grade,
   GradeCategory,
   GradeCategoryId,
@@ -205,4 +209,33 @@ export interface ReportCardCommentRepository extends ScopedRepository<ReportCard
   ): Promise<ReportCardComment | null>;
   listByClass(schoolId: SchoolId, classId: ClassId): Promise<readonly ReportCardComment[]>;
   deleteFor(schoolId: SchoolId, classId: ClassId, studentId: StudentId): Promise<void>;
+}
+
+export interface LiveSessionRepository
+  extends ScopedRepository<LiveSession>, Deletable<LiveSession> {
+  /** Unscoped on purpose: a student's device knows only the PIN. Open sessions only. */
+  findOpenByPin(pin: string): Promise<LiveSession | null>;
+  /** Newest first. */
+  listByTeacher(schoolId: SchoolId, teacherId: UserId): Promise<readonly LiveSession[]>;
+  listByGame(schoolId: SchoolId, gameId: GameId): Promise<readonly LiveSession[]>;
+}
+
+/** The roster students who joined a session. */
+export interface LivePlayerRepository extends ScopedRepository<LivePlayer> {
+  /** Joined first, first. */
+  listBySessions(
+    schoolId: SchoolId,
+    sessionIds: readonly LiveSessionId[],
+  ): Promise<readonly LivePlayer[]>;
+  deleteBySession(schoolId: SchoolId, sessionId: LiveSessionId): Promise<void>;
+}
+
+/** One answer per player and question: saving a second one fails. */
+export interface LiveAnswerRepository {
+  save(answer: LiveAnswer): Promise<void>;
+  listBySessions(
+    schoolId: SchoolId,
+    sessionIds: readonly LiveSessionId[],
+  ): Promise<readonly LiveAnswer[]>;
+  deleteBySession(schoolId: SchoolId, sessionId: LiveSessionId): Promise<void>;
 }

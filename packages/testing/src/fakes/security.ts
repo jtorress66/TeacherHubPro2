@@ -1,8 +1,9 @@
-import { createHash } from 'node:crypto';
+import { createHash, createHmac } from 'node:crypto';
 import { err, ok, type Result } from '@thp/domain';
 import type {
   PasswordHasher,
   RandomTokenGenerator,
+  TicketSigner,
   SecretCipher,
   SecretCipherError,
   TokenHasher,
@@ -68,5 +69,24 @@ export class FakeSecretCipher implements SecretCipher {
       return Promise.resolve(err({ code: 'invalid' }));
     }
     return Promise.resolve(ok(Buffer.from(body, 'base64').toString('utf8')));
+  }
+}
+
+/** Signs tickets with HMAC SHA-256 under a fixed test key: `payload.expiry.signature`. */
+export class FakeTicketSigner implements TicketSigner {
+  constructor(private readonly key = 'test-ticket-key') {}
+
+  sign(payload: Readonly<Record<string, string>>, expiresAt: Date): string {
+    const body = `${Buffer.from(JSON.stringify(payload)).toString('base64url')}.${String(expiresAt.getTime())}`;
+    return `${body}.${createHmac('sha256', this.key).update(body).digest('base64url')}`;
+  }
+
+  verify(ticket: string, now: Date): Readonly<Record<string, string>> | null {
+    const [payload = '', expiry = '', signature = ''] = ticket.split('.');
+    const expected = createHmac('sha256', this.key)
+      .update(`${payload}.${expiry}`)
+      .digest('base64url');
+    if (signature !== expected || Number(expiry) <= now.getTime()) return null;
+    return JSON.parse(Buffer.from(payload, 'base64url').toString()) as Record<string, string>;
   }
 }

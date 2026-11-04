@@ -1,5 +1,6 @@
 import {
   err,
+  findStandard,
   ok,
   validateContent,
   type GameContent,
@@ -25,11 +26,21 @@ Rules:
 - Items are all different from each other.
 - Never mention real people's private details or any student.`;
 
+/** The standard to align with, in its official words (only real Common Core codes reach here). */
+function standardLine(request: GameRequest): string[] {
+  const standard = request.standard === null ? null : findStandard(request.standard);
+  return standard === null
+    ? []
+    : [`Align every item with the Common Core standard ${standard.code}: ${standard.description}`];
+}
+
 function prompt(request: GameRequest): string {
   const format = gameFormats[request.kind];
   return [
     `Write ${String(request.count)} ${format.ask}.`,
     `Subject: ${subjectNames[request.subject]}. Grade: ${request.grade}. Topic: ${request.topic}.`,
+    `Difficulty: ${request.difficulty}.`,
+    ...standardLine(request),
     `Use ${wordingFor(request.grade)}.`,
     `Write everything in ${languageNames[request.language]}.`,
     ...(request.avoid.length > 0 ? [`Do not repeat these items: ${request.avoid.join('; ')}`] : []),

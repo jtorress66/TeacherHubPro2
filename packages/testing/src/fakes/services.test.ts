@@ -15,6 +15,7 @@ import {
   tokenHasherContract,
   secretCipherContract,
 } from '../contracts/security.contract.ts';
+import { ticketSignerContract } from '../contracts/live.contract.ts';
 import {
   billingEventsContract,
   checkoutSessionsContract,
@@ -35,6 +36,7 @@ import {
   FakeSecretCipher,
   FakeTokenHasher,
   SequentialTokenGenerator,
+  FakeTicketSigner,
 } from './security.ts';
 
 llmClientContract('FakeLlmClient', {
@@ -218,3 +220,5 @@ classroomAuthorizationContract('FakeClassroomAuthorization', () => ({
   authorization: new FakeClassroomAuthorization(),
   code: 'classroom-code',
 }));
+
+ticketSignerContract('FakeTicketSigner', () => new FakeTicketSigner());
