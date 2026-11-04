@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import {
   AesGcmCipher,
   CryptoSeedSource,
+  HmacTicketSigner,
   GoogleClassroom,
   GoogleClassroomAuthorization,
   LocalClassroom,
@@ -28,6 +29,16 @@ import {
 } from '@thp/adapters';
 import {
   CreateGame,
+  StartLiveSession,
+  ListLiveSessions,
+  OpenLiveHost,
+  DeleteLiveSession,
+  GetLiveInsights,
+  FindLiveSessionByPin,
+  JoinLiveSession,
+  StartSelfPacedRound,
+  FinishSelfPacedRound,
+  VerifyLiveTicket,
   UpdateGame,
   ListGames,
   GetGame,
@@ -174,6 +185,18 @@ import { defaultGameModes, localDateIn, type LocalDate } from '@thp/domain';
 
 export interface AppContainer {
   readonly appUrl: string;
+  /** The realtime server's address, for the live game pages. */
+  readonly realtimeUrl: string;
+  readonly startLiveSession: StartLiveSession;
+  readonly listLiveSessions: ListLiveSessions;
+  readonly openLiveHost: OpenLiveHost;
+  readonly deleteLiveSession: DeleteLiveSession;
+  readonly getLiveInsights: GetLiveInsights;
+  readonly findLiveSessionByPin: FindLiveSessionByPin;
+  readonly joinLiveSession: JoinLiveSession;
+  readonly verifyLiveTicket: VerifyLiveTicket;
+  readonly startSelfPacedRound: StartSelfPacedRound;
+  readonly finishSelfPacedRound: FinishSelfPacedRound;
   readonly requestGeneration: RequestGeneration;
   readonly listGenerations: ListGenerations;
   readonly getGeneration: GetGeneration;
@@ -401,12 +424,24 @@ export function createAppContainer(
     files: new PostgresFileStore(db),
     jobs: new PostgresJobQueue(db, new UuidIdGenerator()),
     seeds: new CryptoSeedSource(),
+    ticketSigner: new HmacTicketSigner(config.realtime.ticketSecret),
     gameModes: defaultGameModes,
     appUrl: config.appUrl,
   };
 
   return {
     appUrl: config.appUrl,
+    realtimeUrl: config.realtime.url,
+    startLiveSession: new StartLiveSession(deps),
+    listLiveSessions: new ListLiveSessions(deps),
+    openLiveHost: new OpenLiveHost(deps),
+    deleteLiveSession: new DeleteLiveSession(deps),
+    getLiveInsights: new GetLiveInsights(deps),
+    findLiveSessionByPin: new FindLiveSessionByPin(deps),
+    joinLiveSession: new JoinLiveSession(deps),
+    verifyLiveTicket: new VerifyLiveTicket(deps),
+    startSelfPacedRound: new StartSelfPacedRound(deps),
+    finishSelfPacedRound: new FinishSelfPacedRound(deps),
     requestGeneration: new RequestGeneration(deps),
     listGenerations: new ListGenerations(deps),
     getGeneration: new GetGeneration(deps),

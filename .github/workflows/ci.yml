@@ -107,6 +107,8 @@ jobs:
       BILLING_PROVIDER: stripe
       GOOGLE_AUTH_PROVIDER: local
       LOCAL_GOOGLE_SECRET: ci-local-google-secret
+      REALTIME_URL: http://localhost:3200
+      REALTIME_TICKET_SECRET: ci-realtime-ticket-secret-0123456789
     services:
       postgres:
         image: postgres:16-alpine

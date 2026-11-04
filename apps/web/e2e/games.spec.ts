@@ -117,6 +117,8 @@ async function playMemory(student: Page) {
     await expect(student.locator('.memory-card[aria-pressed="true"]:not(.found)')).toHaveCount(0);
   }
   for (const pair of pairs) {
+    // A lucky shuffle can finish the board in the first pass; the result replaces the cards.
+    if ((await cards.count()) === 0) return;
     const term = seen.indexOf(pair.term);
     const definition = seen.indexOf(pair.definition);
     if (await cards.nth(term).evaluate((e) => e.classList.contains('found'))) continue;
