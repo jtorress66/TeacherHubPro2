@@ -1,4 +1,4 @@
-import { err, ok, type Result } from '@thp/domain';
+import { err, ok, type FormsQuiz, type Result } from '@thp/domain';
 import type {
   ClassroomCourse,
   ClassroomCourses,
@@ -7,6 +7,9 @@ import type {
   ClassroomError,
   ClassroomStudent,
   CourseworkRequest,
+  CreatedForm,
+  FormsError,
+  GoogleForms,
   GoogleIdentity,
   GoogleIdentityError,
   GoogleProfile,
@@ -105,6 +108,34 @@ export class FakeClassroomAuthorization implements ClassroomAuthorization {
       refreshToken === `refresh-for-${this.setup.code}`
         ? ok(this.setup.accessToken)
         : err({ code: 'unauthorized' }),
+    );
+  }
+}
+
+/** Keeps the quizzes it makes; a teacher connected before Forms access gets `insufficient_scope`. */
+export class FakeGoogleForms implements GoogleForms {
+  readonly quizzes: FormsQuiz[] = [];
+
+  constructor(
+    private readonly setup: { readonly accessToken: string; readonly withoutScope?: string } = {
+      accessToken: 'classroom-access',
+    },
+  ) {}
+
+  createQuiz(accessToken: string, quiz: FormsQuiz): Promise<Result<CreatedForm, FormsError>> {
+    if (accessToken === this.setup.withoutScope) {
+      return Promise.resolve(err({ code: 'insufficient_scope' }));
+    }
+    if (accessToken !== this.setup.accessToken)
+      return Promise.resolve(err({ code: 'unauthorized' }));
+    this.quizzes.push(quiz);
+    const id = `form-${String(this.quizzes.length)}`;
+    return Promise.resolve(
+      ok({
+        id,
+        editUrl: `https://forms.test/${id}/edit`,
+        responderUrl: `https://forms.test/${id}/viewform`,
+      }),
     );
   }
 }

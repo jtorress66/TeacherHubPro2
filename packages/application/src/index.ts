@@ -247,6 +247,8 @@ export {
   ImportClassroomRoster,
   ShareAssignment,
 } from './assignments/classroom.ts';
+export { StartPdfTest } from './assignments/pdf-test.ts';
+export { MakeFormsQuiz, FindFormsQuiz } from './assignments/forms-quiz.ts';
 export { findOwnGame, type GameRef } from './games/game-access.ts';
 export {
   CreateGame,

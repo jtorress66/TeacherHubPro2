@@ -5,6 +5,7 @@ import type {
   AttachmentId,
   ClassId,
   ClassroomConnection,
+  FormsExport,
   SchoolId,
   StudentLink,
   StudentLinkId,
@@ -13,11 +14,13 @@ import type {
 import type {
   AttachmentRepository,
   ClassroomConnectionRepository,
+  FormsExportRepository,
   StudentLinkRepository,
 } from '@thp/ports';
 import {
   attachmentMapper,
   classroomConnectionMapper,
+  formsExportMapper,
   studentLinkMapper,
 } from '../mappers/assignment-mappers.ts';
 import type { Database } from '../schema.ts';
@@ -130,6 +133,29 @@ export class PostgresClassroomConnectionRepository implements ClassroomConnectio
       .deleteFrom('classroom_connections')
       .where('school_id', '=', schoolId)
       .where('teacher_id', '=', teacherId)
+      .execute();
+  }
+}
+
+export class PostgresFormsExportRepository implements FormsExportRepository {
+  constructor(private readonly db: Kysely<Database>) {}
+
+  async find(schoolId: SchoolId, assignmentId: AssignmentId): Promise<FormsExport | null> {
+    const row = await this.db
+      .selectFrom('forms_exports')
+      .selectAll()
+      .where('school_id', '=', schoolId)
+      .where('assignment_id', '=', assignmentId)
+      .executeTakeFirst();
+    return row === undefined ? null : formsExportMapper.fromRow(row);
+  }
+
+  async save(formsExport: FormsExport): Promise<void> {
+    const row = formsExportMapper.toRow(formsExport);
+    await this.db
+      .insertInto('forms_exports')
+      .values(row)
+      .onConflict((conflict) => conflict.column('assignment_id').doUpdateSet(row))
       .execute();
   }
 }

@@ -6,13 +6,15 @@ import {
   gradeSubmissionAction,
   importRosterAction,
   issueLinksAction,
+  makeFormsQuizAction,
   requestAiGradingAction,
   requestPdfImportAction,
   shareAssignmentAction,
+  startPdfTestAction,
   uploadAttachmentAction,
   type AssignmentFormState,
 } from '../app/_lib/assignment-actions.ts';
-import { FormAlert, Submit } from './forms.tsx';
+import { Field, FormAlert, Submit } from './forms.tsx';
 import { Hidden, Select, type Option } from './form-fields.tsx';
 
 const initial: AssignmentFormState = {};
@@ -308,5 +310,84 @@ export function IssueLinksForm(props: {
         </section>
       )}
     </div>
+  );
+}
+
+/** The AI assistant's card: a new assignment for a class, read from a test PDF. */
+export function PdfTestForm(props: {
+  readonly locale: Locale;
+  /** One option per class and grade category, as `classId|categoryId`. */
+  readonly targets: readonly Option[];
+}) {
+  const t = createTranslator(props.locale);
+  const [state, action] = useActionState(startPdfTestAction, initial);
+  const errors = state.errors ?? {};
+  return (
+    <form action={action} className="stack" aria-label={t('pdfTest.title')}>
+      <Hidden values={{ locale: props.locale }} />
+      <FormAlert message={errors.form ?? errors.categoryId} />
+      <Select
+        id="pdf-test-target"
+        name="target"
+        label={t('pdfTest.target')}
+        options={props.targets}
+      />
+      <Field
+        id="pdf-test-title"
+        name="title"
+        label={t('pdfTest.name')}
+        error={errors.title}
+        required
+      />
+      <Field
+        id="pdf-test-points"
+        name="points"
+        type="number"
+        min={1}
+        label={t('pdfTest.points')}
+        defaultValue={100}
+        error={errors.points}
+      />
+      <Field
+        id="pdf-test-due"
+        name="dueDate"
+        type="date"
+        label={t('pdfTest.dueDate')}
+        error={errors.dueDate}
+      />
+      <FileField
+        id="pdf-test-file"
+        name="pdf"
+        label={t('pdfTest.file')}
+        accept=".pdf,application/pdf"
+        error={errors.pdf}
+      />
+      <p className="hint">{t('pdfImport.scanNote')}</p>
+      <Submit label={t('pdfTest.submit')} />
+    </form>
+  );
+}
+
+export function FormsQuizForm(props: AssignmentProps & { readonly made: boolean }) {
+  const t = createTranslator(props.locale);
+  const [state, action] = useActionState(makeFormsQuizAction, initial);
+  return (
+    <form action={action} className="stack" aria-label={t('forms.make')}>
+      <Hidden values={hidden(props)} />
+      <FormAlert message={allErrors(state)} />
+      {state.reconnect === true ? (
+        <p>
+          <a className="button secondary" href={`/api/classroom/connect?locale=${props.locale}`}>
+            {t('pdfTest.connect')}
+          </a>
+        </p>
+      ) : null}
+      {state.url === undefined ? null : (
+        <p role="status" className="notice">
+          {t('forms.made')} <a href={state.url}>{t('forms.edit')}</a>
+        </p>
+      )}
+      <Submit label={props.made ? t('forms.remake') : t('forms.make')} />
+    </form>
   );
 }

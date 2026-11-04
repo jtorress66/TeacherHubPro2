@@ -30,7 +30,8 @@ export type ApplicationErrorCode =
   | 'classroom_failed'
   | 'grading_off'
   | 'name_taken'
-  | 'email_failed';
+  | 'email_failed'
+  | 'google_reconnect';
 
 /**
  * What a use case can report: a broken validation rule (with its field) or an application-level

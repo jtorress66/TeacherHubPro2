@@ -4,6 +4,7 @@ import { fileStoreContract, pdfTextExtractorContract } from '../contracts/files.
 import {
   classroomAuthorizationContract,
   classroomContract,
+  googleFormsContract,
   googleIdentityContract,
 } from '../contracts/google.contract.ts';
 import { jobQueueContract } from '../contracts/job-queue.contract.ts';
@@ -27,7 +28,12 @@ import { FixedClock } from '../fixed-clock.ts';
 import { SequentialIdGenerator } from '../sequential-id-generator.ts';
 import { FakeBillingEvents, FakeCheckoutSessions } from './billing.ts';
 import { InMemoryFileStore, FakePdfTextExtractor } from './files.ts';
-import { FakeClassroom, FakeClassroomAuthorization, FakeGoogleIdentity } from './google.ts';
+import {
+  FakeClassroom,
+  FakeClassroomAuthorization,
+  FakeGoogleForms,
+  FakeGoogleIdentity,
+} from './google.ts';
 import { InMemoryJobQueue } from './job-queue.ts';
 import { FakeLlmClient, FakeTextToSpeech } from './ai.ts';
 import { FakeMailer } from './mailer.ts';
@@ -222,3 +228,9 @@ classroomAuthorizationContract('FakeClassroomAuthorization', () => ({
 }));
 
 ticketSignerContract('FakeTicketSigner', () => new FakeTicketSigner());
+
+googleFormsContract(
+  'FakeGoogleForms',
+  (accessToken) => new FakeGoogleForms({ accessToken }),
+  'token-1',
+);

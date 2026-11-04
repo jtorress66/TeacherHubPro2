@@ -34,6 +34,7 @@ describe('migrations', () => {
       'attendance_sessions',
       'classes',
       'classroom_connections',
+      'forms_exports',
       'game_plays',
       'games',
       'grade_categories',
@@ -71,6 +72,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0013_forms_exports',
           '0012_portals',
           '0011_learning',
           '0010_live',
@@ -104,10 +106,11 @@ describe('migrations', () => {
           '0010_live',
           '0011_learning',
           '0012_portals',
+          '0013_forms_exports',
         ],
       },
     });
-    expect(await tableNames()).toHaveLength(36);
+    expect(await tableNames()).toHaveLength(37);
   });
 
   it('turns plans saved before step 8 into valid plans of their kind', async () => {

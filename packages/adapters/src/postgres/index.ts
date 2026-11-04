@@ -2,6 +2,7 @@ import type { Kysely } from 'kysely';
 import type {
   AttachmentRepository,
   ClassroomConnectionRepository,
+  FormsExportRepository,
   StudentLinkRepository,
   AiGenerationRepository,
   PresentationRepository,
@@ -60,6 +61,7 @@ import { PostgresPlanTemplateRepository } from './repositories/postgres-plan-tem
 import {
   PostgresAttachmentRepository,
   PostgresClassroomConnectionRepository,
+  PostgresFormsExportRepository,
   PostgresStudentLinkRepository,
 } from './repositories/postgres-assignment-repositories.ts';
 import {
@@ -99,6 +101,7 @@ export interface PostgresRepositories {
   readonly attachments: AttachmentRepository;
   readonly studentLinks: StudentLinkRepository;
   readonly classroomConnections: ClassroomConnectionRepository;
+  readonly formsExports: FormsExportRepository;
   readonly gradeCategories: GradeCategoryRepository;
   readonly assignments: AssignmentRepository;
   readonly grades: GradeRepository;
@@ -136,6 +139,7 @@ export function createPostgresRepositories(db: Kysely<Database>): PostgresReposi
     attachments: new PostgresAttachmentRepository(db),
     studentLinks: new PostgresStudentLinkRepository(db),
     classroomConnections: new PostgresClassroomConnectionRepository(db),
+    formsExports: new PostgresFormsExportRepository(db),
     gradeCategories: new PostgresGradeCategoryRepository(db),
     assignments: new PostgresAssignmentRepository(db),
     grades: new PostgresGradeRepository(db),

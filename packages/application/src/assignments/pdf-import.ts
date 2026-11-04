@@ -39,6 +39,12 @@ interface PdfImportPayload {
   readonly assignmentId: AssignmentId;
 }
 
+/** A PDF the import refuses before storing it: empty, or over the attachment limit. */
+export const pdfSizeError = (pdf: Uint8Array): Result<true, UseCaseError> =>
+  pdf.length === 0 || pdf.length > maxAttachmentBytes
+    ? { ok: false, error: { field: 'pdf', code: 'too_large' } }
+    : ok(true);
+
 /** What a finished import offers the teacher: the questions to review, and where they go. */
 export interface ImportedTest {
   readonly test: ExtractedTest;
@@ -68,9 +74,8 @@ export class RequestPdfImport {
     if (!access.ok) return access;
     const found = await editableAssignment(this.deps, input);
     if (!found.ok) return found;
-    if (input.pdf.length === 0 || input.pdf.length > maxAttachmentBytes) {
-      return { ok: false, error: { field: 'pdf', code: 'too_large' } };
-    }
+    const size = pdfSizeError(input.pdf);
+    if (!size.ok) return size;
     const fileKey = `imports/${input.actor.schoolId}/${this.deps.ids.next()}.pdf`;
     const stored = await this.deps.files.put(fileKey, {
       bytes: input.pdf,

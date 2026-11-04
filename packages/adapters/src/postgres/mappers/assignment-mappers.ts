@@ -5,6 +5,7 @@ import type {
   AttachmentId,
   ClassId,
   ClassroomConnection,
+  FormsExport,
   SchoolId,
   StudentId,
   StudentLink,
@@ -14,6 +15,7 @@ import type {
 import type {
   AssignmentAttachmentsTable,
   ClassroomConnectionsTable,
+  FormsExportsTable,
   StudentLinksTable,
 } from '../schema.ts';
 import type { Row, RowMapper } from './columns.ts';
@@ -73,5 +75,24 @@ export const classroomConnectionMapper = {
     teacherId: row.teacher_id as UserId,
     encryptedRefreshToken: row.encrypted_refresh_token,
     connectedAt: row.connected_at,
+  }),
+};
+
+export const formsExportMapper = {
+  toRow: (formsExport: FormsExport): Row<FormsExportsTable> => ({
+    assignment_id: formsExport.assignmentId,
+    school_id: formsExport.schoolId,
+    form_id: formsExport.formId,
+    edit_url: formsExport.editUrl,
+    responder_url: formsExport.responderUrl,
+    made_at: formsExport.createdAt,
+  }),
+  fromRow: (row: Selectable<FormsExportsTable>): FormsExport => ({
+    schoolId: row.school_id as SchoolId,
+    assignmentId: row.assignment_id as AssignmentId,
+    formId: row.form_id,
+    editUrl: row.edit_url,
+    responderUrl: row.responder_url,
+    createdAt: row.made_at,
   }),
 };

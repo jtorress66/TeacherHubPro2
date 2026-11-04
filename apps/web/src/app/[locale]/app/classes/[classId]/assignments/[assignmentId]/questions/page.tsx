@@ -5,6 +5,7 @@ import type { AssignmentId, ClassId } from '@thp/domain';
 import { createTranslator } from '@thp/i18n';
 import {
   AttachmentUploadForm,
+  FormsQuizForm,
   PdfImportForm,
   ShareToClassroomForm,
 } from '../../../../../../../../components/assignment-tools.tsx';
@@ -16,15 +17,17 @@ import { localeFrom, type LocaleParams } from '../../../../../../locale-param.ts
 
 type Props = LocaleParams & {
   readonly params: Promise<{ locale: string; classId: string; assignmentId: string }>;
+  readonly searchParams: Promise<{ saved?: string }>;
 };
 
 export const metadata: Metadata = { title: 'TeacherHubPro' };
 
-/** The online assignment: questions, files, PDF import and sharing to Classroom. */
+/** The online assignment: questions, files, PDF import, and sending to Classroom or Forms. */
 export default async function AssignmentQuestionsPage(props: Props) {
   const locale = await localeFrom(props);
   const t = createTranslator(locale);
   const { classId, assignmentId } = await props.params;
+  const imported = (await props.searchParams).saved === '1';
   const { user } = await requireUser(locale);
   const app = getAppContainer();
   const ref = {
@@ -37,6 +40,9 @@ export default async function AssignmentQuestionsPage(props: Props) {
   const { assignment, rows } = listed.value;
   const files = await app.listAttachments.execute(ref);
   const courses = await app.listClassroomCourses.execute({ actor: user });
+  const quiz = await app.findFormsQuiz.execute(ref);
+  const made = quiz.ok ? quiz.value : null;
+  const day = new Intl.DateTimeFormat(locale, { dateStyle: 'medium' });
   const locked = rows.some((row) => row.submission !== null);
   const base = `/${locale}/app/classes/${classId}/assignments/${assignmentId}`;
   const ids = { locale, classId, assignmentId };
@@ -50,6 +56,11 @@ export default async function AssignmentQuestionsPage(props: Props) {
         {t('questions.title')}: {assignment.title}
       </h1>
       <p>{t('questions.intro')}</p>
+      {imported ? (
+        <p role="status" className="notice">
+          {t('questions.saved')} <a href="#send-to-google">{t('pdfTest.sendTitle')}</a>
+        </p>
+      ) : null}
       <p>
         <Link className="button secondary" href={`${base}/submissions`}>
           {t('questions.submissions')}
@@ -101,15 +112,42 @@ export default async function AssignmentQuestionsPage(props: Props) {
         <AttachmentUploadForm {...ids} />
       </section>
 
-      {courses.ok ? (
-        <section className="card stack" aria-labelledby="classroom-share-heading">
-          <h2 id="classroom-share-heading">{t('classroom.share')}</h2>
-          <ShareToClassroomForm
-            {...ids}
-            courses={courses.value.map((course) => ({ id: course.id, name: course.name }))}
-          />
-        </section>
-      ) : null}
+      <section id="send-to-google" className="stack" aria-labelledby="send-to-google-heading">
+        <h2 id="send-to-google-heading">{t('pdfTest.sendTitle')}</h2>
+        {courses.ok ? (
+          <>
+            <section className="card stack" aria-labelledby="classroom-share-heading">
+              <h3 id="classroom-share-heading">{t('classroom.share')}</h3>
+              <ShareToClassroomForm
+                {...ids}
+                courses={courses.value.map((course) => ({ id: course.id, name: course.name }))}
+              />
+            </section>
+            <section className="card stack" aria-labelledby="forms-quiz-heading">
+              <h3 id="forms-quiz-heading">{t('forms.title')}</h3>
+              <p>{t('forms.intro')}</p>
+              <p className="hint">{t('forms.note')}</p>
+              {made === null ? null : (
+                <p>
+                  {t('forms.lastMade', { date: day.format(made.createdAt) })}{' '}
+                  <a href={made.editUrl}>{t('forms.edit')}</a> ·{' '}
+                  <a href={made.responderUrl}>{t('forms.studentLink')}</a>
+                </p>
+              )}
+              <FormsQuizForm {...ids} made={made !== null} />
+            </section>
+          </>
+        ) : (
+          <div className="card stack">
+            <p className="muted">{t('pdfTest.connectFirst')}</p>
+            <p>
+              <a className="button" href={`/api/classroom/connect?locale=${locale}`}>
+                {t('pdfTest.connect')}
+              </a>
+            </p>
+          </div>
+        )}
+      </section>
     </section>
   );
 }

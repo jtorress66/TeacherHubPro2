@@ -13,6 +13,7 @@ import type {
 import type {
   AttachmentRepository,
   ClassroomConnectionRepository,
+  FormsExportRepository,
   StudentLinkRepository,
   SubmissionRepository,
 } from '@thp/ports';
@@ -24,6 +25,7 @@ export interface AssignmentRepositories {
   readonly attachments: AttachmentRepository;
   readonly studentLinks: StudentLinkRepository;
   readonly classroomConnections: ClassroomConnectionRepository;
+  readonly formsExports: FormsExportRepository;
 }
 
 const schoolA = 'school-a' as SchoolId;
@@ -133,6 +135,27 @@ export function assignmentRepositoryContract(
       expect(await repo.find(schoolA, connection.teacherId)).not.toBeNull();
       await repo.delete(schoolA, connection.teacherId);
       expect(await repo.find(schoolA, connection.teacherId)).toBeNull();
+    });
+  });
+
+  describe(`${name} (FormsExportRepository)`, () => {
+    it('keeps the latest quiz per assignment, within the school', async () => {
+      const repo = make().formsExports;
+      const first = {
+        schoolId: schoolA,
+        assignmentId: 'assignment-1' as AssignmentId,
+        formId: 'form-1',
+        editUrl: 'https://docs.google.com/forms/d/form-1/edit',
+        responderUrl: 'https://docs.google.com/forms/d/e/x1/viewform',
+        createdAt: new Date('2026-11-04T12:00:00Z'),
+      };
+      await repo.save(first);
+      const second = { ...first, formId: 'form-2', createdAt: new Date('2026-11-05T12:00:00Z') };
+      await repo.save(second);
+
+      expect(await repo.find(schoolA, first.assignmentId)).toEqual(second);
+      expect(await repo.find(schoolB, first.assignmentId)).toBeNull();
+      expect(await repo.find(schoolA, 'assignment-9' as AssignmentId)).toBeNull();
     });
   });
 }
