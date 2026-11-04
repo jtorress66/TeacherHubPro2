@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   parseDatabaseConfig,
   parseLlmConfig,
+  parseMailConfig,
   parseStripeConfig,
   parseTtsConfig,
 } from './config.ts';
@@ -98,5 +99,56 @@ describe('parseTtsConfig', () => {
       error: 'OPENAI_API_KEY is required when TTS_PROVIDER is "openai".',
     });
     expect(parseTtsConfig({ TTS_PROVIDER: 'robot' }).ok).toBe(false);
+  });
+});
+
+describe('parseMailConfig', () => {
+  const base = { APP_URL: 'https://teacherhubpro-web.onrender.com/' };
+
+  it('uses the local stand-in by default, with the site address for links', () => {
+    expect(parseMailConfig(base)).toEqual({
+      ok: true,
+      value: {
+        provider: 'local',
+        appUrl: 'https://teacherhubpro-web.onrender.com',
+        delivers: true,
+      },
+    });
+  });
+
+  it('in production, the stand-in delivers nothing: reminders wait for a real mailer', () => {
+    expect(parseMailConfig({ ...base, APP_ENV: 'production' })).toMatchObject({
+      ok: true,
+      value: { provider: 'local', delivers: false },
+    });
+  });
+
+  it('sends real mail through Resend with a key and a sender', () => {
+    expect(
+      parseMailConfig({
+        ...base,
+        MAIL_PROVIDER: 'resend',
+        RESEND_API_KEY: ' re_x ',
+        MAIL_FROM: 'TeacherHubPro <hello@teacherhubpro.com>',
+      }),
+    ).toEqual({
+      ok: true,
+      value: {
+        provider: 'resend',
+        apiKey: 're_x',
+        from: 'TeacherHubPro <hello@teacherhubpro.com>',
+        appUrl: 'https://teacherhubpro-web.onrender.com',
+        delivers: true,
+      },
+    });
+  });
+
+  it('is an error without the site address, or Resend without its key or sender', () => {
+    expect(parseMailConfig({})).toEqual({ ok: false, error: 'APP_URL is required.' });
+    expect(parseMailConfig({ ...base, MAIL_PROVIDER: 'resend', MAIL_FROM: 'a@b.c' })).toEqual({
+      ok: false,
+      error: 'RESEND_API_KEY and MAIL_FROM are required when MAIL_PROVIDER is "resend".',
+    });
+    expect(parseMailConfig({ ...base, MAIL_PROVIDER: 'pigeon' }).ok).toBe(false);
   });
 });

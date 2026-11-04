@@ -3,7 +3,7 @@ import { portalLinkEmail, trialReminderEmail } from './emails.ts';
 
 describe('portalLinkEmail', () => {
   const input = {
-    locale: 'es' as const,
+    language: 'es' as const,
     firstName: 'Ana',
     schoolName: 'Escuela <Luna>',
     className: 'Historia 6',
@@ -25,7 +25,7 @@ describe('portalLinkEmail', () => {
   });
 
   it('falls back to English for a language without the strings', () => {
-    expect(portalLinkEmail({ ...input, locale: 'de' }).subject).toBe(
+    expect(portalLinkEmail({ ...input, language: 'de' }).subject).toBe(
       'Ana’s progress at Escuela <Luna>',
     );
   });
@@ -34,7 +34,7 @@ describe('portalLinkEmail', () => {
 describe('trialReminderEmail', () => {
   it('says how many days are left and links to billing', () => {
     const mail = trialReminderEmail({
-      locale: 'en',
+      language: 'en',
       name: 'Juan',
       daysLeft: 3,
       billingUrl: 'https://app.test/en/app/billing',
@@ -46,7 +46,7 @@ describe('trialReminderEmail', () => {
 
   it('has a last-day wording', () => {
     expect(
-      trialReminderEmail({ locale: 'es', name: 'Juan', daysLeft: 1, billingUrl: 'https://x' })
+      trialReminderEmail({ language: 'es', name: 'Juan', daysLeft: 1, billingUrl: 'https://x' })
         .subject,
     ).toBe('Su prueba de TeacherHubPro termina hoy');
   });

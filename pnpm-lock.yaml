@@ -309,6 +309,9 @@ importers:
       '@thp/domain':
         specifier: workspace:*
         version: link:../../packages/domain
+      '@thp/i18n':
+        specifier: workspace:*
+        version: link:../../packages/i18n
       '@thp/ports':
         specifier: workspace:*
         version: link:../../packages/ports

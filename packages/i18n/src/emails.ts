@@ -43,7 +43,7 @@ function render({ locale, subject, paragraphs, button, footer }: Layout): EmailC
 }
 
 export interface PortalLinkEmailInput {
-  readonly locale: Locale;
+  readonly language: Locale;
   readonly firstName: string;
   readonly schoolName: string;
   readonly className: string;
@@ -53,10 +53,10 @@ export interface PortalLinkEmailInput {
 
 /** Sends a family their read-only portal link. */
 export function portalLinkEmail(input: PortalLinkEmailInput): EmailContent {
-  const t = createTranslator(input.locale);
+  const t = createTranslator(input.language);
   const names = { name: input.firstName, school: input.schoolName, className: input.className };
   return render({
-    locale: input.locale,
+    locale: input.language,
     subject: t('emails.portalSubject', names),
     paragraphs: [t('emails.portalHello'), t('emails.portalBody', names)],
     button: { label: t('emails.portalButton'), url: input.url },
@@ -65,7 +65,7 @@ export function portalLinkEmail(input: PortalLinkEmailInput): EmailContent {
 }
 
 export interface TrialReminderEmailInput {
-  readonly locale: Locale;
+  readonly language: Locale;
   readonly name: string;
   readonly daysLeft: number;
   readonly billingUrl: string;
@@ -73,11 +73,11 @@ export interface TrialReminderEmailInput {
 
 /** Tells the account owner their trial is ending, with a link to choose a plan. */
 export function trialReminderEmail(input: TrialReminderEmailInput): EmailContent {
-  const t = createTranslator(input.locale);
+  const t = createTranslator(input.language);
   const lastDay = input.daysLeft <= 1;
   const days = { days: input.daysLeft };
   return render({
-    locale: input.locale,
+    locale: input.language,
     subject: lastDay ? t('emails.trialSubjectLastDay') : t('emails.trialSubject', days),
     paragraphs: [
       t('emails.trialHello', { name: input.name }),

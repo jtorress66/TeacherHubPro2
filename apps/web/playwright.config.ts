@@ -60,7 +60,13 @@ export default defineConfig({
       wait: { stdout: /Worker started/ },
       stdout: 'pipe',
       timeout: 60_000,
-      env: { DATABASE_URL: databaseUrl, LLM_PROVIDER: 'local', TTS_PROVIDER: 'local' },
+      env: {
+        DATABASE_URL: databaseUrl,
+        LLM_PROVIDER: 'local',
+        TTS_PROVIDER: 'local',
+        MAIL_PROVIDER: 'local',
+        APP_URL: appUrl,
+      },
     },
   ],
 });
