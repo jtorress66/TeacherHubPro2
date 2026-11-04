@@ -203,7 +203,36 @@ importers:
         specifier: 5.0.5
         version: 5.0.5(@opentelemetry/api@1.10.0)(@types/node@24.19.2)(@vitest/coverage-v8@5.0.5)(msw@3.0.3(@types/node@24.19.2)(supports-color@7.2.0)(typescript@5.9.3)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
 
-  apps/realtime: {}
+  apps/realtime:
+    dependencies:
+      '@thp/adapters':
+        specifier: workspace:*
+        version: link:../../packages/adapters
+      '@thp/application':
+        specifier: workspace:*
+        version: link:../../packages/application
+      '@thp/domain':
+        specifier: workspace:*
+        version: link:../../packages/domain
+      '@thp/ports':
+        specifier: workspace:*
+        version: link:../../packages/ports
+      ws:
+        specifier: 8.22.0
+        version: 8.22.0
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+    devDependencies:
+      '@thp/testing':
+        specifier: workspace:*
+        version: link:../../packages/testing
+      '@types/ws':
+        specifier: 8.18.2
+        version: 8.18.2
+      tsx:
+        specifier: 4.23.15
+        version: 4.23.15
 
   apps/web:
     dependencies:
@@ -310,7 +339,7 @@ importers:
         version: 0.29.7
       openai:
         specifier: 7.32.0
-        version: 7.32.0(undici@8.12.3)(zod@4.6.7)
+        version: 7.32.0(undici@8.12.3)(ws@8.22.0)(zod@4.6.7)
       pdf-lib:
         specifier: 1.17.1
         version: 1.17.1
@@ -1152,6 +1181,9 @@ packages:
 
   '@types/ssh2@1.15.6':
     resolution: {integrity: sha512-oGdxhBqcRTwSTKFm+9EiKzkNVYRLEFkcW44lhguvBalGJbWfGnDt/ezwSUZc+SF9m9bMc3VyklNAtp7zICjS5w==}
+
+  '@types/ws@8.18.2':
+    resolution: {integrity: sha512-67MQl+fpWKVTT1NYdnmo3U4sc/xPo/zQBncVnI74qmQa0z/b+1g6iYqNmGCPbxO+zz2aklb08a0oHfegiVd0/w==}
 
   '@typescript-eslint/eslint-plugin@8.72.1':
     resolution: {integrity: sha512-5CokTWXpmbylfFabsbvHC0CAw3XLaGnoa+nFJX5FR592h/LoZsENUE6p/rg5xvkKrFEXz6pYmgI29AgXc2N3BQ==}
@@ -2562,6 +2594,18 @@ packages:
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
+  ws@8.22.0:
+    resolution: {integrity: sha512-Ydggc987+RO0AnWtZ/7Wq9FtNvcrL1b/RO0ud9mWjUPgDrsAAwQSF51sm2hm1XofbU/4jkpGEsLFsZZxU+1DOg==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+
   xtend@4.0.2:
     resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}
     engines: {node: '>=0.4'}
@@ -3172,6 +3216,10 @@ snapshots:
   '@types/ssh2@1.15.6':
     dependencies:
       '@types/node': 18.19.130
+
+  '@types/ws@8.18.2':
+    dependencies:
+      '@types/node': 24.19.2
 
   '@typescript-eslint/eslint-plugin@8.72.1(@typescript-eslint/parser@8.72.1(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3))(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3)':
     dependencies:
@@ -3989,9 +4037,10 @@ snapshots:
     dependencies:
       wrappy: 1.0.2
 
-  openai@7.32.0(undici@8.12.3)(zod@4.6.7):
+  openai@7.32.0(undici@8.12.3)(ws@8.22.0)(zod@4.6.7):
     optionalDependencies:
       undici: 8.12.3
+      ws: 8.22.0
       zod: 4.6.7
 
   optionator@0.9.4:
@@ -4575,6 +4624,8 @@ snapshots:
       strip-ansi: 7.2.0
 
   wrappy@1.0.2: {}
+
+  ws@8.22.0: {}
 
   xtend@4.0.2: {}
 

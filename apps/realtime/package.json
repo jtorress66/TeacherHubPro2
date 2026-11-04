@@ -4,6 +4,20 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "start": "tsx --env-file-if-exists=../../.env src/index.ts"
+  },
+  "dependencies": {
+    "@thp/adapters": "workspace:*",
+    "@thp/application": "workspace:*",
+    "@thp/domain": "workspace:*",
+    "@thp/ports": "workspace:*",
+    "ws": "8.22.0",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@thp/testing": "workspace:*",
+    "@types/ws": "8.18.2",
+    "tsx": "4.23.15"
   }
 }
