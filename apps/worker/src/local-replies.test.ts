@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   ContentWriter,
   GameWriter,
+  PathWriter,
   PresentationWriter,
   QuestionExtractor,
   SubmissionGrader,
@@ -10,6 +11,7 @@ import { LocalLlmClient } from '@thp/adapters';
 import {
   contentKinds,
   createGameRequest,
+  createPathRequest,
   createPresentationRequest,
   defaultGameModes,
   gameCountRange,
@@ -41,6 +43,18 @@ describe('the local stand-in replies', () => {
       for (const mode of defaultGameModes.modesFor(kind)) {
         expect(mode.unsuitable(content), `${mode.id} with ${kind}`).toBeNull();
       }
+    }
+  });
+
+  it('writes a learning path with the lessons asked for; each check asks for the larger number', async () => {
+    const request = unwrap(
+      createPathRequest({ subject: 'math', grade: '4', language: 'en', level: 3, lessonCount: 4 }),
+    );
+    const draft = unwrap(await new PathWriter(local()).write(request));
+    expect(draft.lessons).toHaveLength(4);
+    for (const check of draft.lessons.flatMap((lesson) => lesson.checks)) {
+      const larger = String(Math.max(...check.options.map(Number)));
+      expect(check.options[check.answer]).toBe(larger);
     }
   });
 

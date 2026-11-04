@@ -20,6 +20,8 @@ import {
   aGame,
   aGamePlay,
   aLiveAnswer,
+  aLearningPath,
+  aLessonAttempt,
   aLivePlayer,
   aLiveSession,
   aGrade,
@@ -42,6 +44,7 @@ import {
 import { attendanceMapper } from './attendance-mapper.ts';
 import { gameMapper, gamePlayMapper } from './game-mappers.ts';
 import { liveAnswerMapper, livePlayerMapper, liveSessionMapper } from './live-mappers.ts';
+import { learningPathMapper, lessonAttemptMapper } from './learning-mappers.ts';
 import {
   assignmentMapper,
   gradeCategoryMapper,
@@ -286,6 +289,23 @@ describe('row mappers round-trip every entity unchanged', () => {
     expect(livePlayerMapper.fromRow(livePlayerMapper.toRow(player))).toEqual(player);
     const answer = aLiveAnswer({ correct: false, points: 0 });
     expect(liveAnswerMapper.fromRow(liveAnswerMapper.toRow(answer))).toEqual(answer);
+  });
+
+  it('learning path and lesson attempt', () => {
+    const path = aLearningPath({
+      subject: 'science',
+      status: 'assigned',
+      assignedAt: new Date('2026-11-04T11:00:00Z'),
+    });
+    expect(learningPathMapper.fromRow(learningPathMapper.toRow(path))).toEqual(path);
+    expect(() =>
+      learningPathMapper.fromRow({ ...learningPathMapper.toRow(path), status: 'paused' }),
+    ).toThrow('learning_paths.status');
+    expect(() =>
+      learningPathMapper.fromRow({ ...learningPathMapper.toRow(path), lessons: '{}' }),
+    ).toThrow('learning_paths.lessons');
+    const attempt = aLessonAttempt({ answers: [1, null, 0] });
+    expect(lessonAttemptMapper.fromRow(lessonAttemptMapper.toRow(attempt))).toEqual(attempt);
   });
 
   it('subscription', () => {

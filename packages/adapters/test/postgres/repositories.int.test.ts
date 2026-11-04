@@ -39,6 +39,7 @@ import {
   assignmentRepositoryContract,
   gamePlayRepositoryContract,
   liveRepositoryContract,
+  learningRepositoryContract,
   SequentialIdGenerator,
   gradeRepositoryContract,
   reportCardCommentContract,
@@ -303,5 +304,12 @@ withParents(parentsFor.games, () => {
     sessions: repos.liveSessions,
     players: repos.livePlayers,
     answers: repos.liveAnswers,
+  }));
+});
+
+withParents(parentsFor.roster, () => {
+  learningRepositoryContract('Postgres', () => ({
+    paths: repos.learningPaths,
+    attempts: repos.lessonAttempts,
   }));
 });

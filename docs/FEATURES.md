@@ -220,6 +220,26 @@ Seven interface languages: English, Spanish, French, Portuguese, German, Italian
 
 - Generate a learning path per student (async), student learning link, complete a lesson (from the teacher view or the student link), progress and dashboard per student.
 - Old files: `backend/routes/adaptive_learning.py`, `frontend/src/pages/AdaptiveLearning.js`, `StudentLearning.js`, `StudentProgress.js`.
+- **Decided for the rebuild:**
+  - **A path is a short personal sequence** of 3 to 8 lessons for one student in one subject. Each lesson has an objective, a reading and 3 to 6 multiple-choice checks; the checks follow the games' quiz rules (real options, the answer among them, no placeholders).
+  - **AI suggests, the teacher decides:** the AI drafts a path as a background job; the teacher reviews it, can edit every lesson and check, and assigns it. Only assigned paths reach the student. Assigning a new path archives the student's previous one in that subject; archived paths keep their progress.
+  - **One student or the whole class:** a class batch queues one job per student, each at that student's own level.
+  - **Students use their personal link** (step 10): a "Your learning" section lists their assigned paths with progress bars. No separate learning link.
+  - **Completing a lesson means answering its check.** The server scores it and only then shows the right answers to what was missed. Retries are kept; each lesson counts once, by its best score. Practice only: nothing reaches the gradebook.
+  - **Adaptive level (1 to 5, 3 is on grade level):** the next path starts from the latest path's level, one up when its lessons average 85% or more, one down under 60%. Objectives scored under 60% are sent back to the writer to review first; those at 85% or more as already mastered.
+  - **The writer is sent** the subject, grade, language, level, lesson count, topic and those objectives: never a name or an ID.
+  - **Reading aloud:** the teacher's review page uses Listen (step 9); the student's lesson page uses the device's own voice, which is free and keeps the text on the device.
+  - **Progress:** the class page shows each student's lessons done, average check score, level per subject and last activity; a student page shows each subject and every path's lessons with best score and attempts.
+  - Evals: the path writer (6 cases: en, es, fr, pt, de, zh; levels 1 to 4; with and without objectives to review) is scored on hand-written saved replies in `pnpm test`; real runs wait for go-live.
+- **Kept from the old app:** a path per student and subject with a title, description and level; lessons with an objective, duration, reading and check questions; generation as a background job the page polls; the student's lesson list with X of Y done and a progress bar; reading aloud; printing a path (one lesson per page, here with an answer key); the teacher dashboard (lessons, completed, % complete); the AI access check.
+- **Fixed from the old app:**
+  - The student's full name was sent to the AI: only the subject, grade, language, level and objectives are sent.
+  - The right answers were sent to the browser and the check was never scored: the student's view has no answers, and the server scores every check.
+  - Teacher routes completed or read any student's lessons by ID, and the dashboard had no school check: every use case is scoped to the school and to classes the teacher manages.
+  - The level rose on the teacher route but not the student route (and only counted lessons): one domain rule sets it, from check scores.
+  - A new path overwrote the old one, and "completed" counted lessons of overwritten paths, so it could pass 100%: paths are kept, and progress counts real attempts on real lessons.
+  - A separate learning token per subject, unhashed and valid 30 days: the student's existing link, stored as a hash and revocable.
+- **Dropped (agreed with the user in step 13):** the fixed subject list (math, language, science, reading), replaced by the app's subjects; the old separate student progress page (folded into the learning pages; Student 360 is step 15); the teacher's button that marked a lesson complete without the check (completion means answering the check, so progress always reflects real answers).
 
 ## Step 14 — Parent and homeschool portals, email
 

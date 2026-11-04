@@ -39,6 +39,17 @@ import {
   StartSelfPacedRound,
   FinishSelfPacedRound,
   VerifyLiveTicket,
+  RequestLearningPath,
+  GetClassLearning,
+  GetLearningPath,
+  UpdateLearningPath,
+  AssignLearningPath,
+  ArchiveLearningPath,
+  DeleteLearningPath,
+  GetStudentLearning,
+  ListStudentPaths,
+  OpenLearnerLesson,
+  SubmitLessonCheck,
   UpdateGame,
   ListGames,
   GetGame,
@@ -197,6 +208,17 @@ export interface AppContainer {
   readonly verifyLiveTicket: VerifyLiveTicket;
   readonly startSelfPacedRound: StartSelfPacedRound;
   readonly finishSelfPacedRound: FinishSelfPacedRound;
+  readonly requestLearningPath: RequestLearningPath;
+  readonly getClassLearning: GetClassLearning;
+  readonly getLearningPath: GetLearningPath;
+  readonly updateLearningPath: UpdateLearningPath;
+  readonly assignLearningPath: AssignLearningPath;
+  readonly archiveLearningPath: ArchiveLearningPath;
+  readonly deleteLearningPath: DeleteLearningPath;
+  readonly getStudentLearning: GetStudentLearning;
+  readonly listStudentPaths: ListStudentPaths;
+  readonly openLearnerLesson: OpenLearnerLesson;
+  readonly submitLessonCheck: SubmitLessonCheck;
   readonly requestGeneration: RequestGeneration;
   readonly listGenerations: ListGenerations;
   readonly getGeneration: GetGeneration;
@@ -442,6 +464,17 @@ export function createAppContainer(
     verifyLiveTicket: new VerifyLiveTicket(deps),
     startSelfPacedRound: new StartSelfPacedRound(deps),
     finishSelfPacedRound: new FinishSelfPacedRound(deps),
+    requestLearningPath: new RequestLearningPath(deps),
+    getClassLearning: new GetClassLearning(deps),
+    getLearningPath: new GetLearningPath(deps),
+    updateLearningPath: new UpdateLearningPath(deps),
+    assignLearningPath: new AssignLearningPath(deps),
+    archiveLearningPath: new ArchiveLearningPath(deps),
+    deleteLearningPath: new DeleteLearningPath(deps),
+    getStudentLearning: new GetStudentLearning(deps),
+    listStudentPaths: new ListStudentPaths(deps),
+    openLearnerLesson: new OpenLearnerLesson(deps),
+    submitLessonCheck: new SubmitLessonCheck(deps),
     requestGeneration: new RequestGeneration(deps),
     listGenerations: new ListGenerations(deps),
     getGeneration: new GetGeneration(deps),

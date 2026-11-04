@@ -21,11 +21,13 @@ import {
   LessonPlanner,
   PresentationWriter,
   GameWriter,
+  PathWriter,
   QuestionExtractor,
   SubmissionGrader,
 } from '@thp/agents';
 import {
   GameDraftHandler,
+  LearningPathHandler,
   GenerationHandler,
   GradingHandler,
   PdfImportHandler,
@@ -66,7 +68,8 @@ export function createJobRunner(database: DatabaseConfig, llm: LlmConfig, tts: T
   const clock = new SystemClock();
   const jobs = new PostgresJobQueue(db, ids);
   const model = llmClient(llm);
-  const { generations, assignments, submissions, classes } = createPostgresRepositories(db);
+  const { generations, assignments, submissions, classes, learningPaths } =
+    createPostgresRepositories(db);
   const files = new PostgresFileStore(db);
   const handlers = new JobHandlerRegistry([
     new LessonPlanDraftHandler(new LessonPlanner(model)),
@@ -80,6 +83,7 @@ export function createJobRunner(database: DatabaseConfig, llm: LlmConfig, tts: T
     }),
     new GradingHandler({ assignments, submissions, classes, grader: new SubmissionGrader(model) }),
     new GameDraftHandler({ gameWriter: new GameWriter(model) }),
+    new LearningPathHandler({ pathWriter: new PathWriter(model), learningPaths, ids, clock }),
   ]);
   return {
     runNext: new RunNextJob({ jobs, handlers }),

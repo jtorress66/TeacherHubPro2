@@ -337,6 +337,36 @@ export interface LiveAnswersTable {
   points: number;
 }
 
+export interface LearningPathsTable {
+  id: string;
+  school_id: string;
+  teacher_id: string;
+  student_id: string;
+  class_id: string;
+  subject: string;
+  grade: string;
+  language: string;
+  level: number;
+  title: string;
+  description: string;
+  lessons: Json;
+  status: string;
+  created_at: Date;
+  assigned_at: Date | null;
+}
+
+export interface LessonAttemptsTable {
+  id: string;
+  school_id: string;
+  path_id: string;
+  student_id: string;
+  lesson: number;
+  answers: Json;
+  score: number;
+  total: number;
+  at: Date;
+}
+
 export interface GamePlaysTable {
   id: string;
   school_id: string;
@@ -407,6 +437,8 @@ export interface Database {
   live_sessions: LiveSessionsTable;
   live_players: LivePlayersTable;
   live_answers: LiveAnswersTable;
+  learning_paths: LearningPathsTable;
+  lesson_attempts: LessonAttemptsTable;
   subscriptions: SubscriptionsTable;
   sessions: SessionsTable;
   password_credentials: PasswordCredentialsTable;

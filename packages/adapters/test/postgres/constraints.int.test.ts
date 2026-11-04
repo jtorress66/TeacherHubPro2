@@ -13,6 +13,8 @@ import {
   aGamePlay,
   aLivePlayer,
   aLiveSession,
+  aLearningPath,
+  aLessonAttempt,
   aGrade,
   aGradeCategory,
   anAttendanceSession,
@@ -25,6 +27,10 @@ import {
 import { attendanceMapper } from '../../src/postgres/mappers/attendance-mapper.ts';
 import { gameMapper, gamePlayMapper } from '../../src/postgres/mappers/game-mappers.ts';
 import { livePlayerMapper, liveSessionMapper } from '../../src/postgres/mappers/live-mappers.ts';
+import {
+  learningPathMapper,
+  lessonAttemptMapper,
+} from '../../src/postgres/mappers/learning-mappers.ts';
 import {
   gradeCategoryMapper,
   gradeMapper,
@@ -375,5 +381,64 @@ describe('live sessions', () => {
       .insertInto('live_players')
       .values(player({ id: 'player-3' }))
       .execute();
+  });
+});
+
+describe('learning paths', () => {
+  beforeEach(() => resetWith(db, parentsFor.roster));
+
+  const path = (overrides: Partial<ReturnType<typeof learningPathMapper.toRow>> = {}) => ({
+    ...learningPathMapper.toRow(aLearningPath({ schoolId: schoolA })),
+    ...overrides,
+  });
+  const assigned = { status: 'assigned', assigned_at: new Date('2026-11-04T11:00:00Z') };
+
+  it('need a known status, a level from 1 to 5, and an assigned date only once assigned', async () => {
+    await expect(
+      db
+        .insertInto('learning_paths')
+        .values(path({ ...assigned, status: 'paused' }))
+        .execute(),
+    ).rejects.toThrow(/learning_paths_status_check/);
+    await expect(
+      db
+        .insertInto('learning_paths')
+        .values(path({ level: 6 }))
+        .execute(),
+    ).rejects.toThrow(/learning_paths_level_check/);
+    await expect(
+      db
+        .insertInto('learning_paths')
+        .values(path({ status: 'assigned' }))
+        .execute(),
+    ).rejects.toThrow(/learning_paths_assigned_check/);
+  });
+
+  it('allow one assigned path per student and subject', async () => {
+    await db.insertInto('learning_paths').values(path(assigned)).execute();
+    await expect(
+      db
+        .insertInto('learning_paths')
+        .values(path({ ...assigned, id: 'path-2' }))
+        .execute(),
+    ).rejects.toThrow(/learning_paths_assigned_key/);
+    await db
+      .insertInto('learning_paths')
+      .values(path({ ...assigned, id: 'path-3', subject: 'science' }))
+      .execute();
+  });
+
+  it('remove their attempts with them, and reject a score above the total', async () => {
+    await db.insertInto('learning_paths').values(path()).execute();
+    const attempt = lessonAttemptMapper.toRow(aLessonAttempt({ schoolId: schoolA }));
+    await expect(
+      db
+        .insertInto('lesson_attempts')
+        .values({ ...attempt, score: 4, total: 3 })
+        .execute(),
+    ).rejects.toThrow(/lesson_attempts_score_check/);
+    await db.insertInto('lesson_attempts').values(attempt).execute();
+    await db.deleteFrom('learning_paths').execute();
+    expect(await db.selectFrom('lesson_attempts').selectAll().execute()).toEqual([]);
   });
 });

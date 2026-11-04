@@ -15,6 +15,9 @@ import type {
   GameId,
   GamePlay,
   LiveAnswer,
+  LearningPath,
+  LearningPathId,
+  LessonAttempt,
   LivePlayer,
   LiveSession,
   LiveSessionId,
@@ -238,4 +241,23 @@ export interface LiveAnswerRepository {
     sessionIds: readonly LiveSessionId[],
   ): Promise<readonly LiveAnswer[]>;
   deleteBySession(schoolId: SchoolId, sessionId: LiveSessionId): Promise<void>;
+}
+
+export interface LearningPathRepository
+  extends ScopedRepository<LearningPath>, Deletable<LearningPath> {
+  /** Oldest first. */
+  listByStudent(schoolId: SchoolId, studentId: StudentId): Promise<readonly LearningPath[]>;
+  /** Oldest first. */
+  listByClass(schoolId: SchoolId, classId: ClassId): Promise<readonly LearningPath[]>;
+}
+
+/** Every check a student submitted; retries are kept. */
+export interface LessonAttemptRepository {
+  save(attempt: LessonAttempt): Promise<void>;
+  /** Oldest first. */
+  listByPaths(
+    schoolId: SchoolId,
+    pathIds: readonly LearningPathId[],
+  ): Promise<readonly LessonAttempt[]>;
+  deleteByPath(schoolId: SchoolId, pathId: LearningPathId): Promise<void>;
 }

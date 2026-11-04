@@ -20,6 +20,9 @@ import type {
   LivePlayer,
   LiveSession,
   LiveSessionId,
+  LearningPath,
+  LearningPathId,
+  LessonAttempt,
   Grade,
   GradeCategory,
   GradeCategoryId,
@@ -56,6 +59,8 @@ import type {
   GamePlayRepository,
   LiveAnswerRepository,
   LivePlayerRepository,
+  LearningPathRepository,
+  LessonAttemptRepository,
   LiveSessionRepository,
   GradeCategoryRepository,
   GradeRepository,
@@ -622,6 +627,62 @@ export class InMemoryLiveAnswerRepository implements LiveAnswerRepository {
       (row) => row.schoolId !== schoolId || row.sessionId !== sessionId,
     );
     this.rows.splice(0, this.rows.length, ...kept);
+    return Promise.resolve();
+  }
+}
+
+export class InMemoryLearningPathRepository
+  extends InMemoryScopedRepository<LearningPath>
+  implements LearningPathRepository
+{
+  /** One assigned path per student and subject, as the database enforces. */
+  override save(path: LearningPath): Promise<void> {
+    const taken =
+      path.status === 'assigned' &&
+      [...this.rows.values()].some(
+        (row) =>
+          row.id !== path.id &&
+          row.schoolId === path.schoolId &&
+          row.studentId === path.studentId &&
+          row.subject === path.subject &&
+          row.status === 'assigned',
+      );
+    if (taken) return Promise.reject(new Error('The student already has an assigned path'));
+    return super.save(path);
+  }
+
+  async listByStudent(schoolId: SchoolId, studentId: StudentId): Promise<readonly LearningPath[]> {
+    const rows = await this.listWhere(schoolId, (row) => row.studentId === studentId);
+    return [...rows].sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+  }
+
+  async listByClass(schoolId: SchoolId, classId: ClassId): Promise<readonly LearningPath[]> {
+    const rows = await this.listWhere(schoolId, (row) => row.classId === classId);
+    return [...rows].sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+  }
+}
+
+export class InMemoryLessonAttemptRepository implements LessonAttemptRepository {
+  private rows: LessonAttempt[] = [];
+
+  save(attempt: LessonAttempt): Promise<void> {
+    this.rows = [...this.rows.filter((row) => row.id !== attempt.id), attempt];
+    return Promise.resolve();
+  }
+
+  listByPaths(
+    schoolId: SchoolId,
+    pathIds: readonly LearningPathId[],
+  ): Promise<readonly LessonAttempt[]> {
+    return Promise.resolve(
+      this.rows
+        .filter((row) => row.schoolId === schoolId && pathIds.includes(row.pathId))
+        .sort((a, b) => a.at.getTime() - b.at.getTime()),
+    );
+  }
+
+  deleteByPath(schoolId: SchoolId, pathId: LearningPathId): Promise<void> {
+    this.rows = this.rows.filter((row) => row.schoolId !== schoolId || row.pathId !== pathId);
     return Promise.resolve();
   }
 }

@@ -123,6 +123,10 @@ Each assignment can be an online test (`…/assignments/<id>/questions`): build 
 
 **Games** (`/app/games`) come in eleven modes (quiz, time attack, true or false, fill in the blanks, flashcards, matching, memory, word search, crossword, sequence, drag and drop) or "all modes", where students choose. Type the items one per line or have the AI write them from a topic, then share the game with a class: students play it from their personal link, every round is scored on the server and saved with their roster ID, and play again reshuffles for free. Teachers can preview a game (never saved), see each student's attempts and the class leaderboard, and turn on "count as a grade": each student's grade (best, first or average attempt) is a draft until the teacher confirms the game's grades.
 
+## Learning paths
+
+**Learning paths** (`/app/learning`) are short personal lesson sequences the AI drafts for one student or each student of a class, at the student's own level (1 to 5; 3 is on grade level). The teacher reviews and edits every draft, then assigns it; it appears on the student's personal link. Each lesson has a reading (read aloud with the device's voice) and a short check that the server scores, showing the right answers only afterwards. The next path moves a level up or down from the scores and starts with the objectives the student missed. Check scores are practice only. Drafts run as `learning.generate` worker jobs; the AI is sent the subject, grade, level and objectives, never a name.
+
 ## Play to Learn (live games)
 
 **Play to Learn** (`/app/live`) runs any game live with a class, like a quiz show, or self-paced. The teacher's screen shows a PIN; students open `/play` on their own devices, enter it and tap their first name from the class list. Each question has a countdown; answers are timed and scored on the server (more points for a faster right answer, plus a streak bonus), and the leaderboard shows after each question. It is practice only: nothing reaches the gradebook. Each game's page shows its live insights: the hardest questions and each student's accuracy.

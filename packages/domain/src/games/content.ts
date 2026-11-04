@@ -72,7 +72,7 @@ const placeholderPatterns: readonly RegExp[] = [
   /\btbd\b/i,
 ];
 
-const isPlaceholder = (text: string): boolean =>
+export const isPlaceholder = (text: string): boolean =>
   placeholderPatterns.some((pattern) => pattern.test(text.trim()));
 
 const sameText = (a: string): string => a.trim().toLocaleLowerCase();

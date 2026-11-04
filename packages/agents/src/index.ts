@@ -27,3 +27,5 @@ export * from './submission-grader/grader-scorecard.ts';
 export { GameWriter, gameWriterSystemPrompt, reviewGame } from './game-writer/game-writer.ts';
 export { gameFormats, wordingFor } from './game-writer/game-formats.ts';
 export * from './game-writer/game-scorecard.ts';
+export { PathWriter, pathWriterSystemPrompt, reviewPath } from './path-writer/path-writer.ts';
+export * from './path-writer/path-scorecard.ts';
