@@ -52,8 +52,38 @@ describe('parseWebConfig', () => {
           url: 'http://localhost:3200',
           ticketSecret: local.REALTIME_TICKET_SECRET,
         },
+        mail: { provider: 'local', delivers: true },
       },
     });
+  });
+
+  it('sends mail with Resend when set up; without it, production mail reaches no one', () => {
+    expect(
+      parseWebConfig({
+        ...production,
+        MAIL_PROVIDER: 'resend',
+        RESEND_API_KEY: 're_xxx',
+        MAIL_FROM: 'TeacherHubPro <hello@teacherhubpro.com>',
+      }),
+    ).toMatchObject({
+      value: {
+        mail: {
+          provider: 'resend',
+          apiKey: 're_xxx',
+          from: 'TeacherHubPro <hello@teacherhubpro.com>',
+          delivers: true,
+        },
+      },
+    });
+    expect(parseWebConfig(production)).toMatchObject({
+      ok: true,
+      value: { mail: { provider: 'local', delivers: false } },
+    });
+    expect(parseWebConfig({ ...production, MAIL_PROVIDER: 'resend' })).toEqual({
+      ok: false,
+      error: 'RESEND_API_KEY and MAIL_FROM are required when MAIL_PROVIDER is resend',
+    });
+    expect(parseWebConfig({ ...local, MAIL_PROVIDER: 'pigeon' }).ok).toBe(false);
   });
 
   it('needs the realtime server’s address and a ticket secret of at least 32 characters', () => {
@@ -105,6 +135,7 @@ describe('parseWebConfig', () => {
           url: 'https://teacherhubpro-realtime.onrender.com',
           ticketSecret: production.REALTIME_TICKET_SECRET,
         },
+        mail: { provider: 'local', delivers: false },
       },
     });
   });

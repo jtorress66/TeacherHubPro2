@@ -123,6 +123,12 @@ Each assignment can be an online test (`…/assignments/<id>/questions`): build 
 
 **Games** (`/app/games`) come in eleven modes (quiz, time attack, true or false, fill in the blanks, flashcards, matching, memory, word search, crossword, sequence, drag and drop) or "all modes", where students choose. Type the items one per line or have the AI write them from a topic, then share the game with a class: students play it from their personal link, every round is scored on the server and saved with their roster ID, and play again reshuffles for free. Teachers can preview a game (never saved), see each student's attempts and the class leaderboard, and turn on "count as a grade": each student's grade (best, first or average attempt) is a draft until the teacher confirms the game's grades.
 
+## Family portal and email
+
+**Family portal links** (a class's **Family portal** page) give each family a private, read-only page (`/{locale}/p/<token>`) with their child's confirmed grades and class average, the week's upcoming work, attendance, learning paths and games, with a printable progress report. The teacher emails the link or makes a new one to copy; the family's earlier link then stops working. Links are stored only as hashes and expire at the end of the semester.
+
+Email goes through `MAIL_PROVIDER`: `local` (the default until go-live) keeps mail in the database, readable at `/en/dev/mail` outside production; `resend` sends it with `RESEND_API_KEY` from `MAIL_FROM`. The worker sends trial reminders (3 days before and on the last day) and needs `APP_URL` for their links; in production it sends none until Resend is on.
+
 ## Learning paths
 
 **Learning paths** (`/app/learning`) are short personal lesson sequences the AI drafts for one student or each student of a class, at the student's own level (1 to 5; 3 is on grade level). The teacher reviews and edits every draft, then assigns it; it appears on the student's personal link. Each lesson has a reading (read aloud with the device's voice) and a short check that the server scores, showing the right answers only afterwards. The next path moves a level up or down from the scores and starts with the objectives the student missed. Check scores are practice only. Drafts run as `learning.generate` worker jobs; the AI is sent the subject, grade, level and objectives, never a name.

@@ -68,6 +68,9 @@ export default async function ClassPage(props: Props) {
         <Link href={`/${locale}/app/classes/${cls.id}/student-links`} className="button secondary">
           {t('studentLinks.open')}
         </Link>
+        <Link href={`/${locale}/app/classes/${cls.id}/portal-links`} className="button secondary">
+          {t('portalLinks.open')}
+        </Link>
         <Link href={`/${locale}/app/classes/${cls.id}/sub-packet`} className="button secondary">
           {t('subPacket.open')}
         </Link>

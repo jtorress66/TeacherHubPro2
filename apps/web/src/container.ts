@@ -1,5 +1,7 @@
 import { createHash } from 'node:crypto';
 import {
+  LocalMailer,
+  ResendMailer,
   AesGcmCipher,
   CryptoSeedSource,
   HmacTicketSigner,
@@ -39,6 +41,11 @@ import {
   StartSelfPacedRound,
   FinishSelfPacedRound,
   VerifyLiveTicket,
+  IssuePortalLink,
+  EmailPortalLink,
+  ListPortalLinks,
+  RevokePortalLink,
+  OpenFamilyPortal,
   RequestLearningPath,
   GetClassLearning,
   GetLearningPath,
@@ -177,6 +184,7 @@ import {
   UpdateSchoolDetails,
 } from '@thp/application';
 import type {
+  SentMailbox,
   BillingEvents,
   CheckoutSessions,
   GoogleIdentity,
@@ -191,7 +199,7 @@ import {
   type GoogleConfig,
   type WebConfig,
 } from './server/config.ts';
-import { createTranslator, locales } from '@thp/i18n';
+import { createTranslator, locales, portalLinkEmail, trialReminderEmail } from '@thp/i18n';
 import { defaultGameModes, localDateIn, type LocalDate } from '@thp/domain';
 
 export interface AppContainer {
@@ -208,6 +216,15 @@ export interface AppContainer {
   readonly verifyLiveTicket: VerifyLiveTicket;
   readonly startSelfPacedRound: StartSelfPacedRound;
   readonly finishSelfPacedRound: FinishSelfPacedRound;
+  readonly issuePortalLink: IssuePortalLink;
+  readonly emailPortalLink: EmailPortalLink;
+  readonly listPortalLinks: ListPortalLinks;
+  readonly revokePortalLink: RevokePortalLink;
+  readonly openFamilyPortal: OpenFamilyPortal;
+  /** Whether email reaches people (no until Resend is set up in production). */
+  readonly mailDelivers: boolean;
+  /** The stand-in's mailbox, outside production only. */
+  readonly sentMailbox: SentMailbox | null;
   readonly requestLearningPath: RequestLearningPath;
   readonly getClassLearning: GetClassLearning;
   readonly getLearningPath: GetLearningPath;
@@ -433,6 +450,7 @@ export function createAppContainer(
 ): AppContainer {
   const billing = billingFor(config.billing, config.appUrl);
   const identity = googleFor(config.google, config.appUrl);
+  const localMailer = new LocalMailer(db);
   const deps = {
     ...createPostgresRepositories(db),
     ...billing,
@@ -449,6 +467,11 @@ export function createAppContainer(
     ticketSigner: new HmacTicketSigner(config.realtime.ticketSecret),
     gameModes: defaultGameModes,
     appUrl: config.appUrl,
+    mailer:
+      config.mail.provider === 'resend'
+        ? new ResendMailer({ apiKey: config.mail.apiKey, from: config.mail.from })
+        : localMailer,
+    mailTemplates: { portalLink: portalLinkEmail, trialReminder: trialReminderEmail },
   };
 
   return {
@@ -464,6 +487,14 @@ export function createAppContainer(
     verifyLiveTicket: new VerifyLiveTicket(deps),
     startSelfPacedRound: new StartSelfPacedRound(deps),
     finishSelfPacedRound: new FinishSelfPacedRound(deps),
+    issuePortalLink: new IssuePortalLink(deps),
+    emailPortalLink: new EmailPortalLink(deps),
+    listPortalLinks: new ListPortalLinks(deps),
+    revokePortalLink: new RevokePortalLink(deps),
+    openFamilyPortal: new OpenFamilyPortal(deps),
+    mailDelivers: config.mail.delivers,
+    sentMailbox:
+      config.mail.provider === 'local' && config.env !== 'production' ? localMailer : null,
     requestLearningPath: new RequestLearningPath(deps),
     getClassLearning: new GetClassLearning(deps),
     getLearningPath: new GetLearningPath(deps),

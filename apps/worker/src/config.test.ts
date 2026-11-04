@@ -143,8 +143,14 @@ describe('parseMailConfig', () => {
     });
   });
 
-  it('is an error without the site address, or Resend without its key or sender', () => {
-    expect(parseMailConfig({})).toEqual({ ok: false, error: 'APP_URL is required.' });
+  it('without the site address, starts anyway with reminders off (links need it)', () => {
+    expect(parseMailConfig({})).toEqual({
+      ok: true,
+      value: { provider: 'local', appUrl: '', delivers: false },
+    });
+  });
+
+  it('is an error when Resend is chosen without its key or sender', () => {
     expect(parseMailConfig({ ...base, MAIL_PROVIDER: 'resend', MAIL_FROM: 'a@b.c' })).toEqual({
       ok: false,
       error: 'RESEND_API_KEY and MAIL_FROM are required when MAIL_PROVIDER is "resend".',

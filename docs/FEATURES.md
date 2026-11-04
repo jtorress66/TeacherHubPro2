@@ -246,6 +246,23 @@ Seven interface languages: English, Spanish, French, Portuguese, German, Italian
 - Portal token per student; parent portal shows grades and attendance. Homeschool portal token and reports. Email a portal link (Resend). Trial reminder emails.
 - Old files: `backend/routes/portal.py`, `server.py` (portal, `/portal/email`, portal email ~2874, trial reminders ~3850–3930), `frontend/src/pages/ParentPortal.js`, `HomeschoolPortal.js`.
 - Fix: an old email linked to the Emergent preview site. Every link uses the configured site URL.
+- **Decided for the rebuild:**
+  - **One family portal** per student (the old parent and homeschool portals together): a private, read-only link showing confirmed grades with the class's weighted average, upcoming work for the next 7 days, attendance (rate, counts and the last 10 days), learning paths and games, all tied to the roster student ID, with a printable progress report. Homeschool families use the same page.
+  - **Links** work like student links: random, stored only as a hash, until the end of the class's semester (180 days without one), revocable. The teacher emails a link (to the roster's parent email or another address, in the family's language) or makes a new one to copy; either way the family's earlier link stops working, and the full link is shown once.
+  - **Only confirmed grades:** the gradebook holds teacher entries only (AI drafts and game plays become grades only when the teacher confirms them), and pending work shows as "not graded yet", never with a score.
+  - **Email** goes through a `Mailer` port: Resend's HTTP API in production at go-live, and until then a local stand-in that keeps mail in the database, readable at `/{locale}/dev/mail` outside production. While production has no real mailer, the app offers no email (copying a link still works) and sends no trial reminders, so nothing is lost or recorded as sent.
+  - **Trial reminders** go to the account owner 3 days before the trial ends and on its last day, each once, in their language, from the worker's minute housekeeping; paid plans get none.
+  - Email texts live with the translations (`packages/i18n`), in English and Spanish; other languages fall back to English.
+- **Kept from the old app:** a portal link per student, emailed to the parent; a read-only portal with the student's grades, averages, recent and upcoming work and attendance summary; the homeschool view of learning progress and games; revoking a link; a bilingual email with the link and "read-only, contact the teacher"; trial reminder emails with the paid-plan check and no duplicates.
+- **Fixed from the old app:**
+  - Portal tokens were stored in plain text: they are random, stored as a hash, revocable and expiring.
+  - The portal showed raw grade records: only teacher-entered grades, and pending work shows no score.
+  - The average assumed points as stored: the gradebook's weighted category average, the same as report cards.
+  - Homeschool game scores were found by matching a typed first name: game plays by roster student ID.
+  - The attendance rate counted only "present": tardy counts as present, as in the attendance report.
+  - Generating a token never checked who owned the student: only the class's teacher, in their school.
+  - Reminders were deduplicated only within 24 hours, and the cron trigger accepted a default key: one record per trial and reminder, and the worker runs them itself with no public trigger.
+- **Dropped (agreed in the step 14 plan):** the separate homeschool token and portal (one family portal); student photos (not collected).
 
 ## Step 15 — Command Center and Student 360
 

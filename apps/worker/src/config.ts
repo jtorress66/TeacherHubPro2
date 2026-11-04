@@ -92,7 +92,7 @@ export type MailConfig = (
   | { readonly provider: 'local' }
   | { readonly provider: 'resend'; readonly apiKey: string; readonly from: string }
 ) & {
-  /** The site address, for links in emails. */
+  /** The site address, for links in emails (empty when not set: then nothing is sent). */
   readonly appUrl: string;
   /**
    * Whether sent mail reaches a person: always with Resend; with the stand-in, only outside
@@ -109,7 +109,8 @@ export function parseMailConfig(
   env: Readonly<Record<string, string | undefined>>,
 ): Result<MailConfig, string> {
   const appUrl = (env.APP_URL?.trim() ?? '').replace(/\/$/u, '');
-  if (appUrl === '') return err('APP_URL is required.');
+  // Without the site address emails would carry broken links: start anyway, sending nothing.
+  if (appUrl === '') return ok({ provider: 'local', appUrl, delivers: false });
   const chosen = env.MAIL_PROVIDER?.trim() ?? '';
   const provider = chosen === '' ? 'local' : chosen;
   if (provider === 'local') {
