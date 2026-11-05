@@ -2,7 +2,7 @@
 
 Place this file at `docs/BUILD_STEPS.md`. Work on one step at a time. Tick a step only when its gate passes and the Definition of Done in `CLAUDE.md` is met. For each step, read its section in `docs/FEATURES.md` first.
 
-**Current step:** 15
+**Current step:** 16
 
 | # | Step | Scope | Gate (must pass before next step) | Done |
 | --- | --- | --- | --- | --- |
@@ -20,7 +20,7 @@ Place this file at `docs/BUILD_STEPS.md`. Work on one step at a time. Tick a ste
 | 12 | Play to Learn (live) | Practice assignments, PIN join, host dashboard, live questions over `apps/realtime`, self-paced mode, insights | E2E: host + 3 students play a live session; scores and insights correct | [x] |
 | 13 | Adaptive learning and student progress | AI learning paths, student learning links, lesson completion, progress dashboard | Evals meet thresholds; E2E: path generated → student completes a lesson → progress updates | [x] |
 | 14 | Parent and homeschool portals, email | Portal links, homeschool portal and reports, emailing portal links (Resend), trial reminder emails | E2E: teacher emails a portal link → parent sees only confirmed grades and attendance | [x] |
-| 15 | Command Center and Student 360 | Daily dashboard, at-risk detection, to-grade list, recommendations, Student 360 timeline, private notes, AI insight | At-risk rules match `docs/FEATURES.md` examples; E2E: dashboard shows today's classes and an at-risk student | [ ] |
+| 15 | Command Center and Student 360 | Daily dashboard, at-risk detection, to-grade list, recommendations, Student 360 timeline, private notes, AI insight | At-risk rules match `docs/FEATURES.md` examples; E2E: dashboard shows today's classes and an at-risk student | [x] |
 | 16 | Prep Agent | Weekly prep batch (plans → materials → quiz → parent email), progress, preview, edit, approve and publish | Evals meet thresholds; E2E: prompt → batch ready → teacher approves → plans and quiz saved | [ ] |
 | 17 | Admin and super admin | School admin (users, roles), super admin (schools, users, password reset, bulk import of teachers and students, overview) | E2E: super admin imports a school's teachers and students; a school admin cannot see another school | [ ] |
 | 18 | Marketing site and chatbot | Landing, features and use-case pages, pricing from the plan catalog, legal and trust pages, contact, lead chatbot, leads dashboard, sitemap and robots | Lighthouse SEO ≥ 90 on landing; chatbot evals pass (real prices, says it is an AI when asked) | [ ] |
