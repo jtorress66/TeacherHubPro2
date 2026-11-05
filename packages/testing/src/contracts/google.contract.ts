@@ -212,19 +212,19 @@ export function googleDriveContract(
   describe(`${name} (GoogleDriveFiles contract)`, () => {
     const docx = new Uint8Array([0x50, 0x4b, 0x03, 0x04, 1, 2, 3]);
 
-    it('turns a Word document into a Google Doc and returns where to open it', async () => {
-      const result = await make(accessToken).uploadWordAsDoc(accessToken, {
+    it('uploads a Word document and returns where to open it', async () => {
+      const result = await make(accessToken).uploadWordDocument(accessToken, {
         name: 'Unit 3.docx',
         bytes: docx,
       });
-      if (!result.ok) throw new Error(`uploadWordAsDoc failed: ${result.error.code}`);
+      if (!result.ok) throw new Error(`uploadWordDocument failed: ${result.error.code}`);
       expect(result.value.id).not.toBe('');
       expect(result.value.url.startsWith('https://')).toBe(true);
     });
 
     it('cannot upload without access', async () => {
       expect(
-        await make(accessToken).uploadWordAsDoc('expired', { name: 'Unit 3.docx', bytes: docx }),
+        await make(accessToken).uploadWordDocument('expired', { name: 'Unit 3.docx', bytes: docx }),
       ).toMatchObject({ ok: false, error: { code: 'unauthorized' } });
     });
   });

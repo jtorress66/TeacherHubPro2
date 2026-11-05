@@ -13,8 +13,8 @@ const describeFailure = (step: string, error: ClassroomError) =>
  */
 export function loggedDrive(drive: GoogleDriveFiles, write: Write = stdout): GoogleDriveFiles {
   return {
-    async uploadWordAsDoc(accessToken, file) {
-      const result = await drive.uploadWordAsDoc(accessToken, file);
+    async uploadWordDocument(accessToken, file) {
+      const result = await drive.uploadWordDocument(accessToken, file);
       if (!result.ok) write(describeFailure('Google Drive upload', result.error));
       return result;
     },

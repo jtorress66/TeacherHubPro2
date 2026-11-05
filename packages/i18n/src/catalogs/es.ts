@@ -938,16 +938,16 @@ export const es: Messages = {
   wordPost: {
     title: 'Enviar un documento de Word a Google Classroom',
     intro:
-      'Sube tu examen, prueba u hoja de trabajo como documento de Word (.docx). Classroom lo recibe como documento de Google y cada estudiante tiene su propia copia para escribir.',
+      'Sube tu examen, prueba u hoja de trabajo como documento de Word (.docx). Classroom recibe el archivo tal cual y cada estudiante tiene su propia copia para escribir.',
     name: 'Título de la tarea',
     instructions: 'Instrucciones para los estudiantes (opcional)',
     dueDate: 'Fecha de entrega en Classroom (opcional)',
     file: 'Documento de Word (.docx)',
-    note: 'Google convierte el documento en un documento de Google; las tablas, la numeración y los recuadros quedan como los hiciste.',
+    note: 'Los estudiantes abren su copia en Documentos de Google y escriben en ella; tu formato queda como en Word.',
     submit: 'Publicar en Google Classroom',
     posted: 'Publicado en Google Classroom.',
     openClassroom: 'Abrir en Classroom',
-    openDoc: 'Abrir el documento de Google',
+    openDoc: 'Abrir el archivo',
   },
   games: {
     title: 'Juegos educativos',
