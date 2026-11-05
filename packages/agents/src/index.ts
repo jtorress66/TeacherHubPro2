@@ -19,6 +19,13 @@ export {
 } from './question-extractor/question-extractor.ts';
 export * from './question-extractor/extractor-scorecard.ts';
 export {
+  InsightWriter,
+  insightSystemPrompt,
+  inventedPercentages,
+  reviewInsight,
+} from './insight-writer/insight-writer.ts';
+export * from './insight-writer/insight-scorecard.ts';
+export {
   SubmissionGrader,
   graderSystemPrompt,
   reviewScores,

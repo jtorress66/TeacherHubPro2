@@ -87,6 +87,10 @@ On a class page, **Import students from a CSV file** adds a whole roster at once
 
 Samples: `apps/web/public/samples/students-en.csv` and `students-es.csv`. At most 500 students per file. If any row has a problem, nothing is imported and every bad row is listed with its line number.
 
+## Command Center and Student 360
+
+The home page (`/app`) is the Command Center: today's classes with their attendance, what is left to grade, students who may need help (at-risk score from the average, missing work, absences and tardies in the last 30 days), suggestions and lessons in the next 7 days. Each student has a Student 360 page (click their name on the roster or in the at-risk list) with their average, attendance, missing work, a timeline, private notes only you see, and an on-demand AI insight (a draft sent numbers only, never a name or notes).
+
 ## Attendance
 
 On a class page, **Take attendance** opens the sheet for a day (today by default). Everyone starts as present; set the others, add minutes late for tardies and a note if needed, then **Save** or **Submit**. A submitted day is read-only until it is reopened. **Attendance report** shows each student's counts and rate over submitted days (last 30 days by default). Tardy counts as present; excused days count in the total. **Attendance** in the menu shows every class and whether the day was taken.

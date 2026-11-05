@@ -102,6 +102,11 @@ import {
   ImportClassroomRoster,
   ShareAssignment,
   PostWordToClassroom,
+  GetCommandCenter,
+  GetStudent360,
+  AddStudentNote,
+  DeleteStudentNote,
+  RequestStudentInsight,
   MakeFormsQuiz,
   FindFormsQuiz,
   CreatePresentation,
@@ -282,6 +287,11 @@ export interface AppContainer {
   readonly importClassroomRoster: ImportClassroomRoster;
   readonly shareAssignment: ShareAssignment;
   readonly postWordToClassroom: PostWordToClassroom;
+  readonly getCommandCenter: GetCommandCenter;
+  readonly getStudent360: GetStudent360;
+  readonly addStudentNote: AddStudentNote;
+  readonly deleteStudentNote: DeleteStudentNote;
+  readonly requestStudentInsight: RequestStudentInsight;
   readonly makeFormsQuiz: MakeFormsQuiz;
   readonly findFormsQuiz: FindFormsQuiz;
   readonly createGame: CreateGame;
@@ -559,6 +569,11 @@ export function createAppContainer(
     importClassroomRoster: new ImportClassroomRoster(deps),
     shareAssignment: new ShareAssignment(deps),
     postWordToClassroom: new PostWordToClassroom(deps),
+    getCommandCenter: new GetCommandCenter(deps),
+    getStudent360: new GetStudent360(deps),
+    addStudentNote: new AddStudentNote(deps),
+    deleteStudentNote: new DeleteStudentNote(deps),
+    requestStudentInsight: new RequestStudentInsight(deps),
     makeFormsQuiz: new MakeFormsQuiz(deps),
     findFormsQuiz: new FindFormsQuiz(deps),
     createGame: new CreateGame(deps),

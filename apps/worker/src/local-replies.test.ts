@@ -4,6 +4,7 @@ import {
   GameWriter,
   PathWriter,
   PresentationWriter,
+  InsightWriter,
   QuestionExtractor,
   SubmissionGrader,
 } from '@thp/agents';
@@ -86,6 +87,26 @@ describe('the local stand-in replies', () => {
     const draft = unwrap(await new PresentationWriter(local()).draft(request));
     expect(draft.slides).toHaveLength(4);
     expect(draft.slides[0]?.layout).toBe('title');
+  });
+
+  it('drafts a three-bullet insight that passes the writer’s checks', async () => {
+    const bullets = unwrap(
+      await new InsightWriter(local()).write({
+        language: 'en',
+        stats: {
+          average: 50,
+          attendanceRate: 90,
+          absences: 1,
+          tardies: 0,
+          excused: 0,
+          sessions: 10,
+          missing: 1,
+        },
+        recentGrades: [],
+        recentAttendance: [],
+      }),
+    );
+    expect(bullets).toHaveLength(3);
   });
 
   it('reads a test into a multiple-choice, a true/false and a short-answer question', async () => {

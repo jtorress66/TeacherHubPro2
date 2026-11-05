@@ -5,6 +5,7 @@ import type {
   ExtractorMetric,
   GameMetric,
   PathMetric,
+  InsightMetric,
   GraderMetric,
   PlanMetric,
   PresentationMetric,
@@ -12,6 +13,7 @@ import type {
 import { runAssistantEvals } from './evals/assistant-evals.ts';
 import { formatReport, type EvalReport } from './evals/eval-report.ts';
 import { runGameEvals } from './evals/game-evals.ts';
+import { runInsightEvals } from './evals/insight-evals.ts';
 import { runPathEvals } from './evals/path-evals.ts';
 import { runExtractorEvals, runGraderEvals } from './evals/grading-evals.ts';
 import { runPlannerEvals } from './evals/planner-evals.ts';
@@ -37,6 +39,7 @@ const thresholds = JSON.parse(
   grader: Record<GraderMetric, number>;
   'game-writer': Record<GameMetric, number>;
   'path-writer': Record<PathMetric, number>;
+  'insight-writer': Record<InsightMetric, number>;
 };
 
 const llm = new AnthropicLlmClient({
@@ -53,6 +56,7 @@ const suites: readonly [string, () => Promise<EvalReport<string>>][] = [
   ['Grader evals', () => runGraderEvals(llm, thresholds.grader)],
   ['Game writer evals', () => runGameEvals(llm, thresholds['game-writer'])],
   ['Path writer evals', () => runPathEvals(llm, thresholds['path-writer'])],
+  ['Insight writer evals', () => runInsightEvals(llm, thresholds['insight-writer'])],
 ];
 
 let failed = false;

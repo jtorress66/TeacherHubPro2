@@ -2,6 +2,9 @@ import type {
   Attachment,
   ClassroomConnection,
   FormsExport,
+  StudentInsight,
+  StudentNote,
+  StudentNoteId,
   StudentLink,
   AiGeneration,
   GenerationSummary,
@@ -178,6 +181,25 @@ export interface ClassroomConnectionRepository {
 export interface FormsExportRepository {
   find(schoolId: SchoolId, assignmentId: AssignmentId): Promise<FormsExport | null>;
   save(formsExport: FormsExport): Promise<void>;
+}
+
+/** Private notes: each teacher sees and deletes only their own. */
+export interface StudentNoteRepository {
+  save(note: StudentNote): Promise<void>;
+  /** Newest first. */
+  listFor(
+    schoolId: SchoolId,
+    studentId: StudentId,
+    authorId: UserId,
+  ): Promise<readonly StudentNote[]>;
+  /** False when there is no such note by this author in the school. */
+  delete(schoolId: SchoolId, id: StudentNoteId, authorId: UserId): Promise<boolean>;
+}
+
+/** The latest AI insight per teacher and student; saving another replaces it. */
+export interface StudentInsightRepository {
+  find(schoolId: SchoolId, studentId: StudentId, teacherId: UserId): Promise<StudentInsight | null>;
+  save(insight: StudentInsight): Promise<void>;
 }
 
 export interface AttendanceSessionRepository extends ScopedRepository<AttendanceSession> {

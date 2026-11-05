@@ -26,6 +26,7 @@ import {
   GameWriter,
   PathWriter,
   QuestionExtractor,
+  InsightWriter,
   SubmissionGrader,
 } from '@thp/agents';
 import {
@@ -34,6 +35,7 @@ import {
   GenerationHandler,
   GradingHandler,
   PdfImportHandler,
+  StudentInsightHandler,
   JobHandlerRegistry,
   LessonPlanDraftHandler,
   PresentationDraftHandler,
@@ -104,6 +106,11 @@ export function createJobRunner(
     }),
     new GradingHandler({ assignments, submissions, classes, grader: new SubmissionGrader(model) }),
     new GameDraftHandler({ gameWriter: new GameWriter(model) }),
+    new StudentInsightHandler({
+      ...repos,
+      insightWriter: new InsightWriter(model),
+      clock,
+    }),
     new LearningPathHandler({ pathWriter: new PathWriter(model), learningPaths, ids, clock }),
   ]);
   const sweep = new SweepStaleJobs({ jobs, clock });

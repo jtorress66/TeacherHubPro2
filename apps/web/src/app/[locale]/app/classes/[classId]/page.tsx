@@ -110,14 +110,18 @@ export default async function ClassPage(props: Props) {
             <tbody>
               {roster.map((student) => (
                 <tr key={student.id}>
-                  <td>{student.lastName}</td>
+                  <td>
+                    <Link href={`/${locale}/app/classes/${cls.id}/students/${student.id}`}>
+                      {student.lastName}
+                    </Link>
+                  </td>
                   <td>{student.firstName}</td>
                   <td>{student.studentNumber ?? ''}</td>
                   <td className="row-actions">
                     {archived ? null : (
                       <>
                         <Link
-                          href={`/${locale}/app/classes/${cls.id}/students/${student.id}`}
+                          href={`/${locale}/app/classes/${cls.id}/students/${student.id}/edit`}
                           aria-label={`${t('students.edit')} ${student.firstName} ${student.lastName}`}
                         >
                           {t('students.edit')}

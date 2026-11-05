@@ -57,7 +57,9 @@ describe('migrations', () => {
       'sent_mail',
       'sessions',
       'stored_files',
+      'student_insights',
       'student_links',
+      'student_notes',
       'students',
       'sub_packets',
       'submissions',
@@ -72,6 +74,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0016_student_360',
           '0015_drop_google_quizzes',
           '0014_google_quizzes',
           '0013_forms_exports',
@@ -111,10 +114,11 @@ describe('migrations', () => {
           '0013_forms_exports',
           '0014_google_quizzes',
           '0015_drop_google_quizzes',
+          '0016_student_360',
         ],
       },
     });
-    expect(await tableNames()).toHaveLength(37);
+    expect(await tableNames()).toHaveLength(39);
   });
 
   it('turns plans saved before step 8 into valid plans of their kind', async () => {

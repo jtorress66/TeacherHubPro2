@@ -3,6 +3,8 @@ import type {
   AttachmentRepository,
   ClassroomConnectionRepository,
   FormsExportRepository,
+  StudentInsightRepository,
+  StudentNoteRepository,
   StudentLinkRepository,
   AiGenerationRepository,
   PresentationRepository,
@@ -65,6 +67,10 @@ import {
   PostgresStudentLinkRepository,
 } from './repositories/postgres-assignment-repositories.ts';
 import {
+  PostgresStudentInsightRepository,
+  PostgresStudentNoteRepository,
+} from './repositories/postgres-student-360-repositories.ts';
+import {
   PostgresAiGenerationRepository,
   PostgresPresentationRepository,
   PostgresSubPacketRepository,
@@ -102,6 +108,8 @@ export interface PostgresRepositories {
   readonly studentLinks: StudentLinkRepository;
   readonly classroomConnections: ClassroomConnectionRepository;
   readonly formsExports: FormsExportRepository;
+  readonly studentNotes: StudentNoteRepository;
+  readonly studentInsights: StudentInsightRepository;
   readonly gradeCategories: GradeCategoryRepository;
   readonly assignments: AssignmentRepository;
   readonly grades: GradeRepository;
@@ -140,6 +148,8 @@ export function createPostgresRepositories(db: Kysely<Database>): PostgresReposi
     studentLinks: new PostgresStudentLinkRepository(db),
     classroomConnections: new PostgresClassroomConnectionRepository(db),
     formsExports: new PostgresFormsExportRepository(db),
+    studentNotes: new PostgresStudentNoteRepository(db),
+    studentInsights: new PostgresStudentInsightRepository(db),
     gradeCategories: new PostgresGradeCategoryRepository(db),
     assignments: new PostgresAssignmentRepository(db),
     grades: new PostgresGradeRepository(db),

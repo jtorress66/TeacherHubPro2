@@ -14,6 +14,8 @@ import {
 } from '@thp/domain';
 import type {
   QuestionExtractor,
+  InsightRequest,
+  InsightWriter,
   SubmissionGrader,
   ContentWriter,
   PresentationDrafter,
@@ -140,6 +142,24 @@ export class FakeQuestionExtractor implements QuestionExtractor {
 
   extract(input: { readonly text: string; readonly language: Language }) {
     this.inputs.push(input);
+    return Promise.resolve(this.outcome);
+  }
+}
+
+/** Returns the same bullets (or failure) for every student, and records what it was sent. */
+export class FakeInsightWriter implements InsightWriter {
+  readonly requests: InsightRequest[] = [];
+
+  constructor(
+    private readonly outcome: Result<readonly string[], DraftError> = ok([
+      'Scores fell over the last three assignments.',
+      'Two absences this month.',
+      'Check in about the missing essay.',
+    ]),
+  ) {}
+
+  write(request: InsightRequest) {
+    this.requests.push(request);
     return Promise.resolve(this.outcome);
   }
 }
