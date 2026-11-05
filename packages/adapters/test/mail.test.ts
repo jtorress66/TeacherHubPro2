@@ -68,6 +68,36 @@ describe('ResendMailer', () => {
     });
   });
 
+  it("keeps Resend's reason for a refusal, with email addresses blanked out", async () => {
+    server.use(
+      http.post(endpoint, () =>
+        HttpResponse.json(
+          {
+            statusCode: 403,
+            name: 'validation_error',
+            message:
+              'You can only send testing emails to your own email address (owner@gmail.com). To send emails to other recipients, please verify a domain at resend.com/domains.',
+          },
+          { status: 403 },
+        ),
+      ),
+    );
+    expect(await mailer().send(message)).toEqual({
+      ok: false,
+      error: {
+        code: 'rejected',
+        reason:
+          '403 validation_error: You can only send testing emails to your own email address ([address]). To send emails to other recipients, please verify a domain at resend.com/domains.',
+      },
+    });
+
+    server.use(http.post(endpoint, () => new HttpResponse('nope', { status: 401 })));
+    expect(await mailer().send(message)).toEqual({
+      ok: false,
+      error: { code: 'rejected', reason: '401' },
+    });
+  });
+
   it('treats a server error, a rate limit or no connection as unavailable', async () => {
     for (const status of [429, 500, 503]) {
       server.use(http.post(endpoint, () => HttpResponse.json({}, { status })));

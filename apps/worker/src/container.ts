@@ -13,6 +13,7 @@ import {
   formatUsage,
   migrateToLatest,
   LocalMailer,
+  loggedMailer,
   PostgresJobQueue,
   ResendMailer,
   SystemClock,
@@ -75,7 +76,9 @@ export const mailTemplates: MailTemplates = {
 
 function mailerFor(config: MailConfig, db: ReturnType<typeof createDatabase>): Mailer {
   return config.provider === 'resend'
-    ? new ResendMailer({ apiKey: config.apiKey, from: config.from })
+    ? loggedMailer(new ResendMailer({ apiKey: config.apiKey, from: config.from }), (line) =>
+        process.stdout.write(line),
+      )
     : new LocalMailer(db);
 }
 
