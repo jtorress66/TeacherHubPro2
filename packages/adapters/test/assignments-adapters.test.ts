@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import {
   classroomAuthorizationContract,
   classroomContract,
+  googleDriveContract,
   googleFormsContract,
   pdfTextExtractorContract,
   secretCipherContract,
@@ -11,7 +12,9 @@ import {
 import { AesGcmCipher } from '../src/crypto/aes-gcm-cipher.ts';
 import { GoogleClassroom } from '../src/google/google-classroom.ts';
 import { GoogleClassroomAuthorization } from '../src/google/google-classroom-authorization.ts';
+import { GoogleDriveApi } from '../src/google/google-drive.ts';
 import { GoogleFormsApi } from '../src/google/google-forms.ts';
+import { LocalDrive } from '../src/google/local-drive.ts';
 import { LocalForms } from '../src/google/local-forms.ts';
 import {
   LocalClassroom,
@@ -132,7 +135,7 @@ describe('GoogleClassroom', () => {
     await new GoogleClassroom(api.fetchFn).createCoursework(fixture.accessToken, 'c-1', {
       title: 'Quiz',
       description: 'Use your personal link.',
-      link: 'https://app.test',
+      material: { kind: 'link', url: 'https://app.test' },
       dueDate: '2026-09-30' as never,
     });
     expect(api.posted[0]).toEqual({
@@ -410,5 +413,86 @@ describe('GoogleFormsApi', () => {
       ok: false,
       error: { code: 'unavailable' },
     });
+  });
+});
+
+describe('GoogleClassroom with a PDF', () => {
+  it('attaches a Drive PDF so each student gets their own copy to write on', async () => {
+    const api = classroomApi(fixture.accessToken);
+    await new GoogleClassroom(api.fetchFn).createCoursework(fixture.accessToken, 'c-1', {
+      title: 'Test',
+      description: '',
+      material: { kind: 'pdf', driveFileId: 'drive-1' },
+      dueDate: null,
+    });
+    expect(api.posted[0]).toEqual({
+      title: 'Test',
+      description: '',
+      materials: [{ driveFile: { driveFile: { id: 'drive-1' }, shareMode: 'STUDENT_COPY' } }],
+      workType: 'ASSIGNMENT',
+      state: 'PUBLISHED',
+    });
+  });
+});
+
+/** Google Drive's multipart upload, answering like the recorded real responses. */
+function driveApi(accessToken: string, status = 200) {
+  const uploads: { url: string; contentType: string | null; body: string }[] = [];
+  const fetchFn = async (input: string | URL | Request, init?: RequestInit): Promise<Response> => {
+    const url = input instanceof Request ? input.url : input.toString();
+    const headers = new Headers(init?.headers);
+    if (headers.get('authorization') !== `Bearer ${accessToken}`) {
+      return Response.json({ error: { code: 401 } }, { status: 401 });
+    }
+    if (status !== 200) return Response.json({ error: {} }, { status });
+    uploads.push({
+      url,
+      contentType: headers.get('content-type'),
+      body: await new Response(init?.body).text(),
+    });
+    return Response.json({ id: 'drive-file-1', name: 'test.pdf', mimeType: 'application/pdf' });
+  };
+  return { fetchFn, uploads };
+}
+
+googleDriveContract(
+  'GoogleDriveApi',
+  (token) => new GoogleDriveApi(driveApi(token).fetchFn),
+  'ya29.recorded',
+);
+googleDriveContract('LocalDrive', () => new LocalDrive(), localClassroomFixture.accessToken);
+
+describe('GoogleDriveApi', () => {
+  it('uploads the PDF with its name in one multipart request', async () => {
+    const api = driveApi('t');
+    const pdf = new TextEncoder().encode('%PDF-1.7 test');
+    expect(
+      await new GoogleDriveApi(api.fetchFn).uploadPdf('t', { name: 'Unit 3.pdf', bytes: pdf }),
+    ).toEqual({ ok: true, value: { id: 'drive-file-1' } });
+    const [upload] = api.uploads;
+    expect(upload?.url).toBe(
+      'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',
+    );
+    expect(upload?.contentType).toMatch(/^multipart\/related; boundary=/);
+    expect(upload?.body).toContain('{"name":"Unit 3.pdf","mimeType":"application/pdf"}');
+    expect(upload?.body).toContain('Content-Type: application/pdf');
+    expect(upload?.body).toContain('%PDF-1.7 test');
+  });
+
+  it('reports a server error or an unreachable Google as unavailable', async () => {
+    const pdf = new Uint8Array([1]);
+    expect(
+      await new GoogleDriveApi(driveApi('t', 503).fetchFn).uploadPdf('t', {
+        name: 'a.pdf',
+        bytes: pdf,
+      }),
+    ).toEqual({ ok: false, error: { code: 'unavailable' } });
+    const offline = () => Promise.reject(new Error('offline'));
+    expect(await new GoogleDriveApi(offline).uploadPdf('t', { name: 'a.pdf', bytes: pdf })).toEqual(
+      {
+        ok: false,
+        error: { code: 'unavailable' },
+      },
+    );
   });
 });

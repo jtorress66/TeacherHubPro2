@@ -4,6 +4,7 @@ import { fileStoreContract, pdfTextExtractorContract } from '../contracts/files.
 import {
   classroomAuthorizationContract,
   classroomContract,
+  googleDriveContract,
   googleFormsContract,
   googleIdentityContract,
 } from '../contracts/google.contract.ts';
@@ -31,6 +32,7 @@ import { InMemoryFileStore, FakePdfTextExtractor } from './files.ts';
 import {
   FakeClassroom,
   FakeClassroomAuthorization,
+  FakeGoogleDrive,
   FakeGoogleForms,
   FakeGoogleIdentity,
 } from './google.ts';
@@ -211,7 +213,7 @@ describe('FakeClassroom', () => {
       await classroom.createCoursework('t', 'nope', {
         title: 'x',
         description: '',
-        link: 'https://l',
+        material: { kind: 'link', url: 'https://l' },
         dueDate: null,
       }),
     ).toEqual({ ok: false, error: { code: 'not_found' } });
@@ -232,5 +234,11 @@ ticketSignerContract('FakeTicketSigner', () => new FakeTicketSigner());
 googleFormsContract(
   'FakeGoogleForms',
   (accessToken) => new FakeGoogleForms({ accessToken }),
+  'token-1',
+);
+
+googleDriveContract(
+  'FakeGoogleDrive',
+  (accessToken) => new FakeGoogleDrive({ accessToken }),
   'token-1',
 );

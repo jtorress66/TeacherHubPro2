@@ -261,6 +261,28 @@ export async function makeGoogleQuizAction(
   redirect(`${assistantPath(locale)}/quizzes/${made.value.id}`);
 }
 
+/** Posts the teacher's own test PDF to a Classroom course, a copy for each student. */
+export async function postPdfToClassroomAction(
+  state: AssignmentFormState,
+  data: FormData,
+): Promise<AssignmentFormState> {
+  const locale = localeOf(data);
+  const { user } = await requireUser(locale);
+  const file = fileOf(data, 'pdf');
+  if (file === null) return { errors: { pdf: createTranslator(locale)('attachments.noFile') } };
+  const posted = await getAppContainer().postPdfToClassroom.execute({
+    actor: user,
+    courseId: text(data, 'courseId'),
+    title: text(data, 'title'),
+    instructions: orNull(text(data, 'instructions')),
+    dueDate: orNull(text(data, 'dueDate')),
+    fileName: file.name,
+    pdf: new Uint8Array(await file.arrayBuffer()),
+  });
+  if (!posted.ok) return { errors: formErrors(posted.error, locale) };
+  return done(state, { url: posted.value.url });
+}
+
 /** Posts one of the teacher's Google Forms quizzes to a Classroom course. */
 export async function postQuizToClassroomAction(
   state: AssignmentFormState,

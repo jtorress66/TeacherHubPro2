@@ -207,7 +207,7 @@ describe('Google Forms quiz without a class', () => {
     expect(classroom.coursework.at(-1)).toEqual({
       title: 'Space quiz',
       description: '',
-      link: quiz.responderUrl,
+      material: { kind: 'link', url: quiz.responderUrl },
       dueDate: '2026-09-30',
     });
     expect(await post('nope', null)).toEqual({ ok: false, error: { code: 'classroom_failed' } });

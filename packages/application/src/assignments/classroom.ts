@@ -183,7 +183,7 @@ export class ShareAssignment {
       {
         title: assignment.title,
         description: assignment.instructions ?? '',
-        link: this.deps.appUrl,
+        material: { kind: 'link', url: this.deps.appUrl },
         dueDate: assignment.dueDate,
       },
     );

@@ -7,6 +7,7 @@ import {
   importRosterAction,
   issueLinksAction,
   makeFormsQuizAction,
+  postPdfToClassroomAction,
   postQuizToClassroomAction,
   requestAiGradingAction,
   requestPdfImportAction,
@@ -16,7 +17,7 @@ import {
   type AssignmentFormState,
 } from '../app/_lib/assignment-actions.ts';
 import { Field, FormAlert, Submit } from './forms.tsx';
-import { Hidden, Select, type Option } from './form-fields.tsx';
+import { Hidden, Select, TextArea, type Option } from './form-fields.tsx';
 
 const initial: AssignmentFormState = {};
 
@@ -392,6 +393,62 @@ export function PdfTestForm(props: {
         </>
       )}
       <Submit label={t('pdfTest.submit')} />
+    </form>
+  );
+}
+
+/** The teacher's own test PDF, posted to a Classroom course as it is. */
+export function PostPdfForm(props: {
+  readonly locale: Locale;
+  readonly courses: readonly Option[];
+}) {
+  const t = createTranslator(props.locale);
+  const [state, action] = useActionState(postPdfToClassroomAction, initial);
+  const errors = state.errors ?? {};
+  return (
+    <form action={action} className="stack" aria-label={t('pdfPost.submit')} key={state.version}>
+      <Hidden values={{ locale: props.locale }} />
+      <FormAlert message={errors.form} />
+      {state.url === undefined ? null : (
+        <p role="status" className="notice">
+          {t('pdfPost.posted')} <a href={state.url}>{t('pdfPost.open')}</a>
+        </p>
+      )}
+      <Select
+        id="pdf-post-course"
+        name="courseId"
+        label={t('classroom.course')}
+        options={props.courses}
+      />
+      <Field
+        id="pdf-post-title"
+        name="title"
+        label={t('pdfPost.name')}
+        error={errors.title}
+        required
+      />
+      <TextArea
+        id="pdf-post-instructions"
+        name="instructions"
+        label={t('pdfPost.instructions')}
+        error={errors.instructions}
+      />
+      <Field
+        id="pdf-post-due"
+        name="dueDate"
+        type="date"
+        label={t('pdfPost.dueDate')}
+        error={errors.dueDate}
+      />
+      <FileField
+        id="pdf-post-file"
+        name="pdf"
+        label={t('pdfPost.file')}
+        accept=".pdf,application/pdf"
+        error={errors.pdf}
+      />
+      <p className="hint">{t('pdfPost.note')}</p>
+      <Submit label={t('pdfPost.submit')} />
     </form>
   );
 }

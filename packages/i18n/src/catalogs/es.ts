@@ -926,6 +926,19 @@ export const es: Messages = {
     true: 'Cierto',
     false: 'Falso',
   },
+  pdfPost: {
+    intro:
+      'Sube el PDF de tu examen o prueba y publícalo tal cual en un curso de Google Classroom como tarea.',
+    name: 'Título de la tarea',
+    instructions: 'Instrucciones para los estudiantes (opcional)',
+    dueDate: 'Fecha de entrega en Classroom (opcional)',
+    file: 'PDF de tu examen o prueba',
+    submit: 'Publicar en Google Classroom',
+    posted: 'Publicado en Google Classroom.',
+    open: 'Abrir en Classroom',
+    note: 'Cada estudiante recibe su propia copia del PDF para escribir en ella y entregarla.',
+    aiInstead: 'O conviértelo en una prueba de Google Forms con IA',
+  },
   googleQuiz: {
     list: 'Tus pruebas de Google Forms',
     empty: 'Todavía no hay pruebas de Google Forms.',

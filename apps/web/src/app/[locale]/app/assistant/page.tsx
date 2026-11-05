@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { createTranslator } from '@thp/i18n';
 import { ContentForm } from '../../../../components/assistant-forms.tsx';
-import { PdfTestForm } from '../../../../components/assignment-tools.tsx';
+import { PdfTestForm, PostPdfForm } from '../../../../components/assignment-tools.tsx';
 import { getAppContainer } from '../../../../container.ts';
 import { requireUser } from '../../../_lib/auth.ts';
 import { localeFrom, type LocaleParams } from '../../locale-param.ts';
@@ -30,6 +30,7 @@ export default async function AssistantPage(props: LocaleParams) {
   ).flat();
   const items = history.ok ? history.value : [];
   const listed = await app.listGoogleQuizzes.execute({ actor: user });
+  const courses = await app.listClassroomCourses.execute({ actor: user });
   const quizzes = listed.ok ? listed.value : [];
   const day = new Intl.DateTimeFormat(locale, { dateStyle: 'medium' });
 
@@ -40,17 +41,36 @@ export default async function AssistantPage(props: LocaleParams) {
       <ContentForm locale={locale} />
       <section id="pdf-test-card" className="card stack" aria-labelledby="pdf-test-heading">
         <h2 id="pdf-test-heading">{t('pdfTest.title')}</h2>
-        <p>{t('pdfTest.intro')}</p>
-        <PdfTestForm
-          locale={locale}
-          targets={targets}
-          noClasses={
-            <p className="hint">
-              {t('pdfTest.noClasses')}{' '}
-              <Link href={`/${locale}/app/classes`}>{t('pdfTest.createClass')}</Link>
+        <p>{t('pdfPost.intro')}</p>
+        {courses.ok ? (
+          <PostPdfForm
+            locale={locale}
+            courses={courses.value.map((course) => ({ id: course.id, name: course.name }))}
+          />
+        ) : (
+          <div className="stack">
+            <p className="muted">{t('pdfTest.connectFirst')}</p>
+            <p>
+              <a className="button" href={`/api/classroom/connect?locale=${locale}`}>
+                {t('pdfTest.connect')}
+              </a>
             </p>
-          }
-        />
+          </div>
+        )}
+        <details className="stack">
+          <summary>{t('pdfPost.aiInstead')}</summary>
+          <p>{t('pdfTest.intro')}</p>
+          <PdfTestForm
+            locale={locale}
+            targets={targets}
+            noClasses={
+              <p className="hint">
+                {t('pdfTest.noClasses')}{' '}
+                <Link href={`/${locale}/app/classes`}>{t('pdfTest.createClass')}</Link>
+              </p>
+            }
+          />
+        </details>
       </section>
       <h2>{t('googleQuiz.list')}</h2>
       {quizzes.length === 0 ? (

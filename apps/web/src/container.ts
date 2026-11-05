@@ -7,8 +7,10 @@ import {
   HmacTicketSigner,
   GoogleClassroom,
   GoogleClassroomAuthorization,
+  GoogleDriveApi,
   GoogleFormsApi,
   LocalClassroom,
+  LocalDrive,
   LocalForms,
   LocalClassroomAuthorization,
   createDatabase,
@@ -100,6 +102,7 @@ import {
   ImportClassroomRoster,
   ShareAssignment,
   StartPdfTest,
+  PostPdfToClassroom,
   MakeFormsQuiz,
   FindFormsQuiz,
   RequestQuizImport,
@@ -284,6 +287,7 @@ export interface AppContainer {
   readonly importClassroomRoster: ImportClassroomRoster;
   readonly shareAssignment: ShareAssignment;
   readonly startPdfTest: StartPdfTest;
+  readonly postPdfToClassroom: PostPdfToClassroom;
   readonly makeFormsQuiz: MakeFormsQuiz;
   readonly findFormsQuiz: FindFormsQuiz;
   readonly requestQuizImport: RequestQuizImport;
@@ -414,6 +418,7 @@ function classroomFor(config: ClassroomConfig) {
       classroomCourses: classroom,
       classroomCoursework: classroom,
       googleForms: new LocalForms(),
+      googleDrive: new LocalDrive(),
     };
   }
   const classroom = new GoogleClassroom();
@@ -426,6 +431,7 @@ function classroomFor(config: ClassroomConfig) {
     classroomCourses: classroom,
     classroomCoursework: classroom,
     googleForms: new GoogleFormsApi(),
+    googleDrive: new GoogleDriveApi(),
   };
 }
 
@@ -564,6 +570,7 @@ export function createAppContainer(
     importClassroomRoster: new ImportClassroomRoster(deps),
     shareAssignment: new ShareAssignment(deps),
     startPdfTest: new StartPdfTest(deps),
+    postPdfToClassroom: new PostPdfToClassroom(deps),
     makeFormsQuiz: new MakeFormsQuiz(deps),
     findFormsQuiz: new FindFormsQuiz(deps),
     requestQuizImport: new RequestQuizImport(deps),

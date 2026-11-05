@@ -919,6 +919,19 @@ export const en = {
     true: 'True',
     false: 'False',
   },
+  pdfPost: {
+    intro:
+      'Upload your test or quiz PDF and post it to a Google Classroom course as an assignment, just as it is.',
+    name: 'Assignment title',
+    instructions: 'Instructions for students (optional)',
+    dueDate: 'Due date in Classroom (optional)',
+    file: 'Test PDF',
+    submit: 'Post to Google Classroom',
+    posted: 'Posted to Google Classroom.',
+    open: 'Open in Classroom',
+    note: 'Each student gets their own copy of the PDF to write on and hand in.',
+    aiInstead: 'Or turn it into a Google Forms quiz with AI',
+  },
   googleQuiz: {
     list: 'Your Google Forms quizzes',
     empty: 'No Google Forms quizzes yet.',
