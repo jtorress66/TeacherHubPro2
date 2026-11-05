@@ -76,11 +76,12 @@ export function classroomContract(
     it('rejects a bad access token and an unknown course', async () => {
       const classroom = make(fixture);
 
-      expect(await classroom.listCourses('expired')).toEqual({
+      // Google's reason token may come along for logs; the code is the contract.
+      expect(await classroom.listCourses('expired')).toMatchObject({
         ok: false,
         error: { code: 'unauthorized' },
       });
-      expect(await classroom.listRoster(fixture.accessToken, 'nope')).toEqual({
+      expect(await classroom.listRoster(fixture.accessToken, 'nope')).toMatchObject({
         ok: false,
         error: { code: 'not_found' },
       });
@@ -116,7 +117,7 @@ export function classroomContract(
         dueDate: null,
       });
 
-      expect(result).toEqual({ ok: false, error: { code: 'unauthorized' } });
+      expect(result).toMatchObject({ ok: false, error: { code: 'unauthorized' } });
     });
   });
 }

@@ -146,7 +146,10 @@ export class FakeGoogleDrive implements GoogleDriveFiles {
   readonly uploads: { readonly name: string; readonly bytes: Uint8Array }[] = [];
 
   constructor(
-    private readonly setup: { readonly accessToken: string } = { accessToken: 'classroom-access' },
+    private readonly setup: {
+      readonly accessToken: string;
+      readonly failWith?: ClassroomError['code'];
+    } = { accessToken: 'classroom-access' },
   ) {}
 
   uploadPdf(
@@ -155,6 +158,8 @@ export class FakeGoogleDrive implements GoogleDriveFiles {
   ): Promise<Result<{ readonly id: string }, ClassroomError>> {
     if (accessToken !== this.setup.accessToken)
       return Promise.resolve(err({ code: 'unauthorized' }));
+    if (this.setup.failWith !== undefined)
+      return Promise.resolve(err({ code: this.setup.failWith }));
     this.uploads.push(file);
     return Promise.resolve(ok({ id: `drive-${String(this.uploads.length)}` }));
   }

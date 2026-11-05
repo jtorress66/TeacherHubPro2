@@ -12,6 +12,7 @@ import {
 import type {
   AttachmentRepository,
   ClassroomAuthorization,
+  ClassroomError,
   ClassroomConnectionRepository,
   ClassroomCourse,
   ClassroomCourses,
@@ -34,6 +35,16 @@ export interface ConnectionDeps {
   readonly cipher: SecretCipher;
   readonly classroomAuth: ClassroomAuthorization;
 }
+
+/** What the teacher can do about a Google refusal: reconnect, turn an API on, or try again. */
+export const googleFailed = (error: ClassroomError) =>
+  fail(
+    error.code === 'insufficient_scope'
+      ? 'google_reconnect'
+      : error.code === 'api_disabled'
+        ? 'google_api_disabled'
+        : 'classroom_failed',
+  );
 
 /** A fresh access token from the teacher's stored (encrypted) refresh token. */
 export async function accessToken(
@@ -101,7 +112,7 @@ export class ListClassroomCourses {
     const token = await accessToken(this.deps, input.actor);
     if (!token.ok) return token;
     const courses = await this.deps.classroomCourses.listCourses(token.value);
-    return courses.ok ? courses : fail('classroom_failed');
+    return courses.ok ? courses : googleFailed(courses.error);
   }
 }
 
@@ -133,7 +144,7 @@ export class ImportClassroomRoster {
     const token = await accessToken(this.deps, input.actor);
     if (!token.ok) return token;
     const roster = await this.deps.classroomCourses.listRoster(token.value, input.courseId);
-    if (!roster.ok) return fail('classroom_failed');
+    if (!roster.ok) return googleFailed(roster.error);
     const current = await this.deps.students.listByClass(cls.value.schoolId, cls.value.id);
     const added: Student[] = [];
     for (const person of roster.value) {
@@ -187,6 +198,6 @@ export class ShareAssignment {
         dueDate: assignment.dueDate,
       },
     );
-    return shared.ok ? ok({ url: shared.value.url }) : fail('classroom_failed');
+    return shared.ok ? ok({ url: shared.value.url }) : googleFailed(shared.error);
   }
 }

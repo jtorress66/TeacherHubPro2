@@ -99,6 +99,22 @@ describe('Posting a test PDF straight to Google Classroom', () => {
     expect(drive.uploads).toEqual([]);
   });
 
+  it('names the fix when Google refuses: an API turned off, or a grant missing Drive', async () => {
+    const off = await teacher(makeWorld(), {
+      drive: new FakeGoogleDrive({ accessToken: 'classroom-access', failWith: 'api_disabled' }),
+    });
+    expect(await off.post()).toEqual({ ok: false, error: { code: 'google_api_disabled' } });
+
+    const old = await teacher(makeWorld(), {
+      drive: new FakeGoogleDrive({
+        accessToken: 'classroom-access',
+        failWith: 'insufficient_scope',
+      }),
+    });
+    expect(await old.post()).toEqual({ ok: false, error: { code: 'google_reconnect' } });
+    expect(old.classroom.coursework).toEqual([]);
+  });
+
   it('needs a Google connection', async () => {
     const world = makeWorld();
     const { post } = await teacher(world, { connect: false });

@@ -1,15 +1,10 @@
 import { err, ok, type Result } from '@thp/domain';
 import type { ClassroomError, GoogleDriveFiles } from '@thp/ports';
+import { googleFailure } from './google-errors.ts';
 
 type Fetch = (input: string | URL | Request, init?: RequestInit) => Promise<Response>;
 
 const uploadUrl = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
-
-function failure(status: number): ClassroomError {
-  if (status === 401 || status === 403) return { code: 'unauthorized' };
-  if (status === 404) return { code: 'not_found' };
-  return { code: 'unavailable' };
-}
 
 /** One multipart/related body: the file's JSON metadata, then its bytes. */
 function multipart(boundary: string, name: string, bytes: Uint8Array): Blob {
@@ -45,7 +40,7 @@ export class GoogleDriveApi implements GoogleDriveFiles {
         },
         body: multipart(this.boundary, file.name, file.bytes),
       });
-      if (!response.ok) return err(failure(response.status));
+      if (!response.ok) return err(await googleFailure(response));
       const body: unknown = await response.json();
       const id = typeof body === 'object' && body !== null && 'id' in body ? body.id : null;
       return typeof id === 'string' ? ok({ id }) : err({ code: 'unavailable' });
