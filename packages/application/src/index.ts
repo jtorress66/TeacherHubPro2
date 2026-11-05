@@ -210,6 +210,7 @@ export {
 } from './assignments/attachments.ts';
 export {
   RequestPdfImport,
+  RequestQuizImport,
   PdfImportHandler,
   GetImportedTest,
   pdfImportJobKind,
@@ -249,6 +250,12 @@ export {
 } from './assignments/classroom.ts';
 export { StartPdfTest } from './assignments/pdf-test.ts';
 export { MakeFormsQuiz, FindFormsQuiz } from './assignments/forms-quiz.ts';
+export {
+  MakeGoogleQuiz,
+  FindGoogleQuiz,
+  ListGoogleQuizzes,
+  PostQuizToClassroom,
+} from './assignments/google-quiz.ts';
 export { findOwnGame, type GameRef } from './games/game-access.ts';
 export {
   CreateGame,

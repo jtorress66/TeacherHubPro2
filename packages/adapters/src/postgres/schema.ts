@@ -295,6 +295,17 @@ export interface FormsExportsTable {
   made_at: Date;
 }
 
+export interface GoogleQuizzesTable {
+  id: string;
+  school_id: string;
+  owner_id: string;
+  title: string;
+  form_id: string;
+  edit_url: string;
+  responder_url: string;
+  made_at: Date;
+}
+
 export interface AttendanceSessionsTable {
   id: string;
   school_id: string;
@@ -468,6 +479,7 @@ export interface Database {
   student_links: StudentLinksTable;
   classroom_connections: ClassroomConnectionsTable;
   forms_exports: FormsExportsTable;
+  google_quizzes: GoogleQuizzesTable;
   attendance_sessions: AttendanceSessionsTable;
   attendance_entries: AttendanceEntriesTable;
   games: GamesTable;

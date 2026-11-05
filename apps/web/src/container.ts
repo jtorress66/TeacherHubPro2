@@ -102,6 +102,11 @@ import {
   StartPdfTest,
   MakeFormsQuiz,
   FindFormsQuiz,
+  RequestQuizImport,
+  MakeGoogleQuiz,
+  FindGoogleQuiz,
+  ListGoogleQuizzes,
+  PostQuizToClassroom,
   CreatePresentation,
   DeleteGeneration,
   DeletePresentation,
@@ -281,6 +286,11 @@ export interface AppContainer {
   readonly startPdfTest: StartPdfTest;
   readonly makeFormsQuiz: MakeFormsQuiz;
   readonly findFormsQuiz: FindFormsQuiz;
+  readonly requestQuizImport: RequestQuizImport;
+  readonly makeGoogleQuiz: MakeGoogleQuiz;
+  readonly findGoogleQuiz: FindGoogleQuiz;
+  readonly listGoogleQuizzes: ListGoogleQuizzes;
+  readonly postQuizToClassroom: PostQuizToClassroom;
   readonly createGame: CreateGame;
   readonly updateGame: UpdateGame;
   readonly listGames: ListGames;
@@ -556,6 +566,11 @@ export function createAppContainer(
     startPdfTest: new StartPdfTest(deps),
     makeFormsQuiz: new MakeFormsQuiz(deps),
     findFormsQuiz: new FindFormsQuiz(deps),
+    requestQuizImport: new RequestQuizImport(deps),
+    makeGoogleQuiz: new MakeGoogleQuiz(deps),
+    findGoogleQuiz: new FindGoogleQuiz(deps),
+    listGoogleQuizzes: new ListGoogleQuizzes(deps),
+    postQuizToClassroom: new PostQuizToClassroom(deps),
     createGame: new CreateGame(deps),
     updateGame: new UpdateGame(deps),
     listGames: new ListGames(deps),

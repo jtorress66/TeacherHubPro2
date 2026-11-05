@@ -85,4 +85,58 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     );
     await expect(quiz.getByRole('button', { name: t('forms.remake') })).toBeVisible();
   });
+
+  test(`a teacher with no class turns a test PDF into a Google Forms quiz and posts it to Classroom (${locale})`, async ({
+    page,
+  }) => {
+    test.setTimeout(90_000);
+    await signUp(page, locale);
+
+    await page.goto(`/${locale}/app/assistant`);
+    const card = page.getByRole('region', { name: t('pdfTest.title') });
+    expect(
+      (
+        await new AxeBuilder({ page })
+          .include('#pdf-test-card')
+          .withTags(['wcag2a', 'wcag2aa'])
+          .analyze()
+      ).violations,
+    ).toEqual([]);
+    await expect(card.getByLabel(t('pdfTest.target'))).toHaveValue('');
+    await card.getByLabel(t('pdfTest.name')).fill('Space quiz');
+    await card
+      .getByLabel(t('pdfTest.file'))
+      .setInputFiles({ name: 'quiz.pdf', mimeType: 'application/pdf', buffer: await quizPdf() });
+    await card.getByRole('button', { name: t('pdfTest.submit') }).click();
+
+    await expect(page.getByRole('note')).toHaveText(t('questions.imported'), { timeout: 30_000 });
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('Space quiz');
+    const reviewUrl = page.url();
+    await page.getByRole('link', { name: t('pdfTest.connect') }).click();
+    await expect(
+      page.getByRole('status').filter({ hasText: t('classroom.connectedNotice') }),
+    ).toBeVisible();
+
+    await page.goto(reviewUrl);
+    const builder = page.getByRole('form', { name: t('questions.title') });
+    await expect(builder.getByRole('listitem')).toHaveCount(3);
+    await builder.getByRole('button', { name: t('forms.make') }).click();
+
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Space quiz');
+    await expect(page.getByRole('link', { name: t('forms.edit') })).toHaveAttribute(
+      'href',
+      /^https:\/\/forms\.local\/d\/local-form-\d+\/edit$/,
+    );
+    const post = page.getByRole('form', { name: t('googleQuiz.post') });
+    await post.getByLabel(t('googleQuiz.dueDate')).fill('2026-12-01');
+    await post.getByRole('button', { name: t('googleQuiz.post') }).click();
+    await expect(post.getByRole('status')).toContainText(t('googleQuiz.posted'));
+
+    await page.getByRole('link', { name: t('googleQuiz.back') }).click();
+    await expect(
+      page
+        .getByRole('list', { name: t('googleQuiz.list') })
+        .getByRole('link', { name: 'Space quiz' }),
+    ).toBeVisible();
+  });
 }

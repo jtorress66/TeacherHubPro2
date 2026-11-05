@@ -3,6 +3,8 @@ import type {
   AssignmentId,
   AttachmentId,
   ClassId,
+  GoogleQuiz,
+  GoogleQuizId,
   QuestionId,
   SchoolId,
   StudentId,
@@ -14,6 +16,7 @@ import type {
   AttachmentRepository,
   ClassroomConnectionRepository,
   FormsExportRepository,
+  GoogleQuizRepository,
   StudentLinkRepository,
   SubmissionRepository,
 } from '@thp/ports';
@@ -26,6 +29,7 @@ export interface AssignmentRepositories {
   readonly studentLinks: StudentLinkRepository;
   readonly classroomConnections: ClassroomConnectionRepository;
   readonly formsExports: FormsExportRepository;
+  readonly googleQuizzes: GoogleQuizRepository;
 }
 
 const schoolA = 'school-a' as SchoolId;
@@ -156,6 +160,34 @@ export function assignmentRepositoryContract(
       expect(await repo.find(schoolA, first.assignmentId)).toEqual(second);
       expect(await repo.find(schoolB, first.assignmentId)).toBeNull();
       expect(await repo.find(schoolA, 'assignment-9' as AssignmentId)).toBeNull();
+    });
+  });
+
+  describe(`${name} (GoogleQuizRepository)`, () => {
+    const quiz = (id: string, ownerId: string, madeOn: string): GoogleQuiz => ({
+      id: id as GoogleQuizId,
+      schoolId: schoolA,
+      ownerId: ownerId as UserId,
+      title: `Quiz ${id}`,
+      formId: `form-${id}`,
+      editUrl: `https://docs.google.com/forms/d/form-${id}/edit`,
+      responderUrl: `https://docs.google.com/forms/d/e/${id}/viewform`,
+      createdAt: new Date(`${madeOn}T12:00:00Z`),
+    });
+
+    it('lists only the owner’s quizzes, newest first, within the school', async () => {
+      const repo = make().googleQuizzes;
+      const older = quiz('gq-1', 'teacher-1', '2026-11-01');
+      const newer = quiz('gq-2', 'teacher-1', '2026-11-03');
+      await repo.save(older);
+      await repo.save(newer);
+      await repo.save(quiz('gq-3', 'teacher-2', '2026-11-02'));
+
+      expect(await repo.listByOwner(schoolA, 'teacher-1' as UserId)).toEqual([newer, older]);
+      expect(await repo.listByOwner(schoolB, 'teacher-1' as UserId)).toEqual([]);
+      expect(await repo.findForOwner(schoolA, 'teacher-1' as UserId, older.id)).toEqual(older);
+      expect(await repo.findForOwner(schoolA, 'teacher-2' as UserId, older.id)).toBeNull();
+      expect(await repo.findForOwner(schoolB, 'teacher-1' as UserId, older.id)).toBeNull();
     });
   });
 }

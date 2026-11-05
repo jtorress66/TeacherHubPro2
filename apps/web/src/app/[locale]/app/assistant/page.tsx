@@ -29,6 +29,8 @@ export default async function AssistantPage(props: LocaleParams) {
     )
   ).flat();
   const items = history.ok ? history.value : [];
+  const listed = await app.listGoogleQuizzes.execute({ actor: user });
+  const quizzes = listed.ok ? listed.value : [];
   const day = new Intl.DateTimeFormat(locale, { dateStyle: 'medium' });
 
   return (
@@ -39,15 +41,30 @@ export default async function AssistantPage(props: LocaleParams) {
       <section id="pdf-test-card" className="card stack" aria-labelledby="pdf-test-heading">
         <h2 id="pdf-test-heading">{t('pdfTest.title')}</h2>
         <p>{t('pdfTest.intro')}</p>
-        {targets.length > 0 ? (
-          <PdfTestForm locale={locale} targets={targets} />
-        ) : (
-          <p>
-            {t('pdfTest.noClasses')}{' '}
-            <Link href={`/${locale}/app/classes`}>{t('pdfTest.createClass')}</Link>
-          </p>
-        )}
+        <PdfTestForm
+          locale={locale}
+          targets={targets}
+          noClasses={
+            <p className="hint">
+              {t('pdfTest.noClasses')}{' '}
+              <Link href={`/${locale}/app/classes`}>{t('pdfTest.createClass')}</Link>
+            </p>
+          }
+        />
       </section>
+      <h2>{t('googleQuiz.list')}</h2>
+      {quizzes.length === 0 ? (
+        <p>{t('googleQuiz.empty')}</p>
+      ) : (
+        <ul className="list" aria-label={t('googleQuiz.list')}>
+          {quizzes.map((quiz) => (
+            <li key={quiz.id}>
+              <Link href={`/${locale}/app/assistant/quizzes/${quiz.id}`}>{quiz.title}</Link>{' '}
+              <span className="hint">{day.format(quiz.createdAt)}</span>
+            </li>
+          ))}
+        </ul>
+      )}
       <h2>{t('assistant.history')}</h2>
       {items.length === 0 ? (
         <p>{t('assistant.historyEmpty')}</p>
