@@ -948,12 +948,6 @@ export const en = {
     open: 'Open the Doc to check',
     checkFirst: 'Fix anything in the Doc first; Classroom gets the Doc as it is when you post.',
   },
-  docLabels: {
-    name: 'Name',
-    date: 'Date',
-    answer: 'Answer',
-    points: '{points} pts',
-  },
   googleQuiz: {
     list: 'Your Google Forms quizzes',
     empty: 'No Google Forms quizzes yet.',

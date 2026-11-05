@@ -1,19 +1,20 @@
 import { describe, expect, it } from 'vitest';
-import { ok, type ExtractedTest, type JobId, type QuestionId } from '@thp/domain';
+import { ok, type JobId, type TestLayout } from '@thp/domain';
 import {
   FakeClassroom,
   FakeClassroomAuthorization,
   FakeGoogleDrive,
   FakePdfTextExtractor,
-  FakeQuestionExtractor,
+  FakeTestTranscriber,
   FakeSecretCipher,
 } from '@thp/testing';
 import {
   FinishClassroomConnect,
+  GetTranscribedTest,
   JobHandlerRegistry,
   MakeTestDoc,
-  PdfImportHandler,
-  pdfImportJobKind,
+  TestDocHandler,
+  testDocJobKind,
   PostDocToClassroom,
   RequestDocImport,
   RequestQuizImport,
@@ -23,35 +24,15 @@ import { colleagueOf, valueOf } from './classroom.ts';
 import { advanceDays, makeWorld, signedUp, type World } from './world.ts';
 
 const pdf = new TextEncoder().encode('%PDF test');
-const labels = {
-  name: 'Nombre',
-  date: 'Fecha',
-  answer: 'Respuesta',
-  true: 'Cierto',
-  false: 'Falso',
-  points: '{points} pts',
-};
-const extracted: ExtractedTest = {
-  instructions: null,
-  questions: [
+const layout: TestLayout = {
+  blocks: [
+    { kind: 'part', title: 'A. Matching Definitions (5 points)' },
     {
-      id: 'q1' as QuestionId,
-      type: 'matching',
-      prompt: 'Match each word.',
-      points: 5,
-      instructions: 'A. Matching Definitions',
-      pairs: [
-        { left: 'risks', right: 'the chance of something bad' },
-        { left: 'capable', right: 'able to do something successfully' },
+      kind: 'columns',
+      rows: [
+        ['______ 1. risks', 'a. to feel uncomfortable or ashamed'],
+        ['______ 2. capable', 'b. the chance of something bad'],
       ],
-    },
-    {
-      id: 'q2' as QuestionId,
-      type: 'fill_blank',
-      prompt: 'I felt ___.',
-      points: 1,
-      instructions: null,
-      acceptedAnswers: ['SECRET-ANSWER'],
     },
   ],
 };
@@ -87,36 +68,46 @@ async function teacher(world: World, drive = new FakeGoogleDrive()) {
       pdf,
       ...changes,
     });
-  const read = async () => {
+  const transcriber = new FakeTestTranscriber(ok(layout));
+  const read = async (
+    pdfText = new FakePdfTextExtractor([{ pdf, text: 'Test text', pageCount: 1 }]),
+  ) => {
     await new RunNextJob({
       jobs: world.jobs,
       handlers: new JobHandlerRegistry([
-        new PdfImportHandler({
-          ...world,
-          pdfText: new FakePdfTextExtractor([{ pdf, text: 'Test text', pageCount: 1 }]),
-          questionExtractor: new FakeQuestionExtractor(ok(extracted)),
-        }),
+        new TestDocHandler({ ...world, pdfText, testTranscriber: transcriber }),
       ]),
     }).execute();
   };
-  return { actor, all, classroom, drive, request, read };
+  return { actor, all, classroom, drive, request, read, transcriber };
 }
 
 describe('A test as a Google Doc students type in', () => {
-  it('reads the PDF, makes a clean Doc without answers, and posts it so each student gets a copy', async () => {
+  it('copies the test as printed into a Doc, and posts it so each student gets a copy', async () => {
     const world = makeWorld();
-    const { actor, all, classroom, drive, request, read } = await teacher(world);
+    const { actor, all, classroom, drive, request, read, transcriber } = await teacher(world);
 
     const job = valueOf(await request());
-    expect(job).toMatchObject({ kind: pdfImportJobKind, ownerId: actor.id });
+    expect(job).toMatchObject({ kind: testDocJobKind, ownerId: actor.id });
     await read();
+    expect(transcriber.texts).toEqual(['Test text']);
+    expect(valueOf(await new GetTranscribedTest(world).execute({ actor, jobId: job.id }))).toEqual({
+      title: 'Chapter 3 – Try It!',
+      layout,
+      classroom: {
+        courseId: 'course-1',
+        instructions: 'Type your answers.',
+        dueDate: '2026-12-01',
+      },
+    });
 
-    const doc = valueOf(await new MakeTestDoc(all).execute({ actor, jobId: job.id, labels }));
+    const doc = valueOf(await new MakeTestDoc(all).execute({ actor, jobId: job.id }));
     expect(doc).toEqual({ docId: 'doc-1', url: 'https://docs.test/doc-1/edit' });
     expect(drive.docs[0]?.name).toBe('Chapter 3 – Try It!');
-    expect(drive.docs[0]?.html).toContain('<td>______ 1. risks</td>');
-    expect(drive.docs[0]?.html).toContain('Nombre: ');
-    expect(drive.docs[0]?.html).not.toContain('SECRET-ANSWER');
+    // The definitions keep their printed letters, so the teacher's answer key still fits.
+    expect(drive.docs[0]?.html).toContain(
+      '<tr><td>______ 1. risks</td><td>a. to feel uncomfortable or ashamed</td></tr>',
+    );
 
     const posted = valueOf(
       await new PostDocToClassroom(all).execute({ actor, jobId: job.id, docId: doc.docId }),
@@ -159,10 +150,10 @@ describe('A test as a Google Doc students type in', () => {
     const job = valueOf(await request());
     const notFound = { ok: false, error: { code: 'not_found' } };
 
-    expect(await new MakeTestDoc(all).execute({ actor, jobId: job.id, labels })).toEqual(notFound);
+    expect(await new MakeTestDoc(all).execute({ actor, jobId: job.id })).toEqual(notFound);
     await read();
     expect(
-      await new MakeTestDoc(all).execute({ actor: colleagueOf(actor), jobId: job.id, labels }),
+      await new MakeTestDoc(all).execute({ actor: colleagueOf(actor), jobId: job.id }),
     ).toEqual(notFound);
     expect(
       await new PostDocToClassroom(all).execute({
@@ -174,10 +165,10 @@ describe('A test as a Google Doc students type in', () => {
 
     const quiz = valueOf(await new RequestQuizImport(world).execute({ actor, title: 'Q', pdf }));
     await read();
-    expect(await new MakeTestDoc(all).execute({ actor, jobId: quiz.id, labels })).toEqual(notFound);
-    expect(
-      await new MakeTestDoc(all).execute({ actor, jobId: 'missing' as JobId, labels }),
-    ).toEqual(notFound);
+    expect(await new MakeTestDoc(all).execute({ actor, jobId: quiz.id })).toEqual(notFound);
+    expect(await new MakeTestDoc(all).execute({ actor, jobId: 'missing' as JobId })).toEqual(
+      notFound,
+    );
   });
 
   it('names the fix when Google refuses the Doc', async () => {
@@ -188,7 +179,7 @@ describe('A test as a Google Doc students type in', () => {
     );
     const job = valueOf(await request());
     await read();
-    expect(await new MakeTestDoc(all).execute({ actor, jobId: job.id, labels })).toEqual({
+    expect(await new MakeTestDoc(all).execute({ actor, jobId: job.id })).toEqual({
       ok: false,
       error: { code: 'google_api_disabled' },
     });
@@ -202,5 +193,24 @@ describe('A test as a Google Doc students type in', () => {
     expect(
       await new PostDocToClassroom(all).execute({ actor, jobId: job.id, docId: 'doc-1' }),
     ).toEqual({ ok: false, error: { code: 'classroom_failed' } });
+  });
+
+  it('fails the job clearly for a PDF without text or one it cannot read, and removes the PDF', async () => {
+    const world = makeWorld();
+    const { actor, request, read } = await teacher(world);
+    const blank = new TextEncoder().encode('%PDF scanned');
+    const job = valueOf(await request({ pdf: blank }));
+    await read(new FakePdfTextExtractor([{ pdf: blank, text: '  ', pageCount: 1 }]));
+    expect(await world.jobs.findForOwner(actor.schoolId, actor.id, job.id)).toMatchObject({
+      status: 'failed',
+      error: 'pdf_no_text',
+    });
+    expect((await world.files.get((job.payload as { fileKey: string }).fileKey)).ok).toBe(false);
+
+    const unreadable = valueOf(await request({ pdf: new Uint8Array([1, 2]) }));
+    await read();
+    expect(await world.jobs.findForOwner(actor.schoolId, actor.id, unreadable.id)).toMatchObject({
+      error: 'pdf_unreadable',
+    });
   });
 });

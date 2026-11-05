@@ -33,13 +33,12 @@ export default async function TestDocPage(props: Props) {
   );
 
   if (job.value.status === 'completed') {
-    const imported = await app.getImportedTest.execute({ actor: user, jobId: job.value.id });
-    if (!imported.ok || imported.value.classId !== null || imported.value.classroom === undefined)
-      notFound();
+    const test = await app.getTranscribedTest.execute({ actor: user, jobId: job.value.id });
+    if (!test.ok) notFound();
     return (
       <section className="stack">
         {back}
-        <h1>{imported.value.title}</h1>
+        <h1>{test.value.title}</h1>
         <p>{t('pdfDoc.intro')}</p>
         <TestDocActions locale={locale} jobId={job.value.id} />
       </section>

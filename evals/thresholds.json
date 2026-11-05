@@ -41,5 +41,11 @@
     "language": 1,
     "playable": 1,
     "focus": 0.8
+  },
+  "test-transcriber": {
+    "structure": 1,
+    "fidelity": 0.98,
+    "order": 1,
+    "coverage": 0.9
   }
 }

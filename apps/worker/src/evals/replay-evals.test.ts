@@ -5,6 +5,7 @@ import type {
   ExtractorMetric,
   GameMetric,
   PathMetric,
+  TranscriberMetric,
   GraderMetric,
   PlanMetric,
   PresentationMetric,
@@ -15,6 +16,7 @@ import { gameCases, runGameEvals } from './game-evals.ts';
 import { pathCases, runPathEvals } from './path-evals.ts';
 import { extractorCases, graderCases, runExtractorEvals, runGraderEvals } from './grading-evals.ts';
 import { plannerCases, runPlannerEvals } from './planner-evals.ts';
+import { runTranscriberEvals, transcriberCases } from './transcriber-evals.ts';
 import { presentationCases, runPresentationEvals } from './presentation-evals.ts';
 import { loadReplays, ReplayLlmClient } from './replay-llm-client.ts';
 
@@ -32,6 +34,7 @@ const thresholds = JSON.parse(
   grader: Record<GraderMetric, number>;
   'game-writer': Record<GameMetric, number>;
   'path-writer': Record<PathMetric, number>;
+  'test-transcriber': Record<TranscriberMetric, number>;
 };
 
 const replay = (suite: string) => new ReplayLlmClient(loadReplays(suite));
@@ -63,6 +66,12 @@ describe('replay evals (saved replies, no API calls)', () => {
 
   it('the question extractor meets its thresholds', async () => {
     const report = await runExtractorEvals(replay('extractor'), thresholds['question-extractor']);
+    expect(report.failing, formatReport(report)).toEqual([]);
+  });
+
+  it('the test transcriber has a saved reply for every case and meets its thresholds', async () => {
+    expect(Object.keys(loadReplays('transcriber'))).toHaveLength(transcriberCases.length);
+    const report = await runTranscriberEvals(replay('transcriber'), thresholds['test-transcriber']);
     expect(report.failing, formatReport(report)).toEqual([]);
   });
 

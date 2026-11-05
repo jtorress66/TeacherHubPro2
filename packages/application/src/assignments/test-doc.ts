@@ -2,44 +2,81 @@ import {
   ok,
   optionalText,
   parseLocalDate,
-  renderTestDocument,
+  renderTestLayout,
   requiredText,
   type Job,
+  type JobFailure,
   type JobId,
   type LocalDate,
   type Result,
-  type TestDocumentLabels,
+  type TestLayout,
   type User,
 } from '@thp/domain';
 import type {
   ClassroomCoursework,
   Clock,
+  FileStore,
   GoogleDriveFiles,
   JobQueue,
+  PdfTextExtractor,
   SubscriptionRepository,
+  TestTranscriber,
 } from '@thp/ports';
 import { checkAiAccess } from '../accounts/ai-access.ts';
 import { fail, type UseCaseError } from '../errors.ts';
+import type { JobHandler } from '../jobs/jobs.ts';
 import { accessToken, googleFailed, type ConnectionDeps } from './classroom.ts';
-import { GetImportedTest, queueImport, type ClassroomPost, type QueueDeps } from './pdf-import.ts';
+import { queuePdfJob, withPdfText, type QueueDeps } from './pdf-import.ts';
+
+export const testDocJobKind = 'assignment.test_doc';
+
+/** Where the Doc is posted, chosen with the PDF. */
+interface ClassroomPost {
+  readonly courseId: string;
+  readonly instructions: string | null;
+  readonly dueDate: LocalDate | null;
+}
+
+interface TestDocPayload {
+  readonly fileKey: string;
+  readonly title: string;
+  readonly classroom: ClassroomPost;
+}
+
+/** What a finished job offers: the test's layout as printed, and where it goes. */
+export interface TranscribedTest {
+  readonly title: string;
+  readonly layout: TestLayout;
+  readonly classroom: ClassroomPost;
+}
 
 interface JobRef {
   readonly actor: User;
   readonly jobId: JobId;
 }
 
-/** The owner's finished import meant for a Classroom Doc, with what to post. */
-async function docImport(deps: { readonly jobs: JobQueue }, input: JobRef) {
-  const imported = await new GetImportedTest(deps).execute(input);
-  if (!imported.ok) return imported;
-  const test = imported.value;
-  if (test.classId !== null || test.classroom === undefined) return fail('not_found');
-  return ok({ ...test, classroom: test.classroom });
+/** The actor's own finished Doc job. */
+export async function findTranscribedTest(
+  deps: { readonly jobs: JobQueue },
+  input: JobRef,
+): Promise<Result<TranscribedTest, UseCaseError>> {
+  const job = await deps.jobs.findForOwner(input.actor.schoolId, input.actor.id, input.jobId);
+  if (job?.kind !== testDocJobKind || job.status !== 'completed') return fail('not_found');
+  return ok(job.result as TranscribedTest);
+}
+
+/** The actor's finished Doc job, for its page. */
+export class GetTranscribedTest {
+  constructor(private readonly deps: { readonly jobs: JobQueue }) {}
+
+  execute(input: JobRef): Promise<Result<TranscribedTest, UseCaseError>> {
+    return findTranscribedTest(this.deps, input);
+  }
 }
 
 /**
- * Starts reading a test PDF to lay it out as a Google Doc students type in. Needs AI access; the
- * course, title, instructions and due date travel with the job.
+ * Starts copying a test PDF's layout, to post it as a Google Doc students type in. Needs AI
+ * access; the course, title, instructions and due date travel with the job.
  */
 export class RequestDocImport {
   constructor(
@@ -71,21 +108,37 @@ export class RequestDocImport {
     }
     const access = await checkAiAccess(this.deps, input.actor.schoolId);
     if (!access.ok) return access;
-    const classroom: ClassroomPost = {
-      courseId: course.value,
-      instructions: instructions.value,
-      dueDate,
-    };
-    return queueImport(this.deps, input.actor, input.pdf, {
-      classId: null,
-      assignmentId: null,
+    const data: Omit<TestDocPayload, 'fileKey'> = {
       title: title.value,
-      classroom,
+      classroom: { courseId: course.value, instructions: instructions.value, dueDate },
+    };
+    return queuePdfJob(this.deps, input.actor, input.pdf, { kind: testDocJobKind, data });
+  }
+}
+
+/** Reads the PDF's text, has the AI copy its layout as printed, and removes the PDF. */
+export class TestDocHandler implements JobHandler {
+  readonly kind = testDocJobKind;
+
+  constructor(
+    private readonly deps: {
+      readonly files: FileStore;
+      readonly pdfText: PdfTextExtractor;
+      readonly testTranscriber: TestTranscriber;
+    },
+  ) {}
+
+  handle(job: Job): Promise<Result<TranscribedTest, { readonly code: JobFailure }>> {
+    const payload = job.payload as TestDocPayload;
+    return withPdfText(this.deps, payload.fileKey, async (text) => {
+      const layout = await this.deps.testTranscriber.transcribe({ text });
+      if (!layout.ok) return layout;
+      return ok({ title: payload.title, layout: layout.value, classroom: payload.classroom });
     });
   }
 }
 
-/** Lays the read test out as a clean Google Doc in the teacher's Drive, without any answers. */
+/** Builds the Google Doc in the teacher's Drive from the copied layout. */
 export class MakeTestDoc {
   constructor(
     private readonly deps: ConnectionDeps & {
@@ -95,19 +148,15 @@ export class MakeTestDoc {
   ) {}
 
   async execute(
-    input: JobRef & { readonly labels: TestDocumentLabels },
+    input: JobRef,
   ): Promise<Result<{ readonly docId: string; readonly url: string }, UseCaseError>> {
-    const found = await docImport(this.deps, input);
+    const found = await findTranscribedTest(this.deps, input);
     if (!found.ok) return found;
     const token = await accessToken(this.deps, input.actor);
     if (!token.ok) return token;
-    const { title, test } = found.value;
     const doc = await this.deps.googleDrive.uploadDoc(token.value, {
-      name: title,
-      html: renderTestDocument(
-        { title, instructions: test.instructions, questions: test.questions },
-        input.labels,
-      ),
+      name: found.value.title,
+      html: renderTestLayout(found.value.layout),
     });
     if (!doc.ok) return googleFailed(doc.error);
     return ok({ docId: doc.value.id, url: doc.value.url });
@@ -126,7 +175,7 @@ export class PostDocToClassroom {
   async execute(
     input: JobRef & { readonly docId: string },
   ): Promise<Result<{ readonly url: string }, UseCaseError>> {
-    const found = await docImport(this.deps, input);
+    const found = await findTranscribedTest(this.deps, input);
     if (!found.ok) return found;
     const token = await accessToken(this.deps, input.actor);
     if (!token.ok) return token;

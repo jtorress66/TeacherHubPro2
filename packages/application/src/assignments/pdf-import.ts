@@ -10,7 +10,6 @@ import {
   type JobFailure,
   type JobId,
   type Language,
-  type LocalDate,
   type Result,
   type User,
 } from '@thp/domain';
@@ -34,25 +33,10 @@ import {
 
 export const pdfImportJobKind = 'assignment.pdf_import';
 
-/** Where a Google Doc made from the test is posted. */
-export interface ClassroomPost {
-  readonly courseId: string;
-  readonly instructions: string | null;
-  readonly dueDate: LocalDate | null;
-}
-
-/**
- * Where the questions go: an assignment, or (no class) a Google Forms quiz, or a Google Doc
- * posted to a Classroom course.
- */
+/** Where the questions go: an assignment, or (no class) a Google Forms quiz. */
 type ImportTarget =
   | { readonly classId: ClassId; readonly assignmentId: AssignmentId }
-  | {
-      readonly classId: null;
-      readonly assignmentId: null;
-      readonly title: string;
-      readonly classroom?: ClassroomPost;
-    };
+  | { readonly classId: null; readonly assignmentId: null; readonly title: string };
 
 type PdfImportPayload = ImportTarget & {
   readonly fileKey: string;
@@ -74,27 +58,50 @@ export interface QueueDeps {
   readonly ids: IdGenerator;
 }
 
-/** Keeps the PDF only for the job, and queues reading it into questions for the target. */
-export async function queueImport(
+/**
+ * Keeps the PDF only for the job, and queues a job of the kind to read it; the payload gets the
+ * stored file's key and the teacher's language.
+ */
+export async function queuePdfJob(
   deps: QueueDeps,
   actor: User,
   pdf: Uint8Array,
-  target: ImportTarget,
+  job: { readonly kind: string; readonly data: object },
 ): Promise<Result<Job, UseCaseError>> {
   const size = pdfSizeError(pdf);
   if (!size.ok) return size;
   const fileKey = `imports/${actor.schoolId}/${deps.ids.next()}.pdf`;
   const stored = await deps.files.put(fileKey, { bytes: pdf, contentType: 'application/pdf' });
   if (!stored.ok) return fail('storage_unavailable');
-  const payload: PdfImportPayload = { ...target, fileKey, language: actor.language };
   return ok(
     await deps.jobs.enqueue({
       schoolId: actor.schoolId,
       ownerId: actor.id,
-      kind: pdfImportJobKind,
-      payload,
+      kind: job.kind,
+      payload: { ...job.data, fileKey, language: actor.language },
     }),
   );
+}
+
+const queueImport = (deps: QueueDeps, actor: User, pdf: Uint8Array, target: ImportTarget) =>
+  queuePdfJob(deps, actor, pdf, { kind: pdfImportJobKind, data: target });
+
+/** A job's PDF as text, used and then removed whatever happens; a scan has no text. */
+export async function withPdfText<T>(
+  deps: { readonly files: FileStore; readonly pdfText: PdfTextExtractor },
+  fileKey: string,
+  use: (text: string) => Promise<Result<T, { readonly code: JobFailure }>>,
+): Promise<Result<T, { readonly code: JobFailure }>> {
+  try {
+    const file = await deps.files.get(fileKey);
+    if (!file.ok) return err({ code: 'failed' });
+    const pdf = await deps.pdfText.extract(file.value.bytes);
+    if (!pdf.ok) return err({ code: 'pdf_unreadable' });
+    if (pdf.value.text.trim() === '') return err({ code: 'pdf_no_text' });
+    return await use(pdf.value.text);
+  } finally {
+    await deps.files.delete(fileKey);
+  }
 }
 
 /**
@@ -169,30 +176,15 @@ export class PdfImportHandler implements JobHandler {
 
   async handle(job: Job): Promise<Result<ImportedTest, { readonly code: JobFailure }>> {
     const payload = job.payload as PdfImportPayload;
-    try {
-      const file = await this.deps.files.get(payload.fileKey);
-      if (!file.ok) return err({ code: 'failed' });
-      const pdf = await this.deps.pdfText.extract(file.value.bytes);
-      if (!pdf.ok) return err({ code: 'pdf_unreadable' });
-      if (pdf.value.text.trim() === '') return err({ code: 'pdf_no_text' });
-      const test = await this.deps.questionExtractor.extract({
-        text: pdf.value.text,
-        language: payload.language,
-      });
+    return withPdfText(this.deps, payload.fileKey, async (text) => {
+      const test = await this.deps.questionExtractor.extract({ text, language: payload.language });
       if (!test.ok) return test;
       const target: ImportTarget =
         payload.classId === null
-          ? {
-              classId: null,
-              assignmentId: null,
-              title: payload.title,
-              ...(payload.classroom === undefined ? {} : { classroom: payload.classroom }),
-            }
+          ? { classId: null, assignmentId: null, title: payload.title }
           : { classId: payload.classId, assignmentId: payload.assignmentId };
       return ok({ ...target, test: test.value });
-    } finally {
-      await this.deps.files.delete(payload.fileKey);
-    }
+    });
   }
 }
 
