@@ -249,6 +249,7 @@ export {
   ShareAssignment,
 } from './assignments/classroom.ts';
 export { StartPdfTest } from './assignments/pdf-test.ts';
+export { PostPdfToClassroom } from './assignments/pdf-to-classroom.ts';
 export { MakeFormsQuiz, FindFormsQuiz } from './assignments/forms-quiz.ts';
 export {
   MakeGoogleQuiz,

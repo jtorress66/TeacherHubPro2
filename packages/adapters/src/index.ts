@@ -36,6 +36,8 @@ export { HmacTicketSigner, minTicketSecretLength } from './crypto/hmac-ticket-si
 export { GoogleClassroom } from './google/google-classroom.ts';
 export { GoogleFormsApi } from './google/google-forms.ts';
 export { LocalForms } from './google/local-forms.ts';
+export { GoogleDriveApi } from './google/google-drive.ts';
+export { LocalDrive } from './google/local-drive.ts';
 export {
   GoogleClassroomAuthorization,
   classroomScopes,

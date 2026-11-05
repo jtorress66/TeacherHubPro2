@@ -141,7 +141,7 @@ export class PostQuizToClassroom {
       {
         title: quiz.value.title,
         description: '',
-        link: quiz.value.responderUrl,
+        material: { kind: 'link', url: quiz.value.responderUrl },
         dueDate,
       },
     );

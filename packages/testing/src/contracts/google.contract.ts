@@ -5,6 +5,7 @@ import type {
   ClassroomAuthorization,
   ClassroomCoursework,
   ClassroomStudent,
+  GoogleDriveFiles,
   GoogleForms,
   GoogleIdentity,
   GoogleProfile,
@@ -89,7 +90,18 @@ export function classroomContract(
       const result = await make(fixture).createCoursework(fixture.accessToken, fixture.course.id, {
         title: 'Quiz 1',
         description: 'Fractions',
-        link: 'https://app.test/a/xyz',
+        material: { kind: 'link', url: 'https://app.test/a/xyz' },
+        dueDate: null,
+      });
+
+      expect(result.ok && result.value.url.startsWith('https://')).toBe(true);
+    });
+
+    it('creates coursework with a PDF each student gets a copy of', async () => {
+      const result = await make(fixture).createCoursework(fixture.accessToken, fixture.course.id, {
+        title: 'Unit test',
+        description: '',
+        material: { kind: 'pdf', driveFileId: 'drive-1' },
         dueDate: null,
       });
 
@@ -100,7 +112,7 @@ export function classroomContract(
       const result = await make(fixture).createCoursework('expired', fixture.course.id, {
         title: 'Quiz 1',
         description: '',
-        link: 'https://app.test/a/xyz',
+        material: { kind: 'link', url: 'https://app.test/a/xyz' },
         dueDate: null,
       });
 
@@ -184,6 +196,33 @@ export function googleFormsContract(
 
     it('cannot create a quiz without access', async () => {
       expect(await make(accessToken).createQuiz('expired', sampleQuiz)).toEqual({
+        ok: false,
+        error: { code: 'unauthorized' },
+      });
+    });
+  });
+}
+
+export function googleDriveContract(
+  name: string,
+  make: (accessToken: string) => GoogleDriveFiles,
+  accessToken: string,
+): void {
+  describe(`${name} (GoogleDriveFiles contract)`, () => {
+    const pdf = new TextEncoder().encode('%PDF-1.7 test');
+
+    it('uploads a PDF and returns its file id', async () => {
+      const result = await make(accessToken).uploadPdf(accessToken, {
+        name: 'Test.pdf',
+        bytes: pdf,
+      });
+      expect(result.ok && result.value.id.length > 0).toBe(true);
+    });
+
+    it('cannot upload without access', async () => {
+      expect(
+        await make(accessToken).uploadPdf('expired', { name: 'Test.pdf', bytes: pdf }),
+      ).toEqual({
         ok: false,
         error: { code: 'unauthorized' },
       });

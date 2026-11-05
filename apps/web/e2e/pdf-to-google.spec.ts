@@ -18,6 +18,42 @@ async function quizPdf(): Promise<Buffer> {
 for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
   const t = createTranslator(locale);
 
+  test(`a teacher posts a test PDF straight to Google Classroom, a copy for each student (${locale})`, async ({
+    page,
+  }) => {
+    await signUp(page, locale);
+    await page.goto(`/${locale}/app/assistant`);
+    const card = page.getByRole('region', { name: t('pdfTest.title') });
+    await card.getByRole('link', { name: t('pdfTest.connect') }).click();
+    await expect(
+      page.getByRole('status').filter({ hasText: t('classroom.connectedNotice') }),
+    ).toBeVisible();
+
+    await page.goto(`/${locale}/app/assistant`);
+    expect(
+      (
+        await new AxeBuilder({ page })
+          .include('#pdf-test-card')
+          .withTags(['wcag2a', 'wcag2aa'])
+          .analyze()
+      ).violations,
+    ).toEqual([]);
+    const post = card.getByRole('form', { name: t('pdfPost.submit') });
+    await post.getByLabel(t('classroom.course')).selectOption({ label: 'Local Classroom course' });
+    await post.getByLabel(t('pdfPost.name')).fill('Unit 3 test');
+    await post.getByLabel(t('pdfPost.dueDate')).fill('2026-12-01');
+    await post
+      .getByLabel(t('pdfPost.file'))
+      .setInputFiles({ name: 'unit-3.pdf', mimeType: 'application/pdf', buffer: await quizPdf() });
+    await post.getByRole('button', { name: t('pdfPost.submit') }).click();
+
+    await expect(card.getByRole('status')).toContainText(t('pdfPost.posted'));
+    await expect(card.getByRole('link', { name: t('pdfPost.open') })).toHaveAttribute(
+      'href',
+      /^https:\/\/classroom\.local\//,
+    );
+  });
+
   test(`a test PDF from the AI assistant goes to Google Classroom and Google Forms (${locale})`, async ({
     page,
   }) => {
@@ -31,6 +67,7 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
 
     await page.goto(`/${locale}/app/assistant`);
     const card = page.getByRole('region', { name: t('pdfTest.title') });
+    await card.getByText(t('pdfPost.aiInstead')).click();
     expect(
       (
         await new AxeBuilder({ page })
@@ -94,6 +131,7 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
 
     await page.goto(`/${locale}/app/assistant`);
     const card = page.getByRole('region', { name: t('pdfTest.title') });
+    await card.getByText(t('pdfPost.aiInstead')).click();
     expect(
       (
         await new AxeBuilder({ page })

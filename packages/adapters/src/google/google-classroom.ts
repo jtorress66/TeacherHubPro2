@@ -5,6 +5,7 @@ import type {
   ClassroomCoursework,
   ClassroomError,
   ClassroomStudent,
+  CourseworkMaterial,
   CourseworkRequest,
 } from '@thp/ports';
 
@@ -23,6 +24,11 @@ function failure(status: number): ClassroomError {
   if (status === 404) return { code: 'not_found' };
   return { code: 'unavailable' };
 }
+
+const materialOf = (material: CourseworkMaterial) =>
+  material.kind === 'link'
+    ? { link: { url: material.url } }
+    : { driveFile: { driveFile: { id: material.driveFileId }, shareMode: 'STUDENT_COPY' } };
 
 const dueParts = (date: LocalDate) => {
   const [year, month, day] = date.split('-').map(Number);
@@ -104,7 +110,7 @@ export class GoogleClassroom implements ClassroomCourses, ClassroomCoursework {
         body: JSON.stringify({
           title: coursework.title,
           description: coursework.description,
-          materials: [{ link: { url: coursework.link } }],
+          materials: [materialOf(coursework.material)],
           workType: 'ASSIGNMENT',
           state: 'PUBLISHED',
           ...(coursework.dueDate === null ? {} : dueParts(coursework.dueDate)),

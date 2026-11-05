@@ -9,6 +9,7 @@ import type {
   CourseworkRequest,
   CreatedForm,
   FormsError,
+  GoogleDriveFiles,
   GoogleForms,
   GoogleIdentity,
   GoogleIdentityError,
@@ -137,5 +138,24 @@ export class FakeGoogleForms implements GoogleForms {
         responderUrl: `https://forms.test/${id}/viewform`,
       }),
     );
+  }
+}
+
+/** Keeps what it uploads. */
+export class FakeGoogleDrive implements GoogleDriveFiles {
+  readonly uploads: { readonly name: string; readonly bytes: Uint8Array }[] = [];
+
+  constructor(
+    private readonly setup: { readonly accessToken: string } = { accessToken: 'classroom-access' },
+  ) {}
+
+  uploadPdf(
+    accessToken: string,
+    file: { readonly name: string; readonly bytes: Uint8Array },
+  ): Promise<Result<{ readonly id: string }, ClassroomError>> {
+    if (accessToken !== this.setup.accessToken)
+      return Promise.resolve(err({ code: 'unauthorized' }));
+    this.uploads.push(file);
+    return Promise.resolve(ok({ id: `drive-${String(this.uploads.length)}` }));
   }
 }
