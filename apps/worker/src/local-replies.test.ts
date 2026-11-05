@@ -5,7 +5,6 @@ import {
   PathWriter,
   PresentationWriter,
   QuestionExtractor,
-  TestTranscriber,
   SubmissionGrader,
 } from '@thp/agents';
 import { LocalLlmClient } from '@thp/adapters';
@@ -87,29 +86,6 @@ describe('the local stand-in replies', () => {
     const draft = unwrap(await new PresentationWriter(local()).draft(request));
     expect(draft.slides).toHaveLength(4);
     expect(draft.slides[0]?.layout).toBe('title');
-  });
-
-  it('copies a test line by line, numbered lines as items, adding no words', async () => {
-    const layout = unwrap(
-      await new TestTranscriber(local()).transcribe({
-        text: [
-          'Space Quiz',
-          '1. Which planet is closest to the Sun?',
-          '2. True or false: the Sun is a star.',
-        ].join('\n'),
-      }),
-    );
-    expect(layout.blocks).toEqual([
-      { kind: 'text', text: 'Space Quiz', bold: false },
-      {
-        kind: 'items',
-        items: [{ label: '1.', text: 'Which planet is closest to the Sun?', choice: null }],
-      },
-      {
-        kind: 'items',
-        items: [{ label: '2.', text: 'True or false: the Sun is a star.', choice: null }],
-      },
-    ]);
   });
 
   it('reads a test into a multiple-choice, a true/false and a short-answer question', async () => {

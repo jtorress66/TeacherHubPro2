@@ -101,19 +101,9 @@ import {
   ListClassroomCourses,
   ImportClassroomRoster,
   ShareAssignment,
-  StartPdfTest,
-  PostPdfToClassroom,
-  RequestDocImport,
-  MakeTestDoc,
-  GetTranscribedTest,
-  PostDocToClassroom,
+  PostWordToClassroom,
   MakeFormsQuiz,
   FindFormsQuiz,
-  RequestQuizImport,
-  MakeGoogleQuiz,
-  FindGoogleQuiz,
-  ListGoogleQuizzes,
-  PostQuizToClassroom,
   CreatePresentation,
   DeleteGeneration,
   DeletePresentation,
@@ -291,19 +281,9 @@ export interface AppContainer {
   readonly listClassroomCourses: ListClassroomCourses;
   readonly importClassroomRoster: ImportClassroomRoster;
   readonly shareAssignment: ShareAssignment;
-  readonly startPdfTest: StartPdfTest;
-  readonly postPdfToClassroom: PostPdfToClassroom;
-  readonly requestDocImport: RequestDocImport;
-  readonly makeTestDoc: MakeTestDoc;
-  readonly getTranscribedTest: GetTranscribedTest;
-  readonly postDocToClassroom: PostDocToClassroom;
+  readonly postWordToClassroom: PostWordToClassroom;
   readonly makeFormsQuiz: MakeFormsQuiz;
   readonly findFormsQuiz: FindFormsQuiz;
-  readonly requestQuizImport: RequestQuizImport;
-  readonly makeGoogleQuiz: MakeGoogleQuiz;
-  readonly findGoogleQuiz: FindGoogleQuiz;
-  readonly listGoogleQuizzes: ListGoogleQuizzes;
-  readonly postQuizToClassroom: PostQuizToClassroom;
   readonly createGame: CreateGame;
   readonly updateGame: UpdateGame;
   readonly listGames: ListGames;
@@ -578,19 +558,9 @@ export function createAppContainer(
     listClassroomCourses: new ListClassroomCourses(deps),
     importClassroomRoster: new ImportClassroomRoster(deps),
     shareAssignment: new ShareAssignment(deps),
-    startPdfTest: new StartPdfTest(deps),
-    postPdfToClassroom: new PostPdfToClassroom(deps),
-    requestDocImport: new RequestDocImport(deps),
-    makeTestDoc: new MakeTestDoc(deps),
-    getTranscribedTest: new GetTranscribedTest(deps),
-    postDocToClassroom: new PostDocToClassroom(deps),
+    postWordToClassroom: new PostWordToClassroom(deps),
     makeFormsQuiz: new MakeFormsQuiz(deps),
     findFormsQuiz: new FindFormsQuiz(deps),
-    requestQuizImport: new RequestQuizImport(deps),
-    makeGoogleQuiz: new MakeGoogleQuiz(deps),
-    findGoogleQuiz: new FindGoogleQuiz(deps),
-    listGoogleQuizzes: new ListGoogleQuizzes(deps),
-    postQuizToClassroom: new PostQuizToClassroom(deps),
     createGame: new CreateGame(deps),
     updateGame: new UpdateGame(deps),
     listGames: new ListGames(deps),

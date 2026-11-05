@@ -24,7 +24,6 @@ export type LivePlayerId = Id<'LivePlayer'>;
 export type LearningPathId = Id<'LearningPath'>;
 export type LessonAttemptId = Id<'LessonAttempt'>;
 export type PortalLinkId = Id<'PortalLink'>;
-export type GoogleQuizId = Id<'GoogleQuiz'>;
 export type SubscriptionId = Id<'Subscription'>;
 export type JobId = Id<'Job'>;
 export type PlanTemplateId = Id<'PlanTemplate'>;

@@ -6,8 +6,6 @@ import type {
   ClassId,
   ClassroomConnection,
   FormsExport,
-  GoogleQuiz,
-  GoogleQuizId,
   SchoolId,
   StudentId,
   StudentLink,
@@ -18,7 +16,6 @@ import type {
   AssignmentAttachmentsTable,
   ClassroomConnectionsTable,
   FormsExportsTable,
-  GoogleQuizzesTable,
   StudentLinksTable,
 } from '../schema.ts';
 import type { Row, RowMapper } from './columns.ts';
@@ -93,29 +90,6 @@ export const formsExportMapper = {
   fromRow: (row: Selectable<FormsExportsTable>): FormsExport => ({
     schoolId: row.school_id as SchoolId,
     assignmentId: row.assignment_id as AssignmentId,
-    formId: row.form_id,
-    editUrl: row.edit_url,
-    responderUrl: row.responder_url,
-    createdAt: row.made_at,
-  }),
-};
-
-export const googleQuizMapper = {
-  toRow: (quiz: GoogleQuiz): Row<GoogleQuizzesTable> => ({
-    id: quiz.id,
-    school_id: quiz.schoolId,
-    owner_id: quiz.ownerId,
-    title: quiz.title,
-    form_id: quiz.formId,
-    edit_url: quiz.editUrl,
-    responder_url: quiz.responderUrl,
-    made_at: quiz.createdAt,
-  }),
-  fromRow: (row: Selectable<GoogleQuizzesTable>): GoogleQuiz => ({
-    id: row.id as GoogleQuizId,
-    schoolId: row.school_id as SchoolId,
-    ownerId: row.owner_id as UserId,
-    title: row.title,
     formId: row.form_id,
     editUrl: row.edit_url,
     responderUrl: row.responder_url,

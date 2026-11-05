@@ -34,11 +34,10 @@ No paid API calls until launch. Steps that need real AI meet their gate with the
 
 - `pnpm eval` against real Claude: planner, AI assistant and presentation suites (steps 8–9).
 - Listen with real OpenAI text-to-speech (`TTS_PROVIDER=openai`, `OPENAI_API_KEY`) (step 9).
-- Google Classroom with a real Google Cloud project: consent screen and verification for the Classroom scopes plus `drive.file` (Google Forms quizzes), the Google Forms and Google Drive APIs enabled, teachers added as test users while the app is in Testing mode, `CLASSROOM_PROVIDER=google`, `TOKEN_ENCRYPTION_KEY` (step 10); make one Forms quiz from a test PDF and open it.
+- Google Classroom with a real Google Cloud project: consent screen and verification for the Classroom scopes plus `drive.file` (Google Forms quizzes), the Google Forms and Google Drive APIs enabled, teachers added as test users while the app is in Testing mode, `CLASSROOM_PROVIDER=google`, `TOKEN_ENCRYPTION_KEY` (step 10); post a Word document to a course and open the student copy, and make one Forms quiz from an assignment.
 - The question extractor and grader evals against real Claude (step 10).
 - The game writer evals against real Claude (step 11).
 - The path writer evals against real Claude (step 13).
-- The test transcriber evals against real Claude (the Google Doc made from a test PDF), then post a real test PDF as a Doc and compare it page by page.
 - Real email with Resend (step 14): verify the sending domain in Resend, then set `MAIL_PROVIDER=resend`, `RESEND_API_KEY` and `MAIL_FROM` on the web and worker services; email a portal link to yourself and check a trial reminder arrives.
 - Prompt caching with real Claude: grade a class of several submissions with open questions and rubrics; the worker log should show `cache read` above 0 from the second submission on.
 

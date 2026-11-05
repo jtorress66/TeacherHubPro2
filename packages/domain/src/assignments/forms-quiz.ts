@@ -1,5 +1,5 @@
 import type { Question, QuestionType } from '../gradebook/question.ts';
-import type { AssignmentId, GoogleQuizId, SchoolId, UserId } from '../shared/ids.ts';
+import type { AssignmentId, SchoolId } from '../shared/ids.ts';
 
 /** One question of a Forms quiz; `correct` is empty when the teacher scores it in Forms. */
 export type FormsQuizItem =
@@ -99,7 +99,7 @@ const items: ItemOf = {
 const itemOf = (question: Question, labels: TrueFalseLabels): FormsQuizItem =>
   (items[question.type] as (q: Question, l: TrueFalseLabels) => FormsQuizItem)(question, labels);
 
-/** What a quiz is made from: an assignment, or questions reviewed from a PDF. */
+/** What a quiz is made from: an assignment's title, instructions and questions. */
 export interface QuizSource {
   readonly title: string;
   readonly instructions: string | null;
@@ -117,18 +117,6 @@ export const toFormsQuiz = (source: QuizSource, labels: TrueFalseLabels): FormsQ
 export interface FormsExport {
   readonly schoolId: SchoolId;
   readonly assignmentId: AssignmentId;
-  readonly formId: string;
-  readonly editUrl: string;
-  readonly responderUrl: string;
-  readonly createdAt: Date;
-}
-
-/** A Google Forms quiz a teacher made from a PDF without a class: only its links are kept. */
-export interface GoogleQuiz {
-  readonly id: GoogleQuizId;
-  readonly schoolId: SchoolId;
-  readonly ownerId: UserId;
-  readonly title: string;
   readonly formId: string;
   readonly editUrl: string;
   readonly responderUrl: string;

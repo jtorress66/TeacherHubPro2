@@ -6,11 +6,11 @@ import {
   FakeGoogleDrive,
   FakeSecretCipher,
 } from '@thp/testing';
-import { FinishClassroomConnect, PostPdfToClassroom } from '../src/index.ts';
+import { FinishClassroomConnect, PostWordToClassroom } from '../src/index.ts';
 import { valueOf } from './classroom.ts';
 import { makeWorld, signedUp, type World } from './world.ts';
 
-const pdf = new TextEncoder().encode('%PDF unit test');
+const docx = new Uint8Array([0x50, 0x4b, 0x03, 0x04, 1, 2, 3]);
 
 async function teacher(world: World, { connect = true, drive = new FakeGoogleDrive() } = {}) {
   const { user: actor } = await signedUp(world);
@@ -35,45 +35,41 @@ async function teacher(world: World, { connect = true, drive = new FakeGoogleDri
       }),
     );
   }
-  const post = (changes: Partial<Parameters<PostPdfToClassroom['execute']>[0]> = {}) =>
-    new PostPdfToClassroom(all).execute({
+  const post = (changes: Partial<Parameters<PostWordToClassroom['execute']>[0]> = {}) =>
+    new PostWordToClassroom(all).execute({
       actor,
       courseId: 'course-1',
       title: 'Unit 3 test',
-      instructions: 'Write your answers on the PDF.',
+      instructions: 'Type your answers in the document.',
       dueDate: '2026-12-01',
-      fileName: 'unit-3.pdf',
-      pdf,
+      fileName: 'unit-3.docx',
+      bytes: docx,
       ...changes,
     });
   return { classroom, drive, post };
 }
 
-describe('Posting a test PDF straight to Google Classroom', () => {
-  it('uploads the PDF to Drive and posts it so each student gets a copy', async () => {
+describe('Posting a Word document to Google Classroom', () => {
+  it('turns the document into a Google Doc and posts it so each student gets a copy', async () => {
     const world = makeWorld();
     const { classroom, drive, post } = await teacher(world);
 
     const posted = valueOf(await post());
 
-    expect(posted.url).toContain('classroom.test');
-    expect(drive.uploads).toEqual([{ name: 'unit-3.pdf', bytes: pdf }]);
+    expect(posted).toEqual({
+      url: expect.stringContaining('classroom.test') as string,
+      docUrl: 'https://docs.test/doc-1/edit',
+    });
+    expect(drive.uploads).toEqual([{ name: 'unit-3.docx', bytes: docx }]);
     expect(classroom.coursework.at(-1)).toEqual({
       title: 'Unit 3 test',
-      description: 'Write your answers on the PDF.',
-      material: { kind: 'driveFile', driveFileId: 'drive-1' },
+      description: 'Type your answers in the document.',
+      material: { kind: 'driveFile', driveFileId: 'doc-1' },
       dueDate: '2026-12-01',
     });
   });
 
-  it('names the upload after the title when the file has no name', async () => {
-    const world = makeWorld();
-    const { drive, post } = await teacher(world);
-    valueOf(await post({ fileName: ' ', instructions: null, dueDate: null }));
-    expect(drive.uploads[0]?.name).toBe('Unit 3 test.pdf');
-  });
-
-  it('checks the title, the PDF and the due date before calling Google', async () => {
+  it('checks the course, title, file and due date before calling Google', async () => {
     const world = makeWorld();
     const { drive, post } = await teacher(world);
     expect(await post({ courseId: ' ' })).toEqual({
@@ -84,19 +80,31 @@ describe('Posting a test PDF straight to Google Classroom', () => {
       ok: false,
       error: { field: 'title', code: 'required' },
     });
-    expect(await post({ pdf: new Uint8Array() })).toEqual({
+    expect(await post({ fileName: 'unit-3.pdf' })).toEqual({
       ok: false,
-      error: { field: 'pdf', code: 'too_large' },
+      error: { field: 'file', code: 'not_allowed' },
     });
-    expect(await post({ pdf: new Uint8Array(maxAttachmentBytes + 1) })).toEqual({
+    expect(await post({ bytes: new TextEncoder().encode('%PDF') })).toEqual({
       ok: false,
-      error: { field: 'pdf', code: 'too_large' },
+      error: { field: 'file', code: 'invalid_format' },
+    });
+    const big = new Uint8Array(maxAttachmentBytes + 1);
+    big.set([0x50, 0x4b]);
+    expect(await post({ bytes: big })).toEqual({
+      ok: false,
+      error: { field: 'file', code: 'too_large' },
     });
     expect(await post({ dueDate: '12/01/2026' })).toEqual({
       ok: false,
       error: { field: 'dueDate', code: 'invalid_format' },
     });
     expect(drive.uploads).toEqual([]);
+  });
+
+  it('needs a Google connection', async () => {
+    const world = makeWorld();
+    const { post } = await teacher(world, { connect: false });
+    expect(await post()).toEqual({ ok: false, error: { code: 'classroom_not_connected' } });
   });
 
   it('names the fix when Google refuses: an API turned off, or a grant missing Drive', async () => {
@@ -115,22 +123,9 @@ describe('Posting a test PDF straight to Google Classroom', () => {
     expect(old.classroom.coursework).toEqual([]);
   });
 
-  it('needs a Google connection', async () => {
-    const world = makeWorld();
-    const { post } = await teacher(world, { connect: false });
-    expect(await post()).toEqual({ ok: false, error: { code: 'classroom_not_connected' } });
-  });
-
-  it('posts nothing when the upload fails, and reports an unknown course', async () => {
-    const world = makeWorld();
-    const failing = await teacher(world, {
-      drive: new FakeGoogleDrive({ accessToken: 'someone-else' }),
-    });
-    expect(await failing.post()).toEqual({ ok: false, error: { code: 'classroom_failed' } });
-    expect(failing.classroom.coursework).toEqual([]);
-
-    const other = await teacher(makeWorld());
-    expect(await other.post({ courseId: 'nope' })).toEqual({
+  it('reports an unknown course', async () => {
+    const { post } = await teacher(makeWorld());
+    expect(await post({ courseId: 'nope' })).toEqual({
       ok: false,
       error: { code: 'classroom_failed' },
     });

@@ -19,14 +19,6 @@ export {
 } from './question-extractor/question-extractor.ts';
 export * from './question-extractor/extractor-scorecard.ts';
 export {
-  inventedWords,
-  layoutTexts,
-  reviewTranscription,
-  TestTranscriber,
-  transcriberSystemPrompt,
-} from './test-transcriber/test-transcriber.ts';
-export * from './test-transcriber/transcriber-scorecard.ts';
-export {
   SubmissionGrader,
   graderSystemPrompt,
   reviewScores,

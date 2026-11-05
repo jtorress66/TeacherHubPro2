@@ -58,7 +58,7 @@ export default async function AssignmentQuestionsPage(props: Props) {
       <p>{t('questions.intro')}</p>
       {imported ? (
         <p role="status" className="notice">
-          {t('questions.saved')} <a href="#send-to-google">{t('pdfTest.sendTitle')}</a>
+          {t('questions.saved')} <a href="#send-to-google">{t('google.sendTitle')}</a>
         </p>
       ) : null}
       <p>
@@ -113,7 +113,7 @@ export default async function AssignmentQuestionsPage(props: Props) {
       </section>
 
       <section id="send-to-google" className="stack" aria-labelledby="send-to-google-heading">
-        <h2 id="send-to-google-heading">{t('pdfTest.sendTitle')}</h2>
+        <h2 id="send-to-google-heading">{t('google.sendTitle')}</h2>
         {courses.ok ? (
           <>
             <section className="card stack" aria-labelledby="classroom-share-heading">
@@ -139,10 +139,10 @@ export default async function AssignmentQuestionsPage(props: Props) {
           </>
         ) : (
           <div className="card stack">
-            <p className="muted">{t('pdfTest.connectFirst')}</p>
+            <p className="muted">{t('google.connectFirst')}</p>
             <p>
               <a className="button" href={`/api/classroom/connect?locale=${locale}`}>
-                {t('pdfTest.connect')}
+                {t('google.connect')}
               </a>
             </p>
           </div>
