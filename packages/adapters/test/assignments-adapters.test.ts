@@ -194,7 +194,8 @@ describe('GoogleClassroomAuthorization', () => {
       ),
     );
     expect(url.searchParams.get('access_type')).toBe('offline');
-    expect(url.searchParams.get('prompt')).toBe('consent');
+    // The account chooser lets a teacher connect the Google account they teach with.
+    expect(url.searchParams.get('prompt')).toBe('select_account consent');
     expect(url.searchParams.get('scope')?.split(' ')).toEqual([
       'https://www.googleapis.com/auth/classroom.courses.readonly',
       'https://www.googleapis.com/auth/classroom.rosters.readonly',

@@ -938,6 +938,9 @@ export const es: Messages = {
     open: 'Abrir en Classroom',
     note: 'Cada estudiante recibe su propia copia del PDF para escribir en ella y entregarla.',
     aiInstead: 'O conviértelo en una prueba de Google Forms con IA',
+    noCourses:
+      'Google Classroom no muestra cursos activos en los que la cuenta de Google conectada sea docente. Crea un curso en classroom.google.com o conecta la cuenta de Google con la que enseñas.',
+    switchAccount: 'Conectar otra cuenta de Google',
   },
   googleQuiz: {
     list: 'Tus pruebas de Google Forms',

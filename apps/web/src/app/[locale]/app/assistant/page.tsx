@@ -42,7 +42,18 @@ export default async function AssistantPage(props: LocaleParams) {
       <section id="pdf-test-card" className="card stack" aria-labelledby="pdf-test-heading">
         <h2 id="pdf-test-heading">{t('pdfTest.title')}</h2>
         <p>{t('pdfPost.intro')}</p>
-        {courses.ok ? (
+        {courses.ok && courses.value.length === 0 ? (
+          <div className="stack">
+            <p className="notice" role="status">
+              {t('pdfPost.noCourses')}
+            </p>
+            <p>
+              <a className="button secondary" href={`/api/classroom/connect?locale=${locale}`}>
+                {t('pdfPost.switchAccount')}
+              </a>
+            </p>
+          </div>
+        ) : courses.ok ? (
           <PostPdfForm
             locale={locale}
             courses={courses.value.map((course) => ({ id: course.id, name: course.name }))}
