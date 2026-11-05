@@ -368,6 +368,20 @@ details[open] > summary {
   min-width: 8rem;
 }
 
+.badge.priority-high {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.badge.priority-medium {
+  border-color: var(--accent);
+}
+
+.badge.priority-low {
+  border-color: var(--border);
+  color: var(--muted);
+}
+
 .badge.grade-late,
 .badge.grade-missing,
 .badge.grade-excused {

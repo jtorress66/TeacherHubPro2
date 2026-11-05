@@ -295,6 +295,23 @@ export interface FormsExportsTable {
   made_at: Date;
 }
 
+export interface StudentNotesTable {
+  id: string;
+  school_id: string;
+  student_id: string;
+  author_id: string;
+  text: string;
+  written_at: Date;
+}
+
+export interface StudentInsightsTable {
+  school_id: string;
+  student_id: string;
+  teacher_id: string;
+  bullets: Json;
+  generated_at: Date;
+}
+
 export interface AttendanceSessionsTable {
   id: string;
   school_id: string;
@@ -468,6 +485,8 @@ export interface Database {
   student_links: StudentLinksTable;
   classroom_connections: ClassroomConnectionsTable;
   forms_exports: FormsExportsTable;
+  student_notes: StudentNotesTable;
+  student_insights: StudentInsightsTable;
   attendance_sessions: AttendanceSessionsTable;
   attendance_entries: AttendanceEntriesTable;
   games: GamesTable;

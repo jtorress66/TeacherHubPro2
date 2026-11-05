@@ -38,6 +38,7 @@ import {
   plannerRepositoryContract,
   assistantRepositoryContract,
   assignmentRepositoryContract,
+  student360RepositoryContract,
   gamePlayRepositoryContract,
   liveRepositoryContract,
   learningRepositoryContract,
@@ -350,4 +351,11 @@ withParents(parentsFor.none, () => {
       expect(await mailer.list(1)).toHaveLength(1);
     });
   });
+});
+
+withParents(parentsFor.rosterTeam, () => {
+  student360RepositoryContract('Postgres', () => ({
+    notes: repos.studentNotes,
+    insights: repos.studentInsights,
+  }));
 });

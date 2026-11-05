@@ -2,6 +2,9 @@ import type {
   Attachment,
   ClassroomConnection,
   FormsExport,
+  StudentInsight,
+  StudentNote,
+  StudentNoteId,
   StudentLink,
   AiGeneration,
   GenerationSummary,
@@ -53,6 +56,8 @@ import type {
   AttachmentRepository,
   ClassroomConnectionRepository,
   FormsExportRepository,
+  StudentInsightRepository,
+  StudentNoteRepository,
   StudentLinkRepository,
   AiGenerationRepository,
   PresentationRepository,
@@ -575,6 +580,62 @@ export class InMemoryFormsExportRepository implements FormsExportRepository {
 
   save(formsExport: FormsExport): Promise<void> {
     this.rows.set(formsExport.assignmentId, formsExport);
+    return Promise.resolve();
+  }
+}
+
+export class InMemoryStudentNoteRepository implements StudentNoteRepository {
+  private readonly rows = new Map<StudentNoteId, StudentNote>();
+
+  save(note: StudentNote): Promise<void> {
+    this.rows.set(note.id, note);
+    return Promise.resolve();
+  }
+
+  listFor(
+    schoolId: SchoolId,
+    studentId: StudentId,
+    authorId: UserId,
+  ): Promise<readonly StudentNote[]> {
+    return Promise.resolve(
+      [...this.rows.values()]
+        .filter(
+          (n) => n.schoolId === schoolId && n.studentId === studentId && n.authorId === authorId,
+        )
+        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()),
+    );
+  }
+
+  delete(schoolId: SchoolId, id: StudentNoteId, authorId: UserId): Promise<boolean> {
+    const row = this.rows.get(id);
+    if (row?.schoolId !== schoolId || row.authorId !== authorId) return Promise.resolve(false);
+    this.rows.delete(id);
+    return Promise.resolve(true);
+  }
+}
+
+export class InMemoryStudentInsightRepository implements StudentInsightRepository {
+  private readonly rows = new Map<string, StudentInsight>();
+
+  private static key(schoolId: SchoolId, studentId: StudentId, teacherId: UserId) {
+    return `${schoolId}|${studentId}|${teacherId}`;
+  }
+
+  find(
+    schoolId: SchoolId,
+    studentId: StudentId,
+    teacherId: UserId,
+  ): Promise<StudentInsight | null> {
+    return Promise.resolve(
+      this.rows.get(InMemoryStudentInsightRepository.key(schoolId, studentId, teacherId)) ?? null,
+    );
+  }
+
+  save(insight: StudentInsight): Promise<void> {
+    this.rows.set(
+      InMemoryStudentInsightRepository.key(insight.schoolId, insight.studentId, insight.teacherId),
+      insight,
+    );
     return Promise.resolve();
   }
 }

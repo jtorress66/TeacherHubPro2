@@ -280,6 +280,22 @@ Added at the teacher's request, between steps 14 and 15 (not in the old app).
 - Fix: the old average assumed every assignment was out of 100 points. Use each assignment's real maximum.
 - Student 360 (`/students/:id`): grade average, attendance rate, missing count, a timeline newest first (grades, absences, tardies, excused, due dates, notes), private teacher notes, an on-demand AI insight that is cached.
 - Old files: `server.py` (`/command-center` ~3200–3450, Student 360 ~1530–1620), `frontend/src/pages/CommandCenter.js`, `Student360.js`.
+- **Decided for the rebuild:**
+  - The Command Center **is the home page** (`/app`); the plan badge and getting-started checklist stay on top. "Today" is the teacher's time zone; only the teacher's own active classes count.
+  - At-risk attendance counts the **last 30 days** of submitted sessions; the average is the gradebook's weighted average on each assignment's real maximum (a missing grade counts as 0, as in the gradebook).
+  - "Missing" is a grade marked missing, or past-due work with no grade (excused never counts); work not yet due is never missing. Student 360 uses the same rule.
+  - To grade: per assignment, student submissions not yet confirmed plus students with no grade on past-due work; overdue first, then by due date, top 10.
+  - Recommendations are four rules (take attendance, reach out when a risk score is 4 or more, overdue grading, classes without lessons in the next 7 days), shown in the teacher's language.
+  - Student 360 lives at `/app/classes/:classId/students/:studentId` (the edit form moved to `…/edit`; roster names link there). Grades on the timeline are dated by their assignment's due date (grades carry no date of their own).
+  - **Private notes** are visible to their author only (a school admin sees their own, not the teacher's).
+  - **AI insight:** on demand, a worker job; 3–5 bullets in the teacher's language, kept per teacher and student, labelled "AI draft, check before acting", never shown to families. It is sent **numbers and assignment titles only** (no name, accommodations or notes); replies that state a percentage not in the data are refused and retried. Replay evals in `evals/replays/insight.json`.
+- **Fixed from the old app:**
+  - Every grade was assumed to be out of 100 points in the at-risk average: the real maximum and the category weights are used.
+  - "Missing" counted assignments not yet due, and any assignment without a score.
+  - To grade counted only `status == graded`, so late and excused grades looked pending, and AI submissions were added on top: waiting submissions and past-due ungraded students are counted once.
+  - The insight sent the student's full name, accommodations and the teacher's notes to the AI, as a 60-second synchronous call with raw errors: anonymised numbers only, as a job with a validated reply and safe error codes.
+  - "Today" was UTC.
+
 
 ## Step 16 — Prep Agent
 

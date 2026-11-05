@@ -354,3 +354,17 @@ export {
 } from './portals/portal-links.ts';
 export { OpenFamilyPortal, type FamilyPortal } from './portals/family-portal.ts';
 export { SendTrialReminders } from './billing/trial-reminders.ts';
+export {
+  GetCommandCenter,
+  type CommandCenter,
+  type TodayAttendance,
+} from './command-center/command-center.ts';
+export {
+  GetStudent360,
+  AddStudentNote,
+  DeleteStudentNote,
+  RequestStudentInsight,
+  StudentInsightHandler,
+  studentInsightJobKind,
+  type StudentView,
+} from './students/student-360.ts';

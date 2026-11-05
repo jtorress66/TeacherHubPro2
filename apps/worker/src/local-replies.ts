@@ -4,6 +4,7 @@ import {
   gameFormats,
   gameWriterSystemPrompt,
   graderSystemPrompt,
+  insightSystemPrompt,
   pathWriterSystemPrompt,
   slidesSystemPrompt,
 } from '@thp/agents';
@@ -52,6 +53,17 @@ function slidesReply(request: LlmRequest): string {
         },
   );
   return JSON.stringify({ title: 'Local slides', slides });
+}
+
+/** Three bullets without numbers, so they never mention a percentage the data lacks. */
+function insightReply(): string {
+  return JSON.stringify({
+    bullets: [
+      'Local draft: look at the trend in the latest grades.',
+      'Check attendance for repeated absences or tardies.',
+      'Next step: a short check-in with the student this week.',
+    ],
+  });
 }
 
 /** A short test, whatever the PDF says: enough for an objective score and an open answer. */
@@ -182,6 +194,7 @@ const repliesBySystem: ReadonlyMap<string, (request: LlmRequest) => string> = ne
   [slidesSystemPrompt, slidesReply],
   [extractorSystemPrompt, extractorReply],
   [graderSystemPrompt, graderReply],
+  [insightSystemPrompt, insightReply],
   [gameWriterSystemPrompt, gameReply],
   [pathWriterSystemPrompt, pathReply],
 ]);

@@ -41,5 +41,11 @@
     "language": 1,
     "playable": 1,
     "focus": 0.8
+  },
+  "insight-writer": {
+    "structure": 1,
+    "count": 1,
+    "grounded": 1,
+    "focus": 0.9
   }
 }
