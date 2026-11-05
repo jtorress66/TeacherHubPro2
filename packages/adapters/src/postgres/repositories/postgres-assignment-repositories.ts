@@ -6,8 +6,6 @@ import type {
   ClassId,
   ClassroomConnection,
   FormsExport,
-  GoogleQuiz,
-  GoogleQuizId,
   SchoolId,
   StudentLink,
   StudentLinkId,
@@ -17,14 +15,12 @@ import type {
   AttachmentRepository,
   ClassroomConnectionRepository,
   FormsExportRepository,
-  GoogleQuizRepository,
   StudentLinkRepository,
 } from '@thp/ports';
 import {
   attachmentMapper,
   classroomConnectionMapper,
   formsExportMapper,
-  googleQuizMapper,
   studentLinkMapper,
 } from '../mappers/assignment-mappers.ts';
 import type { Database } from '../schema.ts';
@@ -161,40 +157,5 @@ export class PostgresFormsExportRepository implements FormsExportRepository {
       .values(row)
       .onConflict((conflict) => conflict.column('assignment_id').doUpdateSet(row))
       .execute();
-  }
-}
-
-export class PostgresGoogleQuizRepository implements GoogleQuizRepository {
-  constructor(private readonly db: Kysely<Database>) {}
-
-  save(quiz: GoogleQuiz): Promise<void> {
-    return upsert(this.db, 'google_quizzes', googleQuizMapper.toRow(quiz));
-  }
-
-  async findForOwner(
-    schoolId: SchoolId,
-    ownerId: UserId,
-    id: GoogleQuizId,
-  ): Promise<GoogleQuiz | null> {
-    const row = await this.db
-      .selectFrom('google_quizzes')
-      .selectAll()
-      .where('school_id', '=', schoolId)
-      .where('owner_id', '=', ownerId)
-      .where('id', '=', id)
-      .executeTakeFirst();
-    return row === undefined ? null : googleQuizMapper.fromRow(row);
-  }
-
-  async listByOwner(schoolId: SchoolId, ownerId: UserId): Promise<readonly GoogleQuiz[]> {
-    const rows = await this.db
-      .selectFrom('google_quizzes')
-      .selectAll()
-      .where('school_id', '=', schoolId)
-      .where('owner_id', '=', ownerId)
-      .orderBy('made_at', 'desc')
-      .orderBy('id')
-      .execute();
-    return rows.map(googleQuizMapper.fromRow);
   }
 }

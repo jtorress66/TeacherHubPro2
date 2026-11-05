@@ -464,55 +464,42 @@ googleDriveContract(
 googleDriveContract('LocalDrive', () => new LocalDrive(), localClassroomFixture.accessToken);
 
 describe('GoogleDriveApi', () => {
-  it('uploads the PDF with its name in one multipart request', async () => {
-    const api = driveApi('t');
-    const pdf = new TextEncoder().encode('%PDF-1.7 test');
-    expect(
-      await new GoogleDriveApi(api.fetchFn).uploadPdf('t', { name: 'Unit 3.pdf', bytes: pdf }),
-    ).toEqual({ ok: true, value: { id: 'drive-file-1' } });
-    const [upload] = api.uploads;
-    expect(upload?.url).toBe(
-      'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',
-    );
-    expect(upload?.contentType).toMatch(/^multipart\/related; boundary=/);
-    expect(upload?.body).toContain('{"name":"Unit 3.pdf","mimeType":"application/pdf"}');
-    expect(upload?.body).toContain('Content-Type: application/pdf');
-    expect(upload?.body).toContain('%PDF-1.7 test');
-  });
+  const docx = new Uint8Array([0x50, 0x4b, 0x03, 0x04, 0x41, 0x42]);
 
-  it('uploads HTML for Drive to convert into a Google Doc', async () => {
+  it('uploads the Word document for Drive to convert into a Google Doc', async () => {
     const api = driveApi('t');
     expect(
-      await new GoogleDriveApi(api.fetchFn).uploadDoc('t', {
-        name: 'Unit 3',
-        html: '<html><body><h1>Unit 3</h1></body></html>',
+      await new GoogleDriveApi(api.fetchFn).uploadWordAsDoc('t', {
+        name: 'Unit 3.docx',
+        bytes: docx,
       }),
     ).toEqual({
       ok: true,
       value: { id: 'drive-file-1', url: 'https://docs.google.com/document/d/drive-file-1/edit' },
     });
     const [upload] = api.uploads;
+    expect(upload?.url).toBe(
+      'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',
+    );
+    expect(upload?.contentType).toMatch(/^multipart\/related; boundary=/);
     expect(upload?.body).toContain(
       '{"name":"Unit 3","mimeType":"application/vnd.google-apps.document"}',
     );
-    expect(upload?.body).toContain('Content-Type: text/html; charset=UTF-8');
-    expect(upload?.body).toContain('<h1>Unit 3</h1>');
+    expect(upload?.body).toContain(
+      'Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    );
+    expect(upload?.body).toContain('PK');
   });
 
   it('reports a server error or an unreachable Google as unavailable', async () => {
-    const pdf = new Uint8Array([1]);
-    expect(
-      await new GoogleDriveApi(driveApi('t', 503).fetchFn).uploadPdf('t', {
-        name: 'a.pdf',
-        bytes: pdf,
-      }),
-    ).toEqual({ ok: false, error: { code: 'unavailable' } });
-    const offline = () => Promise.reject(new Error('offline'));
-    expect(await new GoogleDriveApi(offline).uploadPdf('t', { name: 'a.pdf', bytes: pdf })).toEqual(
-      {
-        ok: false,
-        error: { code: 'unavailable' },
-      },
+    const file = { name: 'a.docx', bytes: docx };
+    expect(await new GoogleDriveApi(driveApi('t', 503).fetchFn).uploadWordAsDoc('t', file)).toEqual(
+      { ok: false, error: { code: 'unavailable' } },
     );
+    const offline = () => Promise.reject(new Error('offline'));
+    expect(await new GoogleDriveApi(offline).uploadWordAsDoc('t', file)).toEqual({
+      ok: false,
+      error: { code: 'unavailable' },
+    });
   });
 });

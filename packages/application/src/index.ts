@@ -210,7 +210,6 @@ export {
 } from './assignments/attachments.ts';
 export {
   RequestPdfImport,
-  RequestQuizImport,
   PdfImportHandler,
   GetImportedTest,
   pdfImportJobKind,
@@ -248,24 +247,8 @@ export {
   ImportClassroomRoster,
   ShareAssignment,
 } from './assignments/classroom.ts';
-export { StartPdfTest } from './assignments/pdf-test.ts';
-export { PostPdfToClassroom } from './assignments/pdf-to-classroom.ts';
-export {
-  RequestDocImport,
-  MakeTestDoc,
-  PostDocToClassroom,
-  TestDocHandler,
-  testDocJobKind,
-  GetTranscribedTest,
-  type TranscribedTest,
-} from './assignments/test-doc.ts';
+export { PostWordToClassroom } from './assignments/word-to-classroom.ts';
 export { MakeFormsQuiz, FindFormsQuiz } from './assignments/forms-quiz.ts';
-export {
-  MakeGoogleQuiz,
-  FindGoogleQuiz,
-  ListGoogleQuizzes,
-  PostQuizToClassroom,
-} from './assignments/google-quiz.ts';
 export { findOwnGame, type GameRef } from './games/game-access.ts';
 export {
   CreateGame,

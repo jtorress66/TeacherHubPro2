@@ -13,14 +13,9 @@ const describeFailure = (step: string, error: ClassroomError) =>
  */
 export function loggedDrive(drive: GoogleDriveFiles, write: Write = stdout): GoogleDriveFiles {
   return {
-    async uploadPdf(accessToken, file) {
-      const result = await drive.uploadPdf(accessToken, file);
+    async uploadWordAsDoc(accessToken, file) {
+      const result = await drive.uploadWordAsDoc(accessToken, file);
       if (!result.ok) write(describeFailure('Google Drive upload', result.error));
-      return result;
-    },
-    async uploadDoc(accessToken, doc) {
-      const result = await drive.uploadDoc(accessToken, doc);
-      if (!result.ok) write(describeFailure('Google Docs upload', result.error));
       return result;
     },
   };

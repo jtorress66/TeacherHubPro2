@@ -210,39 +210,22 @@ export function googleDriveContract(
   accessToken: string,
 ): void {
   describe(`${name} (GoogleDriveFiles contract)`, () => {
-    const pdf = new TextEncoder().encode('%PDF-1.7 test');
+    const docx = new Uint8Array([0x50, 0x4b, 0x03, 0x04, 1, 2, 3]);
 
-    it('uploads a PDF and returns its file id', async () => {
-      const result = await make(accessToken).uploadPdf(accessToken, {
-        name: 'Test.pdf',
-        bytes: pdf,
+    it('turns a Word document into a Google Doc and returns where to open it', async () => {
+      const result = await make(accessToken).uploadWordAsDoc(accessToken, {
+        name: 'Unit 3.docx',
+        bytes: docx,
       });
-      expect(result.ok && result.value.id.length > 0).toBe(true);
-    });
-
-    it('turns HTML into a Google Doc and returns where to open it', async () => {
-      const result = await make(accessToken).uploadDoc(accessToken, {
-        name: 'Test',
-        html: '<html><body><h1>Test</h1></body></html>',
-      });
-      if (!result.ok) throw new Error(`uploadDoc failed: ${result.error.code}`);
+      if (!result.ok) throw new Error(`uploadWordAsDoc failed: ${result.error.code}`);
       expect(result.value.id).not.toBe('');
       expect(result.value.url.startsWith('https://')).toBe(true);
-      expect(
-        await make(accessToken).uploadDoc('expired', { name: 'Test', html: '' }),
-      ).toMatchObject({
-        ok: false,
-        error: { code: 'unauthorized' },
-      });
     });
 
     it('cannot upload without access', async () => {
       expect(
-        await make(accessToken).uploadPdf('expired', { name: 'Test.pdf', bytes: pdf }),
-      ).toEqual({
-        ok: false,
-        error: { code: 'unauthorized' },
-      });
+        await make(accessToken).uploadWordAsDoc('expired', { name: 'Unit 3.docx', bytes: docx }),
+      ).toMatchObject({ ok: false, error: { code: 'unauthorized' } });
     });
   });
 }

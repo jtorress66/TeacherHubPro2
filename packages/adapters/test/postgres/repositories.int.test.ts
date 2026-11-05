@@ -83,14 +83,13 @@ withParents(parentsFor.assistant, () => {
   }));
 });
 
-withParents(parentsFor.gradingTeam, () => {
+withParents(parentsFor.grading, () => {
   assignmentRepositoryContract('Postgres', () => ({
     submissions: repos.submissions,
     attachments: repos.attachments,
     studentLinks: repos.studentLinks,
     classroomConnections: repos.classroomConnections,
     formsExports: repos.formsExports,
-    googleQuizzes: repos.googleQuizzes,
   }));
 });
 

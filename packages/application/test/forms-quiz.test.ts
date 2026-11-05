@@ -1,106 +1,18 @@
 import { describe, expect, it } from 'vitest';
-import { maxAttachmentBytes, type SchoolId, type UserId } from '@thp/domain';
+import type { SchoolId, UserId } from '@thp/domain';
 import { aUser, FakeClassroomAuthorization, FakeGoogleForms, FakeSecretCipher } from '@thp/testing';
 import {
   FindFormsQuiz,
   FinishClassroomConnect,
   MakeFormsQuiz,
-  pdfImportJobKind,
   SaveQuestions,
-  StartPdfTest,
 } from '../src/index.ts';
 import { colleagueOf, gradedClass, valueOf } from './classroom.ts';
-import { advanceDays, makeWorld, type World } from './world.ts';
+import { makeWorld, type World } from './world.ts';
 
 const outsider = aUser({ id: 'u-9' as UserId, schoolId: 'school-9' as SchoolId, email: 'o@x.edu' });
 const notFound = { ok: false, error: { code: 'not_found' } };
 const labels = { true: 'Verdadero', false: 'Falso' };
-const pdf = new TextEncoder().encode('%PDF quiz');
-
-describe('Start a test from a PDF', () => {
-  async function details(world: World) {
-    const setup = await gradedClass(world);
-    return {
-      setup,
-      input: {
-        actor: setup.actor,
-        classId: setup.cls.id,
-        details: {
-          title: 'Fractions quiz',
-          categoryId: setup.category('Pruebas cortas'),
-          points: 50,
-          dueDate: '2026-09-30',
-        },
-        pdf,
-      },
-    };
-  }
-
-  it('creates the assignment and queues reading the PDF into it', async () => {
-    const world = makeWorld();
-    const { setup, input } = await details(world);
-
-    const started = valueOf(await new StartPdfTest(world).execute(input));
-
-    expect(started.assignment).toMatchObject({
-      title: 'Fractions quiz',
-      classId: setup.cls.id,
-      points: 50,
-      dueDate: '2026-09-30',
-      questions: [],
-    });
-    expect(started.job).toMatchObject({
-      kind: pdfImportJobKind,
-      ownerId: setup.actor.id,
-      payload: { classId: setup.cls.id, assignmentId: started.assignment.id },
-    });
-  });
-
-  it('leaves nothing behind when the PDF is refused', async () => {
-    const world = makeWorld();
-    const { setup, input } = await details(world);
-
-    expect(await new StartPdfTest(world).execute({ ...input, pdf: new Uint8Array() })).toEqual({
-      ok: false,
-      error: { field: 'pdf', code: 'too_large' },
-    });
-    expect(
-      await new StartPdfTest(world).execute({
-        ...input,
-        pdf: new Uint8Array(maxAttachmentBytes + 1),
-      }),
-    ).toEqual({ ok: false, error: { field: 'pdf', code: 'too_large' } });
-    expect(await world.assignments.listByClass(setup.actor.schoolId, setup.cls.id)).toEqual([]);
-  });
-
-  it('checks the assignment details', async () => {
-    const world = makeWorld();
-    const { input } = await details(world);
-    expect(
-      await new StartPdfTest(world).execute({
-        ...input,
-        details: { ...input.details, title: ' ' },
-      }),
-    ).toEqual({ ok: false, error: { field: 'title', code: 'required' } });
-  });
-
-  it('needs AI access, and creates nothing without it', async () => {
-    const world = makeWorld();
-    const { setup, input } = await details(world);
-    advanceDays(world, 8);
-    expect(await new StartPdfTest(world).execute(input)).toEqual({
-      ok: false,
-      error: { code: 'subscription_required' },
-    });
-    expect(await world.assignments.listByClass(setup.actor.schoolId, setup.cls.id)).toEqual([]);
-  });
-
-  it("cannot reach another school's class", async () => {
-    const world = makeWorld();
-    const { input } = await details(world);
-    expect(await new StartPdfTest(world).execute({ ...input, actor: outsider })).toEqual(notFound);
-  });
-});
 
 describe('Google Forms quiz', () => {
   const redirectUri = 'https://app.test/api/classroom/callback';

@@ -12,7 +12,6 @@ export type * from './ai/lesson-plan-drafter.ts';
 export type * from './ai/content-writer.ts';
 export type * from './ai/presentation-drafter.ts';
 export type * from './ai/question-extractor.ts';
-export type * from './ai/test-transcriber.ts';
 export type * from './ai/submission-grader.ts';
 export type * from './ai/game-writer.ts';
 export type * from './ai/path-writer.ts';

@@ -1,20 +1,16 @@
 'use client';
 
-import { useActionState, useState, type ReactNode } from 'react';
+import { useActionState, useState } from 'react';
 import { createTranslator, type Locale } from '@thp/i18n';
 import {
   gradeSubmissionAction,
   importRosterAction,
   issueLinksAction,
-  makeTestDocAction,
-  postDocToClassroomAction,
   makeFormsQuizAction,
-  postPdfToClassroomAction,
-  postQuizToClassroomAction,
+  postWordToClassroomAction,
   requestAiGradingAction,
   requestPdfImportAction,
   shareAssignmentAction,
-  startPdfTestAction,
   uploadAttachmentAction,
   type AssignmentFormState,
 } from '../app/_lib/assignment-actions.ts';
@@ -317,190 +313,6 @@ export function IssueLinksForm(props: {
   );
 }
 
-/**
- * The AI assistant's card: a test PDF read into questions. With a class it becomes an assignment
- * graded here; with none, the questions go to a Google Forms quiz.
- */
-export function PdfTestForm(props: {
-  readonly locale: Locale;
-  /** One option per class and grade category, as `classId|categoryId`. */
-  readonly targets: readonly Option[];
-  /** Shown when there is no class to pick, e.g. a link to create one. */
-  readonly noClasses?: ReactNode;
-}) {
-  const t = createTranslator(props.locale);
-  const [state, action] = useActionState(startPdfTestAction, initial);
-  const [target, setTarget] = useState('');
-  const errors = state.errors ?? {};
-  return (
-    <form action={action} className="stack" aria-label={t('pdfTest.title')}>
-      <Hidden values={{ locale: props.locale }} />
-      <FormAlert message={errors.form ?? errors.categoryId} />
-      <Field
-        id="pdf-test-title"
-        name="title"
-        label={t('pdfTest.name')}
-        error={errors.title}
-        required
-      />
-      <FileField
-        id="pdf-test-file"
-        name="pdf"
-        label={t('pdfTest.file')}
-        accept=".pdf,application/pdf"
-        error={errors.pdf}
-      />
-      <p className="hint">{t('pdfImport.scanNote')}</p>
-      <div className="field">
-        <label htmlFor="pdf-test-target">{t('pdfTest.target')}</label>
-        <select
-          id="pdf-test-target"
-          name="target"
-          value={target}
-          aria-describedby="pdf-test-target-hint"
-          onChange={(event) => {
-            setTarget(event.target.value);
-          }}
-        >
-          <option value="">{t('pdfTest.noClass')}</option>
-          {props.targets.map((option) => (
-            <option key={option.id} value={option.id}>
-              {option.name}
-            </option>
-          ))}
-        </select>
-        <p id="pdf-test-target-hint" className="hint">
-          {t('pdfTest.targetHint')}
-        </p>
-        {props.targets.length === 0 ? props.noClasses : null}
-      </div>
-      {target === '' ? null : (
-        <>
-          <Field
-            id="pdf-test-points"
-            name="points"
-            type="number"
-            min={1}
-            label={t('pdfTest.points')}
-            defaultValue={100}
-            error={errors.points}
-          />
-          <Field
-            id="pdf-test-due"
-            name="dueDate"
-            type="date"
-            label={t('pdfTest.dueDate')}
-            error={errors.dueDate}
-          />
-        </>
-      )}
-      <Submit label={t('pdfTest.submit')} />
-    </form>
-  );
-}
-
-/** The teacher's own test PDF, posted to a Classroom course as it is. */
-export function PostPdfForm(props: {
-  readonly locale: Locale;
-  readonly courses: readonly Option[];
-}) {
-  const t = createTranslator(props.locale);
-  const [state, action] = useActionState(postPdfToClassroomAction, initial);
-  const errors = state.errors ?? {};
-  return (
-    <form action={action} className="stack" aria-label={t('pdfPost.submit')} key={state.version}>
-      <Hidden values={{ locale: props.locale }} />
-      <FormAlert message={errors.form} />
-      {state.url === undefined ? null : (
-        <p role="status" className="notice">
-          {t('pdfPost.posted')} <a href={state.url}>{t('pdfPost.open')}</a>
-        </p>
-      )}
-      <Select
-        id="pdf-post-course"
-        name="courseId"
-        label={t('classroom.course')}
-        options={props.courses}
-        error={errors.courseId}
-      />
-      <Field
-        id="pdf-post-title"
-        name="title"
-        label={t('pdfPost.name')}
-        error={errors.title}
-        required
-      />
-      <TextArea
-        id="pdf-post-instructions"
-        name="instructions"
-        label={t('pdfPost.instructions')}
-        error={errors.instructions}
-      />
-      <Field
-        id="pdf-post-due"
-        name="dueDate"
-        type="date"
-        label={t('pdfPost.dueDate')}
-        error={errors.dueDate}
-      />
-      <FileField
-        id="pdf-post-file"
-        name="pdf"
-        label={t('pdfPost.file')}
-        accept=".pdf,application/pdf"
-        error={errors.pdf}
-      />
-      <fieldset className="checks">
-        <legend>{t('pdfDoc.answerAs')}</legend>
-        <label className="checkbox">
-          <input type="radio" name="answerAs" value="pdf" defaultChecked /> {t('pdfDoc.asPdf')}
-        </label>
-        <label className="checkbox">
-          <input type="radio" name="answerAs" value="doc" /> {t('pdfDoc.asDoc')}
-        </label>
-      </fieldset>
-      <Submit label={t('pdfPost.submit')} />
-    </form>
-  );
-}
-
-/** Posts one of the teacher's Google Forms quizzes to a Classroom course. */
-export function PostQuizForm(props: {
-  readonly locale: Locale;
-  readonly quizId: string;
-  readonly courses: readonly Option[];
-}) {
-  const t = createTranslator(props.locale);
-  const [state, action] = useActionState(postQuizToClassroomAction, initial);
-  const errors = state.errors ?? {};
-  return (
-    <form action={action} className="stack" aria-label={t('googleQuiz.post')}>
-      <Hidden values={{ locale: props.locale, quizId: props.quizId }} />
-      <FormAlert message={errors.form} />
-      {state.url === undefined ? null : (
-        <p role="status" className="notice">
-          {t('googleQuiz.posted')} <a href={state.url}>{t('googleQuiz.postedLink')}</a>
-        </p>
-      )}
-      <Select
-        id="post-course"
-        name="courseId"
-        label={t('classroom.course')}
-        options={props.courses}
-      />
-      <Field
-        id="post-due"
-        name="dueDate"
-        type="date"
-        label={t('googleQuiz.dueDate')}
-        error={errors.dueDate}
-      />
-      <p className="hint">{t('googleQuiz.postNote')}</p>
-      <Submit label={t('googleQuiz.post')} />
-    </form>
-  );
-}
-
 export function FormsQuizForm(props: AssignmentProps & { readonly made: boolean }) {
   const t = createTranslator(props.locale);
   const [state, action] = useActionState(makeFormsQuizAction, initial);
@@ -511,7 +323,7 @@ export function FormsQuizForm(props: AssignmentProps & { readonly made: boolean 
       {state.reconnect === true ? (
         <p>
           <a className="button secondary" href={`/api/classroom/connect?locale=${props.locale}`}>
-            {t('pdfTest.connect')}
+            {t('google.connect')}
           </a>
         </p>
       ) : null}
@@ -525,39 +337,65 @@ export function FormsQuizForm(props: AssignmentProps & { readonly made: boolean 
   );
 }
 
-/** Makes the Google Doc from a read test, then posts it once the teacher has had a look. */
-export function TestDocActions(props: { readonly locale: Locale; readonly jobId: string }) {
+/** The teacher's own Word document, posted to a Classroom course as a Google Doc. */
+export function PostWordForm(props: {
+  readonly locale: Locale;
+  readonly courses: readonly Option[];
+}) {
   const t = createTranslator(props.locale);
-  const [made, make] = useActionState(makeTestDocAction, initial);
-  const [posted, post] = useActionState(postDocToClassroomAction, initial);
-  const hidden = { locale: props.locale, jobId: props.jobId };
+  const [state, action] = useActionState(postWordToClassroomAction, initial);
+  const errors = state.errors ?? {};
   return (
-    <div className="stack">
-      <form action={make} className="stack" aria-label={t('pdfDoc.make')}>
-        <Hidden values={hidden} />
-        <FormAlert message={allErrors(made)} />
-        {made.url === undefined ? (
-          <Submit label={t('pdfDoc.make')} />
-        ) : (
-          <p role="status" className="notice">
-            {t('pdfDoc.made')} <a href={made.url}>{t('pdfDoc.open')}</a>
-          </p>
-        )}
-      </form>
-      {made.docId === undefined ? null : (
-        <form action={post} className="stack" aria-label={t('pdfPost.submit')}>
-          <Hidden values={{ ...hidden, docId: made.docId }} />
-          <FormAlert message={allErrors(posted)} />
-          <p className="hint">{t('pdfDoc.checkFirst')}</p>
-          {posted.url === undefined ? (
-            <Submit label={t('pdfPost.submit')} />
-          ) : (
-            <p role="status" className="notice">
-              {t('pdfPost.posted')} <a href={posted.url}>{t('pdfPost.open')}</a>
-            </p>
+    <form action={action} className="stack" aria-label={t('wordPost.submit')} key={state.version}>
+      <Hidden values={{ locale: props.locale }} />
+      <FormAlert message={errors.form} />
+      {state.url === undefined ? null : (
+        <p role="status" className="notice">
+          {t('wordPost.posted')} <a href={state.url}>{t('wordPost.openClassroom')}</a>
+          {state.docUrl === undefined ? null : (
+            <>
+              {' · '}
+              <a href={state.docUrl}>{t('wordPost.openDoc')}</a>
+            </>
           )}
-        </form>
+        </p>
       )}
-    </div>
+      <Select
+        id="word-post-course"
+        name="courseId"
+        label={t('classroom.course')}
+        options={props.courses}
+        error={errors.courseId}
+      />
+      <Field
+        id="word-post-title"
+        name="title"
+        label={t('wordPost.name')}
+        error={errors.title}
+        required
+      />
+      <TextArea
+        id="word-post-instructions"
+        name="instructions"
+        label={t('wordPost.instructions')}
+        error={errors.instructions}
+      />
+      <Field
+        id="word-post-due"
+        name="dueDate"
+        type="date"
+        label={t('wordPost.dueDate')}
+        error={errors.dueDate}
+      />
+      <FileField
+        id="word-post-file"
+        name="file"
+        label={t('wordPost.file')}
+        accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        error={errors.file}
+      />
+      <p className="hint">{t('wordPost.note')}</p>
+      <Submit label={t('wordPost.submit')} />
+    </form>
   );
 }

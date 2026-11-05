@@ -4,7 +4,6 @@ import {
   type AiScores,
   type ContentRequest,
   type ExtractedTest,
-  type TestLayout,
   type GradingRequest,
   type Language,
   type DraftRequest,
@@ -15,7 +14,6 @@ import {
 } from '@thp/domain';
 import type {
   QuestionExtractor,
-  TestTranscriber,
   SubmissionGrader,
   ContentWriter,
   PresentationDrafter,
@@ -142,18 +140,6 @@ export class FakeQuestionExtractor implements QuestionExtractor {
 
   extract(input: { readonly text: string; readonly language: Language }) {
     this.inputs.push(input);
-    return Promise.resolve(this.outcome);
-  }
-}
-
-/** Returns the same layout (or failure) for every test, and records the text it was given. */
-export class FakeTestTranscriber implements TestTranscriber {
-  readonly texts: string[] = [];
-
-  constructor(private readonly outcome: Result<TestLayout, DraftError>) {}
-
-  transcribe(input: { readonly text: string }) {
-    this.texts.push(input.text);
     return Promise.resolve(this.outcome);
   }
 }

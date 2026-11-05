@@ -90,4 +90,4 @@ export * from './assignments/classroom-connection.ts';
 export * from './assignments/grading.ts';
 export * from './assignments/student-view.ts';
 export * from './assignments/forms-quiz.ts';
-export * from './assignments/test-layout.ts';
+export * from './assignments/word-document.ts';

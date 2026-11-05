@@ -6,15 +6,7 @@ import { localClassroomFixture } from './local-classroom.ts';
 export class LocalDrive implements GoogleDriveFiles {
   private uploaded = 0;
 
-  uploadPdf(accessToken: string): Promise<Result<{ readonly id: string }, ClassroomError>> {
-    if (accessToken !== localClassroomFixture.accessToken) {
-      return Promise.resolve(err({ code: 'unauthorized' }));
-    }
-    this.uploaded += 1;
-    return Promise.resolve(ok({ id: `local-drive-${String(this.uploaded)}` }));
-  }
-
-  uploadDoc(
+  uploadWordAsDoc(
     accessToken: string,
   ): Promise<Result<{ readonly id: string; readonly url: string }, ClassroomError>> {
     if (accessToken !== localClassroomFixture.accessToken) {

@@ -926,71 +926,28 @@ export const es: Messages = {
     true: 'Cierto',
     false: 'Falso',
   },
-  pdfPost: {
-    intro:
-      'Sube el PDF de tu examen o prueba y publícalo tal cual en un curso de Google Classroom como tarea.',
-    name: 'Título de la tarea',
-    instructions: 'Instrucciones para los estudiantes (opcional)',
-    dueDate: 'Fecha de entrega en Classroom (opcional)',
-    file: 'PDF de tu examen o prueba',
-    submit: 'Publicar en Google Classroom',
-    posted: 'Publicado en Google Classroom.',
-    open: 'Abrir en Classroom',
-    note: 'Cada estudiante recibe su propia copia del PDF para escribir en ella y entregarla.',
-    aiInstead: 'O conviértelo en una prueba de Google Forms con IA',
-    noCourses:
-      'Google Classroom no muestra cursos activos en los que la cuenta de Google conectada sea docente. Crea un curso en classroom.google.com o conecta la cuenta de Google con la que enseñas.',
-    switchAccount: 'Conectar otra cuenta de Google',
-  },
-  pdfDoc: {
-    answerAs: 'Cómo contestan los estudiantes',
-    asPdf: 'Escribiendo sobre el PDF (queda exactamente igual)',
-    asDoc:
-      'Escribiendo en un documento de Google (la IA ordena el examen; revísalo antes de publicar)',
-    title: 'Creando un documento de Google con tu examen',
-    intro:
-      'La IA ya leyó tu examen. Crea el documento de Google, ábrelo para revisar que no falte nada ni haya errores y luego publícalo. Cada estudiante recibe su propia copia para escribir.',
-    continue: 'Continuar',
-    make: 'Crear el documento de Google',
-    made: 'Tu documento de Google está listo en tu Drive.',
-    open: 'Abrir el documento para revisarlo',
-    checkFirst:
-      'Corrige primero lo que haga falta en el documento; Classroom lo recibe tal como esté al publicar.',
-  },
-  googleQuiz: {
-    list: 'Tus pruebas de Google Forms',
-    empty: 'Todavía no hay pruebas de Google Forms.',
-    madeOn: 'Creada el {date}',
-    post: 'Publicar en Google Classroom',
-    posted: 'Publicada en Google Classroom.',
-    postedLink: 'Abrir en Classroom',
-    dueDate: 'Fecha de entrega (opcional)',
-    postNote:
-      'Classroom recibe el título y el enlace que usan los estudiantes para contestar en Google Forms.',
-    back: 'Volver al asistente de IA',
-  },
-  pdfTest: {
-    title: 'Enviar un examen en PDF a Google',
-    intro:
-      'Sube el PDF de un examen o prueba. La IA lo convierte en preguntas que tú revisas, y luego puedes compartirlo en Google Classroom o crear una prueba de Google Forms.',
-    target: 'Calificarlo en TeacherHubPro (opcional)',
-    noClass: 'Sin clase: solo Google',
-    targetHint:
-      'Elige una clase para tener un examen en línea cuyas notas van a tu registro de notas. Sin clase, creas una prueba de Google Forms y puedes publicarla en Google Classroom.',
-    reviewTitle: 'Revisa las preguntas',
-    reviewIntro: 'Corrige lo que la IA haya leído mal y luego crea la prueba de Google Forms.',
-    name: 'Título',
-    points: 'Puntos',
-    dueDate: 'Fecha de entrega (opcional)',
-    file: 'PDF del examen',
-    submit: 'Leer el PDF',
-    noClasses:
-      'Para calificarlo en TeacherHubPro, primero crea una clase y sus categorías de notas.',
-    createClass: 'Crear una clase',
+  google: {
     sendTitle: 'Enviar a Google',
     connectFirst:
       'Conecta tu cuenta de Google para compartir en Classroom y crear pruebas de Forms.',
     connect: 'Conectar Google',
+    noCourses:
+      'Google Classroom no muestra cursos activos en los que la cuenta de Google conectada sea docente. Crea un curso en classroom.google.com o conecta la cuenta de Google con la que enseñas.',
+    switchAccount: 'Conectar otra cuenta de Google',
+  },
+  wordPost: {
+    title: 'Enviar un documento de Word a Google Classroom',
+    intro:
+      'Sube tu examen, prueba u hoja de trabajo como documento de Word (.docx). Classroom lo recibe como documento de Google y cada estudiante tiene su propia copia para escribir.',
+    name: 'Título de la tarea',
+    instructions: 'Instrucciones para los estudiantes (opcional)',
+    dueDate: 'Fecha de entrega en Classroom (opcional)',
+    file: 'Documento de Word (.docx)',
+    note: 'Google convierte el documento en un documento de Google; las tablas, la numeración y los recuadros quedan como los hiciste.',
+    submit: 'Publicar en Google Classroom',
+    posted: 'Publicado en Google Classroom.',
+    openClassroom: 'Abrir en Classroom',
+    openDoc: 'Abrir el documento de Google',
   },
   games: {
     title: 'Juegos educativos',
