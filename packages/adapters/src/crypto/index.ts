@@ -1,5 +1,12 @@
 import { createHash, randomBytes, randomInt, randomUUID } from 'node:crypto';
-import type { Clock, IdGenerator, RandomTokenGenerator, SeedSource, TokenHasher } from '@thp/ports';
+import type {
+  Clock,
+  Delay,
+  IdGenerator,
+  RandomTokenGenerator,
+  SeedSource,
+  TokenHasher,
+} from '@thp/ports';
 
 export { ScryptPasswordHasher } from './scrypt-password-hasher.ts';
 
@@ -33,5 +40,11 @@ export class UuidIdGenerator implements IdGenerator {
 export class SystemClock implements Clock {
   now(): Date {
     return new Date();
+  }
+}
+
+export class SystemDelay implements Delay {
+  wait(milliseconds: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, milliseconds));
   }
 }

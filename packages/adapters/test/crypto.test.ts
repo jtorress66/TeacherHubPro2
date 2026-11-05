@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   clockContract,
+  delayContract,
   idGeneratorContract,
   passwordHasherContract,
   randomTokenGeneratorContract,
@@ -14,6 +15,7 @@ import {
   ScryptPasswordHasher,
   Sha256TokenHasher,
   SystemClock,
+  SystemDelay,
   UuidIdGenerator,
 } from '../src/crypto/index.ts';
 import { HmacTicketSigner } from '../src/crypto/hmac-ticket-signer.ts';
@@ -23,6 +25,7 @@ tokenHasherContract('Sha256TokenHasher', () => new Sha256TokenHasher());
 randomTokenGeneratorContract('NodeRandomTokenGenerator', () => new NodeRandomTokenGenerator());
 idGeneratorContract('UuidIdGenerator', () => new UuidIdGenerator());
 clockContract('SystemClock', () => new SystemClock());
+delayContract('SystemDelay', () => new SystemDelay());
 seedSourceContract('CryptoSeedSource', () => new CryptoSeedSource());
 ticketSignerContract('HmacTicketSigner', () => new HmacTicketSigner('x'.repeat(32)));
 

@@ -31,6 +31,7 @@ import {
   StripeBillingEvents,
   StripeCheckoutSessions,
   SystemClock,
+  SystemDelay,
   UuidIdGenerator,
 } from '@thp/adapters';
 import {
@@ -472,6 +473,7 @@ export function createAppContainer(
     google: identity.google,
     ...classroomFor(config.classroom),
     clock: new SystemClock(),
+    delay: new SystemDelay(),
     ids: new UuidIdGenerator(),
     tokens: new NodeRandomTokenGenerator(),
     tokenHasher: new Sha256TokenHasher(),
