@@ -9,6 +9,8 @@ export interface MailMessage {
 
 export interface MailerError {
   readonly code: 'rejected' | 'unavailable';
+  /** The provider's reason (status, error name, message without addresses), for logs only. */
+  readonly reason?: string;
 }
 
 export interface Mailer {

@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import {
   LocalMailer,
+  loggedMailer,
   ResendMailer,
   AesGcmCipher,
   CryptoSeedSource,
@@ -494,7 +495,10 @@ export function createAppContainer(
     appUrl: config.appUrl,
     mailer:
       config.mail.provider === 'resend'
-        ? new ResendMailer({ apiKey: config.mail.apiKey, from: config.mail.from })
+        ? loggedMailer(
+            new ResendMailer({ apiKey: config.mail.apiKey, from: config.mail.from }),
+            (line) => process.stdout.write(line),
+          )
         : localMailer,
     mailTemplates: { portalLink: portalLinkEmail, trialReminder: trialReminderEmail },
   };

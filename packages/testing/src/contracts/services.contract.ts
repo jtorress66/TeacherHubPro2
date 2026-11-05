@@ -96,7 +96,8 @@ export function mailerContract(
     });
 
     it('reports a rejected message', async () => {
-      expect(await setup.rejecting().send(message)).toEqual({
+      // The provider's reason may come along for logs; the code is the contract.
+      expect(await setup.rejecting().send(message)).toMatchObject({
         ok: false,
         error: { code: 'rejected' },
       });
