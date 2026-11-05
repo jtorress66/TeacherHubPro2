@@ -368,6 +368,18 @@ details[open] > summary {
   min-width: 8rem;
 }
 
+.school-mark {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.school-logo {
+  height: 2.5rem;
+  width: auto;
+  border-radius: 0.25rem;
+}
+
 .badge.priority-high {
   border-color: var(--danger);
   color: var(--danger);
