@@ -3,6 +3,8 @@ import type {
   ClassroomConnection,
   FormsExport,
   StudentInsight,
+  PrepBatch,
+  PrepBatchId,
   StudentNote,
   StudentNoteId,
   StudentLink,
@@ -58,6 +60,7 @@ import type {
   FormsExportRepository,
   StudentInsightRepository,
   StudentNoteRepository,
+  PrepBatchRepository,
   StudentLinkRepository,
   AiGenerationRepository,
   PresentationRepository,
@@ -809,5 +812,49 @@ export class InMemoryTrialReminderRepository implements TrialReminderRepository 
     kinds.add(reminder.kind);
     this.sent.set(reminder.subscriptionId, kinds);
     return Promise.resolve();
+  }
+}
+
+export class InMemoryPrepBatchRepository implements PrepBatchRepository {
+  private readonly rows = new Map<PrepBatchId, PrepBatch>();
+
+  save(batch: PrepBatch): Promise<void> {
+    this.rows.set(batch.id, batch);
+    return Promise.resolve();
+  }
+
+  find(schoolId: SchoolId, teacherId: UserId, id: PrepBatchId): Promise<PrepBatch | null> {
+    const row = this.rows.get(id);
+    return Promise.resolve(row?.schoolId === schoolId && row.teacherId === teacherId ? row : null);
+  }
+
+  private mine(schoolId: SchoolId, teacherId: UserId): PrepBatch[] {
+    return [...this.rows.values()].filter(
+      (b) => b.schoolId === schoolId && b.teacherId === teacherId,
+    );
+  }
+
+  listForTeacher(
+    schoolId: SchoolId,
+    teacherId: UserId,
+    limit: number,
+  ): Promise<readonly PrepBatch[]> {
+    return Promise.resolve(
+      this.mine(schoolId, teacherId)
+        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+        .slice(0, limit),
+    );
+  }
+
+  countReady(schoolId: SchoolId, teacherId: UserId): Promise<number> {
+    return Promise.resolve(
+      this.mine(schoolId, teacherId).filter((b) => b.status === 'ready').length,
+    );
+  }
+
+  async delete(schoolId: SchoolId, teacherId: UserId, id: PrepBatchId): Promise<boolean> {
+    if ((await this.find(schoolId, teacherId, id)) === null) return false;
+    this.rows.delete(id);
+    return true;
   }
 }

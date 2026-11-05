@@ -6,6 +6,7 @@ import {
   graderSystemPrompt,
   insightSystemPrompt,
   pathWriterSystemPrompt,
+  quizSystemPrompt,
   slidesSystemPrompt,
 } from '@thp/agents';
 import type { ContentKind } from '@thp/domain';
@@ -88,6 +89,22 @@ function extractorReply(): string {
       },
     ],
   });
+}
+
+/** As many questions as asked for: multiple choice with the first option right, and one true/false. */
+function quizReply(request: LlmRequest): string {
+  const count = Number(/Write exactly (\d+) questions/.exec(promptOf(request))?.[1] ?? 5);
+  const questions = Array.from({ length: count }, (_, i) =>
+    i === count - 1
+      ? { type: 'true_false', prompt: 'The week reviewed what we learned.', answer: true }
+      : {
+          type: 'multiple_choice',
+          prompt: `Question ${nth(i)}: which answer is right?`,
+          options: ['Right answer', 'Wrong answer', 'Another wrong answer'],
+          correctOption: 0,
+        },
+  );
+  return JSON.stringify({ instructions: 'Answer every question.', questions });
 }
 
 /** Half the points for every open question the grader is asked about. */
@@ -195,6 +212,7 @@ const repliesBySystem: ReadonlyMap<string, (request: LlmRequest) => string> = ne
   [extractorSystemPrompt, extractorReply],
   [graderSystemPrompt, graderReply],
   [insightSystemPrompt, insightReply],
+  [quizSystemPrompt, quizReply],
   [gameWriterSystemPrompt, gameReply],
   [pathWriterSystemPrompt, pathReply],
 ]);

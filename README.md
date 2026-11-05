@@ -91,6 +91,10 @@ Samples: `apps/web/public/samples/students-en.csv` and `students-es.csv`. At mos
 
 The home page (`/app`) is the Command Center: today's classes with their attendance, what is left to grade, students who may need help (at-risk score from the average, missing work, absences and tardies in the last 30 days), suggestions and lessons in the next 7 days. Each student has a Student 360 page (click their name on the roster or in the at-risk list) with their average, attendance, missing work, a timeline, private notes only you see, and an on-demand AI insight (a draft sent numbers only, never a name or notes).
 
+## Prep Agent
+
+**Prep Agent** in the menu plans a week for one class from one sentence, for example "Prep next week for Unit 3 History (Civil War)". The worker drafts, one AI job per item: the weekly plan (with Common Core codes for the class's subject and grade, and last week's plan as context), slides and a worksheet for each lesson, a Friday quiz and a parent email. The page shows progress while it works; a stalled batch can be resumed. When it is ready (a badge on the menu link and a card on the Command Center), tick the drafts to keep, preview each one, edit the parent email and press **Approve & Publish**: the plan goes to Lesson plans, the slides to Presentations, the worksheets to the AI assistant, the quiz to the gradebook (due Friday, in the category you chose) and the email to each family address on the roster. Nothing is saved or sent before that, and the AI is never sent student data.
+
 ## Attendance
 
 On a class page, **Take attendance** opens the sheet for a day (today by default). Everyone starts as present; set the others, add minutes late for tardies and a note if needed, then **Save** or **Submit**. A submitted day is read-only until it is reopened. **Attendance report** shows each student's counts and rate over submitted days (last 30 days by default). Tardy counts as present; excused days count in the total. **Attendance** in the menu shows every class and whether the day was taken.

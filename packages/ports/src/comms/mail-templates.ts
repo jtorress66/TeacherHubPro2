@@ -21,6 +21,13 @@ export interface MailTemplates {
     readonly daysLeft: number;
     readonly billingUrl: string;
   }): MailContent;
+  /** The teacher's approved weekly update, as they wrote it. */
+  weeklyUpdate(input: {
+    readonly language: Language;
+    readonly subject: string;
+    readonly body: string;
+    readonly schoolName: string;
+  }): MailContent;
 }
 
 /** What the local stand-in mailer kept, newest first: for reading mail in development only. */

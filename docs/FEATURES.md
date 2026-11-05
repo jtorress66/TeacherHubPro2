@@ -302,6 +302,23 @@ Added at the teacher's request, between steps 14 and 15 (not in the old app).
 - One prompt, for example "Prep next week for Unit 3 History (Civil War)", runs 4 steps: research and plan (standards and last week's lessons, daily plans) → materials (slides and worksheets per lesson) → Friday quiz → calendar events and a parent email summary.
 - Progress tracker, side-by-side preview, edits, options (quiz, presentations, worksheets), editable parent email, in-app notification when ready, **Approve & Publish**.
 - Old files: `backend/routes/prep_agent.py`, `frontend/src/pages/PrepAgent.js`.
+- **Decided for the rebuild:**
+  - A batch is for one class the teacher manages: a prompt, the week's Monday, 1–5 lessons, the subject and grade (suggested from the class), the drafts' language, and options (slides, worksheets, quiz, parent email). A quiz needs a grade category of that class.
+  - Each item is drafted by its own worker job in order (the plan, then each day's slides and worksheet, then the quiz), so no job nears the job time limit; progress shows the 4 steps and a count. A stalled job can be resumed; a failed plan stops the batch and can be tried again; a failed slide deck or worksheet is skipped.
+  - The plan reuses the lesson planner (one weekly plan; days after the requested number stay blank), with last week's plan for the class as context. Slides reuse the presentation writer and worksheets the AI assistant, each on that day's theme. The quiz is a new agent (10 questions: multiple choice, true/false, fill in the blank, short answer, each with its answer); replay evals in `evals/replays/quiz.json`.
+  - **Calendar:** no separate calendar. The published plan shows on the Plans calendar and the quiz's Friday due date in the Command Center.
+  - **Review:** the teacher ticks the drafts to keep, previews each one beside the list and edits the parent email (subject and text); everything else is edited after publishing in its usual editor.
+  - **Ready notice:** a count badge on the Prep Agent menu link and a card on the Command Center; no email to the teacher.
+  - **Approve & Publish:** saves the weekly plan, the slide decks, the worksheets (in the AI assistant's history) and the quiz as an assignment due Friday, and emails each distinct parent address on the roster separately (refused emails are counted). Only once per batch.
+  - Batches are private to the teacher who started them.
+- **Fixed from the old app:**
+  - The batch ran inside the web server (lost on a restart): worker jobs stored in Postgres.
+  - Any teacher in the school could prep any class: only classes the teacher manages.
+  - The subject was guessed from keywords and the standards came from a short hard-coded list: the class's subject and grade, and the Common Core catalog through the lesson planner (codes are checked, never invented).
+  - Five one-day plans: one weekly plan.
+  - The quiz was unchecked JSON: validated gradebook questions, saved as an assignment.
+  - The parent email was only queued and never sent: it is sent, one email per family.
+  - Raw error messages reached the teacher, and edits overwrote the drafts without checks: safe error codes; only the ticks and the email change before publishing.
 
 ## Step 17 — Admin and super admin
 

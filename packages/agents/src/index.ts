@@ -26,6 +26,13 @@ export {
 } from './insight-writer/insight-writer.ts';
 export * from './insight-writer/insight-scorecard.ts';
 export {
+  QuizWriter,
+  quizQuestionTypes,
+  quizSystemPrompt,
+  reviewQuiz,
+} from './quiz-writer/quiz-writer.ts';
+export * from './quiz-writer/quiz-scorecard.ts';
+export {
   SubmissionGrader,
   graderSystemPrompt,
   reviewScores,

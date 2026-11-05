@@ -50,6 +50,7 @@ describe('migrations', () => {
       'plan_folders',
       'plan_templates',
       'portal_links',
+      'prep_batches',
       'presentations',
       'report_card_comments',
       'schools',
@@ -74,6 +75,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0017_prep_batches',
           '0016_student_360',
           '0015_drop_google_quizzes',
           '0014_google_quizzes',
@@ -115,10 +117,11 @@ describe('migrations', () => {
           '0014_google_quizzes',
           '0015_drop_google_quizzes',
           '0016_student_360',
+          '0017_prep_batches',
         ],
       },
     });
-    expect(await tableNames()).toHaveLength(39);
+    expect(await tableNames()).toHaveLength(40);
   });
 
   it('turns plans saved before step 8 into valid plans of their kind', async () => {

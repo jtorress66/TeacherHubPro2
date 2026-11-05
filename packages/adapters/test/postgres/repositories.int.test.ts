@@ -39,6 +39,7 @@ import {
   assistantRepositoryContract,
   assignmentRepositoryContract,
   student360RepositoryContract,
+  prepBatchRepositoryContract,
   gamePlayRepositoryContract,
   liveRepositoryContract,
   learningRepositoryContract,
@@ -358,4 +359,8 @@ withParents(parentsFor.rosterTeam, () => {
     notes: repos.studentNotes,
     insights: repos.studentInsights,
   }));
+});
+
+withParents(parentsFor.prep, () => {
+  prepBatchRepositoryContract('Postgres', () => repos.prepBatches);
 });

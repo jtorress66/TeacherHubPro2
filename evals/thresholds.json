@@ -47,5 +47,11 @@
     "count": 1,
     "grounded": 1,
     "focus": 0.9
+  },
+  "quiz-writer": {
+    "structure": 1,
+    "count": 1,
+    "types": 1,
+    "coverage": 0.9
   }
 }

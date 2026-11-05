@@ -99,3 +99,6 @@ export * from './command-center/recommendations.ts';
 export * from './students/student-note.ts';
 export * from './students/student-insight.ts';
 export * from './students/student-360.ts';
+export * from './prep/parent-email.ts';
+export * from './prep/prep-request.ts';
+export * from './prep/prep-batch.ts';

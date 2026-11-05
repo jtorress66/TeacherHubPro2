@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { portalLinkEmail, trialReminderEmail } from './emails.ts';
+import { portalLinkEmail, trialReminderEmail, weeklyUpdateEmail } from './emails.ts';
 
 describe('portalLinkEmail', () => {
   const input = {
@@ -49,5 +49,31 @@ describe('trialReminderEmail', () => {
       trialReminderEmail({ language: 'es', name: 'Juan', daysLeft: 1, billingUrl: 'https://x' })
         .subject,
     ).toBe('Su prueba de TeacherHubPro termina hoy');
+  });
+});
+
+describe('weeklyUpdateEmail', () => {
+  const input = {
+    language: 'es' as const,
+    subject: 'Esta semana en Historia 7',
+    body: 'Queridas familias:\n\n• Lunes: <Causas>\n• Martes: Batallas\n\nSaludos,\nSra. Rivera',
+    schoolName: 'Escuela Luna',
+  };
+
+  it('sends the teacher’s text as written, one paragraph per block, lines kept', () => {
+    const mail = weeklyUpdateEmail(input);
+    expect(mail.subject).toBe('Esta semana en Historia 7');
+    expect(mail.text).toContain(input.body);
+    expect(mail.text).toContain('Escuela Luna');
+    expect(mail.html).toContain('• Lunes: &lt;Causas&gt;<br>• Martes: Batallas');
+    expect(mail.html).not.toContain('<Causas>');
+    expect(mail.html).toContain('lang="es"');
+  });
+
+  it('says who sent it, in the family’s language', () => {
+    expect(weeklyUpdateEmail(input).text).toMatch(/Enviado por un maestro de Escuela Luna/u);
+    expect(weeklyUpdateEmail({ ...input, language: 'en' }).text).toMatch(
+      /Sent by a teacher at Escuela Luna/u,
+    );
   });
 });

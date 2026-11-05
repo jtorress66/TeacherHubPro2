@@ -37,6 +37,7 @@ import { plannerRepositoryContract } from '../contracts/planner.contract.ts';
 import { assistantRepositoryContract } from '../contracts/assistant.contract.ts';
 import { assignmentRepositoryContract } from '../contracts/assignments.contract.ts';
 import { student360RepositoryContract } from '../contracts/student360.contract.ts';
+import { prepBatchRepositoryContract } from '../contracts/prep.contract.ts';
 import { gamePlayRepositoryContract } from '../contracts/games.contract.ts';
 import { liveRepositoryContract } from '../contracts/live.contract.ts';
 import { learningRepositoryContract } from '../contracts/learning.contract.ts';
@@ -80,6 +81,7 @@ import {
   InMemoryClassroomConnectionRepository,
   InMemoryFormsExportRepository,
   InMemoryStudentInsightRepository,
+  InMemoryPrepBatchRepository,
   InMemoryStudentNoteRepository,
   InMemoryReportCardCommentRepository,
   InMemorySchoolRepository,
@@ -297,3 +299,5 @@ student360RepositoryContract('InMemory', () => ({
   notes: new InMemoryStudentNoteRepository(),
   insights: new InMemoryStudentInsightRepository(),
 }));
+
+prepBatchRepositoryContract('InMemory', () => new InMemoryPrepBatchRepository());

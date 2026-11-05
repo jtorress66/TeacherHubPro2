@@ -10,12 +10,15 @@ import {
   type LessonPlanDraft,
   type PresentationDraft,
   type PresentationRequest,
+  type QuestionId,
   type Result,
 } from '@thp/domain';
 import type {
   QuestionExtractor,
   InsightRequest,
   InsightWriter,
+  QuizRequest,
+  QuizWriter,
   SubmissionGrader,
   ContentWriter,
   PresentationDrafter,
@@ -188,5 +191,41 @@ export class FakeSubmissionGrader implements SubmissionGrader {
         feedback: 'Keep going',
       }),
     );
+  }
+}
+
+/** A small valid quiz for tests. */
+export const aQuiz = (): ExtractedTest => ({
+  instructions: 'Answer every question.',
+  questions: [
+    {
+      id: 'q1' as QuestionId,
+      type: 'multiple_choice',
+      prompt: 'Which fraction equals 1/2?',
+      points: 1,
+      instructions: null,
+      options: ['2/4', '1/3'],
+      correctOption: 0,
+    },
+    {
+      id: 'q2' as QuestionId,
+      type: 'true_false',
+      prompt: '3/4 is more than 1/2.',
+      points: 1,
+      instructions: null,
+      answer: true,
+    },
+  ],
+});
+
+/** A scripted quiz writer: returns the given quiz (or error) and records each request. */
+export class FakeQuizWriter implements QuizWriter {
+  readonly requests: QuizRequest[] = [];
+
+  constructor(private readonly outcome: Result<ExtractedTest, DraftError> = ok(aQuiz())) {}
+
+  write(request: QuizRequest): Promise<Result<ExtractedTest, DraftError>> {
+    this.requests.push(request);
+    return Promise.resolve(this.outcome);
   }
 }
