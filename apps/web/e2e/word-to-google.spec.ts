@@ -18,7 +18,7 @@ async function connectGoogle(page: Page, locale: Locale): Promise<void> {
 for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
   const t = createTranslator(locale);
 
-  test(`a teacher posts a Word document to Google Classroom as a Google Doc (${locale})`, async ({
+  test(`a teacher posts a Word document to Google Classroom, a copy for each student (${locale})`, async ({
     page,
   }) => {
     await signUp(page, locale);
@@ -54,7 +54,7 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     );
     await expect(card.getByRole('link', { name: t('wordPost.openDoc') })).toHaveAttribute(
       'href',
-      /^https:\/\/docs\.local\/d\/local-doc-\d+\/edit$/,
+      /^https:\/\/drive\.local\/file\/d\/local-file-\d+\/view$/,
     );
   });
 

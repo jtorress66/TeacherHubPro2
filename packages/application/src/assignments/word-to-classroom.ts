@@ -8,48 +8,21 @@ import {
   type Result,
   type User,
 } from '@thp/domain';
-import type {
-  ClassroomCoursework,
-  ClassroomError,
-  CourseworkRequest,
-  Delay,
-  GoogleDriveFiles,
-} from '@thp/ports';
+import type { ClassroomCoursework, GoogleDriveFiles } from '@thp/ports';
 import type { UseCaseError } from '../errors.ts';
 import { accessToken, googleFailed, type ConnectionDeps } from './classroom.ts';
 
 /**
- * Classroom can answer "not found" for a Doc Drive has only just converted: it is tried again
- * after these waits (about 7 seconds in all) before the teacher is told.
- */
-const catchUpWaits = [1000, 2000, 4000] as const;
-
-/**
- * Posts the teacher's own Word document to a Classroom course: Drive turns it into a Google Doc,
- * and each student gets a copy to type in. No AI; nothing is kept in TeacherHubPro.
+ * Posts the teacher's own Word document to a Classroom course, unchanged: each student gets a
+ * copy, which opens in Google Docs to type in. No AI; nothing is kept in TeacherHubPro.
  */
 export class PostWordToClassroom {
   constructor(
     private readonly deps: ConnectionDeps & {
       readonly googleDrive: GoogleDriveFiles;
       readonly classroomCoursework: ClassroomCoursework;
-      readonly delay: Delay;
     },
   ) {}
-
-  private async createCoursework(
-    token: string,
-    courseId: string,
-    request: CourseworkRequest,
-  ): Promise<Result<{ readonly url: string }, ClassroomError>> {
-    let posted = await this.deps.classroomCoursework.createCoursework(token, courseId, request);
-    for (const wait of catchUpWaits) {
-      if (posted.ok || posted.error.code !== 'not_found') return posted;
-      await this.deps.delay.wait(wait);
-      posted = await this.deps.classroomCoursework.createCoursework(token, courseId, request);
-    }
-    return posted;
-  }
 
   async execute(input: {
     readonly actor: User;
@@ -76,9 +49,9 @@ export class PostWordToClassroom {
     }
     const token = await accessToken(this.deps, input.actor);
     if (!token.ok) return token;
-    const doc = await this.deps.googleDrive.uploadWordAsDoc(token.value, document.value);
+    const doc = await this.deps.googleDrive.uploadWordDocument(token.value, document.value);
     if (!doc.ok) return googleFailed(doc.error);
-    const posted = await this.createCoursework(token.value, course.value, {
+    const posted = await this.deps.classroomCoursework.createCoursework(token.value, course.value, {
       title: title.value,
       description: instructions.value ?? '',
       material: { kind: 'driveFile', driveFileId: doc.value.id },

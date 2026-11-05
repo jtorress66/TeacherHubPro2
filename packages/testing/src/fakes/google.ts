@@ -152,7 +152,7 @@ export class FakeGoogleDrive implements GoogleDriveFiles {
     } = { accessToken: 'classroom-access' },
   ) {}
 
-  uploadWordAsDoc(
+  uploadWordDocument(
     accessToken: string,
     file: { readonly name: string; readonly bytes: Uint8Array },
   ): Promise<Result<{ readonly id: string; readonly url: string }, ClassroomError>> {

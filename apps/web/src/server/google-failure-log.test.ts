@@ -15,11 +15,14 @@ describe('Google failure log', () => {
   it('writes the failing step, code and Google reason, and passes the result through', async () => {
     const lines: string[] = [];
     const drive: GoogleDriveFiles = {
-      uploadWordAsDoc: () =>
+      uploadWordDocument: () =>
         Promise.resolve(err({ code: 'api_disabled', reason: 'SERVICE_DISABLED' })),
     };
 
-    const result = await loggedDrive(drive, (line) => lines.push(line)).uploadWordAsDoc('t', docx);
+    const result = await loggedDrive(drive, (line) => lines.push(line)).uploadWordDocument(
+      't',
+      docx,
+    );
 
     expect(result).toEqual({
       ok: false,

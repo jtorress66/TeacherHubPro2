@@ -466,16 +466,16 @@ googleDriveContract('LocalDrive', () => new LocalDrive(), localClassroomFixture.
 describe('GoogleDriveApi', () => {
   const docx = new Uint8Array([0x50, 0x4b, 0x03, 0x04, 0x41, 0x42]);
 
-  it('uploads the Word document for Drive to convert into a Google Doc', async () => {
+  it('uploads the Word document as it is, without converting it', async () => {
     const api = driveApi('t');
     expect(
-      await new GoogleDriveApi(api.fetchFn).uploadWordAsDoc('t', {
+      await new GoogleDriveApi(api.fetchFn).uploadWordDocument('t', {
         name: 'Unit 3.docx',
         bytes: docx,
       }),
     ).toEqual({
       ok: true,
-      value: { id: 'drive-file-1', url: 'https://docs.google.com/document/d/drive-file-1/edit' },
+      value: { id: 'drive-file-1', url: 'https://drive.google.com/file/d/drive-file-1/view' },
     });
     const [upload] = api.uploads;
     expect(upload?.url).toBe(
@@ -483,7 +483,7 @@ describe('GoogleDriveApi', () => {
     );
     expect(upload?.contentType).toMatch(/^multipart\/related; boundary=/);
     expect(upload?.body).toContain(
-      '{"name":"Unit 3","mimeType":"application/vnd.google-apps.document"}',
+      '{"name":"Unit 3.docx","mimeType":"application/vnd.openxmlformats-officedocument.wordprocessingml.document"}',
     );
     expect(upload?.body).toContain(
       'Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -493,11 +493,11 @@ describe('GoogleDriveApi', () => {
 
   it('reports a server error or an unreachable Google as unavailable', async () => {
     const file = { name: 'a.docx', bytes: docx };
-    expect(await new GoogleDriveApi(driveApi('t', 503).fetchFn).uploadWordAsDoc('t', file)).toEqual(
-      { ok: false, error: { code: 'unavailable' } },
-    );
+    expect(
+      await new GoogleDriveApi(driveApi('t', 503).fetchFn).uploadWordDocument('t', file),
+    ).toEqual({ ok: false, error: { code: 'unavailable' } });
     const offline = () => Promise.reject(new Error('offline'));
-    expect(await new GoogleDriveApi(offline).uploadWordAsDoc('t', file)).toEqual({
+    expect(await new GoogleDriveApi(offline).uploadWordDocument('t', file)).toEqual({
       ok: false,
       error: { code: 'unavailable' },
     });

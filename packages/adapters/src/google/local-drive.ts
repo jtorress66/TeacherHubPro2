@@ -6,14 +6,14 @@ import { localClassroomFixture } from './local-classroom.ts';
 export class LocalDrive implements GoogleDriveFiles {
   private uploaded = 0;
 
-  uploadWordAsDoc(
+  uploadWordDocument(
     accessToken: string,
   ): Promise<Result<{ readonly id: string; readonly url: string }, ClassroomError>> {
     if (accessToken !== localClassroomFixture.accessToken) {
       return Promise.resolve(err({ code: 'unauthorized' }));
     }
     this.uploaded += 1;
-    const id = `local-doc-${String(this.uploaded)}`;
-    return Promise.resolve(ok({ id, url: `https://docs.local/d/${id}/edit` }));
+    const id = `local-file-${String(this.uploaded)}`;
+    return Promise.resolve(ok({ id, url: `https://drive.local/file/d/${id}/view` }));
   }
 }

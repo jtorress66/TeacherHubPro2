@@ -1,5 +1,4 @@
 export type { Clock } from './system/clock.ts';
-export type { Delay } from './system/delay.ts';
 export type { IdGenerator } from './system/id-generator.ts';
 export type { RandomTokenGenerator } from './system/random-token-generator.ts';
 export type { SeedSource } from './system/seed-source.ts';

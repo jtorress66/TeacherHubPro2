@@ -1,5 +1,4 @@
 export { FixedClock } from './fixed-clock.ts';
-export { FakeDelay } from './fake-delay.ts';
 export { SequentialIdGenerator } from './sequential-id-generator.ts';
 export { unwrap } from './unwrap.ts';
 export * from './fixtures.ts';
@@ -18,7 +17,6 @@ export * from './fakes/games.ts';
 export * from './fakes/learning.ts';
 
 export { clockContract } from './contracts/clock.contract.ts';
-export { delayContract } from './contracts/delay.contract.ts';
 export { idGeneratorContract } from './contracts/id-generator.contract.ts';
 export * from './contracts/scoped-repository.contract.ts';
 export * from './contracts/accounts.contract.ts';

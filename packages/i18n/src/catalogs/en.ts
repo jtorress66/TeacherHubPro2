@@ -930,16 +930,16 @@ export const en = {
   wordPost: {
     title: 'Send a Word document to Google Classroom',
     intro:
-      'Upload your test, quiz or worksheet as a Word document (.docx). Classroom gets it as a Google Doc, and each student gets their own copy to type in.',
+      'Upload your test, quiz or worksheet as a Word document (.docx). Classroom gets the file as it is, and each student gets their own copy to type in.',
     name: 'Assignment title',
     instructions: 'Instructions for students (optional)',
     dueDate: 'Due date in Classroom (optional)',
     file: 'Word document (.docx)',
-    note: 'Google turns the document into a Google Doc; tables, numbering and boxes stay as you made them.',
+    note: 'Students open their copy in Google Docs and type in it; your formatting stays as in Word.',
     submit: 'Post to Google Classroom',
     posted: 'Posted to Google Classroom.',
     openClassroom: 'Open in Classroom',
-    openDoc: 'Open the Google Doc',
+    openDoc: 'Open the file',
   },
   games: {
     title: 'Educational games',
