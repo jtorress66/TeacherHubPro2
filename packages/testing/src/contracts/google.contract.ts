@@ -102,7 +102,7 @@ export function classroomContract(
       const result = await make(fixture).createCoursework(fixture.accessToken, fixture.course.id, {
         title: 'Unit test',
         description: '',
-        material: { kind: 'pdf', driveFileId: 'drive-1' },
+        material: { kind: 'driveFile', driveFileId: 'drive-1' },
         dueDate: null,
       });
 
@@ -218,6 +218,22 @@ export function googleDriveContract(
         bytes: pdf,
       });
       expect(result.ok && result.value.id.length > 0).toBe(true);
+    });
+
+    it('turns HTML into a Google Doc and returns where to open it', async () => {
+      const result = await make(accessToken).uploadDoc(accessToken, {
+        name: 'Test',
+        html: '<html><body><h1>Test</h1></body></html>',
+      });
+      if (!result.ok) throw new Error(`uploadDoc failed: ${result.error.code}`);
+      expect(result.value.id).not.toBe('');
+      expect(result.value.url.startsWith('https://')).toBe(true);
+      expect(
+        await make(accessToken).uploadDoc('expired', { name: 'Test', html: '' }),
+      ).toMatchObject({
+        ok: false,
+        error: { code: 'unauthorized' },
+      });
     });
 
     it('cannot upload without access', async () => {

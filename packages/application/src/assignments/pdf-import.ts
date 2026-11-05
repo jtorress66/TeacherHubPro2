@@ -10,6 +10,7 @@ import {
   type JobFailure,
   type JobId,
   type Language,
+  type LocalDate,
   type Result,
   type User,
 } from '@thp/domain';
@@ -33,10 +34,25 @@ import {
 
 export const pdfImportJobKind = 'assignment.pdf_import';
 
-/** Where the reviewed questions go: an assignment, or (no class) a Google Forms quiz. */
+/** Where a Google Doc made from the test is posted. */
+export interface ClassroomPost {
+  readonly courseId: string;
+  readonly instructions: string | null;
+  readonly dueDate: LocalDate | null;
+}
+
+/**
+ * Where the questions go: an assignment, or (no class) a Google Forms quiz, or a Google Doc
+ * posted to a Classroom course.
+ */
 type ImportTarget =
   | { readonly classId: ClassId; readonly assignmentId: AssignmentId }
-  | { readonly classId: null; readonly assignmentId: null; readonly title: string };
+  | {
+      readonly classId: null;
+      readonly assignmentId: null;
+      readonly title: string;
+      readonly classroom?: ClassroomPost;
+    };
 
 type PdfImportPayload = ImportTarget & {
   readonly fileKey: string;
@@ -52,14 +68,14 @@ export const pdfSizeError = (pdf: Uint8Array): Result<true, UseCaseError> =>
 /** What a finished import offers the teacher: the questions to review, and where they go. */
 export type ImportedTest = ImportTarget & { readonly test: ExtractedTest };
 
-interface QueueDeps {
+export interface QueueDeps {
   readonly files: FileStore;
   readonly jobs: JobQueue;
   readonly ids: IdGenerator;
 }
 
 /** Keeps the PDF only for the job, and queues reading it into questions for the target. */
-async function queueImport(
+export async function queueImport(
   deps: QueueDeps,
   actor: User,
   pdf: Uint8Array,
@@ -166,7 +182,12 @@ export class PdfImportHandler implements JobHandler {
       if (!test.ok) return test;
       const target: ImportTarget =
         payload.classId === null
-          ? { classId: null, assignmentId: null, title: payload.title }
+          ? {
+              classId: null,
+              assignmentId: null,
+              title: payload.title,
+              ...(payload.classroom === undefined ? {} : { classroom: payload.classroom }),
+            }
           : { classId: payload.classId, assignmentId: payload.assignmentId };
       return ok({ ...target, test: test.value });
     } finally {

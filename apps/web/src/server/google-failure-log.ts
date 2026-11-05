@@ -18,6 +18,11 @@ export function loggedDrive(drive: GoogleDriveFiles, write: Write = stdout): Goo
       if (!result.ok) write(describeFailure('Google Drive upload', result.error));
       return result;
     },
+    async uploadDoc(accessToken, doc) {
+      const result = await drive.uploadDoc(accessToken, doc);
+      if (!result.ok) write(describeFailure('Google Docs upload', result.error));
+      return result;
+    },
   };
 }
 

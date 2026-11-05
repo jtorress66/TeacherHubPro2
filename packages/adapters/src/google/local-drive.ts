@@ -13,4 +13,15 @@ export class LocalDrive implements GoogleDriveFiles {
     this.uploaded += 1;
     return Promise.resolve(ok({ id: `local-drive-${String(this.uploaded)}` }));
   }
+
+  uploadDoc(
+    accessToken: string,
+  ): Promise<Result<{ readonly id: string; readonly url: string }, ClassroomError>> {
+    if (accessToken !== localClassroomFixture.accessToken) {
+      return Promise.resolve(err({ code: 'unauthorized' }));
+    }
+    this.uploaded += 1;
+    const id = `local-doc-${String(this.uploaded)}`;
+    return Promise.resolve(ok({ id, url: `https://docs.local/d/${id}/edit` }));
+  }
 }

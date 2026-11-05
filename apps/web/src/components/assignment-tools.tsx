@@ -6,6 +6,8 @@ import {
   gradeSubmissionAction,
   importRosterAction,
   issueLinksAction,
+  makeTestDocAction,
+  postDocToClassroomAction,
   makeFormsQuizAction,
   postPdfToClassroomAction,
   postQuizToClassroomAction,
@@ -448,7 +450,15 @@ export function PostPdfForm(props: {
         accept=".pdf,application/pdf"
         error={errors.pdf}
       />
-      <p className="hint">{t('pdfPost.note')}</p>
+      <fieldset className="checks">
+        <legend>{t('pdfDoc.answerAs')}</legend>
+        <label className="checkbox">
+          <input type="radio" name="answerAs" value="pdf" defaultChecked /> {t('pdfDoc.asPdf')}
+        </label>
+        <label className="checkbox">
+          <input type="radio" name="answerAs" value="doc" /> {t('pdfDoc.asDoc')}
+        </label>
+      </fieldset>
       <Submit label={t('pdfPost.submit')} />
     </form>
   );
@@ -512,5 +522,42 @@ export function FormsQuizForm(props: AssignmentProps & { readonly made: boolean 
       )}
       <Submit label={props.made ? t('forms.remake') : t('forms.make')} />
     </form>
+  );
+}
+
+/** Makes the Google Doc from a read test, then posts it once the teacher has had a look. */
+export function TestDocActions(props: { readonly locale: Locale; readonly jobId: string }) {
+  const t = createTranslator(props.locale);
+  const [made, make] = useActionState(makeTestDocAction, initial);
+  const [posted, post] = useActionState(postDocToClassroomAction, initial);
+  const hidden = { locale: props.locale, jobId: props.jobId };
+  return (
+    <div className="stack">
+      <form action={make} className="stack" aria-label={t('pdfDoc.make')}>
+        <Hidden values={hidden} />
+        <FormAlert message={allErrors(made)} />
+        {made.url === undefined ? (
+          <Submit label={t('pdfDoc.make')} />
+        ) : (
+          <p role="status" className="notice">
+            {t('pdfDoc.made')} <a href={made.url}>{t('pdfDoc.open')}</a>
+          </p>
+        )}
+      </form>
+      {made.docId === undefined ? null : (
+        <form action={post} className="stack" aria-label={t('pdfPost.submit')}>
+          <Hidden values={{ ...hidden, docId: made.docId }} />
+          <FormAlert message={allErrors(posted)} />
+          <p className="hint">{t('pdfDoc.checkFirst')}</p>
+          {posted.url === undefined ? (
+            <Submit label={t('pdfPost.submit')} />
+          ) : (
+            <p role="status" className="notice">
+              {t('pdfPost.posted')} <a href={posted.url}>{t('pdfPost.open')}</a>
+            </p>
+          )}
+        </form>
+      )}
+    </div>
   );
 }

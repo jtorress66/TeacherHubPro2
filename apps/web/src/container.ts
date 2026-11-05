@@ -103,6 +103,9 @@ import {
   ShareAssignment,
   StartPdfTest,
   PostPdfToClassroom,
+  RequestDocImport,
+  MakeTestDoc,
+  PostDocToClassroom,
   MakeFormsQuiz,
   FindFormsQuiz,
   RequestQuizImport,
@@ -289,6 +292,9 @@ export interface AppContainer {
   readonly shareAssignment: ShareAssignment;
   readonly startPdfTest: StartPdfTest;
   readonly postPdfToClassroom: PostPdfToClassroom;
+  readonly requestDocImport: RequestDocImport;
+  readonly makeTestDoc: MakeTestDoc;
+  readonly postDocToClassroom: PostDocToClassroom;
   readonly makeFormsQuiz: MakeFormsQuiz;
   readonly findFormsQuiz: FindFormsQuiz;
   readonly requestQuizImport: RequestQuizImport;
@@ -572,6 +578,9 @@ export function createAppContainer(
     shareAssignment: new ShareAssignment(deps),
     startPdfTest: new StartPdfTest(deps),
     postPdfToClassroom: new PostPdfToClassroom(deps),
+    requestDocImport: new RequestDocImport(deps),
+    makeTestDoc: new MakeTestDoc(deps),
+    postDocToClassroom: new PostDocToClassroom(deps),
     makeFormsQuiz: new MakeFormsQuiz(deps),
     findFormsQuiz: new FindFormsQuiz(deps),
     requestQuizImport: new RequestQuizImport(deps),
