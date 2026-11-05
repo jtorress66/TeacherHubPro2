@@ -417,22 +417,21 @@ describe('GoogleFormsApi', () => {
   });
 });
 
-describe('GoogleClassroom with a PDF', () => {
-  it('attaches a Drive PDF so each student gets their own copy to write on', async () => {
+describe('GoogleClassroom with a Drive file', () => {
+  it('gives each student their own copy, or lets everyone view the same file', async () => {
     const api = classroomApi(fixture.accessToken);
-    await new GoogleClassroom(api.fetchFn).createCoursework(fixture.accessToken, 'c-1', {
-      title: 'Test',
-      description: '',
-      material: { kind: 'driveFile', driveFileId: 'drive-1' },
-      dueDate: null,
-    });
-    expect(api.posted[0]).toEqual({
-      title: 'Test',
-      description: '',
-      materials: [{ driveFile: { driveFile: { id: 'drive-1' }, shareMode: 'STUDENT_COPY' } }],
-      workType: 'ASSIGNMENT',
-      state: 'PUBLISHED',
-    });
+    for (const shareMode of ['copy', 'view'] as const) {
+      await new GoogleClassroom(api.fetchFn).createCoursework(fixture.accessToken, 'c-1', {
+        title: 'Test',
+        description: '',
+        material: { kind: 'driveFile', driveFileId: 'drive-1', shareMode },
+        dueDate: null,
+      });
+    }
+    expect(api.posted.map((p) => (p as { materials: unknown }).materials)).toEqual([
+      [{ driveFile: { driveFile: { id: 'drive-1' }, shareMode: 'STUDENT_COPY' } }],
+      [{ driveFile: { driveFile: { id: 'drive-1' }, shareMode: 'VIEW' } }],
+    ]);
   });
 });
 

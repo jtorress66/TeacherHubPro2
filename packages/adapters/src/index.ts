@@ -38,6 +38,8 @@ export { GoogleFormsApi } from './google/google-forms.ts';
 export { LocalForms } from './google/local-forms.ts';
 export { GoogleDriveApi } from './google/google-drive.ts';
 export { LocalDrive } from './google/local-drive.ts';
+export { GoogleSlidesApi } from './google/google-slides.ts';
+export { LocalSlides } from './google/local-slides.ts';
 export {
   GoogleClassroomAuthorization,
   classroomScopes,

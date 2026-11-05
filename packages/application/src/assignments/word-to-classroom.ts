@@ -54,7 +54,7 @@ export class PostWordToClassroom {
     const posted = await this.deps.classroomCoursework.createCoursework(token.value, course.value, {
       title: title.value,
       description: instructions.value ?? '',
-      material: { kind: 'driveFile', driveFileId: doc.value.id },
+      material: { kind: 'driveFile', driveFileId: doc.value.id, shareMode: 'copy' },
       dueDate,
     });
     if (!posted.ok) return googleFailed(posted.error);

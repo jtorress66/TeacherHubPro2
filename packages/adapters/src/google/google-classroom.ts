@@ -23,7 +23,12 @@ const textOf = (value: unknown): string => (typeof value === 'string' ? value : 
 const materialOf = (material: CourseworkMaterial) =>
   material.kind === 'link'
     ? { link: { url: material.url } }
-    : { driveFile: { driveFile: { id: material.driveFileId }, shareMode: 'STUDENT_COPY' } };
+    : {
+        driveFile: {
+          driveFile: { id: material.driveFileId },
+          shareMode: material.shareMode === 'view' ? 'VIEW' : 'STUDENT_COPY',
+        },
+      };
 
 const dueParts = (date: LocalDate) => {
   const [year, month, day] = date.split('-').map(Number);

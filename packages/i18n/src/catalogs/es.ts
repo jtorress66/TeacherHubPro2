@@ -829,6 +829,19 @@ export const es: Messages = {
     madeOn: 'Creado el {date}',
   },
   presentations: {
+    classroomTitle: 'Enviar a Google Classroom',
+    classroomIntro:
+      'Classroom recibe estas diapositivas como una presentación de Google Slides, publicada como tarea. Los estudiantes pueden verla; solo usted puede editarla.',
+    classroomLink: 'Enviar a Google Classroom',
+    classroomName: 'Título de la tarea',
+    classroomInstructions: 'Instrucciones para los estudiantes (opcional)',
+    classroomDueDate: 'Fecha de entrega en Classroom (opcional)',
+    classroomNote:
+      'Cada envío crea una presentación nueva en su Google Drive con las diapositivas tal como están ahora: texto, viñetas y colores del tema.',
+    classroomSend: 'Enviar a Google Classroom',
+    classroomSent: 'Enviada a Google Classroom.',
+    classroomOpen: 'Abrir en Classroom',
+    classroomOpenSlides: 'Abrir las diapositivas',
     title: 'Presentaciones',
     intro: 'Crea diapositivas para tu clase y preséntalas en pantalla completa o imprímelas.',
     empty: 'Todavía no hay presentaciones.',

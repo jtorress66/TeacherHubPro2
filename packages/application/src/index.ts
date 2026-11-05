@@ -383,3 +383,4 @@ export {
 } from './prep/prep-batches.ts';
 export { makePrepRunners, type PrepItemRunner, type PrepRunners } from './prep/prep-runners.ts';
 export { PublishPrepBatch } from './prep/publish-prep.ts';
+export { SendPresentationToClassroom } from './presentations/presentation-to-classroom.ts';

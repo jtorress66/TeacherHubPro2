@@ -1,4 +1,9 @@
-import type { ClassroomCoursework, ClassroomError, GoogleDriveFiles } from '@thp/ports';
+import type {
+  ClassroomCoursework,
+  ClassroomError,
+  GoogleDriveFiles,
+  GoogleSlidesFiles,
+} from '@thp/ports';
 
 type Write = (line: string) => void;
 
@@ -30,6 +35,17 @@ export function loggedCoursework(
     async createCoursework(accessToken, courseId, request) {
       const result = await coursework.createCoursework(accessToken, courseId, request);
       if (!result.ok) write(describeFailure('Google Classroom coursework', result.error));
+      return result;
+    },
+  };
+}
+
+/** The same for making a Google Slides deck. */
+export function loggedSlides(slides: GoogleSlidesFiles, write: Write = stdout): GoogleSlidesFiles {
+  return {
+    async createPresentation(accessToken, deck) {
+      const result = await slides.createPresentation(accessToken, deck);
+      if (!result.ok) write(describeFailure('Google Slides deck', result.error));
       return result;
     },
   };

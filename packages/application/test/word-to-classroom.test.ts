@@ -64,7 +64,7 @@ describe('Posting a Word document to Google Classroom', () => {
     expect(classroom.coursework.at(-1)).toEqual({
       title: 'Unit 3 test',
       description: 'Type your answers in the document.',
-      material: { kind: 'driveFile', driveFileId: 'doc-1' },
+      material: { kind: 'driveFile', driveFileId: 'doc-1', shareMode: 'copy' },
       dueDate: '2026-12-01',
     });
   });

@@ -102,3 +102,4 @@ export * from './students/student-360.ts';
 export * from './prep/parent-email.ts';
 export * from './prep/prep-request.ts';
 export * from './prep/prep-batch.ts';
+export * from './presentations/google-slides.ts';

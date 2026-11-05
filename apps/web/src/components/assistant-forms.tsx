@@ -16,6 +16,7 @@ import {
   createPresentationAction,
   requestGenerationAction,
   requestPresentationDraftAction,
+  sendPresentationToClassroomAction,
   saveSubPacketAction,
   type AssistantFormState,
 } from '../app/_lib/assistant-actions.ts';
@@ -292,6 +293,71 @@ export function SubPacketForm(props: {
         {t('subPacket.includeAccommodations')}
       </label>
       <Submit label={t('subPacket.save')} />
+    </form>
+  );
+}
+
+/** Sends the presentation to a Classroom course as a Google Slides deck students view. */
+export function PresentationClassroomForm(props: {
+  readonly locale: Locale;
+  readonly presentationId: string;
+  readonly name: string;
+  readonly courses: readonly Option[];
+}) {
+  const t = createTranslator(props.locale);
+  const [state, action] = useActionState(sendPresentationToClassroomAction, initial);
+  const errors = state.errors ?? {};
+  return (
+    <form
+      action={action}
+      className="stack"
+      aria-label={t('presentations.classroomSend')}
+      key={state.version}
+    >
+      <Hidden values={{ locale: props.locale, presentationId: props.presentationId }} />
+      <FormAlert message={errors.form} />
+      {state.url === undefined ? null : (
+        <p role="status" className="notice">
+          {t('presentations.classroomSent')}{' '}
+          <a href={state.url}>{t('presentations.classroomOpen')}</a>
+          {state.slidesUrl === undefined ? null : (
+            <>
+              {' · '}
+              <a href={state.slidesUrl}>{t('presentations.classroomOpenSlides')}</a>
+            </>
+          )}
+        </p>
+      )}
+      <Select
+        id="slides-post-course"
+        name="courseId"
+        label={t('classroom.course')}
+        options={props.courses}
+        error={errors.courseId}
+      />
+      <Field
+        id="slides-post-title"
+        name="title"
+        label={t('presentations.classroomName')}
+        defaultValue={props.name}
+        error={errors.title}
+        required
+      />
+      <TextArea
+        id="slides-post-instructions"
+        name="instructions"
+        label={t('presentations.classroomInstructions')}
+        error={errors.instructions}
+      />
+      <Field
+        id="slides-post-due"
+        name="dueDate"
+        type="date"
+        label={t('presentations.classroomDueDate')}
+        error={errors.dueDate}
+      />
+      <p className="hint">{t('presentations.classroomNote')}</p>
+      <Submit label={t('presentations.classroomSend')} />
     </form>
   );
 }

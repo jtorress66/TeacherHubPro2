@@ -5,6 +5,7 @@ import {
   classroomAuthorizationContract,
   classroomContract,
   googleDriveContract,
+  googleSlidesContract,
   googleFormsContract,
   googleIdentityContract,
 } from '../contracts/google.contract.ts';
@@ -33,6 +34,7 @@ import {
   FakeClassroom,
   FakeClassroomAuthorization,
   FakeGoogleDrive,
+  FakeGoogleSlides,
   FakeGoogleForms,
   FakeGoogleIdentity,
 } from './google.ts';
@@ -240,5 +242,11 @@ googleFormsContract(
 googleDriveContract(
   'FakeGoogleDrive',
   (accessToken) => new FakeGoogleDrive({ accessToken }),
+  'token-1',
+);
+
+googleSlidesContract(
+  'FakeGoogleSlides',
+  () => new FakeGoogleSlides({ accessToken: 'token-1' }),
   'token-1',
 );
