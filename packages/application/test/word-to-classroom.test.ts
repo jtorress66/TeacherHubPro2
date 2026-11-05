@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { maxAttachmentBytes } from '@thp/domain';
+import { err, maxAttachmentBytes } from '@thp/domain';
+import type { ClassroomCoursework } from '@thp/ports';
 import {
   FakeClassroom,
   FakeClassroomAuthorization,
+  FakeDelay,
   FakeGoogleDrive,
   FakeSecretCipher,
 } from '@thp/testing';
@@ -12,19 +14,38 @@ import { makeWorld, signedUp, type World } from './world.ts';
 
 const docx = new Uint8Array([0x50, 0x4b, 0x03, 0x04, 1, 2, 3]);
 
-async function teacher(world: World, { connect = true, drive = new FakeGoogleDrive() } = {}) {
+/** Classroom answers "not found" for a Drive file until it has caught up with Drive. */
+function catchingUp(classroom: ClassroomCoursework, notYet: number): ClassroomCoursework {
+  let left = notYet;
+  return {
+    createCoursework: (token, courseId, request) => {
+      if (left > 0) {
+        left -= 1;
+        return Promise.resolve(err({ code: 'not_found', reason: 'NOT_FOUND' }));
+      }
+      return classroom.createCoursework(token, courseId, request);
+    },
+  };
+}
+
+async function teacher(
+  world: World,
+  { connect = true, drive = new FakeGoogleDrive(), notYet = 0 } = {},
+) {
   const { user: actor } = await signedUp(world);
   const classroom = new FakeClassroom({
     accessToken: 'classroom-access',
     course: { id: 'course-1', name: 'Science 5', section: null },
     roster: [],
   });
+  const delay = new FakeDelay();
   const all = {
     ...world,
     cipher: new FakeSecretCipher(),
     classroomAuth: new FakeClassroomAuthorization(),
-    classroomCoursework: classroom,
+    classroomCoursework: catchingUp(classroom, notYet),
     googleDrive: drive,
+    delay,
   };
   if (connect) {
     valueOf(
@@ -46,7 +67,7 @@ async function teacher(world: World, { connect = true, drive = new FakeGoogleDri
       bytes: docx,
       ...changes,
     });
-  return { classroom, drive, post };
+  return { classroom, drive, delay, post };
 }
 
 describe('Posting a Word document to Google Classroom', () => {
@@ -123,11 +144,31 @@ describe('Posting a Word document to Google Classroom', () => {
     expect(old.classroom.coursework).toEqual([]);
   });
 
-  it('reports an unknown course', async () => {
+  it('waits for Classroom to see a just-converted Doc, then posts it', async () => {
+    const { classroom, delay, post } = await teacher(makeWorld(), { notYet: 2 });
+
+    expect((await post()).ok).toBe(true);
+    expect(delay.waits).toEqual([1000, 2000]);
+    expect(classroom.coursework).toHaveLength(1);
+  });
+
+  it('gives up after about seven seconds, and reports an unknown course the same way', async () => {
+    const slow = await teacher(makeWorld(), { notYet: 10 });
+    expect(await slow.post()).toEqual({ ok: false, error: { code: 'classroom_failed' } });
+    expect(slow.delay.waits).toEqual([1000, 2000, 4000]);
+
     const { post } = await teacher(makeWorld());
     expect(await post({ courseId: 'nope' })).toEqual({
       ok: false,
       error: { code: 'classroom_failed' },
     });
+  });
+
+  it('does not wait when Google refuses for another reason', async () => {
+    const { delay, post } = await teacher(makeWorld(), {
+      drive: new FakeGoogleDrive({ accessToken: 'classroom-access', failWith: 'api_disabled' }),
+    });
+    await post();
+    expect(delay.waits).toEqual([]);
   });
 });
