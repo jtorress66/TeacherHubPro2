@@ -33,6 +33,8 @@ export class PostPdfToClassroom {
     readonly fileName: string;
     readonly pdf: Uint8Array;
   }): Promise<Result<{ readonly url: string }, UseCaseError>> {
+    const course = requiredText('courseId', input.courseId);
+    if (!course.ok) return course;
     const title = requiredText('title', input.title);
     if (!title.ok) return title;
     const instructions = optionalText('instructions', input.instructions, 5000);
@@ -50,16 +52,12 @@ export class PostPdfToClassroom {
     const name = input.fileName.trim() === '' ? `${title.value}.pdf` : input.fileName.trim();
     const file = await this.deps.googleDrive.uploadPdf(token.value, { name, bytes: input.pdf });
     if (!file.ok) return fail('classroom_failed');
-    const posted = await this.deps.classroomCoursework.createCoursework(
-      token.value,
-      input.courseId,
-      {
-        title: title.value,
-        description: instructions.value ?? '',
-        material: { kind: 'pdf', driveFileId: file.value.id },
-        dueDate,
-      },
-    );
+    const posted = await this.deps.classroomCoursework.createCoursework(token.value, course.value, {
+      title: title.value,
+      description: instructions.value ?? '',
+      material: { kind: 'pdf', driveFileId: file.value.id },
+      dueDate,
+    });
     return posted.ok ? ok({ url: posted.value.url }) : fail('classroom_failed');
   }
 }

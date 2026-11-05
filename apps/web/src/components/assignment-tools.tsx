@@ -419,6 +419,7 @@ export function PostPdfForm(props: {
         name="courseId"
         label={t('classroom.course')}
         options={props.courses}
+        error={errors.courseId}
       />
       <Field
         id="pdf-post-title"

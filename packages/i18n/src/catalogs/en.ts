@@ -931,6 +931,9 @@ export const en = {
     open: 'Open in Classroom',
     note: 'Each student gets their own copy of the PDF to write on and hand in.',
     aiInstead: 'Or turn it into a Google Forms quiz with AI',
+    noCourses:
+      'Google Classroom shows no active courses where the connected Google account is a teacher. Create a course at classroom.google.com, or connect the Google account you teach with.',
+    switchAccount: 'Connect a different Google account',
   },
   googleQuiz: {
     list: 'Your Google Forms quizzes',

@@ -36,7 +36,7 @@ export class GoogleClassroomAuthorization implements ClassroomAuthorization {
       response_type: 'code',
       scope: classroomScopes.join(' '),
       access_type: 'offline',
-      prompt: 'consent',
+      prompt: 'select_account consent',
       include_granted_scopes: 'true',
       state,
     }).toString();

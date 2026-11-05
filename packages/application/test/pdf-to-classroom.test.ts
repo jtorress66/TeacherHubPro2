@@ -76,6 +76,10 @@ describe('Posting a test PDF straight to Google Classroom', () => {
   it('checks the title, the PDF and the due date before calling Google', async () => {
     const world = makeWorld();
     const { drive, post } = await teacher(world);
+    expect(await post({ courseId: ' ' })).toEqual({
+      ok: false,
+      error: { field: 'courseId', code: 'required' },
+    });
     expect(await post({ title: ' ' })).toEqual({
       ok: false,
       error: { field: 'title', code: 'required' },
