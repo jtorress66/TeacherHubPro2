@@ -2,6 +2,7 @@ import {
   err,
   maxAttachmentBytes,
   ok,
+  requiredText,
   type AssignmentId,
   type ClassId,
   type ExtractedTest,
@@ -32,12 +33,15 @@ import {
 
 export const pdfImportJobKind = 'assignment.pdf_import';
 
-interface PdfImportPayload {
+/** Where the reviewed questions go: an assignment, or (no class) a Google Forms quiz. */
+type ImportTarget =
+  | { readonly classId: ClassId; readonly assignmentId: AssignmentId }
+  | { readonly classId: null; readonly assignmentId: null; readonly title: string };
+
+type PdfImportPayload = ImportTarget & {
   readonly fileKey: string;
   readonly language: Language;
-  readonly classId: ClassId;
-  readonly assignmentId: AssignmentId;
-}
+};
 
 /** A PDF the import refuses before storing it: empty, or over the attachment limit. */
 export const pdfSizeError = (pdf: Uint8Array): Result<true, UseCaseError> =>
@@ -46,10 +50,35 @@ export const pdfSizeError = (pdf: Uint8Array): Result<true, UseCaseError> =>
     : ok(true);
 
 /** What a finished import offers the teacher: the questions to review, and where they go. */
-export interface ImportedTest {
-  readonly test: ExtractedTest;
-  readonly classId: ClassId;
-  readonly assignmentId: AssignmentId;
+export type ImportedTest = ImportTarget & { readonly test: ExtractedTest };
+
+interface QueueDeps {
+  readonly files: FileStore;
+  readonly jobs: JobQueue;
+  readonly ids: IdGenerator;
+}
+
+/** Keeps the PDF only for the job, and queues reading it into questions for the target. */
+async function queueImport(
+  deps: QueueDeps,
+  actor: User,
+  pdf: Uint8Array,
+  target: ImportTarget,
+): Promise<Result<Job, UseCaseError>> {
+  const size = pdfSizeError(pdf);
+  if (!size.ok) return size;
+  const fileKey = `imports/${actor.schoolId}/${deps.ids.next()}.pdf`;
+  const stored = await deps.files.put(fileKey, { bytes: pdf, contentType: 'application/pdf' });
+  if (!stored.ok) return fail('storage_unavailable');
+  const payload: PdfImportPayload = { ...target, fileKey, language: actor.language };
+  return ok(
+    await deps.jobs.enqueue({
+      schoolId: actor.schoolId,
+      ownerId: actor.id,
+      kind: pdfImportJobKind,
+      payload,
+    }),
+  );
 }
 
 /**
@@ -74,28 +103,39 @@ export class RequestPdfImport {
     if (!access.ok) return access;
     const found = await editableAssignment(this.deps, input);
     if (!found.ok) return found;
-    const size = pdfSizeError(input.pdf);
-    if (!size.ok) return size;
-    const fileKey = `imports/${input.actor.schoolId}/${this.deps.ids.next()}.pdf`;
-    const stored = await this.deps.files.put(fileKey, {
-      bytes: input.pdf,
-      contentType: 'application/pdf',
-    });
-    if (!stored.ok) return fail('storage_unavailable');
-    const payload: PdfImportPayload = {
-      fileKey,
-      language: input.actor.language,
+    return queueImport(this.deps, input.actor, input.pdf, {
       classId: found.value.cls.id,
       assignmentId: found.value.assignment.id,
-    };
-    return ok(
-      await this.deps.jobs.enqueue({
-        schoolId: input.actor.schoolId,
-        ownerId: input.actor.id,
-        kind: pdfImportJobKind,
-        payload,
-      }),
-    );
+    });
+  }
+}
+
+/**
+ * Starts reading a PDF into questions for a Google Forms quiz, with no class. Needs AI access; the
+ * questions are only reviewed, never saved in TeacherHubPro.
+ */
+export class RequestQuizImport {
+  constructor(
+    private readonly deps: QueueDeps & {
+      readonly subscriptions: SubscriptionRepository;
+      readonly clock: Clock;
+    },
+  ) {}
+
+  async execute(input: {
+    readonly actor: User;
+    readonly title: string;
+    readonly pdf: Uint8Array;
+  }): Promise<Result<Job, UseCaseError>> {
+    const access = await checkAiAccess(this.deps, input.actor.schoolId);
+    if (!access.ok) return access;
+    const title = requiredText('title', input.title);
+    if (!title.ok) return title;
+    return queueImport(this.deps, input.actor, input.pdf, {
+      classId: null,
+      assignmentId: null,
+      title: title.value,
+    });
   }
 }
 
@@ -124,7 +164,11 @@ export class PdfImportHandler implements JobHandler {
         language: payload.language,
       });
       if (!test.ok) return test;
-      return ok({ test: test.value, classId: payload.classId, assignmentId: payload.assignmentId });
+      const target: ImportTarget =
+        payload.classId === null
+          ? { classId: null, assignmentId: null, title: payload.title }
+          : { classId: payload.classId, assignmentId: payload.assignmentId };
+      return ok({ ...target, test: test.value });
     } finally {
       await this.deps.files.delete(payload.fileKey);
     }

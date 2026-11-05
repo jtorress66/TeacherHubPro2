@@ -926,18 +926,35 @@ export const es: Messages = {
     true: 'Cierto',
     false: 'Falso',
   },
+  googleQuiz: {
+    list: 'Tus pruebas de Google Forms',
+    empty: 'Todavía no hay pruebas de Google Forms.',
+    madeOn: 'Creada el {date}',
+    post: 'Publicar en Google Classroom',
+    posted: 'Publicada en Google Classroom.',
+    postedLink: 'Abrir en Classroom',
+    dueDate: 'Fecha de entrega (opcional)',
+    postNote:
+      'Classroom recibe el título y el enlace que usan los estudiantes para contestar en Google Forms.',
+    back: 'Volver al asistente de IA',
+  },
   pdfTest: {
     title: 'Enviar un examen en PDF a Google',
     intro:
       'Sube el PDF de un examen o prueba. La IA lo convierte en preguntas que tú revisas, y luego puedes compartirlo en Google Classroom o crear una prueba de Google Forms.',
-    target: 'Clase y categoría de notas',
+    target: 'Calificarlo en TeacherHubPro (opcional)',
+    noClass: 'Sin clase: solo Google',
+    targetHint:
+      'Elige una clase para tener un examen en línea cuyas notas van a tu registro de notas. Sin clase, creas una prueba de Google Forms y puedes publicarla en Google Classroom.',
+    reviewTitle: 'Revisa las preguntas',
+    reviewIntro: 'Corrige lo que la IA haya leído mal y luego crea la prueba de Google Forms.',
     name: 'Título',
     points: 'Puntos',
     dueDate: 'Fecha de entrega (opcional)',
     file: 'PDF del examen',
     submit: 'Leer el PDF',
     noClasses:
-      'Primero crea una clase y sus categorías de notas, y luego vuelve para enviar un examen.',
+      'Para calificarlo en TeacherHubPro, primero crea una clase y sus categorías de notas.',
     createClass: 'Crear una clase',
     sendTitle: 'Enviar a Google',
     connectFirst:

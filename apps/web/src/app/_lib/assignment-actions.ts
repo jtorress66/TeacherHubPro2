@@ -6,6 +6,7 @@ import type {
   AssignmentId,
   AttachmentId,
   ClassId,
+  GoogleQuizId,
   GradeCategoryId,
   StudentId,
   StudentLinkId,
@@ -144,7 +145,12 @@ export async function requestPdfImportAction(
   redirect(`${assignmentPath(locale, classId, assignmentId)}/import/${job.value.id}`);
 }
 
-/** Makes the assignment from the AI assistant's PDF card, then follows the import like the class page. */
+const assistantPath = (locale: Locale) => `/${locale}/app/assistant`;
+
+/**
+ * The AI assistant's PDF card. With a class, it makes the assignment and follows the import like
+ * the class page; with no class, the questions are reviewed for a Google Forms quiz.
+ */
 export async function startPdfTestAction(
   _state: AssignmentFormState,
   data: FormData,
@@ -155,6 +161,15 @@ export async function startPdfTestAction(
   const [classId = '', categoryId = ''] = text(data, 'target').split('|');
   const file = fileOf(data, 'pdf');
   if (file === null) return { errors: { pdf: t('attachments.noFile') } };
+  if (classId === '') {
+    const job = await getAppContainer().requestQuizImport.execute({
+      actor: user,
+      title: text(data, 'title'),
+      pdf: new Uint8Array(await file.arrayBuffer()),
+    });
+    if (!job.ok) return { errors: formErrors(job.error, locale) };
+    redirect(`${assistantPath(locale)}/pdf/${job.value.id}`);
+  }
   const started = await getAppContainer().startPdfTest.execute({
     actor: user,
     classId: classId as ClassId,
@@ -219,6 +234,48 @@ export async function shareAssignmentAction(
   });
   if (!shared.ok) return { errors: formErrors(shared.error, locale) };
   return done(state, { url: shared.value.url });
+}
+
+/** Makes a Google Forms quiz from questions reviewed without a class, then shows its links. */
+export async function makeGoogleQuizAction(
+  _state: AssignmentFormState,
+  data: FormData,
+): Promise<AssignmentFormState> {
+  const locale = localeOf(data);
+  const t = createTranslator(locale);
+  const { user } = await requireUser(locale);
+  const questions = parseQuestionsJson(text(data, 'questions'));
+  if (questions === null) return { errors: { form: t('questions.invalid') } };
+  const made = await getAppContainer().makeGoogleQuiz.execute({
+    actor: user,
+    title: text(data, 'title'),
+    instructions: orNull(text(data, 'instructions')),
+    questions,
+    labels: { true: t('forms.true'), false: t('forms.false') },
+  });
+  if (!made.ok) {
+    const reconnect = 'code' in made.error && made.error.code === 'google_reconnect';
+    return { errors: formErrors(made.error, locale), reconnect };
+  }
+  revalidatePath(assistantPath(locale));
+  redirect(`${assistantPath(locale)}/quizzes/${made.value.id}`);
+}
+
+/** Posts one of the teacher's Google Forms quizzes to a Classroom course. */
+export async function postQuizToClassroomAction(
+  state: AssignmentFormState,
+  data: FormData,
+): Promise<AssignmentFormState> {
+  const locale = localeOf(data);
+  const { user } = await requireUser(locale);
+  const posted = await getAppContainer().postQuizToClassroom.execute({
+    actor: user,
+    quizId: text(data, 'quizId') as GoogleQuizId,
+    courseId: text(data, 'courseId'),
+    dueDate: orNull(text(data, 'dueDate')),
+  });
+  if (!posted.ok) return { errors: formErrors(posted.error, locale) };
+  return done(state, { url: posted.value.url });
 }
 
 /** Makes a Google Forms quiz from the questions, with true/false in the teacher's language. */

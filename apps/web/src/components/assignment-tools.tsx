@@ -1,12 +1,13 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { useActionState, useState, type ReactNode } from 'react';
 import { createTranslator, type Locale } from '@thp/i18n';
 import {
   gradeSubmissionAction,
   importRosterAction,
   issueLinksAction,
   makeFormsQuizAction,
+  postQuizToClassroomAction,
   requestAiGradingAction,
   requestPdfImportAction,
   shareAssignmentAction,
@@ -313,47 +314,31 @@ export function IssueLinksForm(props: {
   );
 }
 
-/** The AI assistant's card: a new assignment for a class, read from a test PDF. */
+/**
+ * The AI assistant's card: a test PDF read into questions. With a class it becomes an assignment
+ * graded here; with none, the questions go to a Google Forms quiz.
+ */
 export function PdfTestForm(props: {
   readonly locale: Locale;
   /** One option per class and grade category, as `classId|categoryId`. */
   readonly targets: readonly Option[];
+  /** Shown when there is no class to pick, e.g. a link to create one. */
+  readonly noClasses?: ReactNode;
 }) {
   const t = createTranslator(props.locale);
   const [state, action] = useActionState(startPdfTestAction, initial);
+  const [target, setTarget] = useState('');
   const errors = state.errors ?? {};
   return (
     <form action={action} className="stack" aria-label={t('pdfTest.title')}>
       <Hidden values={{ locale: props.locale }} />
       <FormAlert message={errors.form ?? errors.categoryId} />
-      <Select
-        id="pdf-test-target"
-        name="target"
-        label={t('pdfTest.target')}
-        options={props.targets}
-      />
       <Field
         id="pdf-test-title"
         name="title"
         label={t('pdfTest.name')}
         error={errors.title}
         required
-      />
-      <Field
-        id="pdf-test-points"
-        name="points"
-        type="number"
-        min={1}
-        label={t('pdfTest.points')}
-        defaultValue={100}
-        error={errors.points}
-      />
-      <Field
-        id="pdf-test-due"
-        name="dueDate"
-        type="date"
-        label={t('pdfTest.dueDate')}
-        error={errors.dueDate}
       />
       <FileField
         id="pdf-test-file"
@@ -363,7 +348,87 @@ export function PdfTestForm(props: {
         error={errors.pdf}
       />
       <p className="hint">{t('pdfImport.scanNote')}</p>
+      <div className="field">
+        <label htmlFor="pdf-test-target">{t('pdfTest.target')}</label>
+        <select
+          id="pdf-test-target"
+          name="target"
+          value={target}
+          aria-describedby="pdf-test-target-hint"
+          onChange={(event) => {
+            setTarget(event.target.value);
+          }}
+        >
+          <option value="">{t('pdfTest.noClass')}</option>
+          {props.targets.map((option) => (
+            <option key={option.id} value={option.id}>
+              {option.name}
+            </option>
+          ))}
+        </select>
+        <p id="pdf-test-target-hint" className="hint">
+          {t('pdfTest.targetHint')}
+        </p>
+        {props.targets.length === 0 ? props.noClasses : null}
+      </div>
+      {target === '' ? null : (
+        <>
+          <Field
+            id="pdf-test-points"
+            name="points"
+            type="number"
+            min={1}
+            label={t('pdfTest.points')}
+            defaultValue={100}
+            error={errors.points}
+          />
+          <Field
+            id="pdf-test-due"
+            name="dueDate"
+            type="date"
+            label={t('pdfTest.dueDate')}
+            error={errors.dueDate}
+          />
+        </>
+      )}
       <Submit label={t('pdfTest.submit')} />
+    </form>
+  );
+}
+
+/** Posts one of the teacher's Google Forms quizzes to a Classroom course. */
+export function PostQuizForm(props: {
+  readonly locale: Locale;
+  readonly quizId: string;
+  readonly courses: readonly Option[];
+}) {
+  const t = createTranslator(props.locale);
+  const [state, action] = useActionState(postQuizToClassroomAction, initial);
+  const errors = state.errors ?? {};
+  return (
+    <form action={action} className="stack" aria-label={t('googleQuiz.post')}>
+      <Hidden values={{ locale: props.locale, quizId: props.quizId }} />
+      <FormAlert message={errors.form} />
+      {state.url === undefined ? null : (
+        <p role="status" className="notice">
+          {t('googleQuiz.posted')} <a href={state.url}>{t('googleQuiz.postedLink')}</a>
+        </p>
+      )}
+      <Select
+        id="post-course"
+        name="courseId"
+        label={t('classroom.course')}
+        options={props.courses}
+      />
+      <Field
+        id="post-due"
+        name="dueDate"
+        type="date"
+        label={t('googleQuiz.dueDate')}
+        error={errors.dueDate}
+      />
+      <p className="hint">{t('googleQuiz.postNote')}</p>
+      <Submit label={t('googleQuiz.post')} />
     </form>
   );
 }

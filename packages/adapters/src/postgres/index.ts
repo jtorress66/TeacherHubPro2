@@ -3,6 +3,7 @@ import type {
   AttachmentRepository,
   ClassroomConnectionRepository,
   FormsExportRepository,
+  GoogleQuizRepository,
   StudentLinkRepository,
   AiGenerationRepository,
   PresentationRepository,
@@ -62,6 +63,7 @@ import {
   PostgresAttachmentRepository,
   PostgresClassroomConnectionRepository,
   PostgresFormsExportRepository,
+  PostgresGoogleQuizRepository,
   PostgresStudentLinkRepository,
 } from './repositories/postgres-assignment-repositories.ts';
 import {
@@ -102,6 +104,7 @@ export interface PostgresRepositories {
   readonly studentLinks: StudentLinkRepository;
   readonly classroomConnections: ClassroomConnectionRepository;
   readonly formsExports: FormsExportRepository;
+  readonly googleQuizzes: GoogleQuizRepository;
   readonly gradeCategories: GradeCategoryRepository;
   readonly assignments: AssignmentRepository;
   readonly grades: GradeRepository;
@@ -140,6 +143,7 @@ export function createPostgresRepositories(db: Kysely<Database>): PostgresReposi
     studentLinks: new PostgresStudentLinkRepository(db),
     classroomConnections: new PostgresClassroomConnectionRepository(db),
     formsExports: new PostgresFormsExportRepository(db),
+    googleQuizzes: new PostgresGoogleQuizRepository(db),
     gradeCategories: new PostgresGradeCategoryRepository(db),
     assignments: new PostgresAssignmentRepository(db),
     grades: new PostgresGradeRepository(db),

@@ -1,6 +1,5 @@
-import type { Assignment } from '../gradebook/assignment.ts';
 import type { Question, QuestionType } from '../gradebook/question.ts';
-import type { AssignmentId, SchoolId } from '../shared/ids.ts';
+import type { AssignmentId, GoogleQuizId, SchoolId, UserId } from '../shared/ids.ts';
 
 /** One question of a Forms quiz; `correct` is empty when the teacher scores it in Forms. */
 export type FormsQuizItem =
@@ -28,7 +27,7 @@ export type FormsQuizItem =
       readonly columns: readonly string[];
     };
 
-/** An assignment as a self-scoring quiz, independent of the provider that builds it. */
+/** Questions as a self-scoring quiz, independent of the provider that builds it. */
 export interface FormsQuiz {
   readonly title: string;
   readonly description: string;
@@ -100,17 +99,36 @@ const items: ItemOf = {
 const itemOf = (question: Question, labels: TrueFalseLabels): FormsQuizItem =>
   (items[question.type] as (q: Question, l: TrueFalseLabels) => FormsQuizItem)(question, labels);
 
-/** The assignment's questions as a Forms quiz: objective ones keep their answer keys. */
-export const toFormsQuiz = (assignment: Assignment, labels: TrueFalseLabels): FormsQuiz => ({
-  title: assignment.title,
-  description: assignment.instructions ?? '',
-  items: assignment.questions.map((question) => itemOf(question, labels)),
+/** What a quiz is made from: an assignment, or questions reviewed from a PDF. */
+export interface QuizSource {
+  readonly title: string;
+  readonly instructions: string | null;
+  readonly questions: readonly Question[];
+}
+
+/** The questions as a Forms quiz: objective ones keep their answer keys. */
+export const toFormsQuiz = (source: QuizSource, labels: TrueFalseLabels): FormsQuiz => ({
+  title: source.title,
+  description: source.instructions ?? '',
+  items: source.questions.map((question) => itemOf(question, labels)),
 });
 
 /** The latest Forms quiz made from an assignment, so its links stay at hand. */
 export interface FormsExport {
   readonly schoolId: SchoolId;
   readonly assignmentId: AssignmentId;
+  readonly formId: string;
+  readonly editUrl: string;
+  readonly responderUrl: string;
+  readonly createdAt: Date;
+}
+
+/** A Google Forms quiz a teacher made from a PDF without a class: only its links are kept. */
+export interface GoogleQuiz {
+  readonly id: GoogleQuizId;
+  readonly schoolId: SchoolId;
+  readonly ownerId: UserId;
+  readonly title: string;
   readonly formId: string;
   readonly editUrl: string;
   readonly responderUrl: string;

@@ -35,6 +35,19 @@ describe('toFormsQuiz', () => {
     expect(quiz).toEqual({ title: 'Fractions quiz', description: 'Show your work.', items: [] });
   });
 
+  it('makes a quiz from reviewed questions that belong to no assignment', () => {
+    const quiz = toFormsQuiz(
+      {
+        title: 'Loose quiz',
+        instructions: null,
+        questions: [{ ...common, type: 'essay', prompt: 'Why?', rubric: null }],
+      },
+      labels,
+    );
+    expect(quiz.title).toBe('Loose quiz');
+    expect(quiz.items).toHaveLength(1);
+  });
+
   it('uses an empty description when there are no instructions', () => {
     expect(toFormsQuiz(assignmentWith([]), labels).description).toBe('');
   });

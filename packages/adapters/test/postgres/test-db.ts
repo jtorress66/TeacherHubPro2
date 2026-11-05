@@ -37,6 +37,7 @@ import {
 export const connect = (): Kysely<Database> => createDatabase(inject('databaseUrl'));
 
 const tables = [
+  'google_quizzes',
   'forms_exports',
   'sent_mail',
   'trial_reminders',
@@ -178,6 +179,16 @@ export const parentsFor = {
   roster: ['schools', 'teacher', 'class', 'students'],
   attendance: ['schools', 'teacher', 'class', 'secondClass', 'students'],
   grading: ['schools', 'teacher', 'class', 'category', 'students', 'assignments'],
+  /** Grading, plus a colleague: owner-only records need a second teacher. */
+  gradingTeam: [
+    'schools',
+    'teacher',
+    'secondTeacher',
+    'class',
+    'category',
+    'students',
+    'assignments',
+  ],
   games: ['schools', 'teacher', 'class', 'students', 'game'],
 } as const satisfies Record<string, readonly Parent[]>;
 

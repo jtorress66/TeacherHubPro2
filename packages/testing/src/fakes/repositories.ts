@@ -2,6 +2,8 @@ import type {
   Attachment,
   ClassroomConnection,
   FormsExport,
+  GoogleQuiz,
+  GoogleQuizId,
   StudentLink,
   AiGeneration,
   GenerationSummary,
@@ -53,6 +55,7 @@ import type {
   AttachmentRepository,
   ClassroomConnectionRepository,
   FormsExportRepository,
+  GoogleQuizRepository,
   StudentLinkRepository,
   AiGenerationRepository,
   PresentationRepository,
@@ -576,6 +579,28 @@ export class InMemoryFormsExportRepository implements FormsExportRepository {
   save(formsExport: FormsExport): Promise<void> {
     this.rows.set(formsExport.assignmentId, formsExport);
     return Promise.resolve();
+  }
+}
+
+export class InMemoryGoogleQuizRepository implements GoogleQuizRepository {
+  private readonly rows = new Map<GoogleQuizId, GoogleQuiz>();
+
+  save(quiz: GoogleQuiz): Promise<void> {
+    this.rows.set(quiz.id, quiz);
+    return Promise.resolve();
+  }
+
+  findForOwner(schoolId: SchoolId, ownerId: UserId, id: GoogleQuizId): Promise<GoogleQuiz | null> {
+    const row = this.rows.get(id);
+    return Promise.resolve(row?.schoolId === schoolId && row.ownerId === ownerId ? row : null);
+  }
+
+  listByOwner(schoolId: SchoolId, ownerId: UserId): Promise<readonly GoogleQuiz[]> {
+    return Promise.resolve(
+      [...this.rows.values()]
+        .filter((row) => row.schoolId === schoolId && row.ownerId === ownerId)
+        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()),
+    );
   }
 }
 

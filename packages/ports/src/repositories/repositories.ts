@@ -2,6 +2,8 @@ import type {
   Attachment,
   ClassroomConnection,
   FormsExport,
+  GoogleQuiz,
+  GoogleQuizId,
   StudentLink,
   AiGeneration,
   GenerationSummary,
@@ -178,6 +180,14 @@ export interface ClassroomConnectionRepository {
 export interface FormsExportRepository {
   find(schoolId: SchoolId, assignmentId: AssignmentId): Promise<FormsExport | null>;
   save(formsExport: FormsExport): Promise<void>;
+}
+
+/** Google Forms quizzes a teacher made without a class; only the teacher sees theirs. */
+export interface GoogleQuizRepository {
+  save(quiz: GoogleQuiz): Promise<void>;
+  findForOwner(schoolId: SchoolId, ownerId: UserId, id: GoogleQuizId): Promise<GoogleQuiz | null>;
+  /** Newest first. */
+  listByOwner(schoolId: SchoolId, ownerId: UserId): Promise<readonly GoogleQuiz[]>;
 }
 
 export interface AttendanceSessionRepository extends ScopedRepository<AttendanceSession> {

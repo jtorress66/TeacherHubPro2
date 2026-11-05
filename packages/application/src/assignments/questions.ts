@@ -1,6 +1,7 @@
 import {
   createQuestion,
   invalid,
+  ok,
   replaceQuestions,
   setInstructions,
   type Assignment,
@@ -18,6 +19,19 @@ import {
 
 type Deps = AssignmentAccessDeps & { readonly submissions: SubmissionRepository };
 
+/** Every question checked, an error naming the first broken one (`questions.<index>.<field>`). */
+export function buildQuestions(inputs: readonly QuestionInput[]): Result<Question[], UseCaseError> {
+  const questions: Question[] = [];
+  for (const [index, question] of inputs.entries()) {
+    const created = createQuestion(question);
+    if (!created.ok) {
+      return invalid(`questions.${String(index)}.${created.error.field}`, created.error.code);
+    }
+    questions.push(created.value);
+  }
+  return ok(questions);
+}
+
 /** The question builder's save: the whole list at once, each question checked. */
 export class SaveQuestions {
   constructor(private readonly deps: Deps) {}
@@ -34,15 +48,9 @@ export class SaveQuestions {
     );
     // Students' answers and scores refer to the questions; changing them would break both.
     if (submitted.length > 0) return fail('has_submissions');
-    const questions: Question[] = [];
-    for (const [index, question] of input.questions.entries()) {
-      const created = createQuestion(question);
-      if (!created.ok) {
-        return invalid(`questions.${String(index)}.${created.error.field}`, created.error.code);
-      }
-      questions.push(created.value);
-    }
-    const updated = replaceQuestions(assignment, questions);
+    const questions = buildQuestions(input.questions);
+    if (!questions.ok) return questions;
+    const updated = replaceQuestions(assignment, questions.value);
     if (!updated.ok) return updated;
     await this.deps.assignments.save(updated.value);
     return updated;

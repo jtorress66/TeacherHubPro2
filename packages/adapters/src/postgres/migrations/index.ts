@@ -12,6 +12,7 @@ import * as live from './0010_live.ts';
 import * as learning from './0011_learning.ts';
 import * as portals from './0012_portals.ts';
 import * as formsExports from './0013_forms_exports.ts';
+import * as googleQuizzes from './0014_google_quizzes.ts';
 
 /** Ordered list of migrations, bundled with the code (no filesystem lookups at runtime). */
 const migrations: Readonly<Record<string, Migration>> = {
@@ -28,6 +29,7 @@ const migrations: Readonly<Record<string, Migration>> = {
   '0011_learning': learning,
   '0012_portals': portals,
   '0013_forms_exports': formsExports,
+  '0014_google_quizzes': googleQuizzes,
 };
 
 export const migrationProvider: MigrationProvider = {

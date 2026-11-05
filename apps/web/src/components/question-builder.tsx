@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { useActionState, useState, type ReactNode } from 'react';
 import { questionTypes, type Question, type QuestionType } from '@thp/domain';
 import { createTranslator, type Locale } from '@thp/i18n';
 import { saveQuestionsAction, type AssignmentFormState } from '../app/_lib/assignment-actions.ts';
@@ -15,6 +15,15 @@ import { FormAlert, Submit } from './forms.tsx';
 import { Hidden } from './form-fields.tsx';
 
 const initial: AssignmentFormState = {};
+
+/** Where the questions go when not to an assignment, e.g. straight into a Google Forms quiz. */
+export interface QuestionsSave {
+  readonly action: (state: AssignmentFormState, data: FormData) => Promise<AssignmentFormState>;
+  readonly hidden: Readonly<Record<string, string>>;
+  readonly label: string;
+  /** Shown instead of the submit button, e.g. a "Connect Google" link. */
+  readonly instead?: ReactNode;
+}
 
 function Area(props: {
   readonly id: string;
@@ -130,9 +139,10 @@ export function QuestionBuilder(props: {
   readonly instructions: string | null;
   readonly locked: boolean;
   readonly imported?: boolean;
+  readonly save?: QuestionsSave;
 }) {
   const t = createTranslator(props.locale);
-  const [state, action] = useActionState(saveQuestionsAction, initial);
+  const [state, action] = useActionState(props.save?.action ?? saveQuestionsAction, initial);
   const [drafts, setDrafts] = useState<readonly QuestionDraft[]>(props.questions.map(draftOf));
   const [instructions, setInstructions] = useState(props.instructions ?? '');
   const [newType, setNewType] = useState<QuestionType>('multiple_choice');
@@ -152,11 +162,13 @@ export function QuestionBuilder(props: {
     <form action={action} className="stack" aria-label={t('questions.title')}>
       <Hidden
         values={{
+          ...(props.save?.hidden ?? {
+            classId: props.classId,
+            assignmentId: props.assignmentId,
+            imported: props.imported === true ? '1' : '',
+          }),
           locale: props.locale,
-          classId: props.classId,
-          assignmentId: props.assignmentId,
           questions: JSON.stringify(drafts.map(inputOf)),
-          imported: props.imported === true ? '1' : '',
         }}
       />
       {props.imported === true ? (
@@ -296,7 +308,9 @@ export function QuestionBuilder(props: {
           </div>
         </div>
       )}
-      {props.locked ? null : <Submit label={t('questions.save')} />}
+      {props.locked
+        ? null
+        : (props.save?.instead ?? <Submit label={props.save?.label ?? t('questions.save')} />)}
     </form>
   );
 }
