@@ -8,6 +8,7 @@ import type {
   CourseworkMaterial,
   CourseworkRequest,
 } from '@thp/ports';
+import { googleFailure } from './google-errors.ts';
 
 type Fetch = (input: string | URL | Request, init?: RequestInit) => Promise<Response>;
 
@@ -18,12 +19,6 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const list = (value: unknown): Record<string, unknown>[] =>
   Array.isArray(value) ? value.filter(isRecord) : [];
 const textOf = (value: unknown): string => (typeof value === 'string' ? value : '');
-
-function failure(status: number): ClassroomError {
-  if (status === 401 || status === 403) return { code: 'unauthorized' };
-  if (status === 404) return { code: 'not_found' };
-  return { code: 'unavailable' };
-}
 
 const materialOf = (material: CourseworkMaterial) =>
   material.kind === 'link'
@@ -52,7 +47,7 @@ export class GoogleClassroom implements ClassroomCourses, ClassroomCoursework {
         ...init,
         headers: { authorization: `Bearer ${accessToken}`, 'content-type': 'application/json' },
       });
-      if (!response.ok) return err(failure(response.status));
+      if (!response.ok) return err(await googleFailure(response));
       const body: unknown = await response.json();
       return ok(isRecord(body) ? body : {});
     } catch {

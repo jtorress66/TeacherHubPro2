@@ -1342,7 +1342,10 @@ export const en = {
     grading_off: 'Turn on “Count as a grade” for this game first.',
     name_taken: 'That name is already playing. Pick your own name.',
     email_failed: 'The email could not be sent. Check the address and try again.',
-    google_reconnect: 'Reconnect Google to allow Google Forms, then try again.',
+    google_reconnect:
+      'Google needs a new permission. In Settings, disconnect Google Classroom and connect it again, then try again.',
+    google_api_disabled:
+      'A Google API this needs is turned off in your Google Cloud project. Turn on the Google Drive API and the Google Classroom API, wait a minute, then try again.',
     subscription_required: 'Drafting with AI needs an active trial or plan.',
     required: 'This field is required.',
     invalid_format: 'Please check this value.',

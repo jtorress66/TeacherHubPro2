@@ -1,5 +1,6 @@
 import { err, ok, type FormsQuiz, type FormsQuizItem, type Result } from '@thp/domain';
 import type { CreatedForm, FormsError, GoogleForms } from '@thp/ports';
+import { googleFailure } from './google-errors.ts';
 
 type Fetch = (input: string | URL | Request, init?: RequestInit) => Promise<Response>;
 
@@ -9,12 +10,12 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
 const textOf = (value: unknown): string => (typeof value === 'string' ? value : '');
 
-function failure(status: number): FormsError {
-  if (status === 401) return { code: 'unauthorized' };
-  // Forms answers 403 when the teacher's grant predates the Forms scope.
-  if (status === 403) return { code: 'insufficient_scope' };
-  if (status === 404) return { code: 'not_found' };
-  return { code: 'unavailable' };
+/** Forms answers a bare 403 when the teacher's grant predates the Forms scope. */
+async function formsFailure(response: Response): Promise<FormsError> {
+  const failure = await googleFailure(response);
+  return failure.code === 'unauthorized' && response.status === 403
+    ? { ...failure, code: 'insufficient_scope' }
+    : failure;
 }
 
 const options = (values: readonly string[]) => values.map((value) => ({ value }));
@@ -83,7 +84,7 @@ export class GoogleFormsApi implements GoogleForms {
         headers: { authorization: `Bearer ${accessToken}`, 'content-type': 'application/json' },
         body: JSON.stringify(body),
       });
-      if (!response.ok) return err(failure(response.status));
+      if (!response.ok) return err(await formsFailure(response));
       const reply: unknown = await response.json();
       return ok(isRecord(reply) ? reply : {});
     } catch {

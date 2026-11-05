@@ -1,7 +1,14 @@
 import type { LocalDate, Result } from '@thp/domain';
 
 export interface ClassroomError {
-  readonly code: 'unauthorized' | 'not_found' | 'unavailable';
+  /**
+   * `api_disabled`: a Google API is turned off in the Cloud project; `insufficient_scope`: the
+   * teacher's grant predates a scope the call needs.
+   */
+  readonly code:
+    'unauthorized' | 'not_found' | 'unavailable' | 'api_disabled' | 'insufficient_scope';
+  /** Google's reason token (e.g. `SERVICE_DISABLED`), for logs only. */
+  readonly reason?: string;
 }
 
 export interface ClassroomCourse {

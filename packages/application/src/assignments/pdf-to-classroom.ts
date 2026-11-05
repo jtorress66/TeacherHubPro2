@@ -8,8 +8,8 @@ import {
   type User,
 } from '@thp/domain';
 import type { ClassroomCoursework, GoogleDriveFiles } from '@thp/ports';
-import { fail, type UseCaseError } from '../errors.ts';
-import { accessToken, type ConnectionDeps } from './classroom.ts';
+import type { UseCaseError } from '../errors.ts';
+import { accessToken, googleFailed, type ConnectionDeps } from './classroom.ts';
 import { pdfSizeError } from './pdf-import.ts';
 
 /**
@@ -51,13 +51,13 @@ export class PostPdfToClassroom {
     if (!token.ok) return token;
     const name = input.fileName.trim() === '' ? `${title.value}.pdf` : input.fileName.trim();
     const file = await this.deps.googleDrive.uploadPdf(token.value, { name, bytes: input.pdf });
-    if (!file.ok) return fail('classroom_failed');
+    if (!file.ok) return googleFailed(file.error);
     const posted = await this.deps.classroomCoursework.createCoursework(token.value, course.value, {
       title: title.value,
       description: instructions.value ?? '',
       material: { kind: 'pdf', driveFileId: file.value.id },
       dueDate,
     });
-    return posted.ok ? ok({ url: posted.value.url }) : fail('classroom_failed');
+    return posted.ok ? ok({ url: posted.value.url }) : googleFailed(posted.error);
   }
 }

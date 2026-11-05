@@ -1351,7 +1351,10 @@ export const es: Messages = {
     grading_off: 'Primero activa «Cuenta como nota» para este juego.',
     name_taken: 'Ese nombre ya está jugando. Elige tu propio nombre.',
     email_failed: 'No se pudo enviar el correo. Revise la dirección e inténtelo de nuevo.',
-    google_reconnect: 'Vuelve a conectar Google para permitir Google Forms e inténtalo de nuevo.',
+    google_reconnect:
+      'Google necesita un permiso nuevo. En Configuración, desconecta Google Classroom y vuelve a conectarlo; luego inténtalo de nuevo.',
+    google_api_disabled:
+      'Una API de Google que se necesita está desactivada en tu proyecto de Google Cloud. Activa la API de Google Drive y la API de Google Classroom, espera un minuto e inténtalo de nuevo.',
     subscription_required: 'Para crear borradores con IA necesitas una prueba o un plan activo.',
     required: 'Este campo es obligatorio.',
     invalid_format: 'Revisa este valor.',

@@ -212,6 +212,7 @@ import {
   type GoogleConfig,
   type WebConfig,
 } from './server/config.ts';
+import { loggedCoursework, loggedDrive } from './server/google-failure-log.ts';
 import { createTranslator, locales, portalLinkEmail, trialReminderEmail } from '@thp/i18n';
 import { defaultGameModes, localDateIn, type LocalDate } from '@thp/domain';
 
@@ -429,9 +430,9 @@ function classroomFor(config: ClassroomConfig) {
       clientSecret: config.clientSecret,
     }),
     classroomCourses: classroom,
-    classroomCoursework: classroom,
+    classroomCoursework: loggedCoursework(classroom),
     googleForms: new GoogleFormsApi(),
-    googleDrive: new GoogleDriveApi(),
+    googleDrive: loggedDrive(new GoogleDriveApi()),
   };
 }
 

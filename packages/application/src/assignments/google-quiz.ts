@@ -19,7 +19,7 @@ import type {
   IdGenerator,
 } from '@thp/ports';
 import { fail, type UseCaseError } from '../errors.ts';
-import { accessToken, type ConnectionDeps } from './classroom.ts';
+import { accessToken, googleFailed, type ConnectionDeps } from './classroom.ts';
 import { buildQuestions } from './questions.ts';
 
 interface QuizDeps {
@@ -76,9 +76,7 @@ export class MakeGoogleQuiz {
       ),
     );
     if (!made.ok) {
-      return fail(
-        made.error.code === 'insufficient_scope' ? 'google_reconnect' : 'classroom_failed',
-      );
+      return googleFailed(made.error);
     }
     const quiz: GoogleQuiz = {
       id: this.deps.ids.next() as GoogleQuizId,
@@ -145,6 +143,6 @@ export class PostQuizToClassroom {
         dueDate,
       },
     );
-    return posted.ok ? ok({ url: posted.value.url }) : fail('classroom_failed');
+    return posted.ok ? ok({ url: posted.value.url }) : googleFailed(posted.error);
   }
 }

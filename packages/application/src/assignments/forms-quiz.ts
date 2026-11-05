@@ -7,7 +7,7 @@ import {
   type AssignmentAccessDeps,
   type AssignmentRef,
 } from './assignment-access.ts';
-import { accessToken, type ConnectionDeps } from './classroom.ts';
+import { accessToken, googleFailed, type ConnectionDeps } from './classroom.ts';
 
 /**
  * Makes a self-scoring Google Forms quiz from an assignment's questions, in the teacher's Google
@@ -37,9 +37,7 @@ export class MakeFormsQuiz {
       toFormsQuiz(assignment, input.labels),
     );
     if (!made.ok) {
-      return fail(
-        made.error.code === 'insufficient_scope' ? 'google_reconnect' : 'classroom_failed',
-      );
+      return googleFailed(made.error);
     }
     const formsExport: FormsExport = {
       schoolId: assignment.schoolId,

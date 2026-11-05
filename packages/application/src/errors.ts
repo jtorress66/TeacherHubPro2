@@ -31,7 +31,8 @@ export type ApplicationErrorCode =
   | 'grading_off'
   | 'name_taken'
   | 'email_failed'
-  | 'google_reconnect';
+  | 'google_reconnect'
+  | 'google_api_disabled';
 
 /**
  * What a use case can report: a broken validation rule (with its field) or an application-level
