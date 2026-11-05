@@ -37,6 +37,7 @@ import {
 export const connect = (): Kysely<Database> => createDatabase(inject('databaseUrl'));
 
 const tables = [
+  'prep_batches',
   'student_insights',
   'student_notes',
   'forms_exports',
@@ -180,6 +181,8 @@ export const parentsFor = {
   roster: ['schools', 'teacher', 'class', 'students'],
   /** A roster with a colleague: private notes and insights belong to one teacher. */
   rosterTeam: ['schools', 'teacher', 'secondTeacher', 'class', 'students'],
+  /** Prep batches by a teacher and a colleague, with a quiz category. */
+  prep: ['schools', 'teacher', 'secondTeacher', 'class', 'category'],
   attendance: ['schools', 'teacher', 'class', 'secondClass', 'students'],
   grading: ['schools', 'teacher', 'class', 'category', 'students', 'assignments'],
   games: ['schools', 'teacher', 'class', 'students', 'game'],

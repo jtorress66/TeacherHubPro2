@@ -20,25 +20,35 @@ interface Layout {
   readonly locale: Locale;
   readonly subject: string;
   readonly paragraphs: readonly string[];
-  readonly button: { readonly label: string; readonly url: string };
+  readonly button: { readonly label: string; readonly url: string } | null;
   readonly footer: readonly string[];
 }
 
-/** One simple, accessible layout for every email: text, a button, and the link spelled out. */
-function render({ locale, subject, paragraphs, button, footer }: Layout): EmailContent {
-  const p = (text: string) => `<p style="margin:0 0 16px">${escapeHtml(text)}</p>`;
+/** The button and the link spelled out, for emails that have one. */
+function buttonHtml(button: Layout['button']): string[] {
+  if (button === null) return [];
   const url = escapeHtml(button.url);
+  return [
+    `<p style="margin:24px 0"><a href="${url}" style="background:#1d4ed8;color:#ffffff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold">${escapeHtml(button.label)}</a></p>`,
+    `<p style="margin:0 0 16px;font-size:14px;color:#475569;word-break:break-all">${url}</p>`,
+  ];
+}
+
+/** One simple, accessible layout for every email: text, an optional button, and a footer. */
+function render({ locale, subject, paragraphs, button, footer }: Layout): EmailContent {
+  const p = (text: string) =>
+    `<p style="margin:0 0 16px">${escapeHtml(text).replace(/\n/gu, '<br>')}</p>`;
   const html = [
     `<!doctype html><html lang="${locale}"><body style="font-family:Arial,sans-serif;color:#0f172a;line-height:1.5;max-width:560px;margin:0 auto;padding:24px">`,
     ...paragraphs.map(p),
-    `<p style="margin:24px 0"><a href="${url}" style="background:#1d4ed8;color:#ffffff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold">${escapeHtml(button.label)}</a></p>`,
-    `<p style="margin:0 0 16px;font-size:14px;color:#475569;word-break:break-all">${url}</p>`,
+    ...buttonHtml(button),
     ...footer.map(
       (line) => `<p style="margin:0 0 8px;font-size:14px;color:#475569">${escapeHtml(line)}</p>`,
     ),
     '</body></html>',
   ].join('\n');
-  const text = [...paragraphs, '', `${button.label}: ${button.url}`, '', ...footer].join('\n');
+  const buttonText = button === null ? [] : ['', `${button.label}: ${button.url}`];
+  const text = [paragraphs.join('\n\n'), ...buttonText, '', ...footer].join('\n');
   return { subject, html, text };
 }
 
@@ -85,5 +95,25 @@ export function trialReminderEmail(input: TrialReminderEmailInput): EmailContent
     ],
     button: { label: t('emails.trialButton'), url: input.billingUrl },
     footer: [t('emails.signature')],
+  });
+}
+
+export interface WeeklyUpdateEmailInput {
+  readonly language: Locale;
+  readonly subject: string;
+  /** The teacher's approved text; blank lines separate paragraphs. */
+  readonly body: string;
+  readonly schoolName: string;
+}
+
+/** The teacher's weekly update to families, sent as they approved it. */
+export function weeklyUpdateEmail(input: WeeklyUpdateEmailInput): EmailContent {
+  const t = createTranslator(input.language);
+  return render({
+    locale: input.language,
+    subject: input.subject,
+    paragraphs: input.body.split(/\n\s*\n/u).map((block) => block.trim()),
+    button: null,
+    footer: [t('emails.weeklySentBy', { school: input.schoolName })],
   });
 }

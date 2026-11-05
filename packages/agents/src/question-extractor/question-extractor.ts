@@ -71,7 +71,8 @@ const readers: Readonly<Record<QuestionType, (q: Json) => Record<string, unknown
 const isType = (value: unknown): value is QuestionType =>
   typeof value === 'string' && Object.hasOwn(readers, value);
 
-function readQuestion(q: Json): Result<ExtractedQuestionInput, string> {
+/** One question from a reply in the shared question shape, or what is wrong with it. */
+export function readQuestion(q: Json): Result<ExtractedQuestionInput, string> {
   if (!isType(q.type)) return err(`The reply has an unknown question type "${String(q.type)}".`);
   const points = typeof q.points === 'number' && q.points > 0 ? { points: q.points } : {};
   return ok({

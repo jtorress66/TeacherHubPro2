@@ -312,6 +312,22 @@ export interface StudentInsightsTable {
   generated_at: Date;
 }
 
+export interface PrepBatchesTable {
+  id: string;
+  school_id: string;
+  teacher_id: string;
+  class_id: string;
+  request: Json;
+  status: string;
+  items: Json;
+  parent_email: Json | null;
+  job_id: string;
+  started_at: Date;
+  ready_at: Date | null;
+  published_at: Date | null;
+  published: Json | null;
+}
+
 export interface AttendanceSessionsTable {
   id: string;
   school_id: string;
@@ -487,6 +503,7 @@ export interface Database {
   forms_exports: FormsExportsTable;
   student_notes: StudentNotesTable;
   student_insights: StudentInsightsTable;
+  prep_batches: PrepBatchesTable;
   attendance_sessions: AttendanceSessionsTable;
   attendance_entries: AttendanceEntriesTable;
   games: GamesTable;

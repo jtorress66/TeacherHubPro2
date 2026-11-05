@@ -16,6 +16,7 @@ export type * from './ai/insight-writer.ts';
 export type * from './ai/submission-grader.ts';
 export type * from './ai/game-writer.ts';
 export type * from './ai/path-writer.ts';
+export type * from './ai/quiz-writer.ts';
 export type * from './files/file-store.ts';
 export type * from './files/pdf-text-extractor.ts';
 export type * from './documents/report-card-renderer.ts';

@@ -3,6 +3,8 @@ import type {
   ClassroomConnection,
   FormsExport,
   StudentInsight,
+  PrepBatch,
+  PrepBatchId,
   StudentNote,
   StudentNoteId,
   StudentLink,
@@ -194,6 +196,22 @@ export interface StudentNoteRepository {
   ): Promise<readonly StudentNote[]>;
   /** False when there is no such note by this author in the school. */
   delete(schoolId: SchoolId, id: StudentNoteId, authorId: UserId): Promise<boolean>;
+}
+
+/** Prep batches belong to the teacher who started them. */
+export interface PrepBatchRepository {
+  save(batch: PrepBatch): Promise<void>;
+  find(schoolId: SchoolId, teacherId: UserId, id: PrepBatchId): Promise<PrepBatch | null>;
+  /** Newest first, at most `limit`. */
+  listForTeacher(
+    schoolId: SchoolId,
+    teacherId: UserId,
+    limit: number,
+  ): Promise<readonly PrepBatch[]>;
+  /** Batches waiting for the teacher's review. */
+  countReady(schoolId: SchoolId, teacherId: UserId): Promise<number>;
+  /** False when there is no such batch of this teacher in the school. */
+  delete(schoolId: SchoolId, teacherId: UserId, id: PrepBatchId): Promise<boolean>;
 }
 
 /** The latest AI insight per teacher and student; saving another replaces it. */

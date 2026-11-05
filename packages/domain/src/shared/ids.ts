@@ -32,3 +32,4 @@ export type PresentationId = Id<'Presentation'>;
 export type AttachmentId = Id<'Attachment'>;
 export type StudentLinkId = Id<'StudentLink'>;
 export type StudentNoteId = Id<'StudentNote'>;
+export type PrepBatchId = Id<'PrepBatch'>;

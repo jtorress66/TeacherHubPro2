@@ -19,7 +19,7 @@ import {
   SystemClock,
   UuidIdGenerator,
 } from '@thp/adapters';
-import { portalLinkEmail, trialReminderEmail } from '@thp/i18n';
+import { portalLinkEmail, trialReminderEmail, weeklyUpdateEmail } from '@thp/i18n';
 import {
   ContentWriter,
   LessonPlanner,
@@ -28,6 +28,7 @@ import {
   PathWriter,
   QuestionExtractor,
   InsightWriter,
+  QuizWriter,
   SubmissionGrader,
 } from '@thp/agents';
 import {
@@ -38,6 +39,8 @@ import {
   PdfImportHandler,
   StudentInsightHandler,
   JobHandlerRegistry,
+  makePrepRunners,
+  PrepStepHandler,
   LessonPlanDraftHandler,
   PresentationDraftHandler,
   SpeechHandler,
@@ -72,6 +75,7 @@ function textToSpeech(config: TtsConfig): TextToSpeech {
 export const mailTemplates: MailTemplates = {
   portalLink: portalLinkEmail,
   trialReminder: trialReminderEmail,
+  weeklyUpdate: weeklyUpdateEmail,
 };
 
 function mailerFor(config: MailConfig, db: ReturnType<typeof createDatabase>): Mailer {
@@ -115,6 +119,18 @@ export function createJobRunner(
       clock,
     }),
     new LearningPathHandler({ pathWriter: new PathWriter(model), learningPaths, ids, clock }),
+    new PrepStepHandler({
+      prepBatches: repos.prepBatches,
+      jobs,
+      clock,
+      runners: makePrepRunners({
+        drafter: new LessonPlanner(model),
+        presentationDrafter: new PresentationWriter(model),
+        contentWriter: new ContentWriter(model),
+        quizWriter: new QuizWriter(model),
+        lessonPlans: repos.lessonPlans,
+      }),
+    }),
   ]);
   const sweep = new SweepStaleJobs({ jobs, clock });
   const reminders = new SendTrialReminders({

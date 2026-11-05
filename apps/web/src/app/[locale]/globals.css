@@ -1166,3 +1166,49 @@ details[open] > summary {
 tr[aria-current='true'] {
   font-weight: 700;
 }
+
+/* Prep agent: the count on its menu link, the review's list beside its preview, and step states. */
+.nav-badge {
+  margin-left: auto;
+  min-width: 1.5rem;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.prep-review {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 900px) {
+  .prep-review {
+    grid-template-columns: minmax(16rem, 1fr) minmax(0, 2fr);
+    align-items: start;
+  }
+}
+
+.prep-items li[aria-current='true'] {
+  font-weight: 700;
+}
+
+.prep-steps li[data-state='done'] {
+  color: var(--muted);
+}
+
+.prep-steps li[data-state='current'] {
+  font-weight: 700;
+}
+
+.prep-ready {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+}

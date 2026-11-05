@@ -13,6 +13,8 @@ export interface NavGroup {
     readonly href: string;
     readonly label: string;
     readonly icon: NavIconName;
+    /** A count waiting for the teacher, such as prep batches to review; hidden at zero. */
+    readonly badge?: number;
   }[];
 }
 
@@ -69,6 +71,11 @@ export function AppNav(props: {
                   >
                     <NavIcon name={link.icon} />
                     {link.label}
+                    {link.badge === undefined || link.badge === 0 ? null : (
+                      <span className="nav-badge" data-testid="nav-badge">
+                        {link.badge}
+                      </span>
+                    )}
                   </Link>
                 </li>
               ))}

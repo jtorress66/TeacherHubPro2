@@ -108,6 +108,14 @@ import {
   AddStudentNote,
   DeleteStudentNote,
   RequestStudentInsight,
+  StartPrepBatch,
+  ResumePrepBatch,
+  GetPrepBatch,
+  ListPrepBatches,
+  CountReadyPrepBatches,
+  UpdatePrepSelection,
+  PublishPrepBatch,
+  DeletePrepBatch,
   MakeFormsQuiz,
   FindFormsQuiz,
   CreatePresentation,
@@ -213,7 +221,13 @@ import {
   type WebConfig,
 } from './server/config.ts';
 import { loggedCoursework, loggedDrive } from './server/google-failure-log.ts';
-import { createTranslator, locales, portalLinkEmail, trialReminderEmail } from '@thp/i18n';
+import {
+  createTranslator,
+  locales,
+  portalLinkEmail,
+  trialReminderEmail,
+  weeklyUpdateEmail,
+} from '@thp/i18n';
 import { defaultGameModes, localDateIn, type LocalDate } from '@thp/domain';
 
 export interface AppContainer {
@@ -293,6 +307,14 @@ export interface AppContainer {
   readonly addStudentNote: AddStudentNote;
   readonly deleteStudentNote: DeleteStudentNote;
   readonly requestStudentInsight: RequestStudentInsight;
+  readonly startPrepBatch: StartPrepBatch;
+  readonly resumePrepBatch: ResumePrepBatch;
+  readonly getPrepBatch: GetPrepBatch;
+  readonly listPrepBatches: ListPrepBatches;
+  readonly countReadyPrepBatches: CountReadyPrepBatches;
+  readonly updatePrepSelection: UpdatePrepSelection;
+  readonly publishPrepBatch: PublishPrepBatch;
+  readonly deletePrepBatch: DeletePrepBatch;
   readonly makeFormsQuiz: MakeFormsQuiz;
   readonly findFormsQuiz: FindFormsQuiz;
   readonly createGame: CreateGame;
@@ -500,7 +522,11 @@ export function createAppContainer(
             (line) => process.stdout.write(line),
           )
         : localMailer,
-    mailTemplates: { portalLink: portalLinkEmail, trialReminder: trialReminderEmail },
+    mailTemplates: {
+      portalLink: portalLinkEmail,
+      trialReminder: trialReminderEmail,
+      weeklyUpdate: weeklyUpdateEmail,
+    },
   };
 
   return {
@@ -578,6 +604,14 @@ export function createAppContainer(
     addStudentNote: new AddStudentNote(deps),
     deleteStudentNote: new DeleteStudentNote(deps),
     requestStudentInsight: new RequestStudentInsight(deps),
+    startPrepBatch: new StartPrepBatch(deps),
+    resumePrepBatch: new ResumePrepBatch(deps),
+    getPrepBatch: new GetPrepBatch(deps),
+    listPrepBatches: new ListPrepBatches(deps),
+    countReadyPrepBatches: new CountReadyPrepBatches(deps),
+    updatePrepSelection: new UpdatePrepSelection(deps),
+    publishPrepBatch: new PublishPrepBatch(deps),
+    deletePrepBatch: new DeletePrepBatch(deps),
     makeFormsQuiz: new MakeFormsQuiz(deps),
     findFormsQuiz: new FindFormsQuiz(deps),
     createGame: new CreateGame(deps),

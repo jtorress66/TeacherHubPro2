@@ -6,6 +6,7 @@ import {
   PresentationWriter,
   InsightWriter,
   QuestionExtractor,
+  QuizWriter,
   SubmissionGrader,
 } from '@thp/agents';
 import { LocalLlmClient } from '@thp/adapters';
@@ -107,6 +108,20 @@ describe('the local stand-in replies', () => {
       }),
     );
     expect(bullets).toHaveLength(3);
+  });
+
+  it('writes a quiz with the number of questions asked for', async () => {
+    const quiz = unwrap(
+      await new QuizWriter(local()).write({
+        subject: 'math',
+        grade: '4',
+        topics: ['Fractions'],
+        questionCount: 10,
+        language: 'en',
+      }),
+    );
+    expect(quiz.questions).toHaveLength(10);
+    expect(quiz.questions.at(-1)?.type).toBe('true_false');
   });
 
   it('reads a test into a multiple-choice, a true/false and a short-answer question', async () => {

@@ -33,6 +33,7 @@ export default async function DashboardPage(props: LocaleParams) {
   const { user, school, subscription, access } = await requireUser(locale);
   const app = getAppContainer();
   const onboarding = await app.getOnboarding.execute({ actor: user, school });
+  const readyPrep = await app.countReadyPrepBatches.execute({ actor: user });
   const center = await app.getCommandCenter.execute({
     actor: user,
     timeZone: await teacherTimeZone(),
@@ -64,6 +65,14 @@ export default async function DashboardPage(props: LocaleParams) {
       </p>
       <OnboardingChecklist locale={locale} state={onboarding} />
       <WelcomeTour locale={locale} />
+      {readyPrep === 0 ? null : (
+        <p className="card prep-ready" data-testid="prep-ready">
+          {t('commandCenter.prepReady', { count: readyPrep })}{' '}
+          <Link className="button" href={`/${locale}/app/prep`}>
+            {t('commandCenter.prepReadyOpen')}
+          </Link>
+        </p>
+      )}
 
       {center.ok ? (
         <>

@@ -6,6 +6,7 @@ import type {
   GameMetric,
   PathMetric,
   InsightMetric,
+  QuizMetric,
   GraderMetric,
   PlanMetric,
   PresentationMetric,
@@ -16,6 +17,7 @@ import { gameCases, runGameEvals } from './game-evals.ts';
 import { pathCases, runPathEvals } from './path-evals.ts';
 import { extractorCases, graderCases, runExtractorEvals, runGraderEvals } from './grading-evals.ts';
 import { insightCases, runInsightEvals } from './insight-evals.ts';
+import { quizCases, runQuizEvals } from './quiz-evals.ts';
 import { plannerCases, runPlannerEvals } from './planner-evals.ts';
 import { presentationCases, runPresentationEvals } from './presentation-evals.ts';
 import { loadReplays, ReplayLlmClient } from './replay-llm-client.ts';
@@ -35,6 +37,7 @@ const thresholds = JSON.parse(
   'game-writer': Record<GameMetric, number>;
   'path-writer': Record<PathMetric, number>;
   'insight-writer': Record<InsightMetric, number>;
+  'quiz-writer': Record<QuizMetric, number>;
 };
 
 const replay = (suite: string) => new ReplayLlmClient(loadReplays(suite));
@@ -73,6 +76,13 @@ describe('replay evals (saved replies, no API calls)', () => {
     expect(Object.keys(loadReplays('insight'))).toHaveLength(insightCases.length);
     const report = await runInsightEvals(replay('insight'), thresholds['insight-writer']);
     expect(report.failing, formatReport(report)).toEqual([]);
+  });
+
+  it('the quiz writer has a saved reply for every case and meets its thresholds', async () => {
+    expect(Object.keys(loadReplays('quiz'))).toHaveLength(quizCases.length);
+    const report = await runQuizEvals(replay('quiz'), thresholds['quiz-writer']);
+    expect(report.failing, formatReport(report)).toEqual([]);
+    expect(report.average).toEqual({ structure: 1, count: 1, types: 1, coverage: 1 });
   });
 
   it('the grader meets its thresholds', async () => {

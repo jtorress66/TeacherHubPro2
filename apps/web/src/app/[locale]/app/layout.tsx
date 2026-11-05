@@ -4,6 +4,7 @@ import { createTranslator } from '@thp/i18n';
 import { AppNav, type NavGroup } from '../../../components/app-nav.tsx';
 import { TimeZoneCookie } from '../../../components/browser-helpers.tsx';
 import { Logo } from '../../../components/logo.tsx';
+import { getAppContainer } from '../../../container.ts';
 import { requireUser } from '../../_lib/auth.ts';
 import { localeFrom, type LocaleParams } from '../locale-param.ts';
 
@@ -12,7 +13,8 @@ export const dynamic = 'force-dynamic';
 export default async function AppLayout(props: LocaleParams & { readonly children: ReactNode }) {
   const locale = await localeFrom(props);
   const t = createTranslator(locale);
-  const { school } = await requireUser(locale, { needsAccess: false });
+  const { user, school } = await requireUser(locale, { needsAccess: false });
+  const readyPrep = await getAppContainer().countReadyPrepBatches.execute({ actor: user });
   const base = `/${locale}/app`;
   const groups: NavGroup[] = [
     {
@@ -22,6 +24,7 @@ export default async function AppLayout(props: LocaleParams & { readonly childre
         { href: `${base}/plans`, label: t('nav.lessonPlans'), icon: 'plans' },
         { href: `${base}/assistant`, label: t('nav.assistant'), icon: 'assistant' },
         { href: `${base}/presentations`, label: t('nav.presentations'), icon: 'presentations' },
+        { href: `${base}/prep`, label: t('nav.prep'), icon: 'prep', badge: readyPrep },
       ],
     },
     {

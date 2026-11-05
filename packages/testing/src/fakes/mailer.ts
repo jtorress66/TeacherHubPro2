@@ -26,4 +26,10 @@ export const fakeMailTemplates: MailTemplates = {
     html: `<a href="${input.billingUrl}">${input.name}</a>`,
     text: `${input.name}: ${input.billingUrl}`,
   }),
+  weeklyUpdate: (input): MailContent => ({
+    subject: `[${input.language}] ${input.subject}`,
+    html: `<p>${input.body}</p>`,
+    text: `${input.body}
+${input.schoolName}`,
+  }),
 };

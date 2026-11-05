@@ -368,3 +368,18 @@ export {
   studentInsightJobKind,
   type StudentView,
 } from './students/student-360.ts';
+export {
+  StartPrepBatch,
+  PrepStepHandler,
+  ResumePrepBatch,
+  GetPrepBatch,
+  ListPrepBatches,
+  CountReadyPrepBatches,
+  UpdatePrepSelection,
+  DeletePrepBatch,
+  prepStepJobKind,
+  maxListedPrepBatches,
+  type PrepBatchView,
+} from './prep/prep-batches.ts';
+export { makePrepRunners, type PrepItemRunner, type PrepRunners } from './prep/prep-runners.ts';
+export { PublishPrepBatch } from './prep/publish-prep.ts';
