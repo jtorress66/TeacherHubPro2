@@ -153,7 +153,9 @@ for (const locale of ['es', 'en'] as const satisfies readonly Locale[]) {
   });
 }
 
-test('a school logo uploaded in settings appears on report cards', async ({ page }) => {
+test('a school logo uploaded in settings appears on the dashboard and report cards', async ({
+  page,
+}) => {
   const t = createTranslator('en');
   await signUp(page, 'en');
   const classPath = await classWithStudents(page, 'en');
@@ -170,6 +172,12 @@ test('a school logo uploaded in settings appears on report cards', async ({ page
   await page.getByRole('button', { name: t('settings.uploadLogo') }).click();
   await expect(page.getByRole('status')).toHaveText(t('settings.logoSaved'));
   await expect(page.getByTestId('logo-preview')).toBeVisible();
+
+  await page.goto('/en/app');
+  const logo = page.getByTestId('school-logo');
+  await expect(logo).toBeVisible();
+  expect(await logo.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0);
+  await page.goto('/en/app/settings');
 
   const pdf = await page.request.get(`${classPath}/report-cards/pdf`);
   expect(pdf.status()).toBe(200);

@@ -42,7 +42,18 @@ export default async function DashboardPage(props: LocaleParams) {
   return (
     <section className="stack">
       <h1>{t('dashboard.welcome', { name: user.name })}</h1>
-      <p className="muted">{school.name}</p>
+      <p className="school-mark muted">
+        {school.logoKey === null ? null : (
+          // Decorative: the school's name is right next to it. The key changes with each upload.
+          <img
+            src={`/api/school-logo?v=${encodeURIComponent(school.logoKey)}`}
+            alt=""
+            className="school-logo"
+            data-testid="school-logo"
+          />
+        )}
+        {school.name}
+      </p>
       <p>
         <span className="badge" data-testid="plan-badge">
           {planBadge(subscription, access, locale)}
