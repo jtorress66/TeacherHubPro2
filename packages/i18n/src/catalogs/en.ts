@@ -935,6 +935,25 @@ export const en = {
       'Google Classroom shows no active courses where the connected Google account is a teacher. Create a course at classroom.google.com, or connect the Google account you teach with.',
     switchAccount: 'Connect a different Google account',
   },
+  pdfDoc: {
+    answerAs: 'How students answer',
+    asPdf: 'Write on the PDF (it stays exactly as it is)',
+    asDoc: 'Type in a Google Doc (the AI lays the test out cleanly; check it before posting)',
+    title: 'Making a Google Doc from your test',
+    intro:
+      'The AI has read your test. Make the Google Doc, open it to check that nothing is missing or wrong, then post it. Each student gets their own copy to type in.',
+    continue: 'Continue',
+    make: 'Make the Google Doc',
+    made: 'Your Google Doc is ready in your Drive.',
+    open: 'Open the Doc to check',
+    checkFirst: 'Fix anything in the Doc first; Classroom gets the Doc as it is when you post.',
+  },
+  docLabels: {
+    name: 'Name',
+    date: 'Date',
+    answer: 'Answer',
+    points: '{points} pts',
+  },
   googleQuiz: {
     list: 'Your Google Forms quizzes',
     empty: 'No Google Forms quizzes yet.',

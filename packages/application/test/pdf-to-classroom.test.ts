@@ -61,7 +61,7 @@ describe('Posting a test PDF straight to Google Classroom', () => {
     expect(classroom.coursework.at(-1)).toEqual({
       title: 'Unit 3 test',
       description: 'Write your answers on the PDF.',
-      material: { kind: 'pdf', driveFileId: 'drive-1' },
+      material: { kind: 'driveFile', driveFileId: 'drive-1' },
       dueDate: '2026-12-01',
     });
   });

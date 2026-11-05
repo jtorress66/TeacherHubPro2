@@ -942,6 +942,27 @@ export const es: Messages = {
       'Google Classroom no muestra cursos activos en los que la cuenta de Google conectada sea docente. Crea un curso en classroom.google.com o conecta la cuenta de Google con la que enseñas.',
     switchAccount: 'Conectar otra cuenta de Google',
   },
+  pdfDoc: {
+    answerAs: 'Cómo contestan los estudiantes',
+    asPdf: 'Escribiendo sobre el PDF (queda exactamente igual)',
+    asDoc:
+      'Escribiendo en un documento de Google (la IA ordena el examen; revísalo antes de publicar)',
+    title: 'Creando un documento de Google con tu examen',
+    intro:
+      'La IA ya leyó tu examen. Crea el documento de Google, ábrelo para revisar que no falte nada ni haya errores y luego publícalo. Cada estudiante recibe su propia copia para escribir.',
+    continue: 'Continuar',
+    make: 'Crear el documento de Google',
+    made: 'Tu documento de Google está listo en tu Drive.',
+    open: 'Abrir el documento para revisarlo',
+    checkFirst:
+      'Corrige primero lo que haga falta en el documento; Classroom lo recibe tal como esté al publicar.',
+  },
+  docLabels: {
+    name: 'Nombre',
+    date: 'Fecha',
+    answer: 'Respuesta',
+    points: '{points} pts',
+  },
   googleQuiz: {
     list: 'Tus pruebas de Google Forms',
     empty: 'Todavía no hay pruebas de Google Forms.',

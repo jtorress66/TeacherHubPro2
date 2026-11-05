@@ -55,7 +55,7 @@ export class PostPdfToClassroom {
     const posted = await this.deps.classroomCoursework.createCoursework(token.value, course.value, {
       title: title.value,
       description: instructions.value ?? '',
-      material: { kind: 'pdf', driveFileId: file.value.id },
+      material: { kind: 'driveFile', driveFileId: file.value.id },
       dueDate,
     });
     return posted.ok ? ok({ url: posted.value.url }) : googleFailed(posted.error);

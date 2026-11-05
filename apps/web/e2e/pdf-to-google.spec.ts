@@ -18,6 +18,46 @@ async function quizPdf(): Promise<Buffer> {
 for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
   const t = createTranslator(locale);
 
+  test(`a teacher turns a test PDF into a clean Google Doc students type in, checks it and posts it (${locale})`, async ({
+    page,
+  }) => {
+    test.setTimeout(90_000);
+    await signUp(page, locale);
+    await page.goto(`/${locale}/app/assistant`);
+    const card = page.getByRole('region', { name: t('pdfTest.title') });
+    await card.getByRole('link', { name: t('pdfTest.connect') }).click();
+    await expect(
+      page.getByRole('status').filter({ hasText: t('classroom.connectedNotice') }),
+    ).toBeVisible();
+
+    await page.goto(`/${locale}/app/assistant`);
+    const post = card.getByRole('form', { name: t('pdfPost.submit') });
+    await post.getByLabel(t('pdfPost.name')).fill('Chapter 3 – Try It!');
+    await post.getByLabel(t('pdfPost.file')).setInputFiles({
+      name: 'chapter-3.pdf',
+      mimeType: 'application/pdf',
+      buffer: await quizPdf(),
+    });
+    await post.getByRole('radio', { name: t('pdfDoc.asDoc') }).check();
+    await post.getByRole('button', { name: t('pdfPost.submit') }).click();
+
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Chapter 3 – Try It!', {
+      timeout: 30_000,
+    });
+    expect(
+      (await new AxeBuilder({ page }).include('main').withTags(['wcag2a', 'wcag2aa']).analyze())
+        .violations,
+    ).toEqual([]);
+    await page.getByRole('button', { name: t('pdfDoc.make') }).click();
+    await expect(page.getByRole('link', { name: t('pdfDoc.open') })).toHaveAttribute(
+      'href',
+      /^https:\/\/docs\.local\/d\/local-doc-\d+\/edit$/,
+    );
+    const postDoc = page.getByRole('form', { name: t('pdfPost.submit') });
+    await postDoc.getByRole('button', { name: t('pdfPost.submit') }).click();
+    await expect(postDoc.getByRole('status')).toContainText(t('pdfPost.posted'));
+  });
+
   test(`a teacher posts a test PDF straight to Google Classroom, a copy for each student (${locale})`, async ({
     page,
   }) => {

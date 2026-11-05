@@ -8,6 +8,7 @@ import type {
   ClassId,
   GoogleQuizId,
   GradeCategoryId,
+  JobId,
   StudentId,
   StudentLinkId,
   SubmissionId,
@@ -26,6 +27,8 @@ export interface AssignmentFormState {
   /** Links just issued: shown once, never stored. */
   readonly links?: readonly { readonly name: string; readonly url: string }[];
   readonly url?: string;
+  /** The Google Doc just made from a test, to post next. */
+  readonly docId?: string;
   /** Google refused Forms: the teacher's connection predates the Forms scope. */
   readonly reconnect?: boolean;
   /** Changes after each success so the form can clear itself. */
@@ -270,6 +273,18 @@ export async function postPdfToClassroomAction(
   const { user } = await requireUser(locale);
   const file = fileOf(data, 'pdf');
   if (file === null) return { errors: { pdf: createTranslator(locale)('attachments.noFile') } };
+  if (text(data, 'answerAs') === 'doc') {
+    const job = await getAppContainer().requestDocImport.execute({
+      actor: user,
+      courseId: text(data, 'courseId'),
+      title: text(data, 'title'),
+      instructions: orNull(text(data, 'instructions')),
+      dueDate: orNull(text(data, 'dueDate')),
+      pdf: new Uint8Array(await file.arrayBuffer()),
+    });
+    if (!job.ok) return { errors: formErrors(job.error, locale) };
+    redirect(`${assistantPath(locale)}/doc/${job.value.id}`);
+  }
   const posted = await getAppContainer().postPdfToClassroom.execute({
     actor: user,
     courseId: text(data, 'courseId'),
@@ -278,6 +293,46 @@ export async function postPdfToClassroomAction(
     dueDate: orNull(text(data, 'dueDate')),
     fileName: file.name,
     pdf: new Uint8Array(await file.arrayBuffer()),
+  });
+  if (!posted.ok) return { errors: formErrors(posted.error, locale) };
+  return done(state, { url: posted.value.url });
+}
+
+/** Lays the read test out as a Google Doc in the teacher's Drive, labels in their language. */
+export async function makeTestDocAction(
+  state: AssignmentFormState,
+  data: FormData,
+): Promise<AssignmentFormState> {
+  const locale = localeOf(data);
+  const t = createTranslator(locale);
+  const { user } = await requireUser(locale);
+  const made = await getAppContainer().makeTestDoc.execute({
+    actor: user,
+    jobId: text(data, 'jobId') as JobId,
+    labels: {
+      name: t('docLabels.name'),
+      date: t('docLabels.date'),
+      answer: t('docLabels.answer'),
+      true: t('forms.true'),
+      false: t('forms.false'),
+      points: t('docLabels.points'),
+    },
+  });
+  if (!made.ok) return { errors: formErrors(made.error, locale) };
+  return done(state, { url: made.value.url, docId: made.value.docId });
+}
+
+/** Posts the checked Doc to the course chosen with the PDF. */
+export async function postDocToClassroomAction(
+  state: AssignmentFormState,
+  data: FormData,
+): Promise<AssignmentFormState> {
+  const locale = localeOf(data);
+  const { user } = await requireUser(locale);
+  const posted = await getAppContainer().postDocToClassroom.execute({
+    actor: user,
+    jobId: text(data, 'jobId') as JobId,
+    docId: text(data, 'docId'),
   });
   if (!posted.ok) return { errors: formErrors(posted.error, locale) };
   return done(state, { url: posted.value.url });

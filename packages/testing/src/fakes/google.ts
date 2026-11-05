@@ -144,6 +144,7 @@ export class FakeGoogleForms implements GoogleForms {
 /** Keeps what it uploads. */
 export class FakeGoogleDrive implements GoogleDriveFiles {
   readonly uploads: { readonly name: string; readonly bytes: Uint8Array }[] = [];
+  readonly docs: { readonly name: string; readonly html: string }[] = [];
 
   constructor(
     private readonly setup: {
@@ -162,5 +163,18 @@ export class FakeGoogleDrive implements GoogleDriveFiles {
       return Promise.resolve(err({ code: this.setup.failWith }));
     this.uploads.push(file);
     return Promise.resolve(ok({ id: `drive-${String(this.uploads.length)}` }));
+  }
+
+  uploadDoc(
+    accessToken: string,
+    doc: { readonly name: string; readonly html: string },
+  ): Promise<Result<{ readonly id: string; readonly url: string }, ClassroomError>> {
+    if (accessToken !== this.setup.accessToken)
+      return Promise.resolve(err({ code: 'unauthorized' }));
+    if (this.setup.failWith !== undefined)
+      return Promise.resolve(err({ code: this.setup.failWith }));
+    this.docs.push(doc);
+    const id = `doc-${String(this.docs.length)}`;
+    return Promise.resolve(ok({ id, url: `https://docs.test/${id}/edit` }));
   }
 }

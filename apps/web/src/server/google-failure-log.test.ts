@@ -7,7 +7,7 @@ const pdf = { name: 'test.pdf', bytes: new Uint8Array([1]) };
 const request = {
   title: 'Unit 3',
   description: '',
-  material: { kind: 'pdf' as const, driveFileId: 'd1' },
+  material: { kind: 'driveFile' as const, driveFileId: 'd1' },
   dueDate: null,
 };
 
@@ -16,6 +16,7 @@ describe('Google failure log', () => {
     const lines: string[] = [];
     const drive: GoogleDriveFiles = {
       uploadPdf: () => Promise.resolve(err({ code: 'api_disabled', reason: 'SERVICE_DISABLED' })),
+      uploadDoc: () => Promise.resolve(err({ code: 'insufficient_scope' })),
     };
 
     const result = await loggedDrive(drive, (line) => lines.push(line)).uploadPdf('t', pdf);
@@ -25,6 +26,8 @@ describe('Google failure log', () => {
       error: { code: 'api_disabled', reason: 'SERVICE_DISABLED' },
     });
     expect(lines).toEqual(['Google Drive upload failed: api_disabled (SERVICE_DISABLED)\n']);
+    await loggedDrive(drive, (line) => lines.push(line)).uploadDoc('t', { name: 'x', html: '' });
+    expect(lines.at(-1)).toBe('Google Docs upload failed: insufficient_scope\n');
   });
 
   it('logs nothing on success, and never the token, title or file', async () => {

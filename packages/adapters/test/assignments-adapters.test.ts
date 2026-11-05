@@ -423,7 +423,7 @@ describe('GoogleClassroom with a PDF', () => {
     await new GoogleClassroom(api.fetchFn).createCoursework(fixture.accessToken, 'c-1', {
       title: 'Test',
       description: '',
-      material: { kind: 'pdf', driveFileId: 'drive-1' },
+      material: { kind: 'driveFile', driveFileId: 'drive-1' },
       dueDate: null,
     });
     expect(api.posted[0]).toEqual({
@@ -478,6 +478,25 @@ describe('GoogleDriveApi', () => {
     expect(upload?.body).toContain('{"name":"Unit 3.pdf","mimeType":"application/pdf"}');
     expect(upload?.body).toContain('Content-Type: application/pdf');
     expect(upload?.body).toContain('%PDF-1.7 test');
+  });
+
+  it('uploads HTML for Drive to convert into a Google Doc', async () => {
+    const api = driveApi('t');
+    expect(
+      await new GoogleDriveApi(api.fetchFn).uploadDoc('t', {
+        name: 'Unit 3',
+        html: '<html><body><h1>Unit 3</h1></body></html>',
+      }),
+    ).toEqual({
+      ok: true,
+      value: { id: 'drive-file-1', url: 'https://docs.google.com/document/d/drive-file-1/edit' },
+    });
+    const [upload] = api.uploads;
+    expect(upload?.body).toContain(
+      '{"name":"Unit 3","mimeType":"application/vnd.google-apps.document"}',
+    );
+    expect(upload?.body).toContain('Content-Type: text/html; charset=UTF-8');
+    expect(upload?.body).toContain('<h1>Unit 3</h1>');
   });
 
   it('reports a server error or an unreachable Google as unavailable', async () => {

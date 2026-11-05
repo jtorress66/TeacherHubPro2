@@ -250,6 +250,7 @@ export {
 } from './assignments/classroom.ts';
 export { StartPdfTest } from './assignments/pdf-test.ts';
 export { PostPdfToClassroom } from './assignments/pdf-to-classroom.ts';
+export { RequestDocImport, MakeTestDoc, PostDocToClassroom } from './assignments/test-doc.ts';
 export { MakeFormsQuiz, FindFormsQuiz } from './assignments/forms-quiz.ts';
 export {
   MakeGoogleQuiz,
