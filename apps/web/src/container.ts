@@ -105,6 +105,7 @@ import {
   PostPdfToClassroom,
   RequestDocImport,
   MakeTestDoc,
+  GetTranscribedTest,
   PostDocToClassroom,
   MakeFormsQuiz,
   FindFormsQuiz,
@@ -294,6 +295,7 @@ export interface AppContainer {
   readonly postPdfToClassroom: PostPdfToClassroom;
   readonly requestDocImport: RequestDocImport;
   readonly makeTestDoc: MakeTestDoc;
+  readonly getTranscribedTest: GetTranscribedTest;
   readonly postDocToClassroom: PostDocToClassroom;
   readonly makeFormsQuiz: MakeFormsQuiz;
   readonly findFormsQuiz: FindFormsQuiz;
@@ -580,6 +582,7 @@ export function createAppContainer(
     postPdfToClassroom: new PostPdfToClassroom(deps),
     requestDocImport: new RequestDocImport(deps),
     makeTestDoc: new MakeTestDoc(deps),
+    getTranscribedTest: new GetTranscribedTest(deps),
     postDocToClassroom: new PostDocToClassroom(deps),
     makeFormsQuiz: new MakeFormsQuiz(deps),
     findFormsQuiz: new FindFormsQuiz(deps),

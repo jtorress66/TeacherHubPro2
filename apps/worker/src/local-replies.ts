@@ -6,6 +6,7 @@ import {
   graderSystemPrompt,
   pathWriterSystemPrompt,
   slidesSystemPrompt,
+  transcriberSystemPrompt,
 } from '@thp/agents';
 import type { ContentKind } from '@thp/domain';
 import type { LlmRequest } from '@thp/ports';
@@ -52,6 +53,25 @@ function slidesReply(request: LlmRequest): string {
         },
   );
   return JSON.stringify({ title: 'Local slides', slides });
+}
+
+/**
+ * The test's own lines as layout blocks: numbered lines become items, the rest plain text. It only
+ * repeats the PDF's words, so it passes the transcriber's check that nothing was added.
+ */
+function transcriberReply(request: LlmRequest): string {
+  const test = /The test:\n"""\n([\s\S]*)\n"""/.exec(promptOf(request))?.[1] ?? '';
+  const blocks = test
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line !== '')
+    .map((line) => {
+      const numbered = /^(\d+\.)\s+(.+)$/.exec(line);
+      return numbered === null
+        ? { kind: 'text', text: line }
+        : { kind: 'items', items: [{ label: numbered[1], text: numbered[2] }] };
+    });
+  return JSON.stringify({ blocks });
 }
 
 /** A short test, whatever the PDF says: enough for an objective score and an open answer. */
@@ -181,6 +201,7 @@ const repliesBySystem: ReadonlyMap<string, (request: LlmRequest) => string> = ne
   [contentSystemPrompt, contentReply],
   [slidesSystemPrompt, slidesReply],
   [extractorSystemPrompt, extractorReply],
+  [transcriberSystemPrompt, transcriberReply],
   [graderSystemPrompt, graderReply],
   [gameWriterSystemPrompt, gameReply],
   [pathWriterSystemPrompt, pathReply],

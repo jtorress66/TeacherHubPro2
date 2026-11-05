@@ -957,12 +957,6 @@ export const es: Messages = {
     checkFirst:
       'Corrige primero lo que haga falta en el documento; Classroom lo recibe tal como esté al publicar.',
   },
-  docLabels: {
-    name: 'Nombre',
-    date: 'Fecha',
-    answer: 'Respuesta',
-    points: '{points} pts',
-  },
   googleQuiz: {
     list: 'Tus pruebas de Google Forms',
     empty: 'Todavía no hay pruebas de Google Forms.',

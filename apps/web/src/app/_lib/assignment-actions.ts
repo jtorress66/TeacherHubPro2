@@ -298,25 +298,16 @@ export async function postPdfToClassroomAction(
   return done(state, { url: posted.value.url });
 }
 
-/** Lays the read test out as a Google Doc in the teacher's Drive, labels in their language. */
+/** Builds the Google Doc from the test's copied layout, in the teacher's Drive. */
 export async function makeTestDocAction(
   state: AssignmentFormState,
   data: FormData,
 ): Promise<AssignmentFormState> {
   const locale = localeOf(data);
-  const t = createTranslator(locale);
   const { user } = await requireUser(locale);
   const made = await getAppContainer().makeTestDoc.execute({
     actor: user,
     jobId: text(data, 'jobId') as JobId,
-    labels: {
-      name: t('docLabels.name'),
-      date: t('docLabels.date'),
-      answer: t('docLabels.answer'),
-      true: t('forms.true'),
-      false: t('forms.false'),
-      points: t('docLabels.points'),
-    },
   });
   if (!made.ok) return { errors: formErrors(made.error, locale) };
   return done(state, { url: made.value.url, docId: made.value.docId });

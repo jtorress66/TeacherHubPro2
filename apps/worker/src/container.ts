@@ -26,6 +26,7 @@ import {
   GameWriter,
   PathWriter,
   QuestionExtractor,
+  TestTranscriber,
   SubmissionGrader,
 } from '@thp/agents';
 import {
@@ -34,6 +35,7 @@ import {
   GenerationHandler,
   GradingHandler,
   PdfImportHandler,
+  TestDocHandler,
   JobHandlerRegistry,
   LessonPlanDraftHandler,
   PresentationDraftHandler,
@@ -101,6 +103,11 @@ export function createJobRunner(
       files,
       pdfText: new UnpdfTextExtractor(),
       questionExtractor: new QuestionExtractor(model),
+    }),
+    new TestDocHandler({
+      files,
+      pdfText: new UnpdfTextExtractor(),
+      testTranscriber: new TestTranscriber(model),
     }),
     new GradingHandler({ assignments, submissions, classes, grader: new SubmissionGrader(model) }),
     new GameDraftHandler({ gameWriter: new GameWriter(model) }),
