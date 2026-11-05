@@ -9,8 +9,9 @@ import type {
   GoogleForms,
   GoogleIdentity,
   GoogleProfile,
+  GoogleSlidesFiles,
 } from '@thp/ports';
-import type { FormsQuiz } from '@thp/domain';
+import type { FormsQuiz, GoogleDeck } from '@thp/domain';
 
 export interface GoogleIdentitySetup {
   readonly identity: GoogleIdentity;
@@ -98,15 +99,21 @@ export function classroomContract(
       expect(result.ok && result.value.url.startsWith('https://')).toBe(true);
     });
 
-    it('creates coursework with a PDF each student gets a copy of', async () => {
-      const result = await make(fixture).createCoursework(fixture.accessToken, fixture.course.id, {
-        title: 'Unit test',
-        description: '',
-        material: { kind: 'driveFile', driveFileId: 'drive-1' },
-        dueDate: null,
-      });
+    it('creates coursework with a Drive file to copy or to view', async () => {
+      for (const shareMode of ['copy', 'view'] as const) {
+        const result = await make(fixture).createCoursework(
+          fixture.accessToken,
+          fixture.course.id,
+          {
+            title: 'Unit test',
+            description: '',
+            material: { kind: 'driveFile', driveFileId: 'drive-1', shareMode },
+            dueDate: null,
+          },
+        );
 
-      expect(result.ok && result.value.url.startsWith('https://')).toBe(true);
+        expect(result.ok && result.value.url.startsWith('https://')).toBe(true);
+      }
     });
 
     it('cannot create coursework without access', async () => {
@@ -197,6 +204,41 @@ export function googleFormsContract(
 
     it('cannot create a quiz without access', async () => {
       expect(await make(accessToken).createQuiz('expired', sampleQuiz)).toEqual({
+        ok: false,
+        error: { code: 'unauthorized' },
+      });
+    });
+  });
+}
+
+export function googleSlidesContract(
+  name: string,
+  make: () => GoogleSlidesFiles,
+  accessToken: string,
+): void {
+  describe(`${name} (GoogleSlidesFiles contract)`, () => {
+    const deck: GoogleDeck = {
+      name: 'Volcanoes',
+      colours: { background: '#1d4ed8', text: '#ffffff' },
+      slides: [
+        {
+          layout: 'title',
+          title: '🌋 Volcanoes',
+          body: [{ text: 'Mountains of fire', bullet: false }],
+        },
+        { layout: 'body', title: 'How they form', body: [{ text: 'Magma rises', bullet: true }] },
+      ],
+    };
+
+    it('makes a deck and returns where to open it', async () => {
+      const result = await make().createPresentation(accessToken, deck);
+      if (!result.ok) throw new Error(`createPresentation failed: ${result.error.code}`);
+      expect(result.value.id).not.toBe('');
+      expect(result.value.url.startsWith('https://')).toBe(true);
+    });
+
+    it('cannot make a deck without access', async () => {
+      expect(await make().createPresentation('expired', deck)).toMatchObject({
         ok: false,
         error: { code: 'unauthorized' },
       });

@@ -1,4 +1,4 @@
-import { err, ok, type FormsQuiz, type Result } from '@thp/domain';
+import { err, ok, type FormsQuiz, type GoogleDeck, type Result } from '@thp/domain';
 import type {
   ClassroomCourse,
   ClassroomCourses,
@@ -14,6 +14,7 @@ import type {
   GoogleIdentity,
   GoogleIdentityError,
   GoogleProfile,
+  GoogleSlidesFiles,
 } from '@thp/ports';
 
 /** Knows which OAuth codes are valid and the profile behind each. */
@@ -163,5 +164,30 @@ export class FakeGoogleDrive implements GoogleDriveFiles {
     this.uploads.push(file);
     const id = `doc-${String(this.uploads.length)}`;
     return Promise.resolve(ok({ id, url: `https://docs.test/${id}/edit` }));
+  }
+}
+
+/** Keeps the decks it makes; it can be set to fail as Google would. */
+export class FakeGoogleSlides implements GoogleSlidesFiles {
+  readonly decks: GoogleDeck[] = [];
+
+  constructor(
+    private readonly setup: {
+      readonly accessToken: string;
+      readonly failWith?: ClassroomError['code'];
+    } = { accessToken: 'classroom-access' },
+  ) {}
+
+  createPresentation(
+    accessToken: string,
+    deck: GoogleDeck,
+  ): Promise<Result<{ readonly id: string; readonly url: string }, ClassroomError>> {
+    if (accessToken !== this.setup.accessToken)
+      return Promise.resolve(err({ code: 'unauthorized' }));
+    if (this.setup.failWith !== undefined)
+      return Promise.resolve(err({ code: this.setup.failWith }));
+    this.decks.push(deck);
+    const id = `slides-${String(this.decks.length)}`;
+    return Promise.resolve(ok({ id, url: `https://slides.test/${id}/edit` }));
   }
 }

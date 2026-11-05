@@ -39,6 +39,13 @@ export default async function PresentationsPage(props: LocaleParams) {
                 {t('presentations.updated', { date: day.format(presentation.updatedAt) })}
               </span>{' '}
               <Link href={`${base}/${presentation.id}/present`}>{t('presentations.present')}</Link>
+              {' · '}
+              <Link
+                href={`${base}/${presentation.id}#classroom`}
+                aria-label={`${t('presentations.classroomLink')}: ${presentation.name}`}
+              >
+                {t('presentations.classroomLink')}
+              </Link>
             </li>
           ))}
         </ul>

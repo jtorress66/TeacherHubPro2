@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { err, ok } from '@thp/domain';
-import type { ClassroomCoursework, GoogleDriveFiles } from '@thp/ports';
-import { loggedCoursework, loggedDrive } from './google-failure-log.ts';
+import type { ClassroomCoursework, GoogleDriveFiles, GoogleSlidesFiles } from '@thp/ports';
+import { loggedCoursework, loggedDrive, loggedSlides } from './google-failure-log.ts';
 
 const docx = { name: 'test.docx', bytes: new Uint8Array([0x50, 0x4b]) };
 const request = {
   title: 'Unit 3',
   description: '',
-  material: { kind: 'driveFile' as const, driveFileId: 'd1' },
+  material: { kind: 'driveFile' as const, driveFileId: 'd1', shareMode: 'copy' as const },
   dueDate: null,
 };
 
@@ -29,6 +29,32 @@ describe('Google failure log', () => {
       error: { code: 'api_disabled', reason: 'SERVICE_DISABLED' },
     });
     expect(lines).toEqual(['Google Drive upload failed: api_disabled (SERVICE_DISABLED)\n']);
+  });
+
+  it('logs a refused Slides deck the same way, without its title or text', async () => {
+    const lines: string[] = [];
+    const slides: GoogleSlidesFiles = {
+      createPresentation: (token) =>
+        Promise.resolve(
+          token === 'ok'
+            ? ok({ id: 'deck', url: 'https://d' })
+            : err({ code: 'api_disabled', reason: 'SERVICE_DISABLED' }),
+        ),
+    };
+    const logged = loggedSlides(slides, (line) => lines.push(line));
+    const deck = {
+      name: 'Volcanoes',
+      colours: { background: '#000000', text: '#ffffff' },
+      slides: [],
+    };
+
+    expect((await logged.createPresentation('ok', deck)).ok).toBe(true);
+    expect(await logged.createPresentation('secret-token', deck)).toEqual({
+      ok: false,
+      error: { code: 'api_disabled', reason: 'SERVICE_DISABLED' },
+    });
+    expect(lines).toEqual(['Google Slides deck failed: api_disabled (SERVICE_DISABLED)\n']);
+    expect(lines.join('')).not.toMatch(/secret-token|Volcanoes/);
   });
 
   it('logs nothing on success, and never the token, title or file', async () => {

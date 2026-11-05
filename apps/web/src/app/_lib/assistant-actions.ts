@@ -17,6 +17,9 @@ import { requireUser } from './auth.ts';
 export interface AssistantFormState {
   readonly errors?: Readonly<Record<string, string>>;
   readonly saved?: boolean;
+  /** After sending slides to Classroom: the assignment and the deck. */
+  readonly url?: string;
+  readonly slidesUrl?: string;
   /** Changes after each success so the form can clear itself. */
   readonly version?: number;
 }
@@ -134,4 +137,29 @@ export async function saveSubPacketAction(
   if (!saved.ok) return { errors: formErrors(saved.error, locale) };
   revalidatePath(`/${locale}/app/classes/${classId}/sub-packet`);
   return done(state);
+}
+
+/** Sends the teacher's presentation to a Classroom course as Google Slides everyone views. */
+export async function sendPresentationToClassroomAction(
+  state: AssistantFormState,
+  data: FormData,
+): Promise<AssistantFormState> {
+  const locale = localeOf(data);
+  const { user } = await requireUser(locale);
+  const instructions = text(data, 'instructions');
+  const dueDate = text(data, 'dueDate');
+  const sent = await getAppContainer().sendPresentationToClassroom.execute({
+    actor: user,
+    presentationId: text(data, 'presentationId') as PresentationId,
+    courseId: text(data, 'courseId'),
+    title: text(data, 'title'),
+    instructions: instructions === '' ? null : instructions,
+    dueDate: dueDate === '' ? null : dueDate,
+  });
+  if (!sent.ok) return { errors: formErrors(sent.error, locale) };
+  return {
+    url: sent.value.url,
+    slidesUrl: sent.value.slidesUrl,
+    version: (state.version ?? 0) + 1,
+  };
 }

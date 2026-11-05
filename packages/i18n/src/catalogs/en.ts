@@ -821,6 +821,19 @@ export const en = {
     madeOn: 'Made on {date}',
   },
   presentations: {
+    classroomTitle: 'Send to Google Classroom',
+    classroomIntro:
+      'Classroom gets these slides as a Google Slides deck, posted as an assignment. Students can view it; only you can edit it.',
+    classroomLink: 'Send to Google Classroom',
+    classroomName: 'Assignment title',
+    classroomInstructions: 'Instructions for students (optional)',
+    classroomDueDate: 'Due date in Classroom (optional)',
+    classroomNote:
+      'Each send makes a new deck in your Google Drive from the slides as they are now: text, bullets and theme colours.',
+    classroomSend: 'Send to Google Classroom',
+    classroomSent: 'Sent to Google Classroom.',
+    classroomOpen: 'Open in Classroom',
+    classroomOpenSlides: 'Open the slides',
     title: 'Presentations',
     intro: 'Make slides for your class, then present them full screen or print them.',
     empty: 'No presentations yet.',

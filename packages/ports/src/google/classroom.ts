@@ -31,10 +31,17 @@ export interface ClassroomCourses {
   ): Promise<Result<readonly ClassroomStudent[], ClassroomError>>;
 }
 
-/** What students open: a link, or a Drive file (PDF or Doc) each student gets a copy of. */
+/**
+ * What students open: a link, or a Drive file that each student gets a copy of (`copy`, e.g. a
+ * Word document to type in) or that everyone views (`view`, e.g. slides).
+ */
 export type CourseworkMaterial =
   | { readonly kind: 'link'; readonly url: string }
-  | { readonly kind: 'driveFile'; readonly driveFileId: string };
+  | {
+      readonly kind: 'driveFile';
+      readonly driveFileId: string;
+      readonly shareMode: 'copy' | 'view';
+    };
 
 export interface CourseworkRequest {
   readonly title: string;

@@ -12,6 +12,8 @@ import {
   GoogleFormsApi,
   LocalClassroom,
   LocalDrive,
+  LocalSlides,
+  GoogleSlidesApi,
   LocalForms,
   LocalClassroomAuthorization,
   createDatabase,
@@ -103,6 +105,7 @@ import {
   ImportClassroomRoster,
   ShareAssignment,
   PostWordToClassroom,
+  SendPresentationToClassroom,
   GetCommandCenter,
   GetStudent360,
   AddStudentNote,
@@ -220,7 +223,7 @@ import {
   type GoogleConfig,
   type WebConfig,
 } from './server/config.ts';
-import { loggedCoursework, loggedDrive } from './server/google-failure-log.ts';
+import { loggedCoursework, loggedSlides, loggedDrive } from './server/google-failure-log.ts';
 import {
   createTranslator,
   locales,
@@ -302,6 +305,7 @@ export interface AppContainer {
   readonly importClassroomRoster: ImportClassroomRoster;
   readonly shareAssignment: ShareAssignment;
   readonly postWordToClassroom: PostWordToClassroom;
+  readonly sendPresentationToClassroom: SendPresentationToClassroom;
   readonly getCommandCenter: GetCommandCenter;
   readonly getStudent360: GetStudent360;
   readonly addStudentNote: AddStudentNote;
@@ -441,6 +445,7 @@ function classroomFor(config: ClassroomConfig) {
       classroomCoursework: classroom,
       googleForms: new LocalForms(),
       googleDrive: new LocalDrive(),
+      googleSlides: new LocalSlides(),
     };
   }
   const classroom = new GoogleClassroom();
@@ -454,6 +459,7 @@ function classroomFor(config: ClassroomConfig) {
     classroomCoursework: loggedCoursework(classroom),
     googleForms: new GoogleFormsApi(),
     googleDrive: loggedDrive(new GoogleDriveApi()),
+    googleSlides: loggedSlides(new GoogleSlidesApi()),
   };
 }
 
@@ -599,6 +605,7 @@ export function createAppContainer(
     importClassroomRoster: new ImportClassroomRoster(deps),
     shareAssignment: new ShareAssignment(deps),
     postWordToClassroom: new PostWordToClassroom(deps),
+    sendPresentationToClassroom: new SendPresentationToClassroom(deps),
     getCommandCenter: new GetCommandCenter(deps),
     getStudent360: new GetStudent360(deps),
     addStudentNote: new AddStudentNote(deps),
