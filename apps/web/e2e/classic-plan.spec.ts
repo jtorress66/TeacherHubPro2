@@ -40,7 +40,10 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
       .getByLabel(t('planner.skill', { number: 1 }))
       .first()
       .fill('What is point of view');
-    await page.getByLabel(t('planner.domain_reading')).first().fill('7.R.6.1, 7.R.4');
+    await page
+      .getByLabel(t('planner.domain_reading'), { exact: true })
+      .first()
+      .fill('7.R.6.1, 7.R.4');
     await page.getByLabel(t('planner.domain_writing')).nth(1).fill('7.W.6');
 
     const monday = page.locator('details.plan-day').first();
@@ -54,7 +57,7 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
 
     await page.getByRole('button', { name: t('planner.save') }).click();
     await expect(page).toHaveURL(/\/plans\/[^/?]+\?saved=1$/);
-    await expect(page.getByLabel(t('planner.domain_reading')).first()).toHaveValue(
+    await expect(page.getByLabel(t('planner.domain_reading'), { exact: true }).first()).toHaveValue(
       '7.R.6.1, 7.R.4',
     );
     await page.getByRole('link', { name: t('planner.print') }).click();
@@ -85,6 +88,15 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     const scan = await new AxeBuilder({ page }).analyze();
     expect(scan.violations).toEqual([]);
 
+    // The teacher can switch the layout right on the print page.
+    const formats = page.getByRole('navigation', { name: t('settings.planFormat') });
+    await formats.getByRole('link', { name: t('settings.planFormat_simple') }).click();
+    await expect(page.getByRole('region', { name: t('planPrint.teachersPlanning') })).toHaveCount(
+      0,
+    );
+    await formats.getByRole('link', { name: t('settings.planFormat_classic') }).click();
+    await expect(page.getByRole('region', { name: t('planPrint.teachersPlanning') })).toBeVisible();
+
     const printPath = new URL(page.url()).pathname;
     await choosePlanFormat(page, locale, 'simple');
     await page.goto(printPath);
@@ -95,3 +107,33 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     await expect(page.getByTestId('print-standards').first()).toContainText('7.R.6.1, 7.R.4');
   });
 }
+
+test('a refused save keeps everything the teacher typed and says what to fix', async ({ page }) => {
+  const t = createTranslator('en');
+  await signUp(page, 'en');
+  await page.goto('/en/app/plans/new?kind=weekly&start=2026-11-02');
+  await page.getByLabel(t('planner.unit')).fill('Point of view');
+  await page.getByLabel(t('planner.domain_reading'), { exact: true }).fill('7.R.6.1');
+  // A Puerto Rico code in the Common Core box, which takes official Common Core codes only.
+  await page.getByLabel(t('planner.standards'), { exact: true }).fill('7.R.6.1');
+  const monday = page.locator('details.plan-day').first();
+  await monday.locator('summary').click();
+  await monday.getByLabel(t('planner.eca_core')).check();
+  await page.getByRole('button', { name: t('planner.save') }).click();
+
+  await expect(page.getByRole('alert').first()).toBeVisible();
+  await expect(page.getByText(t('planner.errors.standards'))).toBeVisible();
+  await expect(page.getByLabel(t('planner.unit'))).toHaveValue('Point of view');
+  await expect(page.getByLabel(t('planner.domain_reading'), { exact: true })).toHaveValue(
+    '7.R.6.1',
+  );
+  await expect(monday.getByLabel(t('planner.eca_core'))).toBeChecked();
+
+  await page.getByLabel(t('planner.standards'), { exact: true }).fill('');
+  await page.getByRole('button', { name: t('planner.save') }).click();
+  await expect(page).toHaveURL(/\/plans\/[^/?]+\?saved=1$/);
+  await expect(page.getByLabel(t('planner.unit'))).toHaveValue('Point of view');
+  await expect(page.getByLabel(t('planner.domain_reading'), { exact: true })).toHaveValue(
+    '7.R.6.1',
+  );
+});

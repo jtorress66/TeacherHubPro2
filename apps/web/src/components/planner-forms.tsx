@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { startTransition, useActionState, useState } from 'react';
 import {
   activityTypes,
   addDays,
@@ -53,7 +53,13 @@ function DayFields(props: {
   const notes = new Map((day?.activities ?? []).map((a) => [a.type, a.notes ?? '']));
   const dayName = t(`planner.day_${props.weekday}`);
   return (
-    <details className="plan-day card" open={Boolean(day?.theme ?? day?.notes)}>
+    <details
+      className="plan-day card"
+      open={
+        Boolean(day?.theme ?? day?.notes) ||
+        Object.keys(errors ?? {}).some((name) => name.startsWith(`${prefix}.`))
+      }
+    >
       <summary>
         {dayName}
         {day?.theme ? `: ${day.theme}` : ''}
@@ -160,19 +166,6 @@ function WeekFields(props: {
         ))}
         <ErrorText id={`${prefix}.skills`} message={errors?.[`${prefix}.skills`]} />
       </fieldset>
-      <TextArea
-        id={`${prefix}.standards`}
-        name={`${prefix}.standards`}
-        label={t('planner.standards')}
-        hint={t('planner.standardsHint')}
-        defaultValue={(week.standards ?? []).join('\n')}
-        error={errors?.[`${prefix}.standards`]}
-      />
-      <p>
-        <a href={`/${props.locale}/app/standards`} target="_blank" rel="noreferrer">
-          {t('planner.browseStandards')}
-        </a>
-      </p>
       <fieldset className="stack">
         <legend>{t('planner.domainStandards')}</legend>
         <p className="muted small">{t('planner.domainStandardsHint')}</p>
@@ -187,6 +180,19 @@ function WeekFields(props: {
           />
         ))}
       </fieldset>
+      <TextArea
+        id={`${prefix}.standards`}
+        name={`${prefix}.standards`}
+        label={t('planner.standards')}
+        hint={t('planner.standardsHint')}
+        defaultValue={(week.standards ?? []).join('\n')}
+        error={errors?.[`${prefix}.standards`]}
+      />
+      <p>
+        <a href={`/${props.locale}/app/standards`} target="_blank" rel="noreferrer">
+          {t('planner.browseStandards')}
+        </a>
+      </p>
       <TextArea
         id={`${prefix}.expectations`}
         name={`${prefix}.expectations`}
@@ -367,18 +373,30 @@ export interface PlanEditorProps {
 /** The whole plan: header, weeks and days (or the Conversational English sections). */
 export function PlanEditor(props: PlanEditorProps) {
   const t = createTranslator(props.locale);
-  const [state, action] = useActionState(savePlanAction, initial);
+  const [state, action, pending] = useActionState(savePlanAction, initial);
   const errors = state.errors;
   const saved = state.saved ?? (props.savedOnLoad && !errors);
+  const fieldErrors = errors !== undefined && Object.keys(errors).some((name) => name !== 'form');
   return (
     <form
-      action={action}
+      // Submitted by hand so a refused save never clears what the teacher typed (a form
+      // `action` resets every field after it runs).
+      onSubmit={(event) => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        startTransition(() => {
+          action(data);
+        });
+      }}
       className="stack plan-editor"
       noValidate
       aria-label={t('planner.editTitle')}
+      aria-busy={pending}
     >
       <Hidden values={{ locale: props.locale, planId: props.planId, kind: props.body.kind }} />
-      <FormAlert message={errors?.form} />
+      <FormAlert
+        message={errors?.form ?? (fieldErrors ? t('planner.errors.checkFields') : undefined)}
+      />
       {saved ? (
         <p role="status" className="notice">
           {t('planner.saved')}

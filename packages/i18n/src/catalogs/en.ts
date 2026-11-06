@@ -867,7 +867,10 @@ export const en = {
     errors: {
       notMonday: 'Choose a Monday.',
       weekOrder: 'Week 2 must start after week 1.',
-      standards: 'Use official Common Core codes only, one per line.',
+      standards:
+        'Only official Common Core codes go here, one per line. Put your school’s own codes (such as Puerto Rico standards) under Standards by category.',
+      checkFields:
+        'The plan was not saved. Fix the fields marked below; everything you typed is still here.',
       skills: 'Up to 4 skills.',
       weeks: 'A plan has one or two weeks.',
       typedCodes: 'Separate codes with commas; a code has no spaces.',
