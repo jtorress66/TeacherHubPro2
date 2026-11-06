@@ -6,6 +6,9 @@ import type {
   StudentInsightRepository,
   PrepBatchRepository,
   PasswordTokenRepository,
+  LeadRepository,
+  ChatSessionRepository,
+  ChatTurnQueue,
   PlatformStats,
   SchoolDirectory,
   UserDirectory,
@@ -83,6 +86,10 @@ import {
   PostgresUserDirectory,
 } from './repositories/postgres-admin-repositories.ts';
 import {
+  PostgresChat,
+  PostgresLeadRepository,
+} from './repositories/postgres-marketing-repositories.ts';
+import {
   PostgresAiGenerationRepository,
   PostgresPresentationRepository,
   PostgresSubPacketRepository,
@@ -127,6 +134,9 @@ export interface PostgresRepositories {
   readonly userDirectory: UserDirectory;
   readonly platformStats: PlatformStats;
   readonly passwordTokens: PasswordTokenRepository;
+  readonly leads: LeadRepository;
+  readonly chatSessions: ChatSessionRepository;
+  readonly chatTurns: ChatTurnQueue;
   readonly gradeCategories: GradeCategoryRepository;
   readonly assignments: AssignmentRepository;
   readonly grades: GradeRepository;
@@ -149,6 +159,7 @@ export interface PostgresRepositories {
 
 /** Every repository on one connection pool; wired in each app's composition root. */
 export function createPostgresRepositories(db: Kysely<Database>): PostgresRepositories {
+  const chat = new PostgresChat(db);
   return {
     schools: new PostgresSchoolRepository(db),
     users: new PostgresUserRepository(db),
@@ -172,6 +183,9 @@ export function createPostgresRepositories(db: Kysely<Database>): PostgresReposi
     userDirectory: new PostgresUserDirectory(db),
     platformStats: new PostgresPlatformStats(db),
     passwordTokens: new PostgresPasswordTokenRepository(db),
+    leads: new PostgresLeadRepository(db),
+    chatSessions: chat,
+    chatTurns: chat,
     gradeCategories: new PostgresGradeCategoryRepository(db),
     assignments: new PostgresAssignmentRepository(db),
     grades: new PostgresGradeRepository(db),

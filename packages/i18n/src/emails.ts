@@ -144,3 +144,39 @@ export function setPasswordEmail(input: SetPasswordEmailInput): EmailContent {
     footer: [t('emails.passwordLinkExpires'), t('emails.signature')],
   });
 }
+
+export interface LeadNoticeInput {
+  readonly lead: {
+    readonly name: string;
+    readonly email: string;
+    readonly organization: string | null;
+    readonly role: string;
+    readonly phone: string | null;
+    readonly interest: string;
+    readonly source: string;
+    readonly message: string | null;
+    readonly page: string | null;
+    readonly score: string;
+  };
+}
+
+/** Tells the TeacherHubPro team about a high-priority lead, in English. */
+export function leadNoticeEmail({ lead }: LeadNoticeInput): EmailContent {
+  const t = createTranslator('en');
+  const lines = [
+    `${t('emails.leadName')}: ${lead.name}`,
+    `${t('emails.leadEmail')}: ${lead.email}`,
+    `${t('emails.leadOrganization')}: ${lead.organization ?? '-'}`,
+    `${t('emails.leadRole')}: ${lead.role}`,
+    `${t('emails.leadPhone')}: ${lead.phone ?? '-'}`,
+    `${t('emails.leadInterest')}: ${lead.interest}`,
+    `${t('emails.leadSource')}: ${lead.source} · ${lead.page ?? '-'}`,
+  ];
+  return render({
+    locale: 'en',
+    subject: t('emails.leadSubject', { name: lead.name, score: lead.score }),
+    paragraphs: [lines.join('\n'), ...(lead.message === null ? [] : [lead.message])],
+    button: null,
+    footer: [t('emails.signature')],
+  });
+}

@@ -26,6 +26,11 @@ export const fakeMailTemplates: MailTemplates = {
     html: `<a href="${input.billingUrl}">${input.name}</a>`,
     text: `${input.name}: ${input.billingUrl}`,
   }),
+  leadNotice: ({ lead }): MailContent => ({
+    subject: `Lead: ${lead.name}`,
+    html: `<p>${lead.email}</p>`,
+    text: `${lead.name} <${lead.email}> ${lead.score}`,
+  }),
   setPassword: (input): MailContent => ({
     subject: `[${input.language}] ${input.purpose} ${input.name}`,
     html: `<a href="${input.url}">${input.name}</a>`,

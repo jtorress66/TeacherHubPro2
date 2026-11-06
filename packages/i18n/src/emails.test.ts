@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   portalLinkEmail,
+  leadNoticeEmail,
   setPasswordEmail,
   trialReminderEmail,
   weeklyUpdateEmail,
@@ -98,5 +99,28 @@ describe('setPasswordEmail', () => {
     const mail = setPasswordEmail({ language: 'en', name: 'Ana', url, purpose: 'reset' });
     expect(mail.subject).toBe('Reset your TeacherHubPro password');
     expect(mail.text).toMatch(/ignore this email/u);
+  });
+});
+
+describe('leadNoticeEmail', () => {
+  it('lists the lead’s details for the team, escaping them in HTML', () => {
+    const mail = leadNoticeEmail({
+      lead: {
+        name: 'Pat <Principal>',
+        email: 'pat@lincoln.edu',
+        organization: 'Lincoln Middle',
+        role: 'principal',
+        phone: null,
+        interest: 'demo',
+        source: 'contact',
+        message: 'A demo, please.',
+        page: '/en/contact',
+        score: 'high',
+      },
+    });
+    expect(mail.subject).toBe('New high lead: Pat <Principal>');
+    expect(mail.text).toContain('Email: pat@lincoln.edu');
+    expect(mail.text).toContain('A demo, please.');
+    expect(mail.html).toContain('Pat &lt;Principal&gt;');
   });
 });

@@ -21,6 +21,7 @@ import {
 } from '@thp/adapters';
 import {
   portalLinkEmail,
+  leadNoticeEmail,
   setPasswordEmail,
   trialReminderEmail,
   weeklyUpdateEmail,
@@ -34,6 +35,7 @@ import {
   QuestionExtractor,
   InsightWriter,
   QuizWriter,
+  ChatbotAgent,
   SubmissionGrader,
 } from '@thp/agents';
 import {
@@ -50,12 +52,15 @@ import {
   PresentationDraftHandler,
   SpeechHandler,
   RunNextJob,
+  RunNextChatTurn,
+  SweepOldChats,
   SendTrialReminders,
   SweepStaleJobs,
 } from '@thp/application';
 import type { LlmClient, Mailer, MailTemplates, TextToSpeech } from '@thp/ports';
 import type { DatabaseConfig, LlmConfig, MailConfig, StripeConfig, TtsConfig } from './config.ts';
 import { localReply } from './local-replies.ts';
+import { chatFirst } from './worker-loop.ts';
 
 // Composition root: the only place in the worker where concrete adapters are created.
 
@@ -82,6 +87,7 @@ export const mailTemplates: MailTemplates = {
   trialReminder: trialReminderEmail,
   weeklyUpdate: weeklyUpdateEmail,
   setPassword: setPasswordEmail,
+  leadNotice: leadNoticeEmail,
 };
 
 function mailerFor(config: MailConfig, db: ReturnType<typeof createDatabase>): Mailer {
@@ -148,11 +154,20 @@ export function createJobRunner(
     clock,
     appUrl: mail.appUrl,
   });
+  const runChat = new RunNextChatTurn({ ...repos, chatbot: new ChatbotAgent(model) });
+  const sweepChats = new SweepOldChats({ chatSessions: repos.chatSessions, clock });
+  const runJobs = new RunNextJob({ jobs, handlers });
   return {
-    runNext: new RunNextJob({ jobs, handlers }),
+    runNext: {
+      execute: chatFirst(
+        () => runChat.execute(),
+        () => runJobs.execute(),
+      ),
+    },
     /** Once a minute: stale jobs, then trial reminders (each goes out once, when mail reaches people). */
     housekeeping: async () => {
       const swept = await sweep.execute();
+      await sweepChats.execute();
       if (mail.delivers) await reminders.execute();
       return swept;
     },

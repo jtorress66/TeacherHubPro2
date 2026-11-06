@@ -38,7 +38,8 @@ export type ApplicationErrorCode =
   | 'in_use'
   | 'invalid_link'
   | 'setup_unavailable'
-  | 'already_set_up';
+  | 'already_set_up'
+  | 'rate_limited';
 
 /**
  * What a use case can report: a broken validation rule (with its field) or an application-level

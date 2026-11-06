@@ -35,6 +35,8 @@ export interface WebConfig {
   readonly mail: MailConfig;
   /** Turns on the first super admin setup page; null keeps it off. */
   readonly superAdminSetupKey: string | null;
+  /** Where high-priority website leads are emailed; null sends none. */
+  readonly leadsNotifyEmail: string | null;
 }
 
 /**
@@ -161,16 +163,22 @@ function classroomFrom(
   return ok({ provider, clientId, clientSecret, encryptionKey });
 }
 
-/**
- * Validates the web app's environment once, at the edge. Every secret is required (there are no
- * defaults), APP_ENV defaults to production, and the local stand-ins are refused in production.
- */
+/** The team address for high-priority leads, when it is a valid email; otherwise none. */
+const leadsNotifyFrom = (env: Readonly<Record<string, string | undefined>>): string | null => {
+  const address = env.LEADS_NOTIFY_EMAIL?.trim() ?? '';
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/u.test(address) ? address : null;
+};
+
 /** The first super admin setup key; blank means the setup page is off. */
 const setupKeyFrom = (env: Readonly<Record<string, string | undefined>>): string | null => {
   const key = env.SUPER_ADMIN_SETUP_KEY?.trim() ?? '';
   return key === '' ? null : key;
 };
 
+/**
+ * Validates the web app's environment once, at the edge. Every secret is required (there are no
+ * defaults), APP_ENV defaults to production, and the local stand-ins are refused in production.
+ */
 export function parseWebConfig(
   env: Readonly<Record<string, string | undefined>>,
 ): Result<WebConfig, string> {
@@ -214,5 +222,6 @@ export function parseWebConfig(
     },
     mail: mail.value,
     superAdminSetupKey: setupKeyFrom(env),
+    leadsNotifyEmail: leadsNotifyFrom(env),
   });
 }

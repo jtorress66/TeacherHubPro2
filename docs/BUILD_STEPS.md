@@ -2,7 +2,7 @@
 
 Place this file at `docs/BUILD_STEPS.md`. Work on one step at a time. Tick a step only when its gate passes and the Definition of Done in `CLAUDE.md` is met. For each step, read its section in `docs/FEATURES.md` first.
 
-**Current step:** 18
+**Current step:** 19
 
 | # | Step | Scope | Gate (must pass before next step) | Done |
 | --- | --- | --- | --- | --- |
@@ -23,7 +23,7 @@ Place this file at `docs/BUILD_STEPS.md`. Work on one step at a time. Tick a ste
 | 15 | Command Center and Student 360 | Daily dashboard, at-risk detection, to-grade list, recommendations, Student 360 timeline, private notes, AI insight | At-risk rules match `docs/FEATURES.md` examples; E2E: dashboard shows today's classes and an at-risk student | [x] |
 | 16 | Prep Agent | Weekly prep batch (plans → materials → quiz → parent email), progress, preview, edit, approve and publish | Evals meet thresholds; E2E: prompt → batch ready → teacher approves → plans and quiz saved | [x] |
 | 17 | Admin and super admin | School admin (users, roles), super admin (schools, users, password reset, bulk import of teachers and students, overview) | E2E: super admin imports a school's teachers and students; a school admin cannot see another school | [x] |
-| 18 | Marketing site and chatbot | Landing, features and use-case pages, pricing from the plan catalog, legal and trust pages, contact, lead chatbot, leads dashboard, sitemap and robots | Lighthouse SEO ≥ 90 on landing; chatbot evals pass (real prices, says it is an AI when asked) | [ ] |
+| 18 | Marketing site and chatbot | Landing, features and use-case pages, pricing from the plan catalog, legal and trust pages, contact, lead chatbot, leads dashboard, sitemap and robots | Lighthouse SEO ≥ 90 on landing; chatbot evals pass (real prices, says it is an AI when asked) | [x] |
 | 19 | Data migration | Importer from the old MongoDB export and uploaded files into Postgres and file storage; dry run report; old shared links keep working; bcrypt password hashes accepted and rehashed on login | Dry run on a copy of production data: every count matches, spot checks pass, a migrated teacher logs in with their old password | [ ] |
 | 20 | Hardening for beta | Security review, privacy review (FERPA/COPPA), rate limits, monitoring, audit log, eval thresholds guarded | Beta checklist complete | [ ] |
 | 21 | Launch and cutover | Deploy web, worker and realtime; final migration; DNS for teacherhubpro.com; Stripe webhooks; monitor; shut down the Emergent app | Live site passes the smoke checklist for a week; Emergent subscription cancelled | [ ] |
@@ -41,6 +41,7 @@ No paid API calls until launch. Steps that need real AI meet their gate with the
 - The path writer evals against real Claude (step 13).
 - The insight writer evals against real Claude (step 15).
 - The quiz writer evals against real Claude, and one real prep batch end to end (step 16).
+- The chatbot evals against real Claude, and a real chat on the live site; set `LEADS_NOTIFY_EMAIL` on the web service (step 18).
 - Real email with Resend (step 14): verify the sending domain in Resend, then set `MAIL_PROVIDER=resend`, `RESEND_API_KEY` and `MAIL_FROM` on the web and worker services; email a portal link to yourself and check a trial reminder arrives.
 - Prompt caching with real Claude: grade a class of several submissions with open questions and rubrics; the worker log should show `cache read` above 0 from the second submission on.
 

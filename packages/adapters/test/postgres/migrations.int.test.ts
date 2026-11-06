@@ -32,6 +32,8 @@ describe('migrations', () => {
       'assignments',
       'attendance_entries',
       'attendance_sessions',
+      'chat_sessions',
+      'chat_turns',
       'classes',
       'classroom_connections',
       'forms_exports',
@@ -40,6 +42,7 @@ describe('migrations', () => {
       'grade_categories',
       'grades',
       'jobs',
+      'leads',
       'learning_paths',
       'lesson_attempts',
       'lesson_plans',
@@ -76,6 +79,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0019_marketing',
           '0018_admin',
           '0017_prep_batches',
           '0016_student_360',
@@ -121,10 +125,11 @@ describe('migrations', () => {
           '0016_student_360',
           '0017_prep_batches',
           '0018_admin',
+          '0019_marketing',
         ],
       },
     });
-    expect(await tableNames()).toHaveLength(41);
+    expect(await tableNames()).toHaveLength(44);
   });
 
   it('turns plans saved before step 8 into valid plans of their kind', async () => {

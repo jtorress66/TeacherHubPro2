@@ -106,3 +106,6 @@ export * from './presentations/google-slides.ts';
 export * from './accounts/password-token.ts';
 export * from './users/admin-rules.ts';
 export * from './billing/access.ts';
+export * from './marketing/lead.ts';
+export * from './marketing/chat.ts';
+export * from './marketing/facts.ts';

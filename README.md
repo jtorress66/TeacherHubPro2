@@ -91,6 +91,12 @@ Samples: `apps/web/public/samples/students-en.csv` and `students-es.csv`. At mos
 
 The home page (`/app`) is the Command Center: today's classes with their attendance, what is left to grade, students who may need help (at-risk score from the average, missing work, absences and tardies in the last 30 days), suggestions and lessons in the next 7 days. Each student has a Student 360 page (click their name on the roster or in the at-risk list) with their average, attendance, missing work, a timeline, private notes only you see, and an on-demand AI insight (a draft sent numbers only, never a name or notes).
 
+## Marketing site and chatbot
+
+The public site (`/en`, `/es`, …) has the landing page (the workspace hero, then features, how it works, who it's for, trust, pricing from the plan catalog, FAQ), feature and use-case pages, AI features, pricing, integrations, schools and districts, contact, help, and the legal and trust pages (privacy, terms, cookies, accessibility, acceptable use, FERPA, COPPA, AI governance, trust center). Copy lives in `packages/i18n/src/catalogs/marketing-*.ts`; it states only what the app does today. `sitemap.xml` lists every page in every language; `robots.txt` keeps crawlers out of the app and private links.
+
+**Ed**, the website chat, is an AI assistant (it says so when asked). It answers from a fact sheet built from the plan catalog (`chatFacts`), and replies that state a price not in the catalog or a plan that does not exist are refused. Messages are answered by the worker (chats first, then jobs), limited to 20 per chat and 60 an hour per visitor, and deleted after 30 days. The chat's lead form and the contact form create **leads**, scored high (schools, districts, demos), medium or low; super admins see them under **Super admin → Leads**, and high-priority ones are emailed to `LEADS_NOTIFY_EMAIL`.
+
 ## Admin and super admin
 
 **School users** (menu, for school admins) lists everyone in the school: change roles (teacher or school admin), send a set-password link, and hand one teacher's classes to another. **Super admin** (for super admins) has an overview of the platform, schools (create, edit, delete when empty, see their classes and users), users across schools (search, create, edit, move to another school, delete), and bulk imports: teachers from a CSV (Name, Email, Role) into a school, and students into any school's class (the class roster format). Samples are in `apps/web/public/samples/teachers-*.csv`.

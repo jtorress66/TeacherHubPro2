@@ -7,6 +7,7 @@ import {
   InsightWriter,
   QuestionExtractor,
   QuizWriter,
+  ChatbotAgent,
   SubmissionGrader,
 } from '@thp/agents';
 import { LocalLlmClient } from '@thp/adapters';
@@ -18,6 +19,7 @@ import {
   defaultGameModes,
   gameCountRange,
   leniencyFor,
+  chatFacts,
   type QuestionId,
 } from '@thp/domain';
 import { aContentRequest, unwrap } from '@thp/testing';
@@ -122,6 +124,21 @@ describe('the local stand-in replies', () => {
     );
     expect(quiz.questions).toHaveLength(10);
     expect(quiz.questions.at(-1)?.type).toBe('true_false');
+  });
+
+  it('answers the website chatbot honestly and with the catalog prices', async () => {
+    const ask = (message: string, language: 'en' | 'es' = 'en') =>
+      new ChatbotAgent(local()).reply({
+        facts: chatFacts(),
+        language,
+        role: 'teacher',
+        interest: 'pricing',
+        history: [],
+        message,
+      });
+    expect(unwrap(await ask('How much is it?'))).toContain('$9.99');
+    expect(unwrap(await ask('¿Eres un robot?', 'es'))).toContain('asistente de IA');
+    expect(unwrap(await ask('What can it do?'))).toContain('Pricing page');
   });
 
   it('reads a test into a multiple-choice, a true/false and a short-answer question', async () => {

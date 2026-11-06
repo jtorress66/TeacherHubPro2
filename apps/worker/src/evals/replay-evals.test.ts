@@ -7,6 +7,7 @@ import type {
   PathMetric,
   InsightMetric,
   QuizMetric,
+  ChatMetric,
   GraderMetric,
   PlanMetric,
   PresentationMetric,
@@ -18,6 +19,7 @@ import { pathCases, runPathEvals } from './path-evals.ts';
 import { extractorCases, graderCases, runExtractorEvals, runGraderEvals } from './grading-evals.ts';
 import { insightCases, runInsightEvals } from './insight-evals.ts';
 import { quizCases, runQuizEvals } from './quiz-evals.ts';
+import { chatbotCases, runChatbotEvals } from './chatbot-evals.ts';
 import { plannerCases, runPlannerEvals } from './planner-evals.ts';
 import { presentationCases, runPresentationEvals } from './presentation-evals.ts';
 import { loadReplays, ReplayLlmClient } from './replay-llm-client.ts';
@@ -38,6 +40,7 @@ const thresholds = JSON.parse(
   'path-writer': Record<PathMetric, number>;
   'insight-writer': Record<InsightMetric, number>;
   'quiz-writer': Record<QuizMetric, number>;
+  chatbot: Record<ChatMetric, number>;
 };
 
 const replay = (suite: string) => new ReplayLlmClient(loadReplays(suite));
@@ -83,6 +86,13 @@ describe('replay evals (saved replies, no API calls)', () => {
     const report = await runQuizEvals(replay('quiz'), thresholds['quiz-writer']);
     expect(report.failing, formatReport(report)).toEqual([]);
     expect(report.average).toEqual({ structure: 1, count: 1, types: 1, coverage: 1 });
+  });
+
+  it('the chatbot states only real prices, says it is an AI when asked, and meets its thresholds', async () => {
+    expect(Object.keys(loadReplays('chatbot'))).toHaveLength(chatbotCases.length);
+    const report = await runChatbotEvals(replay('chatbot'), thresholds.chatbot);
+    expect(report.failing, formatReport(report)).toEqual([]);
+    expect(report.average).toEqual({ structure: 1, grounded: 1, honest: 1, language: 1, brief: 1 });
   });
 
   it('the grader meets its thresholds', async () => {

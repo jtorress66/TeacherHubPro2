@@ -43,3 +43,13 @@ export { gameFormats, wordingFor } from './game-writer/game-formats.ts';
 export * from './game-writer/game-scorecard.ts';
 export { PathWriter, pathWriterSystemPrompt, reviewPath } from './path-writer/path-writer.ts';
 export * from './path-writer/path-scorecard.ts';
+export {
+  ChatbotAgent,
+  allowedAmounts,
+  asksIfAi,
+  chatbotSystemPrompt,
+  inventedAmounts,
+  reviewChatReply,
+  saysItIsAi,
+} from './chatbot/chatbot.ts';
+export * from './chatbot/chatbot-scorecard.ts';
