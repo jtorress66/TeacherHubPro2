@@ -368,6 +368,8 @@ Added at the teacher's request, between steps 14 and 15 (not in the old app).
 
 ## Step 19 — Data migration
 
+- **Skipped (owner's decision, 2026-11-06):** no data is moved from the old app; teachers start fresh in the new one. The importer built for this step (PR #40) was closed without merging.
+
 - Source: a `mongodump` (or JSON export) of the production database and a copy of the uploaded files. Collections: users, user_sessions, schools, classes, students, semesters, lesson_plans, plan_folders, ai_templates, attendance_sessions, attendance_records, grade_categories, assignments, grades, ai_assignments, ai_submissions, grading_jobs, generation_jobs, ai_generations, ai_chat_messages, presentations, educational_games, game_scores, game_progress, game_regenerations, practice_assignments, practice_sessions, practice_results, adaptive_learning_paths, adaptive_learning_progress, student_learning_tokens, portal_tokens, homeschool_portal_tokens, student_notes, student_insights, sub_packets, subscriptions, trial_reminders, leads, chatbot_sessions.
 - Skip transient data: sessions, jobs, chat sessions.
 - Merge `grades` and `ai_submissions` into one grade record per student and assignment; resolve name-matched submissions to roster IDs and report the ones that can't be resolved.
