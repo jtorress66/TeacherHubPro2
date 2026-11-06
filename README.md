@@ -123,6 +123,13 @@ On a class page, **Gradebook** shows every student against every assignment with
 
 **Lesson plans** in the menu lists your plans (latest first), filtered by **All**, **Unfiled** or a folder, as a list or a month **Calendar**. A weekly plan holds one or two weeks, each with an objective, up to four skills, Common Core codes, expectations and Monday–Friday days (theme, Depth of Knowledge, day type, activity and material checklists, notes). A **Conversational English** plan has a title, lesson dates and its own sections. Plans can be duplicated to another week, moved between folders, saved as templates and printed (the print page renders tables and fill-in-the-blank lines; use the browser's _Save as PDF_ for a PDF). **Templates** has five starter weeks in English and Spanish, a template of the week, and your own templates.
 
+**Your school's standards and print format.** Besides Common Core codes, each week has five categories (Listening/Speaking, Foundational Skills, Reading, Writing, Language) where teachers type their school's own codes, such as Puerto Rico standards, separated by commas. Each school picks how its weekly plans print in **Settings → Your school → Plan print format**:
+
+- **Classic**, the default, is the original app's two-week layout: one page per week with checkboxes, then a Teacher's Planning page with standards by category, expectations, subject integration and signature lines.
+- **Simple** is a plain printout.
+
+A school's own format is added as a new layout in `apps/web/src/components/plan-formats/`. The plan page also links to **SM Aprendizaje** for planning resources.
+
 **Draft a plan with AI** queues a job: the page polls until the worker has drafted the plan, then opens it in the editor to review, edit and save. Nothing is saved until you press Save. The AI may cite only official Common Core codes (Math and ELA, plus the 6–12 literacy codes for science and social studies), imported once with `pnpm standards:import` from the Common Standards Project (CC BY 3.0 US) into `packages/domain/src/standards/common-core-codes.ts`; any other code is dropped. **Browse Common Core codes** lists them by subject and grade.
 
 Jobs live in Postgres. Run the worker next to the web app:

@@ -57,12 +57,16 @@ async function actorOf(data: FormData) {
   return { locale, actor: user };
 }
 
-const schoolDetails = (data: FormData) => ({
-  name: text(data, 'name'),
-  address: optional(data, 'address'),
-  phone: optional(data, 'phone'),
-  email: optional(data, 'email'),
-});
+const schoolDetails = (data: FormData) => {
+  const planFormat = optional(data, 'planFormat');
+  return {
+    name: text(data, 'name'),
+    address: optional(data, 'address'),
+    phone: optional(data, 'phone'),
+    email: optional(data, 'email'),
+    ...(planFormat === null ? {} : { planFormat }),
+  };
+};
 
 export async function changeUserRoleAction(
   state: AdminFormState,

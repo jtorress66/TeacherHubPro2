@@ -1,7 +1,8 @@
 import { parseOptionalEmail, type Email } from '../shared/email.ts';
+import { defaultPlanFormat, isPlanFormat, type PlanFormat } from '../lesson-plans/plan-format.ts';
 import type { SchoolId } from '../shared/ids.ts';
 import { ok, type Result } from '../shared/result.ts';
-import { optionalText, requiredText, type ValidationError } from '../shared/validation.ts';
+import { invalid, optionalText, requiredText, type ValidationError } from '../shared/validation.ts';
 
 export interface School {
   readonly id: SchoolId;
@@ -11,6 +12,8 @@ export interface School {
   readonly email: Email | null;
   /** Where the uploaded logo is kept in the file store; null when there is none. */
   readonly logoKey: string | null;
+  /** How the school's weekly plans print. */
+  readonly planFormat: PlanFormat;
 }
 
 export interface SchoolInput {
@@ -20,6 +23,7 @@ export interface SchoolInput {
   readonly phone?: string | null;
   readonly email?: string | null;
   readonly logoKey?: string | null;
+  readonly planFormat?: string;
 }
 
 export function createSchool(input: SchoolInput): Result<School, ValidationError> {
@@ -31,6 +35,8 @@ export function createSchool(input: SchoolInput): Result<School, ValidationError
   if (!phone.ok) return phone;
   const email = parseOptionalEmail('email', input.email);
   if (!email.ok) return email;
+  const planFormat = input.planFormat ?? defaultPlanFormat;
+  if (!isPlanFormat(planFormat)) return invalid('planFormat', 'not_allowed');
 
   return ok({
     id: input.id,
@@ -39,17 +45,22 @@ export function createSchool(input: SchoolInput): Result<School, ValidationError
     phone: phone.value,
     email: email.value,
     logoKey: input.logoKey ?? null,
+    planFormat,
   });
 }
 
 export type SchoolDetails = Omit<SchoolInput, 'id' | 'logoKey'>;
 
-/** Replaces the school's details, with the same rules as creating one. The logo is kept unless given. */
+/**
+ * Replaces the school's details, with the same rules as creating one. The logo is kept, and so
+ * is the plan format unless given.
+ */
 export function updateSchoolDetails(
   school: School,
   details: SchoolDetails,
 ): Result<School, ValidationError> {
   return createSchool({
+    planFormat: school.planFormat,
     ...details,
     id: school.id,
     logoKey: school.logoKey,

@@ -117,6 +117,27 @@ describe('parsePlanForm', () => {
     });
   });
 
+  it('reads the codes typed under each standards category, split by commas or new lines', () => {
+    const parsed = parsePlanForm(
+      form([
+        ['kind', 'weekly'],
+        ['w0.weekStart', '2026-11-02'],
+        ['w0.domain.reading', '7.R.6.1, 7.R.4\n7.R.6.1L'],
+        ['w0.domain.writing', '7.W.6'],
+        ['w0.domain.language', '  '],
+      ]),
+    );
+    const week = parsed.body.kind === 'weekly' ? parsed.body.weeks[0] : undefined;
+
+    expect(week?.domainStandards).toEqual({
+      listening_speaking: [],
+      foundational_skills: [],
+      reading: ['7.R.6.1', '7.R.4', '7.R.6.1L'],
+      writing: ['7.W.6'],
+      language: [],
+    });
+  });
+
   it('treats an unknown kind as weekly', () => {
     expect(parsePlanForm(form([['kind', 'daily']])).body.kind).toBe('weekly');
   });
@@ -127,6 +148,7 @@ describe('planFieldName', () => {
     ['weeks.0.weekStart', 'w0.weekStart'],
     ['weeks.1.days.2.theme', 'w1.d2.theme'],
     ['weeks.0.standards', 'w0.standards'],
+    ['weeks.1.domainStandards.reading', 'w1.domain.reading'],
     ['title', 'title'],
     ['lessonDateEnd', 'lessonDateEnd'],
   ])('maps %s to %s', (path, name) => {

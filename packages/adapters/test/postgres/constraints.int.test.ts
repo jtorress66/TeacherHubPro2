@@ -1,3 +1,4 @@
+import { sql } from 'kysely';
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import type {
   AttendanceSessionId,
@@ -440,5 +441,26 @@ describe('learning paths', () => {
     await db.insertInto('lesson_attempts').values(attempt).execute();
     await db.deleteFrom('learning_paths').execute();
     expect(await db.selectFrom('lesson_attempts').selectAll().execute()).toEqual([]);
+  });
+});
+
+describe('schools', () => {
+  it('print plans in the classic format by default and refuse an unknown format', async () => {
+    // Written without the column, as schools saved before it existed were.
+    await sql`insert into schools (id, name) values ('school-format', 'Format')`.execute(db);
+    const saved = await db
+      .selectFrom('schools')
+      .select('plan_format')
+      .where('id', '=', 'school-format')
+      .executeTakeFirstOrThrow();
+    expect(saved.plan_format).toBe('classic');
+
+    await expect(
+      db
+        .updateTable('schools')
+        .set({ plan_format: 'fancy' })
+        .where('id', '=', 'school-format')
+        .execute(),
+    ).rejects.toThrow(/schools_plan_format_check/);
   });
 });

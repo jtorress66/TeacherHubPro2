@@ -18,6 +18,7 @@ import * as student360 from './0016_student_360.ts';
 import * as prepBatches from './0017_prep_batches.ts';
 import * as admin from './0018_admin.ts';
 import * as marketing from './0019_marketing.ts';
+import * as planFormat from './0020_plan_format.ts';
 
 /** Ordered list of migrations, bundled with the code (no filesystem lookups at runtime). */
 const migrations: Readonly<Record<string, Migration>> = {
@@ -40,6 +41,7 @@ const migrations: Readonly<Record<string, Migration>> = {
   '0017_prep_batches': prepBatches,
   '0018_admin': admin,
   '0019_marketing': marketing,
+  '0020_plan_format': planFormat,
 };
 
 export const migrationProvider: MigrationProvider = {

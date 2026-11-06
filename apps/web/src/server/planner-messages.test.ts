@@ -27,6 +27,18 @@ describe('planErrors', () => {
       'Up to 4 skills.',
       'Hasta 4 destrezas.',
     ],
+    [
+      { field: 'weeks.0.domainStandards.reading', code: 'invalid_format' },
+      'w0.domain.reading',
+      'Separate codes with commas; a code has no spaces.',
+      'Separa los códigos con comas; un código no lleva espacios.',
+    ],
+    [
+      { field: 'weeks.1.domainStandards.writing', code: 'out_of_range' },
+      'w1.domain.writing',
+      'Up to 12 codes per category.',
+      'Hasta 12 códigos por categoría.',
+    ],
     [{ field: 'start', code: 'not_allowed' }, 'start', 'Choose a Monday.', 'Elige un lunes.'],
     [
       { field: 'weeks.0.days.2.theme', code: 'too_long' },

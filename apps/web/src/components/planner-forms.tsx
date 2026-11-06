@@ -11,6 +11,7 @@ import {
   materialTypes,
   maxSkills,
   planWeekdays,
+  standardDomains,
   standardSubjects,
   subjectIntegrations,
   type LocalDate,
@@ -172,6 +173,20 @@ function WeekFields(props: {
           {t('planner.browseStandards')}
         </a>
       </p>
+      <fieldset className="stack">
+        <legend>{t('planner.domainStandards')}</legend>
+        <p className="muted small">{t('planner.domainStandardsHint')}</p>
+        {standardDomains.map((domain) => (
+          <Field
+            key={domain}
+            id={`${prefix}.domain.${domain}`}
+            name={`${prefix}.domain.${domain}`}
+            label={t(`planner.domain_${domain}`)}
+            defaultValue={(week.domainStandards?.[domain] ?? []).join(', ')}
+            error={errors?.[`${prefix}.domain.${domain}`]}
+          />
+        ))}
+      </fieldset>
       <TextArea
         id={`${prefix}.expectations`}
         name={`${prefix}.expectations`}
@@ -189,6 +204,29 @@ function WeekFields(props: {
         />
       ))}
     </fieldset>
+  );
+}
+
+/** The publisher's site with resources for planning lessons, as in the original planner. */
+const smAprendizajeUrl = 'https://loginsma.smaprendizaje.com';
+
+function SmAprendizaje({ locale }: { readonly locale: Locale }) {
+  const t = createTranslator(locale);
+  return (
+    <aside className="sm-aprendizaje no-print" aria-labelledby="sm-aprendizaje-title">
+      <div>
+        <h3 id="sm-aprendizaje-title">{t('planner.smTitle')}</h3>
+        <p className="small">{t('planner.smBody')}</p>
+      </div>
+      <a
+        className="button secondary"
+        href={smAprendizajeUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {t('planner.smButton')}
+      </a>
+    </aside>
   );
 }
 
@@ -374,6 +412,7 @@ export function PlanEditor(props: PlanEditorProps) {
           error={errors?.folderId}
         />
       </div>
+      <SmAprendizaje locale={props.locale} />
       {props.body.kind === 'weekly' ? (
         <WeeklyFields locale={props.locale} body={props.body} errors={errors} />
       ) : (

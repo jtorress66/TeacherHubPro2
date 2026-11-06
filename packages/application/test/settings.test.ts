@@ -59,6 +59,41 @@ describe('UpdateSchoolDetails', () => {
     expect((await world.users.findById(school.id, user.id))?.onboardingStatus).toBe('in_progress');
   });
 
+  it('changes how the school’s plans print, and keeps it when the form leaves it out', async () => {
+    const world = makeWorld();
+    const { user, school } = await signedUp(world);
+    expect((await world.schools.findById(school.id))?.planFormat).toBe('classic');
+
+    await new UpdateSchoolDetails(world).execute({
+      actor: user,
+      schoolId: school.id,
+      details: { ...details, planFormat: 'simple' },
+    });
+    expect((await world.schools.findById(school.id))?.planFormat).toBe('simple');
+
+    await new UpdateSchoolDetails(world).execute({ actor: user, schoolId: school.id, details });
+    expect((await world.schools.findById(school.id))?.planFormat).toBe('simple');
+  });
+
+  it('refuses an unknown plan format, and a teacher who may not manage the school', async () => {
+    const world = makeWorld();
+    const { user, school } = await signedUp(world);
+    const colleague = aUser({ id: 'colleague' as UserId, schoolId: school.id, email: 'c@luz.edu' });
+    const update = (actor: typeof user, planFormat: string) =>
+      new UpdateSchoolDetails(world).execute({
+        actor,
+        schoolId: school.id,
+        details: { ...details, planFormat },
+      });
+
+    expect(await update(user, 'fancy')).toEqual({
+      ok: false,
+      error: { field: 'planFormat', code: 'not_allowed' },
+    });
+    expect(await update(colleague, 'simple')).toEqual({ ok: false, error: { code: 'forbidden' } });
+    expect((await world.schools.findById(school.id))?.planFormat).toBe('classic');
+  });
+
   it('lets a school admin edit their school', async () => {
     const world = makeWorld();
     const { school } = await signedUp(world);

@@ -14,7 +14,26 @@ describe('createSchool', () => {
       phone: null,
       email: null,
       logoKey: null,
+      planFormat: 'classic',
     });
+  });
+
+  it('keeps the plan print format the school chose, and refuses an unknown one', () => {
+    expect(valueOf(createSchool({ id, name: 'A', planFormat: 'simple' })).planFormat).toBe(
+      'simple',
+    );
+    expect(errorOf(createSchool({ id, name: 'A', planFormat: 'fancy' }))).toEqual({
+      field: 'planFormat',
+      code: 'not_allowed',
+    });
+  });
+
+  it('changes the plan format with the details, and keeps it when not given', () => {
+    const school = valueOf(createSchool({ id, name: 'A', planFormat: 'simple' }));
+    expect(valueOf(updateSchoolDetails(school, { name: 'B' })).planFormat).toBe('simple');
+    expect(
+      valueOf(updateSchoolDetails(school, { name: 'B', planFormat: 'classic' })).planFormat,
+    ).toBe('classic');
   });
 
   it('keeps contact details and normalises the email', () => {
@@ -67,6 +86,7 @@ describe('updateSchoolDetails', () => {
       phone: '555',
       email: 'a@luz.edu',
       logoKey: null,
+      planFormat: 'classic',
     });
   });
 
