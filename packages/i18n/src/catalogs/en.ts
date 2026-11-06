@@ -60,6 +60,7 @@ export const en = {
     sessionExpired: 'Your session has ended. Please log in again.',
   },
   dashboard: {
+    ownerAccess: 'Owner: full access',
     welcome: 'Welcome, {name}',
     trialDaysLeft: 'Free trial: {days} days left',
     trialLastDay: 'Free trial: last day',
@@ -344,6 +345,7 @@ export const en = {
     seats: '{plan} · {count} teachers',
   },
   billing: {
+    ownerNote: 'Your account has full access as the platform owner; no plan is needed.',
     title: 'Plans and billing',
     onTrial: 'You are on the free trial: {days} days left.',
     trialEnded: 'Your free trial has ended. Choose a plan to keep using TeacherHubPro.',

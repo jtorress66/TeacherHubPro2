@@ -64,7 +64,7 @@ export class RequestGameDraft {
   ) {}
 
   async execute(input: GameDraftInput): Promise<Result<Job, UseCaseError>> {
-    const access = await checkAiAccess(this.deps, input.actor.schoolId);
+    const access = await checkAiAccess(this.deps, input.actor);
     if (!access.ok) return access;
     let kind = input.kind;
     let avoid: string[] = [];

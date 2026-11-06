@@ -62,6 +62,7 @@ export const es: Messages = {
     sessionExpired: 'Tu sesión terminó. Vuelve a iniciar sesión.',
   },
   dashboard: {
+    ownerAccess: 'Propietario: acceso completo',
     welcome: 'Hola, {name}',
     trialDaysLeft: 'Prueba gratis: quedan {days} días',
     trialLastDay: 'Prueba gratis: último día',
@@ -350,6 +351,8 @@ export const es: Messages = {
     seats: '{plan} · {count} maestros',
   },
   billing: {
+    ownerNote:
+      'Su cuenta tiene acceso completo como propietario de la plataforma; no necesita un plan.',
     title: 'Planes y pagos',
     onTrial: 'Estás en la prueba gratis: quedan {days} días.',
     trialEnded: 'Tu prueba gratis terminó. Elige un plan para seguir usando TeacherHubPro.',

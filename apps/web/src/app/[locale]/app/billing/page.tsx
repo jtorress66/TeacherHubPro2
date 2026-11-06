@@ -34,7 +34,12 @@ export default async function BillingPage(
           {t(message.key)}
         </p>
       ) : null}
-      {trialing && access.hasAccess ? (
+      {access.owner ? (
+        <p role="status" className="notice" data-testid="owner-note">
+          {t('billing.ownerNote')}
+        </p>
+      ) : null}
+      {trialing && access.hasAccess && !access.owner ? (
         <p>{t('billing.onTrial', { days: access.trialDaysLeft ?? 0 })}</p>
       ) : null}
       {trialing && !access.hasAccess ? (

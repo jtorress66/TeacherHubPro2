@@ -98,6 +98,16 @@ describe('AI drafts', () => {
     ).toEqual({ ok: false, error: { code: 'subscription_required' } });
   });
 
+  it('lets a super admin use AI after the trial has ended', async () => {
+    const world = makeWorld();
+    const actor = { ...(await teacher(world)), role: 'super_admin' as const };
+    advanceDays(world, 8);
+
+    expect((await new RequestLessonPlanDraft(world).execute({ actor, ...draftInput })).ok).toBe(
+      true,
+    );
+  });
+
   it('checks the request and its class', async () => {
     const world = makeWorld();
     const actor = await teacher(world);

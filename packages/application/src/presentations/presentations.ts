@@ -53,7 +53,7 @@ export class RequestPresentationDraft {
     input: { actor: User } & PresentationRequestInput,
   ): Promise<Result<Job, UseCaseError>> {
     const { actor, ...details } = input;
-    const access = await checkAiAccess(this.deps, actor.schoolId);
+    const access = await checkAiAccess(this.deps, actor);
     if (!access.ok) return access;
     const request = createPresentationRequest(details);
     if (!request.ok) return request;
