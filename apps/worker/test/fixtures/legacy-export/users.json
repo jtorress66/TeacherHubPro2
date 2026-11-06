@@ -1,0 +1,1 @@
+{"_id":{"$oid":"65a000000000000000000000"},"user_id":"user_legacy1","email":"legacy.teacher@example.edu","password_hash":"$2b$10$FLCEi2D7UWchsQ9CShRwruNhRJrLBzSdGotNQEbV2GlmtyfZ5HuuC","name":"Lena Legacy","role":"teacher","school_id":"school_legacy1","language":"es","picture":null,"created_at":{"$date":"2025-08-01T12:00:00Z"},"onboarding_status":"completed"}

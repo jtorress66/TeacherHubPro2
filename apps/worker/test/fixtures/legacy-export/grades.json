@@ -1,0 +1,2 @@
+{"_id":{"$oid":"65a000000000000000000000"},"grade_id":"grade_legacy1","assignment_id":"assign_legacy1","student_id":"student_legacy1","score":{"$numberDouble":"18.5"},"status":"graded","comment":"Muy bien"}
+{"_id":{"$oid":"65a000000000000000000001"},"grade_id":"grade_legacy2","assignment_id":"assign_legacy1","student_id":"student_legacy2","score":null,"status":"missing"}

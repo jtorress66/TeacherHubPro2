@@ -1,6 +1,7 @@
 import { createHash, randomBytes, randomInt, randomUUID } from 'node:crypto';
 import type { Clock, IdGenerator, RandomTokenGenerator, SeedSource, TokenHasher } from '@thp/ports';
 
+export { LegacyAwarePasswordHasher } from './legacy-aware-password-hasher.ts';
 export { ScryptPasswordHasher } from './scrypt-password-hasher.ts';
 
 /** SHA-256 of a link or session token. Tokens are long and random, so no salt is needed. */

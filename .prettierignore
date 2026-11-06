@@ -6,3 +6,5 @@ test-results/
 docs/
 CLAUDE.md
 packages/domain/src/standards/common-core-codes.ts
+# mongoexport writes one JSON record per line, which Prettier reads as a single document.
+apps/worker/test/fixtures/legacy-export/

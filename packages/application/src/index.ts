@@ -432,3 +432,8 @@ export {
   maxListedLeads,
   type LeadList,
 } from './marketing/leads.ts';
+export {
+  ImportLegacyData,
+  leftOutCollections,
+  type ImportLegacyDataDeps,
+} from './migration/import-legacy-data.ts';

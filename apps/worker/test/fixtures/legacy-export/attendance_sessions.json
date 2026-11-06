@@ -1,0 +1,1 @@
+{"_id":{"$oid":"65a000000000000000000000"},"session_id":"att_legacy1","class_id":"class_legacy1","teacher_id":"user_legacy1","date":"2025-09-08","status":"submitted","records":[{"student_id":"student_legacy1","status":"present"},{"student_id":"student_legacy2","status":"absent","note":"Enfermo"}]}

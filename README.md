@@ -175,6 +175,10 @@ The **AI assistant** (`/app/assistant`) writes worksheets, quizzes, topic summar
 
 **Voice.** Listen reads text aloud with OpenAI text-to-speech. The worker makes the audio (`TTS_PROVIDER=openai` with `OPENAI_API_KEY`; voice `OPENAI_TTS_VOICE`, default `nova`, which the web app must share) and caches it per school; without a key it uses a silent local stand-in.
 
+## Moving data from the old app
+
+`pnpm migrate:legacy --from <export folder>` reads the old app's `mongoexport` files and prints what it would import, collection by collection (counts and reasons only). Add `--apply` to write to the database in `DATABASE_URL`. Running it again updates the same records. Old passwords keep working and are upgraded at the next log-in. Old family and learning links keep working too. The export holds student data: keep it outside the repository and delete it afterwards. See `docs/MIGRATION.md`.
+
 ## Commands
 
 ```
@@ -185,6 +189,7 @@ pnpm test:e2e:stripe  # the Stripe test-mode journey (CI job e2e-stripe; needs a
 pnpm stripe:setup     # creates the Stripe products and prices (STRIPE_SECRET_KEY)
 pnpm eval             # planner, assistant and presentation evals against Claude (needs ANTHROPIC_API_KEY)
 pnpm standards:import # re-imports the Common Core codes (network)
+pnpm migrate:legacy --from <folder> [--apply]  # imports the old app's export (dry run without --apply)
 pnpm typecheck
 pnpm lint             # zero warnings allowed
 pnpm check:forbidden  # the legacy-platform reference check CI runs

@@ -1,0 +1,2 @@
+{"_id":{"$oid":"65a000000000000000000000"},"student_id":"student_legacy1","class_id":"class_legacy1","first_name":"Tomás","last_name":"Prueba","student_number":"1001","parent_email":"familia.prueba@example.com","email":"tomas@example.com"}
+{"_id":{"$oid":"65a000000000000000000001"},"student_id":"student_legacy2","class_id":"class_legacy1","first_name":"Inés","last_name":"Ejemplo","parent_email":""}

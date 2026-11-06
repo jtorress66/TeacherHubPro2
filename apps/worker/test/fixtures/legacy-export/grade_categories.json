@@ -1,0 +1,1 @@
+{"_id":{"$oid":"65a000000000000000000000"},"category_id":"cat_legacy1","class_id":"class_legacy1","name":"Tareas","name_es":"Tareas","weight_percent":{"$numberInt":"100"}}

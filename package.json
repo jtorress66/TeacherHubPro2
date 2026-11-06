@@ -19,6 +19,7 @@
     "standards:import": "node scripts/import-standards.ts",
     "db:up": "docker compose up -d --wait postgres",
     "db:migrate": "pnpm --filter @thp/worker migrate",
+    "migrate:legacy": "pnpm --filter @thp/worker migrate:legacy",
     "stripe:setup": "pnpm --filter @thp/worker stripe:setup",
     "test:e2e:stripe": "pnpm --filter @thp/web test:e2e:stripe"
   },

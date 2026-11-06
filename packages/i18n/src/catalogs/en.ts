@@ -1420,6 +1420,11 @@ export const en = {
       'Email sending isn’t switched on yet. Use “New link to copy” and share it with the family.',
     back: 'Back to the class',
   },
+  oldLink: {
+    title: 'This link is from the old TeacherHubPro',
+    body: 'Assignments and games now open from each student’s own link, so their work always reaches the right gradebook.',
+    action: 'Ask your teacher for your new link.',
+  },
   family: {
     title: '{name}’s progress',
     readOnly: 'Read-only. Questions? Contact the teacher.',

@@ -52,3 +52,4 @@ export {
 export { ResendMailer, type ResendConfig } from './mail/resend-mailer.ts';
 export { LocalMailer } from './mail/local-mailer.ts';
 export { loggedMailer } from './mail/logged-mailer.ts';
+export { MongoExportSource } from './migration/mongo-export-source.ts';

@@ -1432,6 +1432,11 @@ export const es: Messages = {
       'El envío de correos aún no está activado. Use «Nuevo enlace para copiar» y compártalo con la familia.',
     back: 'Volver a la clase',
   },
+  oldLink: {
+    title: 'Este enlace es del TeacherHubPro anterior',
+    body: 'Las tareas y los juegos ahora se abren desde el enlace personal de cada estudiante, para que su trabajo siempre llegue a la libreta de calificaciones correcta.',
+    action: 'Pídele a tu maestro o maestra tu enlace nuevo.',
+  },
   family: {
     title: 'Progreso de {name}',
     readOnly: 'Solo lectura. ¿Preguntas? Contacte al maestro.',

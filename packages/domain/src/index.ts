@@ -109,3 +109,6 @@ export * from './billing/access.ts';
 export * from './marketing/lead.ts';
 export * from './marketing/chat.ts';
 export * from './marketing/facts.ts';
+
+export * from './migration/legacy-report.ts';
+export * from './migration/names.ts';

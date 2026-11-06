@@ -1,0 +1,1 @@
+{"_id":{"$oid":"65a000000000000000000000"},"subscription_id":"sub_legacy1","user_id":"user_legacy1","plan_id":"individual_yearly","quantity":{"$numberInt":"1"},"status":"active","stripe_subscription_id":null,"current_period_start":"2025-09-01T00:00:00+00:00","current_period_end":"2099-09-01T00:00:00+00:00","trial_end":null,"created_at":"2025-09-01T00:00:00+00:00"}

@@ -1,3 +1,8 @@
+import { execSync } from 'node:child_process';
+import { cpSync, mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { createDatabase } from '@thp/adapters';
 
 const databaseUrl =
@@ -17,5 +22,27 @@ export async function resetSuperAdmins(): Promise<void> {
       .execute();
   } finally {
     await db.destroy();
+  }
+}
+
+const legacyExport = fileURLToPath(
+  new URL('../../worker/test/fixtures/legacy-export', import.meta.url),
+);
+
+/**
+ * Test-only: imports a small synthetic export of the old app (fake people) through the real
+ * command, from a folder outside the repository as a real export must be.
+ */
+export function importLegacyExport(): void {
+  const folder = mkdtempSync(join(tmpdir(), 'thp-legacy-'));
+  try {
+    cpSync(legacyExport, folder, { recursive: true });
+    execSync(`pnpm migrate:legacy --from "${folder}" --apply`, {
+      cwd: fileURLToPath(new URL('../../..', import.meta.url)),
+      env: { ...process.env, DATABASE_URL: databaseUrl },
+      stdio: 'pipe',
+    });
+  } finally {
+    rmSync(folder, { recursive: true, force: true });
   }
 }

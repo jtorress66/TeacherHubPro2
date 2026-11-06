@@ -47,5 +47,25 @@ export const isGradeLevel = (value: string): value is GradeLevel =>
 /** An official Common Core standard, or null for any code not in the imported list. */
 export const findStandard = (code: string): Standard | null => byCode.get(code) ?? null;
 
+const officialPrefix = /^ccss\.(?:math\.content|ela-literacy)\./u;
+
+/** Lower-case codes, with and without their prefix ("5.nf.a.1", "rl.3.1"). */
+const byLooseCode = new Map(
+  catalog.flatMap((standard) => {
+    const lower = standard.code.toLowerCase();
+    return [
+      [lower, standard],
+      [lower.replace(officialPrefix, ''), standard],
+    ] as const;
+  }),
+);
+
+/**
+ * An official code however an older plan wrote it: any case, with or without its
+ * "CCSS.Math.Content." or "CCSS.ELA-Literacy." prefix. Unknown codes are still unknown.
+ */
+export const findStandardLoosely = (code: string): Standard | null =>
+  byLooseCode.get(code.trim().toLowerCase()) ?? null;
+
 export const standardsFor = (subject: StandardSubject, grade: GradeLevel): readonly Standard[] =>
   catalog.filter((s) => s.subject === subject && s.grades.includes(grade));

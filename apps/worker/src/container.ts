@@ -12,6 +12,8 @@ import {
   UsageReportingLlmClient,
   formatUsage,
   migrateToLatest,
+  MongoExportSource,
+  Sha256TokenHasher,
   LocalMailer,
   loggedMailer,
   PostgresJobQueue,
@@ -56,7 +58,9 @@ import {
   SweepOldChats,
   SendTrialReminders,
   SweepStaleJobs,
+  ImportLegacyData,
 } from '@thp/application';
+import { defaultGameModes } from '@thp/domain';
 import type { LlmClient, Mailer, MailTemplates, TextToSpeech } from '@thp/ports';
 import type { DatabaseConfig, LlmConfig, MailConfig, StripeConfig, TtsConfig } from './config.ts';
 import { localReply } from './local-replies.ts';
@@ -180,6 +184,27 @@ export async function runMigrations({ databaseUrl }: DatabaseConfig) {
   const db = createDatabase(databaseUrl);
   try {
     return await migrateToLatest(db);
+  } finally {
+    await db.destroy();
+  }
+}
+
+/** The old app's export in `folder`, imported into the database (written only with `apply`). */
+export async function importLegacyData(
+  { databaseUrl }: DatabaseConfig,
+  folder: string,
+  apply: boolean,
+) {
+  const db = createDatabase(databaseUrl);
+  try {
+    const repos = createPostgresRepositories(db);
+    return await new ImportLegacyData({
+      ...repos,
+      legacy: new MongoExportSource(folder),
+      clock: new SystemClock(),
+      tokenHasher: new Sha256TokenHasher(),
+      gameModes: defaultGameModes,
+    }).execute({ apply });
   } finally {
     await db.destroy();
   }

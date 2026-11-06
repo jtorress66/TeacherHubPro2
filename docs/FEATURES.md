@@ -375,6 +375,32 @@ Added at the teacher's request, between steps 14 and 15 (not in the old app).
 - Old passwords: accept the old hashes (passlib/bcrypt) and rehash on first login.
 - Idempotent; a dry run prints counts per collection and a list of skipped records.
 
+- **Decided for the rebuild:**
+  - Source: `mongoexport` files from Atlas, one per collection, in a folder outside the repository (the command refuses one inside it). Credentials stay in the terminal. Steps in `docs/MIGRATION.md`.
+  - Uploaded files are not copied: school logos and assignment attachments are left out and counted in the report.
+  - Run from the user's computer: `pnpm migrate:legacy --from <folder>` (dry run), then `--apply` against the database in `DATABASE_URL`.
+  - Old ids are kept, so a second import replaces the same rows; a password already set in the new app is never replaced.
+  - Every record is accounted for: imported, or skipped with a reason. The report holds counts and reasons only, never names or contact details.
+  - An old account whose email already has an account here joins it, and their old personal school merges into the existing one.
+  - A student in several classes gets a record in each class (`<old id>:<class id>`).
+  - Assignments without a known category go to "Other" ("Otros" for Spanish-speaking teachers), weighted 0, so class totals stay as they were.
+  - Old learning paths come back as drafts for the teacher to review and assign.
+  - Someone still inside the old app's 7-day free trial keeps it.
+  - Old family and learning links still open, and their tokens are stored only as hashes. Expired links are left out.
+  - Old assignment and game links lead to a page asking for the student's new link. Those links matched students by a typed name, which the new app never does.
+  - Not carried over:
+    - Sessions, jobs and chats.
+    - Game play progress.
+    - Game scores, which already reached the gradebook as grades.
+    - Learning progress, which has no scores to carry.
+    - AI planner templates, which have no counterpart.
+    - Practice sessions.
+- **Fixed from the old app:**
+  - Submissions were matched to students by typed name. Each is tied to a roster student; names that match nobody, or several students, are reported and never guessed.
+  - Grades and AI submissions could disagree. There is one grade per student and assignment, and a confirmed AI grade wins.
+  - AI scores waiting for review stay drafts; they never count until the teacher confirms them.
+  - Standards codes in any case or without their prefix are read as official codes. Unknown codes are dropped and counted.
+
 ## Not carried over
 
 - Emergent editor scripts, the visual-edits and health-check plugins, the badge-hiding code, Emergent auth, the `emergentintegrations` library and the one-off video generation scripts.

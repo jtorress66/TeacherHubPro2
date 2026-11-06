@@ -10,6 +10,7 @@ import {
 } from '@thp/testing';
 import {
   CryptoSeedSource,
+  LegacyAwarePasswordHasher,
   NodeRandomTokenGenerator,
   ScryptPasswordHasher,
   Sha256TokenHasher,
@@ -19,6 +20,16 @@ import {
 import { HmacTicketSigner } from '../src/crypto/hmac-ticket-signer.ts';
 
 passwordHasherContract('ScryptPasswordHasher', () => new ScryptPasswordHasher());
+/** A bcrypt hash as the old app's passlib stored it, made for this test. */
+const oldBcrypt = {
+  password: 'old password',
+  hash: '$2b$04$VlRPCU7sTvBdEP.9jSdpt.z4Pom2//B8u6OA6M86187i6J/8Biuha',
+};
+passwordHasherContract(
+  'LegacyAwarePasswordHasher',
+  () => new LegacyAwarePasswordHasher(new ScryptPasswordHasher()),
+  oldBcrypt,
+);
 tokenHasherContract('Sha256TokenHasher', () => new Sha256TokenHasher());
 randomTokenGeneratorContract('NodeRandomTokenGenerator', () => new NodeRandomTokenGenerator());
 idGeneratorContract('UuidIdGenerator', () => new UuidIdGenerator());
@@ -61,6 +72,19 @@ describe('ScryptPasswordHasher', () => {
   it('asks to rehash a scrypt hash made with weaker settings', async () => {
     const weak = new ScryptPasswordHasher({ cost: 1024 });
     expect(hasher.needsRehash(await weak.hash('correct horse'))).toBe(true);
+  });
+});
+
+describe('LegacyAwarePasswordHasher', () => {
+  const hasher = new LegacyAwarePasswordHasher(new ScryptPasswordHasher());
+
+  it('rejects a wrong password for an old bcrypt hash, and makes new hashes with scrypt', async () => {
+    expect(await hasher.verify('wrong', oldBcrypt.hash)).toBe(false);
+    expect(await hasher.hash('pw')).toMatch(/^scrypt\$/u);
+  });
+
+  it('refuses a damaged bcrypt hash instead of throwing', async () => {
+    expect(await hasher.verify('old password', '$2b$04$broken')).toBe(false);
   });
 });
 

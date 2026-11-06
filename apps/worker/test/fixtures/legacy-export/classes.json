@@ -1,0 +1,1 @@
+{"_id":{"$oid":"65a000000000000000000000"},"class_id":"class_legacy1","school_id":"school_legacy1","teacher_id":"user_legacy1","name":"Ciencias 5","grade":"5","section":"A","subject":"Science","year_term":"2025-2026","period":{"$numberInt":"3"},"start_time":"10:00","end_time":"10:50","days_of_week":["Monday","Wednesday","Friday"]}

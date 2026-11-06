@@ -38,3 +38,4 @@ export type * from './accounts/password-credential-repository.ts';
 export type * from './admin/admin-directories.ts';
 export type * from './marketing/marketing.ts';
 export type * from './ai/chatbot-writer.ts';
+export type * from './migration/legacy-source.ts';

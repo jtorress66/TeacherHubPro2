@@ -55,4 +55,15 @@ describe('routeLocale', () => {
       save: 'es',
     });
   });
+
+  it('sends links shared from the old app to their new pages, in the saved language', () => {
+    const route = (pathname: string) => routeLocale({ pathname, search: '', saved: 'es' });
+
+    expect(route('/portal/portal_abc')).toMatchObject({ to: '/es/p/portal_abc' });
+    expect(route('/homeschool-portal/hsp_abc')).toMatchObject({ to: '/es/p/hsp_abc' });
+    expect(route('/student-learning/slt_abc')).toMatchObject({ to: '/es/s/slt_abc' });
+    expect(route('/assignment/abc123')).toMatchObject({ to: '/es/old-link' });
+    expect(route('/play-game/game_1')).toMatchObject({ to: '/es/old-link' });
+    expect(route('/portal')).toMatchObject({ to: '/es/portal' });
+  });
 });

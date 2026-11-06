@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { findStandard, isGradeLevel, standardsFor, standardSubjects } from './common-core.ts';
+import {
+  findStandard,
+  findStandardLoosely,
+  isGradeLevel,
+  standardsFor,
+  standardSubjects,
+} from './common-core.ts';
 
 describe('the Common Core catalog', () => {
   it('finds an official code with its subject, grades and description', () => {
@@ -14,6 +20,15 @@ describe('the Common Core catalog', () => {
   it('does not know invented codes', () => {
     expect(findStandard('CCSS.Math.Content.4.NF.Z.9')).toBeNull();
     expect(findStandard('PR.MATH.4.1')).toBeNull();
+  });
+
+  it('reads a code written in another case or without its prefix, as older plans stored them', () => {
+    expect(findStandardLoosely('CCSS.MATH.CONTENT.5.NF.A.1')?.code).toBe(
+      'CCSS.Math.Content.5.NF.A.1',
+    );
+    expect(findStandardLoosely(' rl.3.1 ')?.code).toBe('CCSS.ELA-Literacy.RL.3.1');
+    expect(findStandardLoosely('5.NF.A.1')?.code).toBe('CCSS.Math.Content.5.NF.A.1');
+    expect(findStandardLoosely('PR.MATH.4.1')).toBeNull();
   });
 
   it('lists the standards for a subject and grade', () => {
