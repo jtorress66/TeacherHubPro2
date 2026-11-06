@@ -1,6 +1,7 @@
 import {
   chargePerBillingPeriodCents,
   planCatalog,
+  type Access,
   type PlanId,
   type Subscription,
 } from '@thp/domain';
@@ -28,11 +29,12 @@ export const planName = (planId: PlanId, locale: Locale): string =>
 /** The short plan label on the dashboard. */
 export function planBadge(
   subscription: Subscription | null,
-  access: { readonly hasAccess: boolean; readonly trialDaysLeft: number | null },
+  access: Access,
   locale: Locale,
 ): string {
-  if (subscription === null) return '';
   const t = createTranslator(locale);
+  if (access.owner) return t('dashboard.ownerAccess');
+  if (subscription === null) return '';
   if (subscription.status === 'trialing') {
     const days = access.trialDaysLeft ?? 0;
     if (days === 0) return t('plans.freeTrial');

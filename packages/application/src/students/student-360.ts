@@ -219,7 +219,7 @@ export class RequestStudentInsight {
   ): Promise<Result<Job, UseCaseError>> {
     const found = await classStudent(this.deps, input);
     if (!found.ok) return found;
-    const access = await checkAiAccess(this.deps, input.actor.schoolId);
+    const access = await checkAiAccess(this.deps, input.actor);
     if (!access.ok) return access;
     const payload: InsightPayload = {
       classId: found.value.cls.id,

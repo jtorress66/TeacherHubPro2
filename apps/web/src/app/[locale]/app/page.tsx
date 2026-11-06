@@ -59,7 +59,7 @@ export default async function DashboardPage(props: LocaleParams) {
         <span className="badge" data-testid="plan-badge">
           {planBadge(subscription, access, locale)}
         </span>{' '}
-        {subscription?.status === 'trialing' ? (
+        {subscription?.status === 'trialing' && !access.owner ? (
           <Link href={`/${locale}/app/billing`}>{t('dashboard.seePlans')}</Link>
         ) : null}
       </p>

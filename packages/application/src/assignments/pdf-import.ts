@@ -64,7 +64,7 @@ export class RequestPdfImport {
   async execute(
     input: AssignmentRef & { readonly pdf: Uint8Array },
   ): Promise<Result<Job, UseCaseError>> {
-    const access = await checkAiAccess(this.deps, input.actor.schoolId);
+    const access = await checkAiAccess(this.deps, input.actor);
     if (!access.ok) return access;
     const found = await editableAssignment(this.deps, input);
     if (!found.ok) return found;

@@ -34,13 +34,15 @@ describe('planBadge', () => {
   const periodEnd = new Date('2027-09-01T00:00:00Z');
 
   it('counts the free days left, with a special message for the last day', () => {
-    expect(planBadge(trial, { hasAccess: true, trialDaysLeft: 7 }, 'en')).toBe(
+    expect(planBadge(trial, { hasAccess: true, trialDaysLeft: 7, owner: false }, 'en')).toBe(
       'Free trial: 7 days left',
     );
-    expect(planBadge(trial, { hasAccess: true, trialDaysLeft: 1 }, 'es')).toBe(
+    expect(planBadge(trial, { hasAccess: true, trialDaysLeft: 1, owner: false }, 'es')).toBe(
       'Prueba gratis: último día',
     );
-    expect(planBadge(trial, { hasAccess: false, trialDaysLeft: 0 }, 'en')).toBe('Free trial');
+    expect(planBadge(trial, { hasAccess: false, trialDaysLeft: 0, owner: false }, 'en')).toBe(
+      'Free trial',
+    );
   });
 
   it('names a paid plan, with the teachers on School and District plans', () => {
@@ -49,18 +51,24 @@ describe('planBadge', () => {
     );
     const individual = unwrap(activateSubscription(trial, { currentPeriodEnd: periodEnd }));
 
-    expect(planBadge(school, { hasAccess: true, trialDaysLeft: null }, 'en')).toBe(
+    expect(planBadge(school, { hasAccess: true, trialDaysLeft: null, owner: false }, 'en')).toBe(
       'School · 12 teachers',
     );
-    expect(planBadge(school, { hasAccess: true, trialDaysLeft: null }, 'es')).toBe(
+    expect(planBadge(school, { hasAccess: true, trialDaysLeft: null, owner: false }, 'es')).toBe(
       'Escuela · 12 maestros',
     );
-    expect(planBadge(individual, { hasAccess: true, trialDaysLeft: null }, 'en')).toBe(
-      'Individual monthly',
-    );
+    expect(
+      planBadge(individual, { hasAccess: true, trialDaysLeft: null, owner: false }, 'en'),
+    ).toBe('Individual monthly');
+  });
+
+  it('shows full owner access for a super admin, whatever the plan', () => {
+    const owner = { hasAccess: true, trialDaysLeft: null, owner: true };
+    expect(planBadge(trial, owner, 'en')).toBe('Owner: full access');
+    expect(planBadge(null, owner, 'es')).toBe('Propietario: acceso completo');
   });
 
   it('shows nothing for a school without a subscription', () => {
-    expect(planBadge(null, { hasAccess: false, trialDaysLeft: null }, 'en')).toBe('');
+    expect(planBadge(null, { hasAccess: false, trialDaysLeft: null, owner: false }, 'en')).toBe('');
   });
 });

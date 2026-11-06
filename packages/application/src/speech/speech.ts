@@ -68,7 +68,7 @@ export class RequestSpeech {
     language: string;
   }): Promise<Result<SpeechOutcome, UseCaseError>> {
     const { actor } = input;
-    const access = await checkAiAccess(this.deps, actor.schoolId);
+    const access = await checkAiAccess(this.deps, actor);
     if (!access.ok) return access;
     const request = createSpeechRequest(input);
     if (!request.ok) return request;

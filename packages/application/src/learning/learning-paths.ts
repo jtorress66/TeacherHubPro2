@@ -118,7 +118,7 @@ export class RequestLearningPath {
     };
     const valid = createPathRequest({ ...base, level: 3 });
     if (!valid.ok) return valid;
-    const access = await checkAiAccess(this.deps, actor.schoolId);
+    const access = await checkAiAccess(this.deps, actor);
     if (!access.ok) return access;
     const roster = await this.deps.students.listByClass(actor.schoolId, cls.value.id);
     const students =

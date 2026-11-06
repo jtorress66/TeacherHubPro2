@@ -64,8 +64,12 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     await setup.getByRole('button', { name: t('passwords.setupButton') }).click();
     await expect(page.getByRole('status')).toContainText(rootEmail);
 
-    // A new school, then its staff from a CSV file.
+    // The owner's access never expires.
     await page.goto(`/${locale}/app`);
+    await expect(page.getByTestId('plan-badge')).toHaveText(t('dashboard.ownerAccess'));
+    await expect(page.getByRole('link', { name: t('dashboard.seePlans') })).toHaveCount(0);
+
+    // A new school, then its staff from a CSV file.
     await page.getByRole('link', { name: t('nav.superAdmin'), exact: true }).click();
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(t('superAdmin.title'));
     expect(await axe(page)).toEqual([]);

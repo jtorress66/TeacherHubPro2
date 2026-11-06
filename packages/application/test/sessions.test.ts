@@ -71,7 +71,12 @@ describe('AuthenticateSession', () => {
 
     expect(await new AuthenticateSession(world).execute(sessionToken)).toEqual({
       ok: true,
-      value: { user, school, subscription, access: { hasAccess: true, trialDaysLeft: 7 } },
+      value: {
+        user,
+        school,
+        subscription,
+        access: { hasAccess: true, trialDaysLeft: 7, owner: false },
+      },
     });
   });
 
@@ -100,7 +105,25 @@ describe('AuthenticateSession', () => {
     advanceDays(world, 8);
 
     const result = await new AuthenticateSession(world).execute(sessionToken);
-    expect(result.ok && result.value.access).toEqual({ hasAccess: false, trialDaysLeft: 0 });
+    expect(result.ok && result.value.access).toEqual({
+      hasAccess: false,
+      trialDaysLeft: 0,
+      owner: false,
+    });
+  });
+
+  it('always gives a super admin full access, even after the trial and without a plan', async () => {
+    const world = makeWorld();
+    const { user, sessionToken } = await signedUp(world);
+    await world.users.save({ ...user, role: 'super_admin' });
+    advanceDays(world, 8);
+    const full = { hasAccess: true, trialDaysLeft: null, owner: true };
+
+    const afterTrial = await new AuthenticateSession(world).execute(sessionToken);
+    expect(afterTrial.ok && afterTrial.value.access).toEqual(full);
+    world.subscriptions = new InMemorySubscriptionRepository();
+    const noPlan = await new AuthenticateSession(world).execute(sessionToken);
+    expect(noPlan.ok && noPlan.value.access).toEqual(full);
   });
 });
 
@@ -124,7 +147,7 @@ describe('AuthenticateSession edge cases', () => {
     const result = await new AuthenticateSession(world).execute(sessionToken);
     expect(result.ok && result.value).toMatchObject({
       subscription: null,
-      access: { hasAccess: false, trialDaysLeft: null },
+      access: { hasAccess: false, trialDaysLeft: null, owner: false },
     });
   });
 });

@@ -1,8 +1,8 @@
 import {
-  hasAccess,
+  accessFor,
   isSessionActive,
   ok,
-  trialDaysLeft,
+  type Access,
   type Result,
   type School,
   type Subscription,
@@ -28,11 +28,7 @@ export interface AuthenticateSessionDeps {
   readonly clock: Clock;
 }
 
-export interface Access {
-  readonly hasAccess: boolean;
-  /** Days left in the free trial; null when not on a trial. */
-  readonly trialDaysLeft: number | null;
-}
+export type { Access };
 
 export interface Authenticated {
   readonly user: User;
@@ -59,9 +55,7 @@ export class AuthenticateSession {
     if (!user || !school) return fail('unauthenticated');
 
     const subscription = await findSchoolSubscription(this.deps.subscriptions, school.id);
-    const access: Access = subscription
-      ? { hasAccess: hasAccess(subscription, now), trialDaysLeft: trialDaysLeft(subscription, now) }
-      : { hasAccess: false, trialDaysLeft: null };
+    const access = accessFor(user, subscription, now);
     return ok({ user, school, subscription, access });
   }
 }

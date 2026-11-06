@@ -94,7 +94,7 @@ export class StartPrepBatch {
     request: PrepRequestInput;
   }): Promise<Result<PrepBatch, UseCaseError>> {
     const { actor } = input;
-    const access = await checkAiAccess(this.deps, actor.schoolId);
+    const access = await checkAiAccess(this.deps, actor);
     if (!access.ok) return access;
     const request = createPrepRequest(input.request);
     if (!request.ok) return request;

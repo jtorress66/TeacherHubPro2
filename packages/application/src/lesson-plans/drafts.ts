@@ -49,7 +49,7 @@ export class RequestLessonPlanDraft {
 
   async execute(input: { actor: User } & DraftRequestInput): Promise<Result<Job, UseCaseError>> {
     const { actor, ...details } = input;
-    const access = await checkAiAccess(this.deps, actor.schoolId);
+    const access = await checkAiAccess(this.deps, actor);
     if (!access.ok) return access;
     const request = createDraftRequest(details);
     if (!request.ok) return request;

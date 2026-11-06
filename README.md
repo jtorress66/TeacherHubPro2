@@ -97,6 +97,8 @@ The home page (`/app`) is the Command Center: today's classes with their attenda
 
 Nobody ever sees another person's password: new accounts and resets get an emailed one-time link (`/set-password`, the secret in the link's `#hash`, stored only as a hash, valid 3 days). **Forgot password?** on the log-in page sends the same link and never reveals whether an email has an account. A teacher who still teaches classes cannot be deleted or moved to another school until their classes are handed over; deleting removes their own plans, presentations and AI writing, and is refused while school records name them (grades they gave, a subscription they own).
 
+Super admins always have full access, with no trial or plan; the other teachers of their school use the trial or a plan.
+
 **First super admin:** set `SUPER_ADMIN_SETUP_KEY` on the web service, sign up, open `/en/setup`, enter your email and the key. It works only while there is no super admin; then remove the key.
 
 ## Prep Agent

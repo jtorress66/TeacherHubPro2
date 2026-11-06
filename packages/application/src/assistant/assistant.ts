@@ -47,7 +47,7 @@ export class RequestGeneration {
 
   async execute(input: { actor: User } & ContentRequestInput): Promise<Result<Job, UseCaseError>> {
     const { actor, ...details } = input;
-    const access = await checkAiAccess(this.deps, actor.schoolId);
+    const access = await checkAiAccess(this.deps, actor);
     if (!access.ok) return access;
     const request = createContentRequest(details);
     if (!request.ok) return request;
