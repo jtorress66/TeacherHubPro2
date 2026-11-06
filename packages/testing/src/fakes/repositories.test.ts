@@ -38,6 +38,13 @@ import { assistantRepositoryContract } from '../contracts/assistant.contract.ts'
 import { assignmentRepositoryContract } from '../contracts/assignments.contract.ts';
 import { student360RepositoryContract } from '../contracts/student360.contract.ts';
 import { prepBatchRepositoryContract } from '../contracts/prep.contract.ts';
+import { adminContract } from '../contracts/admin.contract.ts';
+import {
+  InMemoryPasswordTokenRepository,
+  InMemoryPlatformStats,
+  InMemorySchoolDirectory,
+  InMemoryUserDirectory,
+} from './admin.ts';
 import { gamePlayRepositoryContract } from '../contracts/games.contract.ts';
 import { liveRepositoryContract } from '../contracts/live.contract.ts';
 import { learningRepositoryContract } from '../contracts/learning.contract.ts';
@@ -301,3 +308,24 @@ student360RepositoryContract('InMemory', () => ({
 }));
 
 prepBatchRepositoryContract('InMemory', () => new InMemoryPrepBatchRepository());
+
+adminContract('InMemory', () => {
+  const stores = {
+    schools: new InMemorySchoolRepository(),
+    users: new InMemoryUserRepository(),
+    classes: new InMemoryClassRepository(),
+    students: new InMemoryStudentRepository(),
+    lessonPlans: new InMemoryLessonPlanRepository(),
+    presentations: new InMemoryPresentationRepository(),
+    generations: new InMemoryAiGenerationRepository(),
+    grades: new InMemoryGradeRepository(),
+    subscriptions: new InMemorySubscriptionRepository(),
+  };
+  return {
+    ...stores,
+    schoolDirectory: new InMemorySchoolDirectory(stores),
+    userDirectory: new InMemoryUserDirectory(stores),
+    platformStats: new InMemoryPlatformStats(stores),
+    passwordTokens: new InMemoryPasswordTokenRepository(),
+  };
+});

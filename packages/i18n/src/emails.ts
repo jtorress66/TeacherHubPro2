@@ -117,3 +117,30 @@ export function weeklyUpdateEmail(input: WeeklyUpdateEmailInput): EmailContent {
     footer: [t('emails.weeklySentBy', { school: input.schoolName })],
   });
 }
+
+export interface SetPasswordEmailInput {
+  readonly language: Locale;
+  readonly name: string;
+  /** The one-time link, with its secret in the #hash. */
+  readonly url: string;
+  readonly purpose: 'welcome' | 'reset';
+}
+
+/** A one-time link to choose a password: for a new account, or a reset the person asked for. */
+export function setPasswordEmail(input: SetPasswordEmailInput): EmailContent {
+  const t = createTranslator(input.language);
+  const welcome = input.purpose === 'welcome';
+  return render({
+    locale: input.language,
+    subject: welcome ? t('emails.welcomeSubject') : t('emails.resetSubject'),
+    paragraphs: [
+      t('emails.trialHello', { name: input.name }),
+      welcome ? t('emails.welcomeBody') : t('emails.resetBody'),
+    ],
+    button: {
+      label: welcome ? t('emails.welcomeButton') : t('emails.resetButton'),
+      url: input.url,
+    },
+    footer: [t('emails.passwordLinkExpires'), t('emails.signature')],
+  });
+}

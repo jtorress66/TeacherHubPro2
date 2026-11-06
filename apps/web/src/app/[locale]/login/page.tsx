@@ -30,6 +30,8 @@ export default async function LogInPage(
       notice={noticeKey === undefined ? undefined : t(noticeKey)}
       footer={
         <>
+          <Link href={`/${locale}/forgot-password`}>{t('passwords.forgot')}</Link>
+          <br />
           {t('auth.noAccount')} <Link href={`/${locale}/signup`}>{t('auth.createAccount')}</Link>
         </>
       }

@@ -4,6 +4,7 @@ export { unwrap } from './unwrap.ts';
 export * from './fixtures.ts';
 
 export * from './fakes/repositories.ts';
+export * from './fakes/admin.ts';
 export * from './fakes/accounts.ts';
 export * from './fakes/ai.ts';
 export * from './fakes/files.ts';
@@ -39,3 +40,4 @@ export * from './contracts/learning.contract.ts';
 export * from './contracts/portals.contract.ts';
 export * from './contracts/student360.contract.ts';
 export * from './contracts/prep.contract.ts';
+export * from './contracts/admin.contract.ts';

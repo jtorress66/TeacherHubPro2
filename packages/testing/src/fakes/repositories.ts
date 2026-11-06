@@ -126,6 +126,21 @@ export class InMemoryScopedRepository<T extends SchoolOwned> implements ScopedRe
   protected findWhere(matches: (row: T) => boolean): Promise<T | null> {
     return Promise.resolve([...this.rows.values()].find(matches) ?? null);
   }
+
+  /** Test helper: every stored row, in every school. */
+  all(): readonly T[] {
+    return [...this.rows.values()];
+  }
+
+  /** Test helper: removes a row whatever its school. */
+  remove(id: string): void {
+    this.rows.delete(id);
+  }
+
+  /** Test helper: stores a row as given, even under a new school. */
+  replace(entity: T): void {
+    this.rows.set(entity.id, entity);
+  }
 }
 
 export class InMemorySchoolRepository implements SchoolRepository {
@@ -138,6 +153,16 @@ export class InMemorySchoolRepository implements SchoolRepository {
   save(school: School): Promise<void> {
     this.rows.set(school.id, school);
     return Promise.resolve();
+  }
+
+  /** Test helper: every school. */
+  all(): readonly School[] {
+    return [...this.rows.values()];
+  }
+
+  /** Test helper: removes a school. */
+  remove(id: SchoolId): void {
+    this.rows.delete(id);
   }
 }
 

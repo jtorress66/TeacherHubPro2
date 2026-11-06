@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import { isAdminOf } from '@thp/domain';
 import { createTranslator } from '@thp/i18n';
 import { AppNav, type NavGroup } from '../../../components/app-nav.tsx';
 import { TimeZoneCookie } from '../../../components/browser-helpers.tsx';
@@ -47,6 +48,15 @@ export default async function AppLayout(props: LocaleParams & { readonly childre
       ],
     },
   ];
+  const adminLinks: NavGroup['links'] = [
+    ...(isAdminOf(user, user.schoolId)
+      ? [{ href: `${base}/admin`, label: t('nav.schoolUsers'), icon: 'admin' as const }]
+      : []),
+    ...(user.role === 'super_admin'
+      ? [{ href: `${base}/super-admin`, label: t('nav.superAdmin'), icon: 'superAdmin' as const }]
+      : []),
+  ];
+  if (adminLinks.length > 0) groups.push({ title: t('nav.groupAdmin'), links: adminLinks });
 
   return (
     <div className="app">

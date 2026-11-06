@@ -85,6 +85,9 @@ services:
         sync: false
       - key: MAIL_FROM # e.g. TeacherHubPro <hello@teacherhubpro.com>, on a domain verified in Resend
         sync: false
+      # Turns on /setup for the first super admin; remove it once you are set up.
+      - key: SUPER_ADMIN_SETUP_KEY
+        sync: false
 
   - type: worker
     name: teacherhubpro-worker

@@ -21,6 +21,13 @@ export interface MailTemplates {
     readonly daysLeft: number;
     readonly billingUrl: string;
   }): MailContent;
+  /** A one-time link to choose a password: for a new account, or a reset. */
+  setPassword(input: {
+    readonly language: Language;
+    readonly name: string;
+    readonly url: string;
+    readonly purpose: 'welcome' | 'reset';
+  }): MailContent;
   /** The teacher's approved weekly update, as they wrote it. */
   weeklyUpdate(input: {
     readonly language: Language;

@@ -325,6 +325,21 @@ Added at the teacher's request, between steps 14 and 15 (not in the old app).
 - School admin: list users and change roles. First super admin setup page.
 - Super admin: overview, schools (create, edit, delete, classes), users (create, edit, delete, reset password, bulk), bulk import of teachers and students.
 - Old files: `server.py` (`/admin` and `/setup` ~4060–4200, `/super-admin` ~4200–4700), `frontend/src/pages/AdminPanel.js`, `SetupAdmin.js`.
+- **Decided for the rebuild:**
+  - **School admin** (`/app/admin`): their own school's users with class counts; roles teacher ↔ school admin (never their own, never a super admin); send a set-password link; hand one teacher's classes to another. A super admin can do the same for any school.
+  - **Super admin** (`/app/super-admin`): overview (schools, teachers, admins, classes, students, plans; newest users; schools with counts); schools (create, edit details, delete only when empty, classes, users); users across schools (search, filter, create, edit name/email/role/school, delete, send a password link); bulk import of teachers (CSV: Name, Email, Role; en/es headers) and of students into any school's class (the roster format and rules).
+  - **Passwords:** emailed one-time set-password links for new accounts and resets (3 days, stored as hashes, the secret in the link's `#hash`); **Forgot password?** on the log-in page answers the same whether or not the email has an account.
+  - **First super admin:** `/setup` with `SUPER_ADMIN_SETUP_KEY` (a server secret), only while there is no super admin; off when the key is unset.
+  - **New schools** start the same 7-day trial as sign-up when their first account is added; that account owns the subscription.
+  - **Teachers with classes:** hand their classes over first; until then they cannot be deleted or moved to another school. Moving takes their own plans, folders, templates, presentations and AI writing with them; deleting removes those, and is refused while school records name them.
+- **Fixed from the old app:**
+  - The setup key was written in the code: a server secret.
+  - School "admins" could list and change every user of every school: only their own school.
+  - Temporary passwords were shown to the admin and returned by the API (also for bulk imports): emailed one-time links.
+  - Bulk imports created accounts one by one with raw error text and "Welcome…" passwords: the file is checked first, every bad row is listed with its line, then accounts are created and emailed.
+  - Users could be deleted or moved with their classes, orphaning school data: hand classes over first.
+  - A school "branding" block nothing used: dropped.
+  - The student import silently overwrote students with the same number: the roster rule reports the row.
 
 ## Step 18 — Marketing site and chatbot
 

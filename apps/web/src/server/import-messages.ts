@@ -9,6 +9,9 @@ const columnLabels: Readonly<Record<string, MessageKey>> = {
   studentNumber: 'students.studentNumber',
   parentEmail: 'students.parentEmail',
   accommodations: 'students.accommodations',
+  name: 'admin.name',
+  email: 'admin.email',
+  role: 'admin.role',
 };
 
 /** An import failure as messages: one per bad row, or a single message for the whole file. */

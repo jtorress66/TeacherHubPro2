@@ -312,6 +312,17 @@ export interface StudentInsightsTable {
   generated_at: Date;
 }
 
+export interface PasswordTokensTable {
+  id: string;
+  user_id: string;
+  school_id: string;
+  token_hash: string;
+  purpose: string;
+  issued_at: Date;
+  expires_at: Date;
+  used_at: Date | null;
+}
+
 export interface PrepBatchesTable {
   id: string;
   school_id: string;
@@ -504,6 +515,7 @@ export interface Database {
   student_notes: StudentNotesTable;
   student_insights: StudentInsightsTable;
   prep_batches: PrepBatchesTable;
+  password_tokens: PasswordTokensTable;
   attendance_sessions: AttendanceSessionsTable;
   attendance_entries: AttendanceEntriesTable;
   games: GamesTable;

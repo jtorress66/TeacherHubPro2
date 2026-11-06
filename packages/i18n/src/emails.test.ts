@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { portalLinkEmail, trialReminderEmail, weeklyUpdateEmail } from './emails.ts';
+import {
+  portalLinkEmail,
+  setPasswordEmail,
+  trialReminderEmail,
+  weeklyUpdateEmail,
+} from './emails.ts';
 
 describe('portalLinkEmail', () => {
   const input = {
@@ -75,5 +80,23 @@ describe('weeklyUpdateEmail', () => {
     expect(weeklyUpdateEmail({ ...input, language: 'en' }).text).toMatch(
       /Sent by a teacher at Escuela Luna/u,
     );
+  });
+});
+
+describe('setPasswordEmail', () => {
+  const url = 'https://app.test/es/set-password#secret';
+
+  it('welcomes a new account with a link to choose a password', () => {
+    const mail = setPasswordEmail({ language: 'es', name: 'Ana', url, purpose: 'welcome' });
+    expect(mail.subject).toBe('Su cuenta de TeacherHubPro');
+    expect(mail.text).toContain('Hola, Ana:');
+    expect(mail.html).toContain(`href="${url}"`);
+    expect(mail.text).toMatch(/3 días/u);
+  });
+
+  it('has a reset wording', () => {
+    const mail = setPasswordEmail({ language: 'en', name: 'Ana', url, purpose: 'reset' });
+    expect(mail.subject).toBe('Reset your TeacherHubPro password');
+    expect(mail.text).toMatch(/ignore this email/u);
   });
 });

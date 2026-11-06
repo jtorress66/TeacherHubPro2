@@ -37,6 +37,7 @@ export default defineConfig({
         LOCAL_GOOGLE_SECRET: 'e2e-local-google-secret',
         REALTIME_URL: `http://localhost:${String(realtimePort)}`,
         REALTIME_TICKET_SECRET: ticketSecret,
+        SUPER_ADMIN_SETUP_KEY: 'e2e-super-admin-setup-key',
       },
     },
     {

@@ -33,6 +33,8 @@ export interface WebConfig {
   /** Live games: the realtime server's address, and the secret both use to sign tickets. */
   readonly realtime: { readonly url: string; readonly ticketSecret: string };
   readonly mail: MailConfig;
+  /** Turns on the first super admin setup page; null keeps it off. */
+  readonly superAdminSetupKey: string | null;
 }
 
 /**
@@ -163,6 +165,12 @@ function classroomFrom(
  * Validates the web app's environment once, at the edge. Every secret is required (there are no
  * defaults), APP_ENV defaults to production, and the local stand-ins are refused in production.
  */
+/** The first super admin setup key; blank means the setup page is off. */
+const setupKeyFrom = (env: Readonly<Record<string, string | undefined>>): string | null => {
+  const key = env.SUPER_ADMIN_SETUP_KEY?.trim() ?? '';
+  return key === '' ? null : key;
+};
+
 export function parseWebConfig(
   env: Readonly<Record<string, string | undefined>>,
 ): Result<WebConfig, string> {
@@ -205,5 +213,6 @@ export function parseWebConfig(
       ticketSecret: c.REALTIME_TICKET_SECRET,
     },
     mail: mail.value,
+    superAdminSetupKey: setupKeyFrom(env),
   });
 }

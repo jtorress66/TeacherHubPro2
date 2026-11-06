@@ -46,6 +46,7 @@ export {
 } from './students/student-use-cases.ts';
 export {
   ImportStudents,
+  RosterImporter,
   type ImportError,
   type ImportStudentsDeps,
   type RowError,
@@ -384,3 +385,35 @@ export {
 export { makePrepRunners, type PrepItemRunner, type PrepRunners } from './prep/prep-runners.ts';
 export { PublishPrepBatch } from './prep/publish-prep.ts';
 export { SendPresentationToClassroom } from './presentations/presentation-to-classroom.ts';
+export { adminSchool, requireSuperAdmin } from './admin/admin-access.ts';
+export {
+  PasswordLinks,
+  RequestPasswordReset,
+  SendPasswordLink,
+  SetPassword,
+  SetUpFirstSuperAdmin,
+} from './admin/passwords.ts';
+export {
+  ChangeUserRole,
+  ListSchoolUsers,
+  TransferClasses,
+  type SchoolUserRow,
+} from './admin/school-admin.ts';
+export {
+  CreateSchool,
+  CreateUser,
+  DeleteSchool,
+  DeleteUser,
+  GetPlatformOverview,
+  ListAllUsers,
+  ListSchoolClasses,
+  ListSchools,
+  UpdateSchool,
+  UpdateUser,
+  maxListedUsers,
+  type NewUserDetails,
+  type PlatformOverview,
+  type SchoolRow,
+  type UserRow,
+} from './admin/super-admin.ts';
+export { ImportSchoolStudents, ImportTeachers, maxTeacherRows } from './admin/imports.ts';
