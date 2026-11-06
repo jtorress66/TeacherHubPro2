@@ -106,6 +106,25 @@ import {
   ShareAssignment,
   PostWordToClassroom,
   SendPresentationToClassroom,
+  SetUpFirstSuperAdmin,
+  RequestPasswordReset,
+  SetPassword,
+  SendPasswordLink,
+  ListSchoolUsers,
+  ChangeUserRole,
+  TransferClasses,
+  GetPlatformOverview,
+  ListSchools,
+  CreateSchool,
+  UpdateSchool,
+  DeleteSchool,
+  ListSchoolClasses,
+  ListAllUsers,
+  CreateUser,
+  UpdateUser,
+  DeleteUser,
+  ImportTeachers,
+  ImportSchoolStudents,
   GetCommandCenter,
   GetStudent360,
   AddStudentNote,
@@ -230,6 +249,7 @@ import {
   portalLinkEmail,
   trialReminderEmail,
   weeklyUpdateEmail,
+  setPasswordEmail,
 } from '@thp/i18n';
 import { defaultGameModes, localDateIn, type LocalDate } from '@thp/domain';
 
@@ -306,6 +326,27 @@ export interface AppContainer {
   readonly shareAssignment: ShareAssignment;
   readonly postWordToClassroom: PostWordToClassroom;
   readonly sendPresentationToClassroom: SendPresentationToClassroom;
+  /** Whether the first super admin setup page is on (a key is set). */
+  readonly superAdminSetupAvailable: boolean;
+  readonly setUpFirstSuperAdmin: SetUpFirstSuperAdmin;
+  readonly requestPasswordReset: RequestPasswordReset;
+  readonly setPassword: SetPassword;
+  readonly sendPasswordLink: SendPasswordLink;
+  readonly listSchoolUsers: ListSchoolUsers;
+  readonly changeUserRole: ChangeUserRole;
+  readonly transferClasses: TransferClasses;
+  readonly getPlatformOverview: GetPlatformOverview;
+  readonly listSchools: ListSchools;
+  readonly createSchool: CreateSchool;
+  readonly updateSchool: UpdateSchool;
+  readonly deleteSchool: DeleteSchool;
+  readonly listSchoolClasses: ListSchoolClasses;
+  readonly listAllUsers: ListAllUsers;
+  readonly createUser: CreateUser;
+  readonly updateUser: UpdateUser;
+  readonly deleteUser: DeleteUser;
+  readonly importTeachers: ImportTeachers;
+  readonly importSchoolStudents: ImportSchoolStudents;
   readonly getCommandCenter: GetCommandCenter;
   readonly getStudent360: GetStudent360;
   readonly addStudentNote: AddStudentNote;
@@ -521,6 +562,7 @@ export function createAppContainer(
     ticketSigner: new HmacTicketSigner(config.realtime.ticketSecret),
     gameModes: defaultGameModes,
     appUrl: config.appUrl,
+    setupKey: config.superAdminSetupKey,
     mailer:
       config.mail.provider === 'resend'
         ? loggedMailer(
@@ -532,6 +574,7 @@ export function createAppContainer(
       portalLink: portalLinkEmail,
       trialReminder: trialReminderEmail,
       weeklyUpdate: weeklyUpdateEmail,
+      setPassword: setPasswordEmail,
     },
   };
 
@@ -606,6 +649,26 @@ export function createAppContainer(
     shareAssignment: new ShareAssignment(deps),
     postWordToClassroom: new PostWordToClassroom(deps),
     sendPresentationToClassroom: new SendPresentationToClassroom(deps),
+    superAdminSetupAvailable: config.superAdminSetupKey !== null,
+    setUpFirstSuperAdmin: new SetUpFirstSuperAdmin(deps),
+    requestPasswordReset: new RequestPasswordReset(deps),
+    setPassword: new SetPassword(deps),
+    sendPasswordLink: new SendPasswordLink(deps),
+    listSchoolUsers: new ListSchoolUsers(deps),
+    changeUserRole: new ChangeUserRole(deps),
+    transferClasses: new TransferClasses(deps),
+    getPlatformOverview: new GetPlatformOverview(deps),
+    listSchools: new ListSchools(deps),
+    createSchool: new CreateSchool(deps),
+    updateSchool: new UpdateSchool(deps),
+    deleteSchool: new DeleteSchool(deps),
+    listSchoolClasses: new ListSchoolClasses(deps),
+    listAllUsers: new ListAllUsers(deps),
+    createUser: new CreateUser(deps),
+    updateUser: new UpdateUser(deps),
+    deleteUser: new DeleteUser(deps),
+    importTeachers: new ImportTeachers(deps),
+    importSchoolStudents: new ImportSchoolStudents(deps),
     getCommandCenter: new GetCommandCenter(deps),
     getStudent360: new GetStudent360(deps),
     addStudentNote: new AddStudentNote(deps),

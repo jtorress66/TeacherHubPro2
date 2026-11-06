@@ -21,6 +21,7 @@ const config: WebConfig = {
     ticketSecret: 'realtime-ticket-secret-for-int-tests',
   },
   mail: { provider: 'local', delivers: true },
+  superAdminSetupKey: null,
 };
 const db = createDatabase(config.databaseUrl);
 const app = createAppContainer(config, db);

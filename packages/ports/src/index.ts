@@ -35,3 +35,4 @@ export type * from './repositories/scoped-repository.ts';
 export type * from './repositories/repositories.ts';
 export type { SessionRepository } from './accounts/session-repository.ts';
 export type * from './accounts/password-credential-repository.ts';
+export type * from './admin/admin-directories.ts';

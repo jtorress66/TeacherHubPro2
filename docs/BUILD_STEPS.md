@@ -2,7 +2,7 @@
 
 Place this file at `docs/BUILD_STEPS.md`. Work on one step at a time. Tick a step only when its gate passes and the Definition of Done in `CLAUDE.md` is met. For each step, read its section in `docs/FEATURES.md` first.
 
-**Current step:** 17
+**Current step:** 18
 
 | # | Step | Scope | Gate (must pass before next step) | Done |
 | --- | --- | --- | --- | --- |
@@ -22,7 +22,7 @@ Place this file at `docs/BUILD_STEPS.md`. Work on one step at a time. Tick a ste
 | 14 | Parent and homeschool portals, email | Portal links, homeschool portal and reports, emailing portal links (Resend), trial reminder emails | E2E: teacher emails a portal link → parent sees only confirmed grades and attendance | [x] |
 | 15 | Command Center and Student 360 | Daily dashboard, at-risk detection, to-grade list, recommendations, Student 360 timeline, private notes, AI insight | At-risk rules match `docs/FEATURES.md` examples; E2E: dashboard shows today's classes and an at-risk student | [x] |
 | 16 | Prep Agent | Weekly prep batch (plans → materials → quiz → parent email), progress, preview, edit, approve and publish | Evals meet thresholds; E2E: prompt → batch ready → teacher approves → plans and quiz saved | [x] |
-| 17 | Admin and super admin | School admin (users, roles), super admin (schools, users, password reset, bulk import of teachers and students, overview) | E2E: super admin imports a school's teachers and students; a school admin cannot see another school | [ ] |
+| 17 | Admin and super admin | School admin (users, roles), super admin (schools, users, password reset, bulk import of teachers and students, overview) | E2E: super admin imports a school's teachers and students; a school admin cannot see another school | [x] |
 | 18 | Marketing site and chatbot | Landing, features and use-case pages, pricing from the plan catalog, legal and trust pages, contact, lead chatbot, leads dashboard, sitemap and robots | Lighthouse SEO ≥ 90 on landing; chatbot evals pass (real prices, says it is an AI when asked) | [ ] |
 | 19 | Data migration | Importer from the old MongoDB export and uploaded files into Postgres and file storage; dry run report; old shared links keep working; bcrypt password hashes accepted and rehashed on login | Dry run on a copy of production data: every count matches, spot checks pass, a migrated teacher logs in with their old password | [ ] |
 | 20 | Hardening for beta | Security review, privacy review (FERPA/COPPA), rate limits, monitoring, audit log, eval thresholds guarded | Beta checklist complete | [ ] |
@@ -35,6 +35,7 @@ No paid API calls until launch. Steps that need real AI meet their gate with the
 - `pnpm eval` against real Claude: planner, AI assistant and presentation suites (steps 8–9).
 - Listen with real OpenAI text-to-speech (`TTS_PROVIDER=openai`, `OPENAI_API_KEY`) (step 9).
 - Google Classroom with a real Google Cloud project: consent screen and verification for the Classroom scopes plus `drive.file` (Google Forms quizzes), the Google Forms and Google Drive APIs enabled, teachers added as test users while the app is in Testing mode, `CLASSROOM_PROVIDER=google`, `TOKEN_ENCRYPTION_KEY` (step 10); post a Word document to a course and open the student copy, and make one Forms quiz from an assignment. Enable the Google Slides API and send a presentation to a course; students see it read-only.
+- First super admin on the live site (step 17): set `SUPER_ADMIN_SETUP_KEY` on the web service, open `/en/setup`, then remove the key; send yourself a password reset and import a test teacher.
 - The question extractor and grader evals against real Claude (step 10).
 - The game writer evals against real Claude (step 11).
 - The path writer evals against real Claude (step 13).

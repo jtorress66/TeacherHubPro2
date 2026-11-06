@@ -2,6 +2,7 @@ import {
   createStudent,
   err,
   ok,
+  type Class,
   type ClassId,
   type Result,
   type Student,
@@ -12,7 +13,8 @@ import {
 import type { ClassRepository, IdGenerator, StudentRepository } from '@thp/ports';
 import { findManagedClass } from '../classes/managed-class.ts';
 import { fail, type UseCaseError } from '../errors.ts';
-import { parseRosterCsv, type RosterCsvError, type RosterRow } from './roster-csv.ts';
+import type { CsvTableError } from '../shared/csv-table.ts';
+import { parseRosterCsv, type RosterRow } from './roster-csv.ts';
 
 export interface RowError {
   readonly line: number;
@@ -22,7 +24,7 @@ export interface RowError {
 
 export type ImportError =
   | UseCaseError
-  | RosterCsvError
+  | CsvTableError<string>
   | { readonly code: 'invalid_rows'; readonly rows: readonly RowError[] };
 
 export interface ImportStudentsDeps {
@@ -36,7 +38,11 @@ export interface ImportStudentsDeps {
  * imported and every bad row is reported with its line, so the teacher can fix the file.
  */
 export class ImportStudents {
-  constructor(private readonly deps: ImportStudentsDeps) {}
+  private readonly roster: RosterImporter;
+
+  constructor(private readonly deps: ImportStudentsDeps) {
+    this.roster = new RosterImporter(deps);
+  }
 
   async execute(input: {
     actor: User;
@@ -45,16 +51,25 @@ export class ImportStudents {
   }): Promise<Result<{ imported: number }, ImportError>> {
     const cls = await findManagedClass(this.deps.classes, input.actor, input.classId);
     if (!cls.ok) return cls;
-    if (cls.value.archivedAt !== null) return fail('class_archived');
-    const rows = parseRosterCsv(input.csv);
+    return this.roster.importInto(cls.value, input.csv);
+  }
+}
+
+/** Imports a roster file into a class the caller has already checked access to. */
+export class RosterImporter {
+  constructor(private readonly deps: Omit<ImportStudentsDeps, 'classes'>) {}
+
+  async importInto(cls: Class, csv: string): Promise<Result<{ imported: number }, ImportError>> {
+    if (cls.archivedAt !== null) return fail('class_archived');
+    const rows = parseRosterCsv(csv);
     if (!rows.ok) return rows;
 
-    const existing = await this.deps.students.listByClass(cls.value.schoolId, cls.value.id);
+    const existing = await this.deps.students.listByClass(cls.schoolId, cls.id);
     const taken = new Set(existing.flatMap((student) => student.studentNumber ?? []));
     const students: Student[] = [];
     const errors: RowError[] = [];
     for (const row of rows.value) {
-      const student = this.toStudent(row, cls.value.schoolId, cls.value.id);
+      const student = this.toStudent(row, cls.schoolId, cls.id);
       if (!student.ok) {
         errors.push({ line: row.line, ...student.error });
         continue;

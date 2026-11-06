@@ -53,8 +53,16 @@ describe('parseWebConfig', () => {
           ticketSecret: local.REALTIME_TICKET_SECRET,
         },
         mail: { provider: 'local', delivers: true },
+        superAdminSetupKey: null,
       },
     });
+  });
+
+  it('turns on the first super admin setup only when a key is set', () => {
+    const key = parseWebConfig({ ...local, SUPER_ADMIN_SETUP_KEY: '  a-long-secret  ' });
+    expect(key.ok && key.value.superAdminSetupKey).toBe('a-long-secret');
+    const blank = parseWebConfig({ ...local, SUPER_ADMIN_SETUP_KEY: ' ' });
+    expect(blank.ok && blank.value.superAdminSetupKey).toBeNull();
   });
 
   it('sends mail with Resend when set up; without it, production mail reaches no one', () => {
@@ -136,6 +144,7 @@ describe('parseWebConfig', () => {
           ticketSecret: production.REALTIME_TICKET_SECRET,
         },
         mail: { provider: 'local', delivers: false },
+        superAdminSetupKey: null,
       },
     });
   });

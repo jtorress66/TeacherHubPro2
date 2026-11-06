@@ -32,7 +32,13 @@ export type ApplicationErrorCode =
   | 'name_taken'
   | 'email_failed'
   | 'google_reconnect'
-  | 'google_api_disabled';
+  | 'google_api_disabled'
+  | 'own_account'
+  | 'has_classes'
+  | 'in_use'
+  | 'invalid_link'
+  | 'setup_unavailable'
+  | 'already_set_up';
 
 /**
  * What a use case can report: a broken validation rule (with its field) or an application-level

@@ -19,7 +19,12 @@ import {
   SystemClock,
   UuidIdGenerator,
 } from '@thp/adapters';
-import { portalLinkEmail, trialReminderEmail, weeklyUpdateEmail } from '@thp/i18n';
+import {
+  portalLinkEmail,
+  setPasswordEmail,
+  trialReminderEmail,
+  weeklyUpdateEmail,
+} from '@thp/i18n';
 import {
   ContentWriter,
   LessonPlanner,
@@ -76,6 +81,7 @@ export const mailTemplates: MailTemplates = {
   portalLink: portalLinkEmail,
   trialReminder: trialReminderEmail,
   weeklyUpdate: weeklyUpdateEmail,
+  setPassword: setPasswordEmail,
 };
 
 function mailerFor(config: MailConfig, db: ReturnType<typeof createDatabase>): Mailer {

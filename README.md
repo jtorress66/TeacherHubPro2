@@ -91,6 +91,14 @@ Samples: `apps/web/public/samples/students-en.csv` and `students-es.csv`. At mos
 
 The home page (`/app`) is the Command Center: today's classes with their attendance, what is left to grade, students who may need help (at-risk score from the average, missing work, absences and tardies in the last 30 days), suggestions and lessons in the next 7 days. Each student has a Student 360 page (click their name on the roster or in the at-risk list) with their average, attendance, missing work, a timeline, private notes only you see, and an on-demand AI insight (a draft sent numbers only, never a name or notes).
 
+## Admin and super admin
+
+**School users** (menu, for school admins) lists everyone in the school: change roles (teacher or school admin), send a set-password link, and hand one teacher's classes to another. **Super admin** (for super admins) has an overview of the platform, schools (create, edit, delete when empty, see their classes and users), users across schools (search, create, edit, move to another school, delete), and bulk imports: teachers from a CSV (Name, Email, Role) into a school, and students into any school's class (the class roster format). Samples are in `apps/web/public/samples/teachers-*.csv`.
+
+Nobody ever sees another person's password: new accounts and resets get an emailed one-time link (`/set-password`, the secret in the link's `#hash`, stored only as a hash, valid 3 days). **Forgot password?** on the log-in page sends the same link and never reveals whether an email has an account. A teacher who still teaches classes cannot be deleted or moved to another school until their classes are handed over; deleting removes their own plans, presentations and AI writing, and is refused while school records name them (grades they gave, a subscription they own).
+
+**First super admin:** set `SUPER_ADMIN_SETUP_KEY` on the web service, sign up, open `/en/setup`, enter your email and the key. It works only while there is no super admin; then remove the key.
+
 ## Prep Agent
 
 **Prep Agent** in the menu plans a week for one class from one sentence, for example "Prep next week for Unit 3 History (Civil War)". The worker drafts, one AI job per item: the weekly plan (with Common Core codes for the class's subject and grade, and last week's plan as context), slides and a worksheet for each lesson, a Friday quiz and a parent email. The page shows progress while it works; a stalled batch can be resumed. When it is ready (a badge on the menu link and a card on the Command Center), tick the drafts to keep, preview each one, edit the parent email and press **Approve & Publish**: the plan goes to Lesson plans, the slides to Presentations, the worksheets to the AI assistant, the quiz to the gradebook (due Friday, in the category you chose) and the email to each family address on the roster. Nothing is saved or sent before that, and the AI is never sent student data.

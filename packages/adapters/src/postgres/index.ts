@@ -5,6 +5,10 @@ import type {
   FormsExportRepository,
   StudentInsightRepository,
   PrepBatchRepository,
+  PasswordTokenRepository,
+  PlatformStats,
+  SchoolDirectory,
+  UserDirectory,
   StudentNoteRepository,
   StudentLinkRepository,
   AiGenerationRepository,
@@ -73,6 +77,12 @@ import {
 } from './repositories/postgres-student-360-repositories.ts';
 import { PostgresPrepBatchRepository } from './repositories/postgres-prep-batch-repository.ts';
 import {
+  PostgresPasswordTokenRepository,
+  PostgresPlatformStats,
+  PostgresSchoolDirectory,
+  PostgresUserDirectory,
+} from './repositories/postgres-admin-repositories.ts';
+import {
   PostgresAiGenerationRepository,
   PostgresPresentationRepository,
   PostgresSubPacketRepository,
@@ -113,6 +123,10 @@ export interface PostgresRepositories {
   readonly studentNotes: StudentNoteRepository;
   readonly studentInsights: StudentInsightRepository;
   readonly prepBatches: PrepBatchRepository;
+  readonly schoolDirectory: SchoolDirectory;
+  readonly userDirectory: UserDirectory;
+  readonly platformStats: PlatformStats;
+  readonly passwordTokens: PasswordTokenRepository;
   readonly gradeCategories: GradeCategoryRepository;
   readonly assignments: AssignmentRepository;
   readonly grades: GradeRepository;
@@ -154,6 +168,10 @@ export function createPostgresRepositories(db: Kysely<Database>): PostgresReposi
     studentNotes: new PostgresStudentNoteRepository(db),
     studentInsights: new PostgresStudentInsightRepository(db),
     prepBatches: new PostgresPrepBatchRepository(db),
+    schoolDirectory: new PostgresSchoolDirectory(db),
+    userDirectory: new PostgresUserDirectory(db),
+    platformStats: new PostgresPlatformStats(db),
+    passwordTokens: new PostgresPasswordTokenRepository(db),
     gradeCategories: new PostgresGradeCategoryRepository(db),
     assignments: new PostgresAssignmentRepository(db),
     grades: new PostgresGradeRepository(db),
