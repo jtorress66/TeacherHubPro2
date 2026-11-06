@@ -4,6 +4,9 @@ import { createTranslator, type Locale } from '@thp/i18n';
 import { resetSuperAdmins } from './database.ts';
 import { signUp, uniqueEmail } from './helpers.ts';
 
+// The hero drawing fades in; its own test checks the motion, so these checks run with it still.
+test.use({ reducedMotion: 'reduce' });
+
 const axe = async (page: Page) =>
   (await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze()).violations;
 
