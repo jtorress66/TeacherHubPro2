@@ -18,8 +18,8 @@ describe('planErrors', () => {
     [
       { field: 'weeks.0.standards', code: 'not_allowed' },
       'w0.standards',
-      'Use official Common Core codes only, one per line.',
-      'Usa solo códigos oficiales Common Core, uno por línea.',
+      'Only official Common Core codes go here, one per line. Put your school’s own codes (such as Puerto Rico standards) under Standards by category.',
+      'Aquí van solo códigos oficiales Common Core, uno por línea. Escribe los códigos de tu escuela (como los estándares de Puerto Rico) en Estándares por categoría.',
     ],
     [
       { field: 'weeks.0.skills', code: 'out_of_range' },

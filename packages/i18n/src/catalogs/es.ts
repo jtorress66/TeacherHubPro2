@@ -878,7 +878,10 @@ export const es: Messages = {
     errors: {
       notMonday: 'Elige un lunes.',
       weekOrder: 'La semana 2 debe empezar después de la semana 1.',
-      standards: 'Usa solo códigos oficiales Common Core, uno por línea.',
+      standards:
+        'Aquí van solo códigos oficiales Common Core, uno por línea. Escribe los códigos de tu escuela (como los estándares de Puerto Rico) en Estándares por categoría.',
+      checkFields:
+        'El plan no se guardó. Corrige los campos marcados abajo; todo lo que escribiste sigue aquí.',
       skills: 'Hasta 4 destrezas.',
       weeks: 'Un plan tiene una o dos semanas.',
       typedCodes: 'Separa los códigos con comas; un código no lleva espacios.',
