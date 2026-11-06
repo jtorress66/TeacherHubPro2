@@ -39,6 +39,8 @@ import { assignmentRepositoryContract } from '../contracts/assignments.contract.
 import { student360RepositoryContract } from '../contracts/student360.contract.ts';
 import { prepBatchRepositoryContract } from '../contracts/prep.contract.ts';
 import { adminContract } from '../contracts/admin.contract.ts';
+import { marketingContract } from '../contracts/marketing.contract.ts';
+import { InMemoryChat, InMemoryLeadRepository } from './marketing.ts';
 import {
   InMemoryPasswordTokenRepository,
   InMemoryPlatformStats,
@@ -328,4 +330,9 @@ adminContract('InMemory', () => {
     platformStats: new InMemoryPlatformStats(stores),
     passwordTokens: new InMemoryPasswordTokenRepository(),
   };
+});
+
+marketingContract('InMemory', () => {
+  const chat = new InMemoryChat();
+  return { leads: new InMemoryLeadRepository(), chatSessions: chat, chatTurns: chat };
 });

@@ -351,6 +351,21 @@ Added at the teacher's request, between steps 14 and 15 (not in the old app).
 - Images: the old app loaded its logo and feature images from Emergent's servers. Use the copies saved into `apps/web/public/images/`.
 - Old files: `frontend/src/pages/Landing.js`, `pages/features/`, `pages/use-cases/`, `components/marketing/`, the legal pages, `routes/chatbot.py`, `components/ChatbotWidget.jsx`, `pages/LeadsDashboard.js`.
 
+- **Decided for the rebuild:**
+  - Legal and trust: the core pages only, with true claims (privacy, terms, cookies, accessibility, acceptable use, FERPA, COPPA, AI governance, trust center; a DPA on request). No SOC 2, SLA or formal policy pages. The user reviews them before publishing.
+  - Images: our own line drawings; nothing loaded from other sites.
+  - Claims: only features that exist; no testimonials or usage numbers until real ones are provided.
+  - Chatbot "Ed": an AI assistant that says so when asked; facts and prices from the plan catalog; replies checked for invented prices and plan names; answered by the worker; limits per chat and per visitor; chats deleted after 30 days.
+  - Leads: from the chat's form and the contact form; scored high/medium/low; super admins only; high ones emailed to `LEADS_NOTIFY_EMAIL`.
+  - SEO: per-page title, description, canonical, en/es alternates and Open Graph; `sitemap.xml` and `robots.txt`.
+- **Fixed from the old app:**
+  - The bot was told to hide that it is an AI: it says it is.
+  - Prices were hard-coded in the prompt with a fallback: they come from the plan catalog and replies are checked.
+  - Unbacked claims ("10+ hours a week") and unbuilt plan features (SSO, API access, district analytics) are gone.
+  - The chat ran synchronously in the request: a worker queue polled by the widget.
+  - Images came from Emergent's servers: our own drawings.
+  - The leads list was readable by any signed-in user: super admins only.
+
 ## Step 19 — Data migration
 
 - Source: a `mongodump` (or JSON export) of the production database and a copy of the uploaded files. Collections: users, user_sessions, schools, classes, students, semesters, lesson_plans, plan_folders, ai_templates, attendance_sessions, attendance_records, grade_categories, assignments, grades, ai_assignments, ai_submissions, grading_jobs, generation_jobs, ai_generations, ai_chat_messages, presentations, educational_games, game_scores, game_progress, game_regenerations, practice_assignments, practice_sessions, practice_results, adaptive_learning_paths, adaptive_learning_progress, student_learning_tokens, portal_tokens, homeschool_portal_tokens, student_notes, student_insights, sub_packets, subscriptions, trial_reminders, leads, chatbot_sessions.

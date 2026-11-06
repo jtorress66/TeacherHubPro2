@@ -34,3 +34,6 @@ export type StudentLinkId = Id<'StudentLink'>;
 export type StudentNoteId = Id<'StudentNote'>;
 export type PrepBatchId = Id<'PrepBatch'>;
 export type PasswordTokenId = Id<'PasswordToken'>;
+export type LeadId = Id<'Lead'>;
+export type ChatSessionId = Id<'ChatSession'>;
+export type ChatTurnId = Id<'ChatTurn'>;

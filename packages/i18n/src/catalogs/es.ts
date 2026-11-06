@@ -1,6 +1,8 @@
 import type { Messages } from '../messages.ts';
+import { marketingEs } from './marketing-es.ts';
 
 export const es: Messages = {
+  ...marketingEs,
   app: {
     name: 'TeacherHubPro',
   },
@@ -1384,6 +1386,14 @@ export const es: Messages = {
       'Su prueba gratuita termina hoy. Elija un plan para conservar sus clases, su registro de calificaciones y las herramientas de IA sin interrupción.',
     trialButton: 'Elegir un plan',
     signature: 'El equipo de TeacherHubPro',
+    leadSubject: 'Nuevo contacto {score}: {name}',
+    leadName: 'Nombre',
+    leadEmail: 'Correo',
+    leadOrganization: 'Organización',
+    leadRole: 'Rol',
+    leadPhone: 'Teléfono',
+    leadInterest: 'Interés',
+    leadSource: 'Origen',
     welcomeSubject: 'Su cuenta de TeacherHubPro',
     welcomeBody:
       'Se creó una cuenta para usted en TeacherHubPro. Elija su contraseña para comenzar; también puede entrar con Google usando este correo.',
@@ -1619,6 +1629,7 @@ export const es: Messages = {
     in_use: 'Todavía está en uso: tiene personas, clases o registros.',
     invalid_link: 'Este enlace venció o ya se usó. Pida uno nuevo.',
     setup_unavailable: 'La configuración no está disponible en este servidor.',
+    rate_limited: 'Demasiados mensajes. Espere un poco e inténtelo de nuevo.',
     already_set_up: 'Ya existe un superadministrador, así que la configuración está desactivada.',
     has_submissions:
       'Los estudiantes ya respondieron esta asignación, así que sus preguntas no pueden cambiar.',

@@ -5,7 +5,7 @@ import { LocalLlmClient } from '@thp/adapters';
 import { unwrap } from '@thp/testing';
 import type { JobRun } from '@thp/application';
 import { localPlannerReply } from './local-planner-reply.ts';
-import { runWorkerLoop } from './worker-loop.ts';
+import { chatFirst, runWorkerLoop } from './worker-loop.ts';
 
 describe('runWorkerLoop', () => {
   const loop = (runs: (JobRun | Error)[], ticks = runs.length) => {
@@ -68,6 +68,33 @@ describe('runWorkerLoop', () => {
       'sleep 1000',
       'completed',
     ]);
+  });
+});
+
+describe('chatFirst', () => {
+  it('answers a waiting website chat before any job, and runs a job only when no chat waits', async () => {
+    const calls: string[] = [];
+    const run = chatFirst(
+      () => {
+        calls.push('chat');
+        return Promise.resolve(calls.length === 1 ? 'answered' : 'idle');
+      },
+      () => {
+        calls.push('job');
+        return Promise.resolve<JobRun>('completed');
+      },
+    );
+    expect(await run()).toBe('completed');
+    expect(await run()).toBe('completed');
+    expect(calls).toEqual(['chat', 'chat', 'job']);
+  });
+
+  it('reports a failed chat as a failed run', async () => {
+    const run = chatFirst(
+      () => Promise.resolve('failed'),
+      () => Promise.resolve<JobRun>('idle'),
+    );
+    expect(await run()).toBe('failed');
   });
 });
 

@@ -7,6 +7,7 @@ import type {
   PathMetric,
   InsightMetric,
   QuizMetric,
+  ChatMetric,
   GraderMetric,
   PlanMetric,
   PresentationMetric,
@@ -16,6 +17,7 @@ import { formatReport, type EvalReport } from './evals/eval-report.ts';
 import { runGameEvals } from './evals/game-evals.ts';
 import { runInsightEvals } from './evals/insight-evals.ts';
 import { runQuizEvals } from './evals/quiz-evals.ts';
+import { runChatbotEvals } from './evals/chatbot-evals.ts';
 import { runPathEvals } from './evals/path-evals.ts';
 import { runExtractorEvals, runGraderEvals } from './evals/grading-evals.ts';
 import { runPlannerEvals } from './evals/planner-evals.ts';
@@ -43,6 +45,7 @@ const thresholds = JSON.parse(
   'path-writer': Record<PathMetric, number>;
   'insight-writer': Record<InsightMetric, number>;
   'quiz-writer': Record<QuizMetric, number>;
+  chatbot: Record<ChatMetric, number>;
 };
 
 const llm = new AnthropicLlmClient({
@@ -61,6 +64,7 @@ const suites: readonly [string, () => Promise<EvalReport<string>>][] = [
   ['Path writer evals', () => runPathEvals(llm, thresholds['path-writer'])],
   ['Insight writer evals', () => runInsightEvals(llm, thresholds['insight-writer'])],
   ['Quiz writer evals', () => runQuizEvals(llm, thresholds['quiz-writer'])],
+  ['Chatbot evals', () => runChatbotEvals(llm, thresholds.chatbot)],
 ];
 
 let failed = false;

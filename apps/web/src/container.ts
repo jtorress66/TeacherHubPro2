@@ -106,6 +106,12 @@ import {
   ShareAssignment,
   PostWordToClassroom,
   SendPresentationToClassroom,
+  StartChat,
+  SendChatMessage,
+  GetChat,
+  CaptureLead,
+  ListLeads,
+  UpdateLeadStatus,
   SetUpFirstSuperAdmin,
   RequestPasswordReset,
   SetPassword,
@@ -250,6 +256,7 @@ import {
   trialReminderEmail,
   weeklyUpdateEmail,
   setPasswordEmail,
+  leadNoticeEmail,
 } from '@thp/i18n';
 import { defaultGameModes, localDateIn, type LocalDate } from '@thp/domain';
 
@@ -326,6 +333,12 @@ export interface AppContainer {
   readonly shareAssignment: ShareAssignment;
   readonly postWordToClassroom: PostWordToClassroom;
   readonly sendPresentationToClassroom: SendPresentationToClassroom;
+  readonly startChat: StartChat;
+  readonly sendChatMessage: SendChatMessage;
+  readonly getChat: GetChat;
+  readonly captureLead: CaptureLead;
+  readonly listLeads: ListLeads;
+  readonly updateLeadStatus: UpdateLeadStatus;
   /** Whether the first super admin setup page is on (a key is set). */
   readonly superAdminSetupAvailable: boolean;
   readonly setUpFirstSuperAdmin: SetUpFirstSuperAdmin;
@@ -563,6 +576,7 @@ export function createAppContainer(
     gameModes: defaultGameModes,
     appUrl: config.appUrl,
     setupKey: config.superAdminSetupKey,
+    leadsNotifyEmail: config.leadsNotifyEmail,
     mailer:
       config.mail.provider === 'resend'
         ? loggedMailer(
@@ -575,6 +589,7 @@ export function createAppContainer(
       trialReminder: trialReminderEmail,
       weeklyUpdate: weeklyUpdateEmail,
       setPassword: setPasswordEmail,
+      leadNotice: leadNoticeEmail,
     },
   };
 
@@ -649,6 +664,12 @@ export function createAppContainer(
     shareAssignment: new ShareAssignment(deps),
     postWordToClassroom: new PostWordToClassroom(deps),
     sendPresentationToClassroom: new SendPresentationToClassroom(deps),
+    startChat: new StartChat(deps),
+    sendChatMessage: new SendChatMessage(deps),
+    getChat: new GetChat(deps),
+    captureLead: new CaptureLead(deps),
+    listLeads: new ListLeads(deps),
+    updateLeadStatus: new UpdateLeadStatus(deps),
     superAdminSetupAvailable: config.superAdminSetupKey !== null,
     setUpFirstSuperAdmin: new SetUpFirstSuperAdmin(deps),
     requestPasswordReset: new RequestPasswordReset(deps),

@@ -41,6 +41,7 @@ No paid API calls until launch. Steps that need real AI meet their gate with the
 - The path writer evals against real Claude (step 13).
 - The insight writer evals against real Claude (step 15).
 - The quiz writer evals against real Claude, and one real prep batch end to end (step 16).
+- The chatbot evals against real Claude, and a real chat on the live site; set `LEADS_NOTIFY_EMAIL` on the web service (step 18).
 - Real email with Resend (step 14): verify the sending domain in Resend, then set `MAIL_PROVIDER=resend`, `RESEND_API_KEY` and `MAIL_FROM` on the web and worker services; email a portal link to yourself and check a trial reminder arrives.
 - Prompt caching with real Claude: grade a class of several submissions with open questions and rubrics; the worker log should show `cache read` above 0 from the second submission on.
 

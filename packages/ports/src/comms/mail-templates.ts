@@ -1,4 +1,4 @@
-import type { Language } from '@thp/domain';
+import type { Language, Lead } from '@thp/domain';
 
 export interface MailContent {
   readonly subject: string;
@@ -28,6 +28,8 @@ export interface MailTemplates {
     readonly url: string;
     readonly purpose: 'welcome' | 'reset';
   }): MailContent;
+  /** Tells the team about a high-priority lead from the website. */
+  leadNotice(input: { readonly lead: Lead }): MailContent;
   /** The teacher's approved weekly update, as they wrote it. */
   weeklyUpdate(input: {
     readonly language: Language;

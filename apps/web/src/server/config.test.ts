@@ -54,8 +54,16 @@ describe('parseWebConfig', () => {
         },
         mail: { provider: 'local', delivers: true },
         superAdminSetupKey: null,
+        leadsNotifyEmail: null,
       },
     });
+  });
+
+  it('emails high-priority leads to a valid team address only', () => {
+    const team = parseWebConfig({ ...local, LEADS_NOTIFY_EMAIL: ' team@teacherhubpro.com ' });
+    expect(team.ok && team.value.leadsNotifyEmail).toBe('team@teacherhubpro.com');
+    const bad = parseWebConfig({ ...local, LEADS_NOTIFY_EMAIL: 'not-an-email' });
+    expect(bad.ok && bad.value.leadsNotifyEmail).toBeNull();
   });
 
   it('turns on the first super admin setup only when a key is set', () => {
@@ -145,6 +153,7 @@ describe('parseWebConfig', () => {
         },
         mail: { provider: 'local', delivers: false },
         superAdminSetupKey: null,
+        leadsNotifyEmail: null,
       },
     });
   });

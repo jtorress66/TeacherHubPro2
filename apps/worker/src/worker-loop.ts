@@ -1,4 +1,4 @@
-import type { JobRun } from '@thp/application';
+import type { ChatRun, JobRun } from '@thp/application';
 
 export interface WorkerLoopDeps {
   readonly runNext: () => Promise<JobRun>;
@@ -34,3 +34,12 @@ export async function runWorkerLoop(deps: WorkerLoopDeps): Promise<void> {
     }
   }
 }
+
+/** A website visitor is waiting for each chat reply, so chats go before background jobs. */
+export const chatFirst =
+  (runChat: () => Promise<ChatRun>, runJob: () => Promise<JobRun>) => async (): Promise<JobRun> => {
+    const chat = await runChat();
+    if (chat === 'answered') return 'completed';
+    if (chat === 'failed') return 'failed';
+    return runJob();
+  };

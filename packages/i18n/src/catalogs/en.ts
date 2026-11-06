@@ -1,4 +1,7 @@
+import { marketingEn } from './marketing-en.ts';
+
 export const en = {
+  ...marketingEn,
   app: {
     name: 'TeacherHubPro',
   },
@@ -1371,6 +1374,14 @@ export const en = {
       'Your free trial ends today. Choose a plan to keep your classes, gradebook and AI tools without interruption.',
     trialButton: 'Choose a plan',
     signature: 'The TeacherHubPro team',
+    leadSubject: 'New {score} lead: {name}',
+    leadName: 'Name',
+    leadEmail: 'Email',
+    leadOrganization: 'Organization',
+    leadRole: 'Role',
+    leadPhone: 'Phone',
+    leadInterest: 'Interest',
+    leadSource: 'Source',
     welcomeSubject: 'Your TeacherHubPro account',
     welcomeBody:
       'An account was made for you on TeacherHubPro. Choose your password to start; you can also sign in with Google using this email.',
@@ -1606,6 +1617,7 @@ export const en = {
     in_use: 'This is still in use: people, classes or records belong to it.',
     invalid_link: 'This link has expired or was already used. Ask for a new one.',
     setup_unavailable: 'Setup is not available on this server.',
+    rate_limited: 'Too many messages. Please wait a little and try again.',
     already_set_up: 'A super admin already exists, so setup is turned off.',
     has_submissions:
       'Students have already answered this assignment, so its questions can no longer change.',

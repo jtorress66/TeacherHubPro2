@@ -22,6 +22,7 @@ const config: WebConfig = {
   },
   mail: { provider: 'local', delivers: true },
   superAdminSetupKey: null,
+  leadsNotifyEmail: null,
 };
 const db = createDatabase(config.databaseUrl);
 const app = createAppContainer(config, db);

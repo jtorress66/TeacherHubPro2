@@ -417,3 +417,18 @@ export {
   type UserRow,
 } from './admin/super-admin.ts';
 export { ImportSchoolStudents, ImportTeachers, maxTeacherRows } from './admin/imports.ts';
+export {
+  GetChat,
+  RunNextChatTurn,
+  SendChatMessage,
+  StartChat,
+  SweepOldChats,
+  type ChatRun,
+} from './marketing/chat.ts';
+export {
+  CaptureLead,
+  ListLeads,
+  UpdateLeadStatus,
+  maxListedLeads,
+  type LeadList,
+} from './marketing/leads.ts';

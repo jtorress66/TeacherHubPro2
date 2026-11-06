@@ -88,6 +88,9 @@ services:
       # Turns on /setup for the first super admin; remove it once you are set up.
       - key: SUPER_ADMIN_SETUP_KEY
         sync: false
+      # Where high-priority website leads (schools, districts, demo requests) are emailed.
+      - key: LEADS_NOTIFY_EMAIL
+        sync: false
 
   - type: worker
     name: teacherhubpro-worker

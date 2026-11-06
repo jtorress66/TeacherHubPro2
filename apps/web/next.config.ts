@@ -9,6 +9,9 @@ const config: NextConfig = {
   // ESLint runs once for the whole monorepo (`pnpm lint`).
   eslint: { ignoreDuringBuilds: true },
   poweredByHeader: false,
+  // Titles and descriptions go in the page's <head> for every visitor, not streamed in after the
+  // content, so screen readers and search engines always see them.
+  htmlLimitedBots: /.*/,
 };
 
 export default config;

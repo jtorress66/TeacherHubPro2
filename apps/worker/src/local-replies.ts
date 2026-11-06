@@ -7,6 +7,8 @@ import {
   insightSystemPrompt,
   pathWriterSystemPrompt,
   quizSystemPrompt,
+  chatbotSystemPrompt,
+  asksIfAi,
   slidesSystemPrompt,
 } from '@thp/agents';
 import type { ContentKind } from '@thp/domain';
@@ -105,6 +107,33 @@ function quizReply(request: LlmRequest): string {
         },
   );
   return JSON.stringify({ instructions: 'Answer every question.', questions });
+}
+
+/**
+ * The website chatbot: says it is an AI when asked, and quotes the catalog's prices (read from the
+ * facts in the prompt, so they are always the real ones); otherwise a short pointer.
+ */
+function chatbotReply(request: LlmRequest): string {
+  const prompt = promptOf(request);
+  const spanish = prompt.includes('Reply in Spanish');
+  const message = prompt.slice(prompt.lastIndexOf('Visitor: ') + 'Visitor: '.length);
+  if (asksIfAi(message)) {
+    return spanish
+      ? 'Soy Ed, un asistente de IA de TeacherHubPro. ¿En qué le puedo ayudar?'
+      : "I'm Ed, an AI assistant for TeacherHubPro. How can I help?";
+  }
+  if (/price|cost|how much|precio|cuesta|cuánto/iu.test(message)) {
+    const facts = JSON.parse(/facts[^\n]*\n(\{.*\})\n/u.exec(prompt)?.[1] ?? '{"plans":[]}') as {
+      plans: { id: string; price: number }[];
+    };
+    const price = (id: string) => String(facts.plans.find((p) => p.id === id)?.price ?? '');
+    return spanish
+      ? `El plan Individual mensual cuesta $${price('individual_monthly')} al mes y el anual $${price('individual_yearly')} al año.`
+      : `The Individual monthly plan is $${price('individual_monthly')} a month, or $${price('individual_yearly')} a year.`;
+  }
+  return spanish
+    ? 'TeacherHubPro ayuda a planificar, calificar y compartir el progreso. Vea la página de precios.'
+    : 'TeacherHubPro helps you plan, grade and share progress. See the Pricing page.';
 }
 
 /** Half the points for every open question the grader is asked about. */
@@ -213,6 +242,7 @@ const repliesBySystem: ReadonlyMap<string, (request: LlmRequest) => string> = ne
   [graderSystemPrompt, graderReply],
   [insightSystemPrompt, insightReply],
   [quizSystemPrompt, quizReply],
+  [chatbotSystemPrompt, chatbotReply],
   [gameWriterSystemPrompt, gameReply],
   [pathWriterSystemPrompt, pathReply],
 ]);

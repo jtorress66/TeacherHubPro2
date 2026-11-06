@@ -312,6 +312,45 @@ export interface StudentInsightsTable {
   generated_at: Date;
 }
 
+export interface LeadsTable {
+  id: string;
+  name: string;
+  email: string;
+  organization: string | null;
+  role: string;
+  phone: string | null;
+  interest: string;
+  source: string;
+  message: string | null;
+  locale: string;
+  page: string | null;
+  score: string;
+  status: string;
+  received_at: Date;
+}
+
+export interface ChatSessionsTable {
+  id: string;
+  token_hash: string;
+  visitor_hash: string;
+  role: string;
+  interest: string;
+  locale: string;
+  page: string | null;
+  turns: number;
+  started_at: Date;
+}
+
+export interface ChatTurnsTable {
+  id: string;
+  session_id: string;
+  message: string;
+  reply: string | null;
+  status: string;
+  claimed: Generated<boolean>;
+  sent_at: Date;
+}
+
 export interface PasswordTokensTable {
   id: string;
   user_id: string;
@@ -516,6 +555,9 @@ export interface Database {
   student_insights: StudentInsightsTable;
   prep_batches: PrepBatchesTable;
   password_tokens: PasswordTokensTable;
+  leads: LeadsTable;
+  chat_sessions: ChatSessionsTable;
+  chat_turns: ChatTurnsTable;
   attendance_sessions: AttendanceSessionsTable;
   attendance_entries: AttendanceEntriesTable;
   games: GamesTable;

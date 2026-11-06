@@ -53,5 +53,12 @@
     "count": 1,
     "types": 1,
     "coverage": 0.9
+  },
+  "chatbot": {
+    "structure": 1,
+    "grounded": 1,
+    "honest": 1,
+    "language": 1,
+    "brief": 1
   }
 }
