@@ -1,6 +1,8 @@
 import {
   languages,
   folderColors,
+  planBodyFromJson,
+  planFormats,
   onboardingStatuses,
   planIds,
   roles,
@@ -9,7 +11,6 @@ import {
   type ClassId,
   type Email,
   type LessonPlan,
-  type PlanBody,
   type PlanFolder,
   type PlanTemplate,
   type PlanTemplateId,
@@ -55,6 +56,7 @@ export const schoolMapper: RowMapper<School, SchoolsTable> = {
     phone: school.phone,
     email: school.email,
     logo_key: school.logoKey,
+    plan_format: school.planFormat,
   }),
   fromRow: (row) => ({
     id: row.id as SchoolId,
@@ -63,6 +65,7 @@ export const schoolMapper: RowMapper<School, SchoolsTable> = {
     phone: row.phone,
     email: row.email as Email | null,
     logoKey: row.logo_key,
+    planFormat: oneOf(planFormats, row.plan_format, 'schools.plan_format'),
   }),
 };
 
@@ -192,7 +195,7 @@ export const lessonPlanMapper: RowMapper<LessonPlan, LessonPlansTable> = {
     title: row.title,
     classId: row.class_id as ClassId | null,
     folderId: row.folder_id as PlanFolderId | null,
-    body: readJson(row.body) as PlanBody,
+    body: planBodyFromJson(readJson(row.body)),
   }),
 };
 
@@ -229,7 +232,7 @@ export const planTemplateMapper: RowMapper<PlanTemplate, PlanTemplatesTable> = {
     teacherId: row.teacher_id as UserId,
     name: row.name,
     title: row.title,
-    body: readJson(row.body) as PlanBody,
+    body: planBodyFromJson(readJson(row.body)),
   }),
 };
 

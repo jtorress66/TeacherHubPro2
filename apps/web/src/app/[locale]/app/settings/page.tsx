@@ -38,6 +38,7 @@ export default async function SettingsPage(
               address: school.address,
               phone: school.phone,
               email: school.email,
+              planFormat: school.planFormat,
             }}
           />
         </section>

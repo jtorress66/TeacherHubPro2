@@ -2,6 +2,7 @@ import {
   activityTypes,
   maxSkills,
   planWeekdays,
+  standardDomains,
   type ClassId,
   type ConversationalBodyInput,
   type PlanBodyInput,
@@ -63,6 +64,15 @@ function week(data: FormData, index: number): PlanWeekInput {
       field(data, `${prefix}.skill.${String(i)}`),
     ),
     standards: field(data, `${prefix}.standards`).split(/[\s,]+/),
+    domainStandards: Object.fromEntries(
+      standardDomains.map((domain) => [
+        domain,
+        field(data, `${prefix}.domain.${domain}`)
+          .split(/[\n,]+/u)
+          .map((code) => code.trim())
+          .filter((code) => code !== ''),
+      ]),
+    ),
     expectations: optional(data, `${prefix}.expectations`),
     days: planWeekdays.map((_, j) => day(data, `${prefix}.d${String(j)}`)),
   };
@@ -111,4 +121,7 @@ export function parsePlanForm(data: FormData): PlanForm {
 
 /** The form field a domain error path belongs to: `weeks.0.days.2.theme` is `w0.d2.theme`. */
 export const planFieldName = (path: string): string =>
-  path.replace(/^weeks\.(\d+)/, 'w$1').replace(/\.days\.(\d+)/, '.d$1');
+  path
+    .replace(/^weeks\.(\d+)/, 'w$1')
+    .replace(/\.days\.(\d+)/, '.d$1')
+    .replace(/\.domainStandards\./, '.domain.');

@@ -39,6 +39,11 @@ describe('parseForm', () => {
     });
   });
 
+  it('reads the plan print format the school chose', () => {
+    const parsed = parseForm(schoolForm, form({ name: 'Escuela Luz', planFormat: 'simple' }));
+    expect(parsed.ok && parsed.value.planFormat).toBe('simple');
+  });
+
   it('reads the profile form', () => {
     expect(parseForm(profileForm, form({ name: 'Ana', language: 'es', locale: 'es' }))).toEqual({
       ok: true,

@@ -23,6 +23,8 @@ export const schoolForm = z.object({
   address: optional,
   phone: optional,
   email: optional,
+  /** Missing on forms without the choice (the school keeps its format); the domain checks it. */
+  planFormat: z.string().optional(),
   locale,
 });
 export const upgradeForm = z.object({

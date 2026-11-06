@@ -99,3 +99,19 @@ export async function studentLink(
   const link = issued.getByRole('row').filter({ hasText: name }).getByTestId('student-link');
   return (await link.getAttribute('href')) ?? '';
 }
+
+/** Sets how the signed-in teacher's school prints plans (Settings → Your school). */
+export async function choosePlanFormat(
+  page: Page,
+  locale: Locale,
+  format: 'classic' | 'simple',
+): Promise<void> {
+  const t = createTranslator(locale);
+  await page.goto(`/${locale}/app/settings`);
+  const school = page.getByRole('region', { name: t('settings.school') });
+  await school
+    .getByLabel(t('settings.planFormat'))
+    .selectOption({ label: t(`settings.planFormat_${format}`) });
+  await school.getByRole('button', { name: t('settings.save') }).click();
+  await expect(school.getByRole('status')).toHaveText(t('settings.saved'));
+}

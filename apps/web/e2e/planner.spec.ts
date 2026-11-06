@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { createTranslator, type Locale } from '@thp/i18n';
-import { signUp } from './helpers.ts';
+import { choosePlanFormat, signUp } from './helpers.ts';
 
 const plansPath = (locale: Locale) => `/${locale}/app/plans`;
 
@@ -31,6 +31,8 @@ for (const locale of ['es', 'en'] as const satisfies readonly Locale[]) {
   // Build step 8 gate: generate a plan as a job → edit → print.
   test(`a teacher drafts a plan with AI, edits it and prints it (${locale})`, async ({ page }) => {
     await signUp(page, locale);
+    // The simple layout prints everything, notes included (the classic one has its own spec).
+    await choosePlanFormat(page, locale, 'simple');
     await draftPlan(page, locale, 'Fracciones');
 
     await expect(page.getByRole('note')).toHaveText(t('planner.draftNotice'));

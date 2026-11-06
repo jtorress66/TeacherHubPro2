@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState } from 'react';
-import type { Role } from '@thp/domain';
+import { planFormats, type Role } from '@thp/domain';
 import { createTranslator, localeInfo, locales, type Locale } from '@thp/i18n';
 import {
   changeUserRoleAction,
@@ -157,6 +157,7 @@ interface SchoolValues {
   readonly address: string | null;
   readonly phone: string | null;
   readonly email: string | null;
+  readonly planFormat: string;
 }
 
 /** A new school, or a school's details. */
@@ -180,7 +181,7 @@ export function SchoolDetailsForm(props: {
           ...(props.school === undefined ? {} : { schoolId: props.school.id }),
         }}
       />
-      <FormAlert message={alertOf(state, ['name', 'address', 'phone', 'email'])} />
+      <FormAlert message={alertOf(state, ['name', 'address', 'phone', 'email', 'planFormat'])} />
       <Notice message={state.notice === 'saved' ? t('superAdmin.schoolSaved') : undefined} />
       <Field
         id={editing ? 'school-name' : 'new-school-name'}
@@ -214,6 +215,17 @@ export function SchoolDetailsForm(props: {
           error={errors.email}
         />
       </div>
+      <Select
+        id={editing ? 'school-plan-format' : 'new-school-plan-format'}
+        name="planFormat"
+        label={t('settings.planFormat')}
+        options={planFormats.map((format) => ({
+          id: format,
+          name: t(`settings.planFormat_${format}`),
+        }))}
+        defaultValue={props.school?.planFormat}
+        error={errors.planFormat}
+      />
       <Submit label={label} />
     </form>
   );

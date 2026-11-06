@@ -2,6 +2,7 @@
 
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
+import { planFormats } from '@thp/domain';
 import { createTranslator, localeInfo, locales, type Locale } from '@thp/i18n';
 import {
   logInAction,
@@ -11,6 +12,7 @@ import {
   upgradeAction,
   type FormState,
 } from '../app/_lib/actions.ts';
+import { Select } from './form-fields.tsx';
 
 interface FieldProps {
   readonly label: string;
@@ -199,6 +201,7 @@ export interface SchoolFields {
   readonly address: string | null;
   readonly phone: string | null;
   readonly email: string | null;
+  readonly planFormat: string;
 }
 
 export function SchoolForm({
@@ -245,6 +248,18 @@ export function SchoolForm({
         defaultValue={school.email}
         error={state.errors?.email}
       />
+      <Select
+        id="school-plan-format"
+        name="planFormat"
+        label={t('settings.planFormat')}
+        options={planFormats.map((format) => ({
+          id: format,
+          name: t(`settings.planFormat_${format}`),
+        }))}
+        defaultValue={school.planFormat}
+        error={state.errors?.planFormat}
+      />
+      <p className="muted small">{t('settings.planFormatHint')}</p>
       <Saved state={state} label={t('settings.saved')} />
       <Submit label={t('settings.save')} />
     </form>

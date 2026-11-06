@@ -144,6 +144,17 @@ describe('row mappers round-trip every entity unchanged', () => {
     expect(lessonPlanMapper.fromRow(stored(row, ['body']))).toEqual(plan);
   });
 
+  it('reads a weekly plan saved before standards had categories, with empty categories', () => {
+    const plan = aLessonPlan();
+    const row = lessonPlanMapper.toRow(plan);
+    const old = JSON.parse(row.body) as { weeks: Record<string, unknown>[] };
+    for (const week of old.weeks) delete week.domainStandards;
+
+    expect(
+      lessonPlanMapper.fromRow(stored({ ...row, body: JSON.stringify(old) }, ['body'])),
+    ).toEqual(plan);
+  });
+
   it('plan folder and plan template', () => {
     const folder = aPlanFolder({ color: 'rose' });
     expect(planFolderMapper.fromRow(stored(planFolderMapper.toRow(folder)))).toEqual(folder);

@@ -3,6 +3,7 @@ import { ok, type Result } from '../shared/result.ts';
 import { invalid, optionalText, type ValidationError } from '../shared/validation.ts';
 import { findStandard } from '../standards/common-core.ts';
 import { isMonday, longText, shiftDate, subsetOf } from './plan-fields.ts';
+import { domainStandardsOf, type DomainStandards } from './plan-standards.ts';
 
 export const planWeekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'] as const;
 export const activityTypes = [
@@ -70,6 +71,8 @@ export interface PlanWeek {
   readonly skills: readonly string[];
   /** Official Common Core codes only. */
   readonly standards: readonly string[];
+  /** Codes the teacher typed by category (e.g. Puerto Rico standards). */
+  readonly domainStandards: DomainStandards;
   readonly expectations: string | null;
   readonly days: readonly PlanDay[];
 }
@@ -97,6 +100,7 @@ export interface PlanWeekInput {
   readonly objective?: string | null;
   readonly skills?: readonly string[];
   readonly standards?: readonly string[];
+  readonly domainStandards?: Readonly<Record<string, readonly string[]>>;
   readonly expectations?: string | null;
   /** Monday to Friday; missing means five blank days. */
   readonly days?: readonly PlanDayInput[];
@@ -186,6 +190,8 @@ function week(field: string, input: PlanWeekInput): Checked<PlanWeek> {
   if (!chosenSkills.ok) return chosenSkills;
   const codes = standards(`${field}.standards`, input.standards);
   if (!codes.ok) return codes;
+  const typed = domainStandardsOf(`${field}.domainStandards`, input.domainStandards);
+  if (!typed.ok) return typed;
   const expectations = longText(`${field}.expectations`, input.expectations);
   if (!expectations.ok) return expectations;
   const dayInputs = input.days ?? planWeekdays.map(() => ({}));
@@ -201,6 +207,7 @@ function week(field: string, input: PlanWeekInput): Checked<PlanWeek> {
     objective: objective.value,
     skills: chosenSkills.value,
     standards: codes.value,
+    domainStandards: typed.value,
     expectations: expectations.value,
     days,
   });

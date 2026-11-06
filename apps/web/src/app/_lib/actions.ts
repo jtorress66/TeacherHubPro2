@@ -84,12 +84,12 @@ export async function updateProfileAction(_state: FormState, data: FormData): Pr
 export async function updateSchoolAction(_state: FormState, data: FormData): Promise<FormState> {
   const form = parseForm(schoolForm, data);
   if (!form.ok) return fieldMessages(form.error, localeOf(data));
-  const { locale, ...details } = form.value;
+  const { locale, planFormat, ...details } = form.value;
   const { user, school } = await requireUser(locale);
   const result = await getAppContainer().updateSchoolDetails.execute({
     actor: user,
     schoolId: school.id,
-    details,
+    details: planFormat === undefined ? details : { ...details, planFormat },
   });
   if (!result.ok) return { errors: formErrors(result.error, locale) };
   // The school name shows in the app header and drives the setup checklist.

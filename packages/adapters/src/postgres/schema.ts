@@ -15,6 +15,7 @@ export interface SchoolsTable {
   phone: string | null;
   email: string | null;
   logo_key: string | null;
+  plan_format: string;
   created_at: CreatedAt;
 }
 

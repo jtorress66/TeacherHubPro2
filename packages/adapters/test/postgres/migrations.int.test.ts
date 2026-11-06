@@ -2,9 +2,9 @@ import { sql } from 'kysely';
 import { Migrator } from 'kysely/migration';
 import { afterAll, describe, expect, it } from 'vitest';
 import { createLessonPlan, type UserId } from '@thp/domain';
-import { aSchool, aUser } from '@thp/testing';
+import { aUser } from '@thp/testing';
 import { migrateDown, migrateToLatest } from '../../src/postgres/index.ts';
-import { schoolMapper, userMapper } from '../../src/postgres/mappers/school-mappers.ts';
+import { userMapper } from '../../src/postgres/mappers/school-mappers.ts';
 import { migrationProvider } from '../../src/postgres/migrations/index.ts';
 import { PostgresLessonPlanRepository } from '../../src/postgres/repositories/postgres-lesson-plan-repository.ts';
 import { connect, schoolA, truncateAll } from './test-db.ts';
@@ -79,6 +79,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0020_plan_format',
           '0019_marketing',
           '0018_admin',
           '0017_prep_batches',
@@ -126,6 +127,7 @@ describe('migrations', () => {
           '0017_prep_batches',
           '0018_admin',
           '0019_marketing',
+          '0020_plan_format',
         ],
       },
     });
@@ -136,10 +138,8 @@ describe('migrations', () => {
     const migrator = new Migrator({ db, provider: migrationProvider });
     await truncateAll(db);
     expect((await migrator.migrateTo('0005_gradebook')).error).toBeUndefined();
-    await db
-      .insertInto('schools')
-      .values(schoolMapper.toRow(aSchool({ id: schoolA })))
-      .execute();
+    // A school as stored at 0005, before later columns (such as plan_format) existed.
+    await sql`INSERT INTO schools (id, name) VALUES (${schoolA}, 'Lincoln')`.execute(db);
     await db
       .insertInto('users')
       .values(userMapper.toRow(aUser({ id: 'teacher-1' as UserId, schoolId: schoolA })))

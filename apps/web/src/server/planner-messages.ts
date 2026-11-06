@@ -1,11 +1,19 @@
 import type { UseCaseError } from '@thp/application';
-import { jobFailures, type JobFailure, type ValidationCode } from '@thp/domain';
+import { jobFailures, standardDomains, type JobFailure, type ValidationCode } from '@thp/domain';
 import { createTranslator, type Locale, type MessageKey } from '@thp/i18n';
 import { formErrors } from './error-messages.ts';
 import { planFieldName } from './plan-forms.ts';
 
+/** Typed codes under a standards category: `weeks.0.domainStandards.reading`. */
+const typedCodes: Partial<Record<ValidationCode, MessageKey>> = {
+  invalid_format: 'planner.errors.typedCodes',
+  too_long: 'planner.errors.typedCodesLong',
+  out_of_range: 'planner.errors.typedCodesMany',
+};
+
 /** Planner wording where the shared message is too vague, by the last part of the field path. */
 const fieldKeys: Readonly<Record<string, Partial<Record<ValidationCode, MessageKey>>>> = {
+  ...Object.fromEntries(standardDomains.map((domain) => [domain, typedCodes])),
   weekStart: { not_allowed: 'planner.errors.notMonday', invalid_order: 'planner.errors.weekOrder' },
   standards: { not_allowed: 'planner.errors.standards' },
   skills: { out_of_range: 'planner.errors.skills' },

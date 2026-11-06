@@ -366,6 +366,14 @@ Added at the teacher's request, between steps 14 and 15 (not in the old app).
   - Images came from Emergent's servers: our own drawings.
   - The leads list was readable by any signed-in user: super admins only.
 
+## Added after step 18 — School plan formats and local standards
+
+- A Puerto Rico school's teacher used a custom two-week plan in the old app (`frontend/src/components/PlanPrintView.js`, behaviour only).
+- **Decided (2026-11-06):**
+  - Teachers type their school's own standards (for example Puerto Rico codes) under five categories per week. Common Core codes stay validated against the official list. The AI writes only Common Core codes.
+  - Print formats are built in, and each school picks one: Classic (the old layout, the default) or Simple. A school's own format is added as a new layout.
+  - The SM Aprendizaje link (`https://loginsma.smaprendizaje.com`) stays on the plan page, as in the old app.
+
 ## Step 19 — Data migration
 
 - **Skipped (owner's decision, 2026-11-06):** no data is moved from the old app; teachers start fresh in the new one. The importer built for this step (PR #40) was closed without merging.
