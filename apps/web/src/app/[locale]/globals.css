@@ -315,7 +315,7 @@ details[open] > summary {
   color: #b42318;
 }
 
-@media (prefers-color-scheme: dark) {
+@media screen {
   .band-good {
     color: #6fdc8c;
   }
@@ -425,7 +425,7 @@ details[open] > summary {
   color: #b42318;
 }
 
-@media (prefers-color-scheme: dark) {
+@media screen {
   .letter-a {
     color: #6fdc8c;
   }
