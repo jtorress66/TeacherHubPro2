@@ -179,6 +179,8 @@ function StandardsColumn(props: {
       <h3 className="cp-std-heading">{props.heading}</h3>
       {standardDomains.map((domain) => {
         const codes = byDomain.get(domain) ?? [];
+        // The original page lists the five language categories; other standards only when used.
+        if (domain === 'other' && codes.length === 0) return null;
         return (
           <p key={domain} className="cp-std-item">
             <Box checked={codes.length > 0} /> <strong>{t(`planner.domain_${domain}`)}</strong>

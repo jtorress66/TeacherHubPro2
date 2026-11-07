@@ -2,13 +2,17 @@ import { ok, type Result } from '../shared/result.ts';
 import { invalid, type ValidationError } from '../shared/validation.ts';
 import type { PlanBody } from './lesson-plan.ts';
 
-/** The categories a week's standards are grouped by on a printed plan. */
+/**
+ * The categories a week's standards are grouped by on a printed plan: the five of the language
+ * programs, and "other" for subjects without them (Math, Science, Social Studies).
+ */
 export const standardDomains = [
   'listening_speaking',
   'foundational_skills',
   'reading',
   'writing',
   'language',
+  'other',
 ] as const;
 
 export type StandardDomain = (typeof standardDomains)[number];
@@ -25,6 +29,7 @@ export const noDomainStandards: DomainStandards = {
   reading: [],
   writing: [],
   language: [],
+  other: [],
 };
 
 export const maxCodesPerDomain = 12;

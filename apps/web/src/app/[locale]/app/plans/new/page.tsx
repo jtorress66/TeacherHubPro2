@@ -5,6 +5,7 @@ import type { DraftedPlan, JobId, PlanTemplateId } from '@thp/domain';
 import { createTranslator } from '@thp/i18n';
 import { PlanEditor } from '../../../../../components/planner-forms.tsx';
 import { getAppContainer } from '../../../../../container.ts';
+import { prOptionsFor } from '../../../../../server/plan-standards-options.ts';
 import { nextMonday } from '../../../../../server/lesson-plan-display.ts';
 import { requireUser } from '../../../../_lib/auth.ts';
 import { teacherTimeZone } from '../../../../_lib/time-zone.ts';
@@ -83,6 +84,7 @@ export default async function NewPlanPage(props: Props) {
         folderId={null}
         body={content.body}
         classes={classes.map((c) => ({ id: c.id, name: c.name }))}
+        prOptions={prOptionsFor(classes)}
         folders={folders.map(({ folder }) => ({ id: folder.id, name: folder.name }))}
       />
     </section>

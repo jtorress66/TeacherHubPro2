@@ -135,6 +135,7 @@ describe('parsePlanForm', () => {
       reading: ['7.R.6.1', '7.R.4', '7.R.6.1L'],
       writing: ['7.W.6'],
       language: [],
+      other: [],
     });
   });
 

@@ -111,3 +111,4 @@ export * from './billing/access.ts';
 export * from './marketing/lead.ts';
 export * from './marketing/chat.ts';
 export * from './marketing/facts.ts';
+export * from './standards/puerto-rico.ts';

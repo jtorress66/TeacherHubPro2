@@ -17,6 +17,7 @@
     "format": "prettier --write .",
     "check:forbidden": "node scripts/forbidden-terms.ts",
     "standards:import": "node scripts/import-standards.ts",
+    "standards:import-pr": "node scripts/import-pr-standards.ts",
     "db:up": "docker compose up -d --wait postgres",
     "db:migrate": "pnpm --filter @thp/worker migrate",
     "stripe:setup": "pnpm --filter @thp/worker stripe:setup",
@@ -34,6 +35,7 @@
     "prettier": "3.9.10",
     "typescript": "5.9.3",
     "typescript-eslint": "8.72.1",
+    "unpdf": "2.0.0",
     "vitest": "5.0.5"
   }
 }
