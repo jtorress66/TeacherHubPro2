@@ -15,7 +15,14 @@ export interface Violation {
 // The character class keeps this file from matching its own pattern.
 const forbidden = /emerg[e]nt/i;
 
-const isAllowed = (path: string): boolean => path === 'CLAUDE.md' || path.startsWith('docs/');
+/**
+ * CLAUDE.md and docs/ may name the old platform. The Puerto Rico standards list is the official
+ * documents' wording, where a Spanish word for "emerging" is ordinary text (owner's decision, 2026-11-07).
+ */
+const isAllowed = (path: string): boolean =>
+  path === 'CLAUDE.md' ||
+  path.startsWith('docs/') ||
+  path === 'packages/domain/src/standards/puerto-rico-codes.ts';
 
 export function findForbiddenTerms(files: readonly TrackedFile[]): Violation[] {
   return files
@@ -41,7 +48,7 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
   for (const { path, line } of violations) console.error(`${path}:${String(line)}`);
   if (violations.length > 0) {
     console.error(
-      'Forbidden legacy-platform references found (allowed only in CLAUDE.md and docs/).',
+      'Forbidden legacy-platform references found (allowed only in CLAUDE.md, docs/ and the Puerto Rico standards list).',
     );
     process.exit(1);
   }
