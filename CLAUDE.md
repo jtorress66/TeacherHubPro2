@@ -17,7 +17,7 @@ These rules apply to every session. If a request conflicts with them, stop and a
    If anything fails, fix it. Never skip, delete, or weaken a test to make it pass, and never use `.skip`, `.only`, `@ts-ignore`, or `eslint-disable` without the user's explicit approval.
 4. **SOLID, always** (see below). If a change would violate a principle, propose a design that doesn't.
 5. **Plan before code.** For any new step or feature, first list the files, interfaces, and tests you'll create, and wait for approval.
-6. **No Emergent.** Nothing in this repository may reference Emergent: no `emergentintegrations`, no `EMERGENT_*` variables, no `emergent.sh` or `emergentagent.com` URLs, scripts, images or badges. CI fails if `git grep -i emergent` finds anything outside this file and `docs/`.
+6. **No Emergent.** Nothing in this repository may reference Emergent: no `emergentintegrations`, no `EMERGENT_*` variables, no `emergent.sh` or `emergentagent.com` URLs, scripts, images or badges. CI fails if `git grep -i emergent` finds anything outside this file, `docs/` and the official Puerto Rico standards list (`packages/domain/src/standards/puerto-rico-codes.ts`, where "emergentes" is an ordinary word).
 
 ## Legacy app
 
