@@ -18,6 +18,7 @@ import {
   type PlanBodyInput,
   type PlanDayInput,
   type PlanWeekInput,
+  type PrSubject,
 } from '@thp/domain';
 import { createTranslator, type Locale } from '@thp/i18n';
 import {
@@ -29,6 +30,8 @@ import {
 } from '../app/_lib/planner-actions.ts';
 import { Field, FormAlert, Submit } from './forms.tsx';
 import { JobProgress } from './job-progress.tsx';
+import { PrCodesPicker, type PrSelection } from './pr-codes-picker.tsx';
+import type { PrOptions } from '../server/plan-standards-options.ts';
 import {
   Checks,
   ErrorText,
@@ -131,6 +134,7 @@ function WeekFields(props: {
   readonly index: number;
   readonly week: PlanWeekInput;
   readonly errors: Errors;
+  readonly selection: PrSelection;
 }) {
   const t = createTranslator(props.locale);
   const { week, errors } = props;
@@ -170,14 +174,22 @@ function WeekFields(props: {
         <legend>{t('planner.domainStandards')}</legend>
         <p className="muted small">{t('planner.domainStandardsHint')}</p>
         {standardDomains.map((domain) => (
-          <Field
-            key={domain}
-            id={`${prefix}.domain.${domain}`}
-            name={`${prefix}.domain.${domain}`}
-            label={t(`planner.domain_${domain}`)}
-            defaultValue={(week.domainStandards?.[domain] ?? []).join(', ')}
-            error={errors?.[`${prefix}.domain.${domain}`]}
-          />
+          <div key={domain} className="pr-category">
+            <Field
+              id={`${prefix}.domain.${domain}`}
+              name={`${prefix}.domain.${domain}`}
+              label={t(`planner.domain_${domain}`)}
+              defaultValue={(week.domainStandards?.[domain] ?? []).join(', ')}
+              error={errors?.[`${prefix}.domain.${domain}`]}
+            />
+            <PrCodesPicker
+              locale={props.locale}
+              selection={props.selection}
+              domain={domain}
+              categoryLabel={t(`planner.domain_${domain}`)}
+              inputId={`${prefix}.domain.${domain}`}
+            />
+          </div>
         ))}
       </fieldset>
       <TextArea
@@ -236,13 +248,80 @@ function SmAprendizaje({ locale }: { readonly locale: Locale }) {
   );
 }
 
+/** Which Puerto Rico list the plan's "Choose codes" buttons show; only filters, never saved. */
+function PrListChoice(props: {
+  readonly locale: Locale;
+  readonly options: PrOptions;
+  readonly selection: PrSelection;
+  readonly onChange: (selection: PrSelection) => void;
+}) {
+  const t = createTranslator(props.locale);
+  const { subject, grade } = props.selection;
+  const grades = subject === '' ? [] : props.options.choices[subject];
+  const gradeLabel = (choice: string) =>
+    choice === 'intermediate' || choice === 'high'
+      ? t(`standards.level_${choice}`)
+      : choice === 'K'
+        ? t('drafts.grade_K')
+        : choice;
+  return (
+    <div className="stack">
+      <div className="field-row">
+        <div className="field">
+          <label htmlFor="pr-subject">{t('planner.prSubject')}</label>
+          <select
+            id="pr-subject"
+            value={subject}
+            onChange={(event) => {
+              const next = event.target.value as PrSelection['subject'];
+              const choices = next === '' ? [] : props.options.choices[next];
+              props.onChange({
+                subject: next,
+                grade: choices.includes(grade as never) ? grade : (choices[0] ?? ''),
+              });
+            }}
+          >
+            <option value="">{t('planner.prNoSubject')}</option>
+            {(Object.keys(props.options.choices) as PrSubject[]).map((option) => (
+              <option key={option} value={option}>
+                {t(`standards.pr_${option}`)}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="field">
+          <label htmlFor="pr-grade">{t('planner.prGrade')}</label>
+          <select
+            id="pr-grade"
+            value={grade}
+            disabled={subject === ''}
+            onChange={(event) => {
+              props.onChange({ subject, grade: event.target.value as PrSelection['grade'] });
+            }}
+          >
+            {grades.map((choice) => (
+              <option key={choice} value={choice}>
+                {gradeLabel(choice)}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+      {subject === '' ? <p className="muted small">{t('planner.prPickFirst')}</p> : null}
+    </div>
+  );
+}
+
 function WeeklyFields(props: {
   readonly locale: Locale;
   readonly body: Extract<PlanBodyInput, { kind: 'weekly' }>;
   readonly errors: Errors;
+  readonly prOptions: PrOptions | undefined;
+  readonly startGrade: PrSelection['grade'];
 }) {
   const t = createTranslator(props.locale);
   const { body, errors } = props;
+  const [selection, setSelection] = useState<PrSelection>({ subject: '', grade: props.startGrade });
   const [first, second] = body.weeks;
   const [hasWeek2, setHasWeek2] = useState(second !== undefined);
   const week1 = first ?? { weekStart: '' };
@@ -275,7 +354,21 @@ function WeeklyFields(props: {
         label={(subject) => t(`planner.subject_${subject}`)}
       />
       <FormAlert message={errors?.weeks} />
-      <WeekFields locale={props.locale} index={0} week={week1} errors={errors} />
+      {props.prOptions === undefined ? null : (
+        <PrListChoice
+          locale={props.locale}
+          options={props.prOptions}
+          selection={selection}
+          onChange={setSelection}
+        />
+      )}
+      <WeekFields
+        locale={props.locale}
+        index={0}
+        week={week1}
+        errors={errors}
+        selection={selection}
+      />
       <label className="checkbox">
         <input
           type="checkbox"
@@ -288,7 +381,13 @@ function WeeklyFields(props: {
         {t('planner.addWeek2')}
       </label>
       {hasWeek2 ? (
-        <WeekFields locale={props.locale} index={1} week={week2} errors={errors} />
+        <WeekFields
+          locale={props.locale}
+          index={1}
+          week={week2}
+          errors={errors}
+          selection={selection}
+        />
       ) : null}
     </>
   );
@@ -368,6 +467,8 @@ export interface PlanEditorProps {
   readonly classes: readonly Option[];
   readonly folders: readonly Option[];
   readonly savedOnLoad?: boolean;
+  /** Puerto Rico code picker choices; without them the picker is hidden. */
+  readonly prOptions?: PrOptions;
 }
 
 /** The whole plan: header, weeks and days (or the Conversational English sections). */
@@ -432,7 +533,15 @@ export function PlanEditor(props: PlanEditorProps) {
       </div>
       <SmAprendizaje locale={props.locale} />
       {props.body.kind === 'weekly' ? (
-        <WeeklyFields locale={props.locale} body={props.body} errors={errors} />
+        <WeeklyFields
+          locale={props.locale}
+          body={props.body}
+          errors={errors}
+          prOptions={props.prOptions}
+          startGrade={
+            props.classId === null ? '' : (props.prOptions?.classGrades[props.classId] ?? '')
+          }
+        />
       ) : (
         <ConversationalFields locale={props.locale} body={props.body} errors={errors} />
       )}

@@ -5,6 +5,7 @@ import type { LessonPlanId } from '@thp/domain';
 import { createTranslator } from '@thp/i18n';
 import { PlanCommands, PlanEditor } from '../../../../../components/planner-forms.tsx';
 import { getAppContainer } from '../../../../../container.ts';
+import { prOptionsFor } from '../../../../../server/plan-standards-options.ts';
 import { nextStartOf, planName } from '../../../../../server/lesson-plan-display.ts';
 import { requireUser } from '../../../../_lib/auth.ts';
 import { localeFrom, type LocaleParams } from '../../../locale-param.ts';
@@ -53,6 +54,7 @@ export default async function PlanPage(props: Props) {
         folderId={plan.folderId}
         body={plan.body}
         classes={classes.map((c) => ({ id: c.id, name: c.name }))}
+        prOptions={prOptionsFor(classes)}
         folders={folders}
         savedOnLoad={saved === '1'}
       />

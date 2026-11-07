@@ -26,6 +26,7 @@ describe('standards typed by category', () => {
           reading: [' 7.R.6.1 ', '7.R.4', '7.R.6.1'],
           writing: ['7.W.6'],
           language: [],
+          other: ['5.N.2.1'],
         },
       }),
     );
@@ -36,6 +37,7 @@ describe('standards typed by category', () => {
       reading: ['7.R.6.1', '7.R.4'],
       writing: ['7.W.6'],
       language: [],
+      other: ['5.N.2.1'],
     });
   });
 

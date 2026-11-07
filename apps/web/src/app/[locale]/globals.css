@@ -1530,3 +1530,40 @@ tr[aria-current='true'] {
     break-after: auto;
   }
 }
+
+/* Puerto Rico code picker */
+.pr-category {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  align-items: flex-end;
+}
+
+.pr-category > .field {
+  flex: 1 1 18rem;
+}
+
+.pr-picker {
+  width: min(48rem, calc(100vw - 2rem));
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
+  border: 1px solid var(--border-strong);
+  color: var(--fg);
+  background: var(--surface);
+}
+
+.pr-picker::backdrop {
+  background: rgb(0 0 0 / 0.45);
+}
+
+.pr-codes {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pr-codes label {
+  align-items: flex-start;
+}

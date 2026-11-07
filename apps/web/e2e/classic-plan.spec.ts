@@ -137,3 +137,70 @@ test('a refused save keeps everything the teacher typed and says what to fix', a
     '7.R.6.1',
   );
 });
+
+for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
+  const t = createTranslator(locale);
+
+  test(`a teacher picks Puerto Rico codes from the list into a plan, and they print (${locale})`, async ({
+    page,
+  }) => {
+    test.setTimeout(120_000);
+    await signUp(page, locale);
+    await page.goto(`/${locale}/app/plans/new?kind=weekly&start=2026-11-02`);
+    await page
+      .getByLabel(t('planner.prSubject'))
+      .selectOption({ label: t('standards.pr_english') });
+    await page.getByLabel(t('planner.prGrade')).selectOption('7');
+
+    const reading = t('planner.domain_reading');
+    await page
+      .getByRole('button', { name: `${t('planner.prChoose')}: ${reading}` })
+      .first()
+      .click();
+    const dialog = page.getByRole('dialog', {
+      name: t('planner.prChooseFor', { category: reading }),
+    });
+    await dialog.getByRole('checkbox', { name: /^7\.R\.6\.1L\b/u }).check();
+    const scan = await new AxeBuilder({ page }).include('dialog[open]').analyze();
+    expect(scan.violations).toEqual([]);
+    await dialog.getByRole('button', { name: t('planner.prAdd') }).click();
+    await expect(page.getByLabel(reading, { exact: true }).first()).toHaveValue('7.R.6.1L');
+
+    // Math has no language categories: its codes go under other standards.
+    await page.getByLabel(t('planner.prSubject')).selectOption({ label: t('standards.pr_math') });
+    await page.getByLabel(t('planner.prGrade')).selectOption('5');
+    const other = t('planner.domain_other');
+    await page
+      .getByRole('button', { name: `${t('planner.prChoose')}: ${other}` })
+      .first()
+      .click();
+    const mathDialog = page.getByRole('dialog', {
+      name: t('planner.prChooseFor', { category: other }),
+    });
+    await mathDialog.getByRole('checkbox', { name: /^5\.N\.2\.1\b/u }).check();
+    await mathDialog.getByRole('button', { name: t('planner.prAdd') }).click();
+    await expect(page.getByLabel(other, { exact: true }).first()).toHaveValue('5.N.2.1');
+
+    await page.getByRole('button', { name: t('planner.save') }).click();
+    await expect(page).toHaveURL(/\/plans\/[^/?]+\?saved=1$/);
+    await page.getByRole('link', { name: t('planner.print') }).click();
+    const planning = page.getByRole('region', { name: t('planPrint.teachersPlanning') });
+    await expect(planning).toContainText(`${reading} 7.R.6.1L`);
+    await expect(planning).toContainText(`${other} 5.N.2.1`);
+  });
+
+  test(`the standards page lists Puerto Rico codes by subject and grade (${locale})`, async ({
+    page,
+  }) => {
+    await signUp(page, locale);
+    await page.goto(`/${locale}/app/standards`);
+    await page.getByRole('link', { name: t('standards.set_puerto_rico') }).click();
+    await page
+      .getByLabel(t('standards.subject'))
+      .selectOption({ label: t('standards.pr_english') });
+    await page.getByLabel(t('standards.grade')).selectOption('7');
+    await page.getByRole('button', { name: t('standards.show') }).click();
+    await expect(page.getByTestId('standards-list')).toContainText('7.R.6.1L');
+    await expect(page.getByText(t('standards.prSource'))).toBeVisible();
+  });
+}
