@@ -70,7 +70,23 @@ describe('Sending a presentation to Google Classroom', () => {
       description: 'Look through these before Friday.',
       material: { kind: 'driveFile', driveFileId: 'slides-1', shareMode: 'view' },
       dueDate: '2026-12-01',
+      scheduledAt: null,
     });
+  });
+
+  it('schedules the post for later, and refuses a time that has already passed', async () => {
+    const { classroom, slides, send } = await teacher(makeWorld());
+    const later = new Date('2026-09-02T13:00:00Z');
+
+    valueOf(await send({ scheduledAt: later }));
+    expect(classroom.coursework.at(-1)).toMatchObject({ scheduledAt: later });
+
+    const decks = slides.decks.length;
+    expect(await send({ scheduledAt: new Date('2026-08-31T13:00:00Z') })).toEqual({
+      ok: false,
+      error: { field: 'scheduledAt', code: 'out_of_range' },
+    });
+    expect(slides.decks).toHaveLength(decks);
   });
 
   it('posts without instructions or a due date', async () => {

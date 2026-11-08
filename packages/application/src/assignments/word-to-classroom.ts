@@ -1,4 +1,5 @@
 import {
+  checkSchedule,
   ok,
   optionalText,
   parseLocalDate,
@@ -8,7 +9,7 @@ import {
   type Result,
   type User,
 } from '@thp/domain';
-import type { ClassroomCoursework, GoogleDriveFiles } from '@thp/ports';
+import type { ClassroomCoursework, Clock, GoogleDriveFiles } from '@thp/ports';
 import type { UseCaseError } from '../errors.ts';
 import { accessToken, googleFailed, type ConnectionDeps } from './classroom.ts';
 
@@ -21,6 +22,7 @@ export class PostWordToClassroom {
     private readonly deps: ConnectionDeps & {
       readonly googleDrive: GoogleDriveFiles;
       readonly classroomCoursework: ClassroomCoursework;
+      readonly clock: Clock;
     },
   ) {}
 
@@ -32,6 +34,8 @@ export class PostWordToClassroom {
     readonly dueDate: string | null;
     readonly fileName: string;
     readonly bytes: Uint8Array;
+    /** Post later, at this moment; missing or null posts now. */
+    readonly scheduledAt?: Date | null;
   }): Promise<Result<{ readonly url: string; readonly docUrl: string }, UseCaseError>> {
     const course = requiredText('courseId', input.courseId);
     if (!course.ok) return course;
@@ -47,6 +51,12 @@ export class PostWordToClassroom {
       if (!parsed.ok) return parsed;
       dueDate = parsed.value;
     }
+    let scheduledAt: Date | null = null;
+    if (input.scheduledAt != null) {
+      const checked = checkSchedule('scheduledAt', input.scheduledAt, this.deps.clock.now());
+      if (!checked.ok) return checked;
+      scheduledAt = checked.value;
+    }
     const token = await accessToken(this.deps, input.actor);
     if (!token.ok) return token;
     const doc = await this.deps.googleDrive.uploadWordDocument(token.value, document.value);
@@ -56,6 +66,7 @@ export class PostWordToClassroom {
       description: instructions.value ?? '',
       material: { kind: 'driveFile', driveFileId: doc.value.id, shareMode: 'copy' },
       dueDate,
+      scheduledAt,
     });
     if (!posted.ok) return googleFailed(posted.error);
     return ok({ url: posted.value.url, docUrl: doc.value.url });

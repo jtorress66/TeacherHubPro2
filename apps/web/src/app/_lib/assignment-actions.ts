@@ -13,6 +13,8 @@ import type {
 import { createTranslator, isLocale, type Locale } from '@thp/i18n';
 import type { IssuedLink } from '@thp/application';
 import { getAppContainer } from '../../container.ts';
+import { scheduledAtOf } from '../../server/schedule-form.ts';
+import { teacherTimeZone } from './time-zone.ts';
 import { parseQuestionsJson, studentLinkUrl } from '../../server/assignment-forms.ts';
 import { formErrors } from '../../server/error-messages.ts';
 import { requireUser } from './auth.ts';
@@ -26,6 +28,8 @@ export interface AssignmentFormState {
   readonly url?: string;
   /** The Google Doc a Word document became. */
   readonly docUrl?: string;
+  /** When the post was scheduled for, as the teacher reads it; missing when posted now. */
+  readonly scheduledFor?: string;
   /** Google refused Forms: the teacher's connection predates the Forms scope. */
   readonly reconnect?: boolean;
   /** Changes after each success so the form can clear itself. */
@@ -204,6 +208,11 @@ export async function postWordToClassroomAction(
   const { user } = await requireUser(locale);
   const file = fileOf(data, 'file');
   if (file === null) return { errors: { file: createTranslator(locale)('attachments.noFile') } };
+  const timeZone = await teacherTimeZone();
+  const scheduledAt = scheduledAtOf(data, timeZone);
+  if (!scheduledAt.ok) return { errors: formErrors(scheduledAt.error, locale) };
+  const when = (at: Date) =>
+    new Intl.DateTimeFormat(locale, { dateStyle: 'full', timeStyle: 'short', timeZone }).format(at);
   const posted = await getAppContainer().postWordToClassroom.execute({
     actor: user,
     courseId: text(data, 'courseId'),
@@ -212,9 +221,14 @@ export async function postWordToClassroomAction(
     dueDate: orNull(text(data, 'dueDate')),
     fileName: file.name,
     bytes: new Uint8Array(await file.arrayBuffer()),
+    scheduledAt: scheduledAt.value,
   });
   if (!posted.ok) return { errors: formErrors(posted.error, locale) };
-  return done(state, { url: posted.value.url, docUrl: posted.value.docUrl });
+  return done(state, {
+    url: posted.value.url,
+    docUrl: posted.value.docUrl,
+    ...(scheduledAt.value === null ? {} : { scheduledFor: when(scheduledAt.value) }),
+  });
 }
 
 /** Makes a Google Forms quiz from the questions, with true/false in the teacher's language. */

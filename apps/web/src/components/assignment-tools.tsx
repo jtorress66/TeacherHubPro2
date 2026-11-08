@@ -16,6 +16,7 @@ import {
 } from '../app/_lib/assignment-actions.ts';
 import { Field, FormAlert, Submit } from './forms.tsx';
 import { Hidden, Select, TextArea, type Option } from './form-fields.tsx';
+import { ScheduleFields } from './schedule-fields.tsx';
 
 const initial: AssignmentFormState = {};
 
@@ -351,7 +352,10 @@ export function PostWordForm(props: {
       <FormAlert message={errors.form} />
       {state.url === undefined ? null : (
         <p role="status" className="notice">
-          {t('wordPost.posted')} <a href={state.url}>{t('wordPost.openClassroom')}</a>
+          {state.scheduledFor === undefined
+            ? t('wordPost.posted')
+            : t('schedule.scheduledFor', { when: state.scheduledFor })}{' '}
+          <a href={state.url}>{t('wordPost.openClassroom')}</a>
           {state.docUrl === undefined ? null : (
             <>
               {' · '}
@@ -387,6 +391,7 @@ export function PostWordForm(props: {
         label={t('wordPost.dueDate')}
         error={errors.dueDate}
       />
+      <ScheduleFields locale={props.locale} idPrefix="word-post" error={errors.scheduledAt} />
       <FileField
         id="word-post-file"
         name="file"

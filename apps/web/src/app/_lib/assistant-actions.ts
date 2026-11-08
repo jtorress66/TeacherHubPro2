@@ -13,6 +13,8 @@ import {
 } from '../../server/assistant-forms.ts';
 import { formErrors } from '../../server/error-messages.ts';
 import { requireUser } from './auth.ts';
+import { scheduledAtOf } from '../../server/schedule-form.ts';
+import { teacherTimeZone } from './time-zone.ts';
 
 export interface AssistantFormState {
   readonly errors?: Readonly<Record<string, string>>;
@@ -20,6 +22,8 @@ export interface AssistantFormState {
   /** After sending slides to Classroom: the assignment and the deck. */
   readonly url?: string;
   readonly slidesUrl?: string;
+  /** When the post was scheduled for, as the teacher reads it; missing when posted now. */
+  readonly scheduledFor?: string;
   /** Changes after each success so the form can clear itself. */
   readonly version?: number;
 }
@@ -146,6 +150,11 @@ export async function sendPresentationToClassroomAction(
 ): Promise<AssistantFormState> {
   const locale = localeOf(data);
   const { user } = await requireUser(locale);
+  const timeZone = await teacherTimeZone();
+  const scheduledAt = scheduledAtOf(data, timeZone);
+  if (!scheduledAt.ok) return { errors: formErrors(scheduledAt.error, locale) };
+  const when = (at: Date) =>
+    new Intl.DateTimeFormat(locale, { dateStyle: 'full', timeStyle: 'short', timeZone }).format(at);
   const instructions = text(data, 'instructions');
   const dueDate = text(data, 'dueDate');
   const sent = await getAppContainer().sendPresentationToClassroom.execute({
@@ -155,9 +164,11 @@ export async function sendPresentationToClassroomAction(
     title: text(data, 'title'),
     instructions: instructions === '' ? null : instructions,
     dueDate: dueDate === '' ? null : dueDate,
+    scheduledAt: scheduledAt.value,
   });
   if (!sent.ok) return { errors: formErrors(sent.error, locale) };
   return {
+    ...(scheduledAt.value === null ? {} : { scheduledFor: when(scheduledAt.value) }),
     url: sent.value.url,
     slidesUrl: sent.value.slidesUrl,
     version: (state.version ?? 0) + 1,

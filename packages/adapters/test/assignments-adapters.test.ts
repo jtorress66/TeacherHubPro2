@@ -149,6 +149,21 @@ describe('GoogleClassroom', () => {
     });
   });
 
+  it('posts a scheduled coursework as a draft that Classroom publishes at that time', async () => {
+    const api = classroomApi(fixture.accessToken);
+    await new GoogleClassroom(api.fetchFn).createCoursework(fixture.accessToken, 'c-1', {
+      title: 'Slides',
+      description: '',
+      material: { kind: 'link', url: 'https://app.test' },
+      dueDate: null,
+      scheduledAt: new Date('2026-11-10T12:30:00Z'),
+    });
+    expect(api.posted[0]).toMatchObject({
+      state: 'DRAFT',
+      scheduledTime: '2026-11-10T12:30:00.000Z',
+    });
+  });
+
   it('reports a server error as unavailable', async () => {
     const failing = () => Promise.resolve(new Response('{}', { status: 503 }));
     expect(await new GoogleClassroom(failing).listCourses('t')).toEqual({

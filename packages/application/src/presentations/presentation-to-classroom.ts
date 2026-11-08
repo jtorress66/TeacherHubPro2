@@ -1,4 +1,5 @@
 import {
+  checkSchedule,
   ok,
   optionalText,
   parseLocalDate,
@@ -9,7 +10,12 @@ import {
   type Result,
   type User,
 } from '@thp/domain';
-import type { ClassroomCoursework, GoogleSlidesFiles, PresentationRepository } from '@thp/ports';
+import type {
+  ClassroomCoursework,
+  Clock,
+  GoogleSlidesFiles,
+  PresentationRepository,
+} from '@thp/ports';
 import { findOwned } from '../assistant/owned.ts';
 import { accessToken, googleFailed, type ConnectionDeps } from '../assignments/classroom.ts';
 import type { UseCaseError } from '../errors.ts';
@@ -24,6 +30,7 @@ export class SendPresentationToClassroom {
       readonly presentations: PresentationRepository;
       readonly googleSlides: GoogleSlidesFiles;
       readonly classroomCoursework: ClassroomCoursework;
+      readonly clock: Clock;
     },
   ) {}
 
@@ -34,6 +41,8 @@ export class SendPresentationToClassroom {
     readonly title: string;
     readonly instructions: string | null;
     readonly dueDate: string | null;
+    /** Post later, at this moment; missing or null posts now. */
+    readonly scheduledAt?: Date | null;
   }): Promise<Result<{ readonly url: string; readonly slidesUrl: string }, UseCaseError>> {
     const presentation = await findOwned(
       this.deps.presentations,
@@ -53,6 +62,12 @@ export class SendPresentationToClassroom {
       if (!parsed.ok) return parsed;
       dueDate = parsed.value;
     }
+    let scheduledAt: Date | null = null;
+    if (input.scheduledAt != null) {
+      const checked = checkSchedule('scheduledAt', input.scheduledAt, this.deps.clock.now());
+      if (!checked.ok) return checked;
+      scheduledAt = checked.value;
+    }
     const token = await accessToken(this.deps, input.actor);
     if (!token.ok) return token;
     const deck = await this.deps.googleSlides.createPresentation(
@@ -65,6 +80,7 @@ export class SendPresentationToClassroom {
       description: instructions.value ?? '',
       material: { kind: 'driveFile', driveFileId: deck.value.id, shareMode: 'view' },
       dueDate,
+      scheduledAt,
     });
     if (!posted.ok) return googleFailed(posted.error);
     return ok({ url: posted.value.url, slidesUrl: deck.value.url });

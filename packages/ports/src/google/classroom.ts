@@ -48,6 +48,8 @@ export interface CourseworkRequest {
   readonly description: string;
   readonly material: CourseworkMaterial;
   readonly dueDate: LocalDate | null;
+  /** Classroom publishes the post at this moment; missing or null posts it now. */
+  readonly scheduledAt?: Date | null;
 }
 
 /** Shares an assignment to a Google Classroom course. */

@@ -8,6 +8,7 @@ export * from './shared/time-of-day.ts';
 export * from './shared/weekday.ts';
 export * from './shared/language.ts';
 export * from './shared/url.ts';
+export * from './shared/schedule.ts';
 
 export * from './accounts/session.ts';
 export * from './accounts/password-policy.ts';
