@@ -131,6 +131,7 @@ describe('migrations', () => {
           '0018_admin',
           '0019_marketing',
           '0020_plan_format',
+          '0021_hardening',
         ],
       },
     });
