@@ -135,7 +135,7 @@ describe('migrations', () => {
         ],
       },
     });
-    expect(await tableNames()).toHaveLength(44);
+    expect(await tableNames()).toHaveLength(46);
   });
 
   it('turns plans saved before step 8 into valid plans of their kind', async () => {
