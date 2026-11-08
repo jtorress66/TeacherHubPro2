@@ -9,6 +9,7 @@ import { formErrors } from '../../server/error-messages.ts';
 import { parseForm, type FieldErrors } from '../../server/forms.ts';
 import { importErrorMessages } from '../../server/import-messages.ts';
 import { classForm, semesterForm, studentForm, toClassChanges } from '../../server/roster-forms.ts';
+import { record } from './activity.ts';
 import { requireUser } from './auth.ts';
 
 export interface RosterFormState {
@@ -110,6 +111,7 @@ export async function addStudentAction(
     details,
   });
   if (!result.ok) return { errors: formErrors(result.error, locale) };
+  await record(user, 'student_added', result.value.id);
   revalidatePath(classPage(locale, classId));
   return { saved: true, version: (state.version ?? 0) + 1 };
 }
@@ -128,6 +130,7 @@ export async function updateStudentAction(
     details,
   });
   if (!result.ok) return { errors: formErrors(result.error, locale) };
+  await record(user, 'student_updated', result.value.id);
   // Refresh the roster before going back to it, so it shows the change.
   revalidatePath(classPage(locale, result.value.classId));
   redirect(classPage(locale, result.value.classId));
@@ -137,10 +140,12 @@ export async function deleteStudentAction(data: FormData): Promise<void> {
   const locale = localeOf(data);
   const { user } = await requireUser(locale);
   const classId = text(data, 'classId');
-  await getAppContainer().deleteStudent.execute({
+  const studentId = text(data, 'studentId');
+  const deleted = await getAppContainer().deleteStudent.execute({
     actor: user,
-    studentId: text(data, 'studentId') as StudentId,
+    studentId: studentId as StudentId,
   });
+  if (deleted.ok) await record(user, 'student_removed', studentId);
   revalidatePath(classPage(locale, classId));
 }
 
@@ -159,6 +164,7 @@ export async function importStudentsAction(
     csv,
   });
   if (!result.ok) return { messages: importErrorMessages(result.error, locale) };
+  await record(user, 'students_imported', classId);
   revalidatePath(classPage(locale, classId));
   return { imported: result.value.imported, version: (state.version ?? 0) + 1 };
 }

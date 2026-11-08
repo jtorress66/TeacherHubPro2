@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { SchoolId } from '@thp/domain';
 import { createTranslator } from '@thp/i18n';
+import { ActivityLog } from '../../../../../../components/activity-log.tsx';
 import {
   DeleteForm,
   NewUserForm,
@@ -83,6 +84,7 @@ export default async function SchoolPage(props: Props) {
           teachers={users.value.map(({ user: person }) => ({ id: person.id, name: person.name }))}
         />
       </section>
+      <ActivityLog locale={locale} actor={user} schoolId={school.id} names={names} />
       <DeleteForm locale={locale} kind="school" schoolId={school.id} />
     </section>
   );

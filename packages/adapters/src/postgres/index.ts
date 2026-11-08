@@ -1,5 +1,7 @@
 import type { Kysely } from 'kysely';
 import type {
+  AuditLog,
+  RateLimiter,
   AttachmentRepository,
   ClassroomConnectionRepository,
   FormsExportRepository,
@@ -45,6 +47,7 @@ import type {
   SubscriptionRepository,
   UserRepository,
 } from '@thp/ports';
+import { PostgresAuditLog, PostgresRateLimiter } from './repositories/postgres-hardening.ts';
 import { PostgresAssignmentRepository } from './repositories/postgres-assignment-repository.ts';
 import { PostgresAttendanceSessionRepository } from './repositories/postgres-attendance-session-repository.ts';
 import { PostgresClassRepository } from './repositories/postgres-class-repository.ts';
@@ -112,6 +115,8 @@ export { PostgresFileStore } from './repositories/postgres-file-store.ts';
 export { PostgresJobQueue } from './repositories/postgres-job-queue.ts';
 
 export interface PostgresRepositories {
+  readonly rateLimiter: RateLimiter;
+  readonly auditLog: AuditLog;
   readonly schools: SchoolRepository;
   readonly users: UserRepository;
   readonly classes: ClassRepository;
@@ -161,6 +166,8 @@ export interface PostgresRepositories {
 export function createPostgresRepositories(db: Kysely<Database>): PostgresRepositories {
   const chat = new PostgresChat(db);
   return {
+    rateLimiter: new PostgresRateLimiter(db),
+    auditLog: new PostgresAuditLog(db),
     schools: new PostgresSchoolRepository(db),
     users: new PostgresUserRepository(db),
     classes: new PostgresClassRepository(db),

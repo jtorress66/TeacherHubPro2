@@ -19,6 +19,7 @@ import * as prepBatches from './0017_prep_batches.ts';
 import * as admin from './0018_admin.ts';
 import * as marketing from './0019_marketing.ts';
 import * as planFormat from './0020_plan_format.ts';
+import * as hardening from './0021_hardening.ts';
 
 /** Ordered list of migrations, bundled with the code (no filesystem lookups at runtime). */
 const migrations: Readonly<Record<string, Migration>> = {
@@ -42,6 +43,7 @@ const migrations: Readonly<Record<string, Migration>> = {
   '0018_admin': admin,
   '0019_marketing': marketing,
   '0020_plan_format': planFormat,
+  '0021_hardening': hardening,
 };
 
 export const migrationProvider: MigrationProvider = {

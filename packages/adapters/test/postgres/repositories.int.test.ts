@@ -42,6 +42,8 @@ import {
   prepBatchRepositoryContract,
   adminContract,
   marketingContract,
+  rateLimiterContract,
+  auditLogContract,
   gamePlayRepositoryContract,
   liveRepositoryContract,
   learningRepositoryContract,
@@ -373,4 +375,12 @@ withParents(parentsFor.none, () => {
 
 withParents(parentsFor.none, () => {
   marketingContract('Postgres', () => repos);
+});
+
+withParents(parentsFor.none, () => {
+  rateLimiterContract('PostgresRateLimiter', () => repos.rateLimiter);
+});
+
+withParents(parentsFor.school, () => {
+  auditLogContract('PostgresAuditLog', () => repos.auditLog);
 });

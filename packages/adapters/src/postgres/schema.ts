@@ -313,6 +313,21 @@ export interface StudentInsightsTable {
   generated_at: Date;
 }
 
+export interface RateLimitsTable {
+  key: string;
+  window_start: Date;
+  count: number;
+}
+
+export interface AuditEventsTable {
+  id: string;
+  school_id: string;
+  actor_id: string;
+  action: string;
+  target_id: string | null;
+  at: Date;
+}
+
 export interface LeadsTable {
   id: string;
   name: string;
@@ -557,6 +572,8 @@ export interface Database {
   prep_batches: PrepBatchesTable;
   password_tokens: PasswordTokensTable;
   leads: LeadsTable;
+  rate_limits: RateLimitsTable;
+  audit_events: AuditEventsTable;
   chat_sessions: ChatSessionsTable;
   chat_turns: ChatTurnsTable;
   attendance_sessions: AttendanceSessionsTable;

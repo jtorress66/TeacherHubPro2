@@ -37,6 +37,8 @@ import {
 export const connect = (): Kysely<Database> => createDatabase(inject('databaseUrl'));
 
 const tables = [
+  'rate_limits',
+  'audit_events',
   'chat_turns',
   'chat_sessions',
   'leads',

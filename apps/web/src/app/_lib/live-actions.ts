@@ -5,6 +5,7 @@ import { z } from 'zod';
 import type { ClassId, GameId, LiveSessionId } from '@thp/domain';
 import type { GameRound, LiveJoin, LiveLobby, RoundResult } from '@thp/application';
 import { isLocale, type Locale } from '@thp/i18n';
+import { callerAddress, throttle } from './limits.ts';
 import { getAppContainer } from '../../container.ts';
 import { formErrors, messageFor } from '../../server/error-messages.ts';
 import { requireUser } from './auth.ts';
@@ -87,6 +88,8 @@ export async function joinLiveAction(
 ): Promise<JoinReply> {
   const parsed = joinInput.safeParse(input);
   if (!parsed.success) return { ok: false, message: messageFor({ code: 'not_found' }, locale) };
+  const limited = await throttle([['liveJoin', await callerAddress()]]);
+  if (limited !== null) return { ok: false, message: messageFor(limited, locale) };
   const { reconnectToken, ...rest } = parsed.data;
   const join = await getAppContainer().joinLiveSession.execute({
     ...rest,

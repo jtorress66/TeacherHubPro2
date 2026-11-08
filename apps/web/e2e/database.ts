@@ -19,3 +19,17 @@ export async function resetSuperAdmins(): Promise<void> {
     await db.destroy();
   }
 }
+
+/** Test-only: makes the account with this email its school's admin. */
+export async function makeSchoolAdmin(email: string): Promise<void> {
+  const db = createDatabase(databaseUrl);
+  try {
+    await db
+      .updateTable('users')
+      .set({ role: 'school_admin' })
+      .where('email', '=', email.toLowerCase())
+      .execute();
+  } finally {
+    await db.destroy();
+  }
+}

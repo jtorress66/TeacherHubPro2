@@ -17,6 +17,7 @@ import { scheduledAtOf } from '../../server/schedule-form.ts';
 import { teacherTimeZone } from './time-zone.ts';
 import { parseQuestionsJson, studentLinkUrl } from '../../server/assignment-forms.ts';
 import { formErrors } from '../../server/error-messages.ts';
+import { record } from './activity.ts';
 import { requireUser } from './auth.ts';
 
 export interface AssignmentFormState {
@@ -180,6 +181,7 @@ export async function gradeSubmissionAction(
       ? await app.confirmGrade.execute({ ...decision, ...(score === undefined ? {} : { score }) })
       : await app.gradeByHand.execute({ ...decision, score: score ?? Number.NaN });
   if (!result.ok) return { errors: formErrors(result.error, locale) };
+  await record(ref.actor, 'submission_graded', decision.submissionId);
   revalidatePath(`${assignmentPath(locale, classId, assignmentId)}/submissions`);
   revalidatePath(`${classPath(locale, classId)}/gradebook`);
   revalidatePath(`${classPath(locale, classId)}/report-cards`);
@@ -269,6 +271,7 @@ export async function issueLinksAction(
           studentId: studentId as StudentId,
         });
   if (!issued.ok) return { errors: formErrors(issued.error, locale) };
+  await record(user, 'links_issued', studentId === '' ? classId : studentId);
   const issuedLinks: readonly IssuedLink[] =
     'token' in issued.value ? [issued.value] : issued.value;
   const links = issuedLinks.map(({ student, token }) => ({
@@ -283,11 +286,13 @@ export async function revokeLinkAction(data: FormData): Promise<void> {
   const locale = localeOf(data);
   const { user } = await requireUser(locale);
   const classId = text(data, 'classId');
-  await getAppContainer().revokeLink.execute({
+  const linkId = text(data, 'linkId');
+  const revoked = await getAppContainer().revokeLink.execute({
     actor: user,
     classId: classId as ClassId,
-    linkId: text(data, 'linkId') as StudentLinkId,
+    linkId: linkId as StudentLinkId,
   });
+  if (revoked.ok) await record(user, 'link_revoked', linkId);
   revalidatePath(`${classPath(locale, classId)}/student-links`);
 }
 

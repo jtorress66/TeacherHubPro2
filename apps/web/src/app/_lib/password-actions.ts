@@ -1,6 +1,7 @@
 'use server';
 
 import { isLocale, type Locale } from '@thp/i18n';
+import { callerAddress, throttle } from './limits.ts';
 import { getAppContainer } from '../../container.ts';
 import { formErrors } from '../../server/error-messages.ts';
 
@@ -27,6 +28,8 @@ export async function requestPasswordResetAction(
   data: FormData,
 ): Promise<PasswordFormState> {
   const locale = localeOf(data);
+  const limited = await throttle([['passwordReset', await callerAddress()]]);
+  if (limited !== null) return { errors: formErrors(limited, locale) };
   const sent = await getAppContainer().requestPasswordReset.execute({
     email: text(data, 'email').trim(),
   });

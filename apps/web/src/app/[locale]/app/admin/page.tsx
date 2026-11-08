@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { assignableRoles } from '@thp/domain';
 import { createTranslator } from '@thp/i18n';
+import { ActivityLog } from '../../../../components/activity-log.tsx';
 import { RoleForm, SendLinkForm, TransferForm } from '../../../../components/admin-forms.tsx';
 import { getAppContainer } from '../../../../container.ts';
 import { requireUser } from '../../../_lib/auth.ts';
@@ -76,6 +77,12 @@ export default async function SchoolUsersPage(props: LocaleParams) {
           teachers={rows.value.map(({ user: person }) => ({ id: person.id, name: person.name }))}
         />
       </section>
+      <ActivityLog
+        locale={locale}
+        actor={user}
+        schoolId={school.id}
+        names={new Map(rows.value.map(({ user: person }) => [person.id, person.name]))}
+      />
     </section>
   );
 }

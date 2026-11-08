@@ -15,6 +15,8 @@ import {
   type FieldErrors,
 } from '../../server/forms.ts';
 import { requireUser, setSessionCookie, takeSessionCookie } from './auth.ts';
+import { record } from './activity.ts';
+import { callerAddress, throttle } from './limits.ts';
 
 export interface FormState {
   readonly errors?: Readonly<Record<string, string>>;
@@ -39,6 +41,8 @@ export async function signUpAction(_state: FormState, data: FormData): Promise<F
   const form = parseForm(signUpForm, data);
   if (!form.ok) return fieldMessages(form.error, localeOf(data));
   const { locale, ...fields } = form.value;
+  const limited = await throttle([['signUp', await callerAddress()]]);
+  if (limited !== null) return { errors: formErrors(limited, locale) };
   const result = await getAppContainer().signUp.execute({
     ...fields,
     language: locale,
@@ -53,6 +57,11 @@ export async function logInAction(_state: FormState, data: FormData): Promise<Fo
   const form = parseForm(logInForm, data);
   if (!form.ok) return fieldMessages(form.error, localeOf(data));
   const { locale, ...credentials } = form.value;
+  const limited = await throttle([
+    ['logInEmail', credentials.email],
+    ['logInAddress', await callerAddress()],
+  ]);
+  if (limited !== null) return { errors: formErrors(limited, locale) };
   const result = await getAppContainer().logIn.execute(credentials);
   if (!result.ok) return { errors: formErrors(result.error, locale) };
   await setSessionCookie(result.value.sessionToken);
@@ -92,6 +101,7 @@ export async function updateSchoolAction(_state: FormState, data: FormData): Pro
     details: planFormat === undefined ? details : { ...details, planFormat },
   });
   if (!result.ok) return { errors: formErrors(result.error, locale) };
+  await record(user, 'school_updated', school.id);
   // The school name shows in the app header and drives the setup checklist.
   revalidatePath(`/${locale}/app`, 'layout');
   return { saved: true };
