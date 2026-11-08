@@ -66,6 +66,7 @@ describe('Posting a Word document to Google Classroom', () => {
       description: 'Type your answers in the document.',
       material: { kind: 'driveFile', driveFileId: 'doc-1', shareMode: 'copy' },
       dueDate: '2026-12-01',
+      scheduledAt: null,
     });
   });
 
@@ -99,6 +100,13 @@ describe('Posting a Word document to Google Classroom', () => {
       error: { field: 'dueDate', code: 'invalid_format' },
     });
     expect(drive.uploads).toEqual([]);
+  });
+
+  it('schedules the post for later', async () => {
+    const { classroom, post } = await teacher(makeWorld());
+    const later = new Date('2026-09-03T12:00:00Z');
+    valueOf(await post({ scheduledAt: later }));
+    expect(classroom.coursework.at(-1)).toMatchObject({ scheduledAt: later });
   });
 
   it('needs a Google connection', async () => {

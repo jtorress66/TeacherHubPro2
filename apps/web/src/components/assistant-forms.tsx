@@ -22,6 +22,7 @@ import {
 } from '../app/_lib/assistant-actions.ts';
 import { Field, FormAlert, Submit } from './forms.tsx';
 import { Hidden, Select, TextArea, type Option } from './form-fields.tsx';
+import { ScheduleFields } from './schedule-fields.tsx';
 
 const initial: AssistantFormState = {};
 const option = (id: string, name: string): Option => ({ id, name });
@@ -318,7 +319,9 @@ export function PresentationClassroomForm(props: {
       <FormAlert message={errors.form} />
       {state.url === undefined ? null : (
         <p role="status" className="notice">
-          {t('presentations.classroomSent')}{' '}
+          {state.scheduledFor === undefined
+            ? t('presentations.classroomSent')
+            : t('schedule.scheduledFor', { when: state.scheduledFor })}{' '}
           <a href={state.url}>{t('presentations.classroomOpen')}</a>
           {state.slidesUrl === undefined ? null : (
             <>
@@ -356,6 +359,7 @@ export function PresentationClassroomForm(props: {
         label={t('presentations.classroomDueDate')}
         error={errors.dueDate}
       />
+      <ScheduleFields locale={props.locale} idPrefix="slides-post" error={errors.scheduledAt} />
       <p className="hint">{t('presentations.classroomNote')}</p>
       <Submit label={t('presentations.classroomSend')} />
     </form>

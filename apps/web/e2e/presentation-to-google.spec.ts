@@ -56,5 +56,15 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     await expect(
       card.getByRole('link', { name: t('presentations.classroomOpenSlides') }),
     ).toHaveAttribute('href', /^https:\/\/slides\.local\/presentation\/d\/local-deck-\d+\/edit$/);
+
+    // Or schedule it: Classroom publishes it then, and the notice says when.
+    const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    await send.getByLabel(t('classroom.course')).selectOption({ label: 'Local Classroom course' });
+    await send.getByLabel(t('schedule.later')).check();
+    await send.getByLabel(t('schedule.date'), { exact: true }).fill(tomorrow);
+    await send.getByLabel(t('schedule.time'), { exact: true }).fill('08:30');
+    await send.getByRole('button', { name: t('presentations.classroomSend') }).click();
+    const scheduled = t('schedule.scheduledFor', { when: '|' }).split('|')[0] ?? '';
+    await expect(card.getByRole('status')).toContainText(scheduled);
   });
 }

@@ -1531,6 +1531,15 @@ export const es: Messages = {
       'El envío de correos aún no está activado. Use «Nuevo enlace para copiar» y compártalo con la familia.',
     back: 'Volver a la clase',
   },
+  schedule: {
+    when: 'Cuándo publicar',
+    now: 'Publicar ahora',
+    later: 'Programar para más tarde',
+    date: 'Fecha',
+    time: 'Hora',
+    hint: 'Google Classroom lo publica a esta hora, en tu zona horaria (al menos 5 minutos desde ahora y dentro de un año). Puedes cambiarlo o cancelarlo en Classroom.',
+    scheduledFor: 'Programado en Google Classroom para el {when}.',
+  },
   family: {
     title: 'Progreso de {name}',
     readOnly: 'Solo lectura. ¿Preguntas? Contacte al maestro.',

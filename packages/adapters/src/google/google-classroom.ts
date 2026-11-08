@@ -112,7 +112,9 @@ export class GoogleClassroom implements ClassroomCourses, ClassroomCoursework {
           description: coursework.description,
           materials: [materialOf(coursework.material)],
           workType: 'ASSIGNMENT',
-          state: 'PUBLISHED',
+          ...(coursework.scheduledAt == null
+            ? { state: 'PUBLISHED' }
+            : { state: 'DRAFT', scheduledTime: coursework.scheduledAt.toISOString() }),
           ...(coursework.dueDate === null ? {} : dueParts(coursework.dueDate)),
         }),
       },

@@ -1516,6 +1516,15 @@ export const en = {
       'Email sending isn’t switched on yet. Use “New link to copy” and share it with the family.',
     back: 'Back to the class',
   },
+  schedule: {
+    when: 'When to post',
+    now: 'Post now',
+    later: 'Schedule for later',
+    date: 'Date',
+    time: 'Time',
+    hint: 'Google Classroom posts it at this time, in your time zone (at least 5 minutes from now and within a year). You can change or cancel it in Classroom.',
+    scheduledFor: 'Scheduled in Google Classroom for {when}.',
+  },
   family: {
     title: '{name}’s progress',
     readOnly: 'Read-only. Questions? Contact the teacher.',
