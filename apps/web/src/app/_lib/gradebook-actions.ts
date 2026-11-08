@@ -12,6 +12,7 @@ import {
   parseGradeForm,
 } from '../../server/grade-forms.ts';
 import { gradeEntryMessages, gradeFieldMessages } from '../../server/gradebook-messages.ts';
+import { record } from './activity.ts';
 import { requireUser } from './auth.ts';
 
 export interface GradebookFormState {
@@ -150,6 +151,7 @@ export async function saveGradesAction(
     rows,
   });
   if (!result.ok) return { errors: gradeEntryMessages(result.error, locale) };
+  await record(user, 'grades_saved', assignmentId);
   refresh(locale, classId);
   return done(state);
 }

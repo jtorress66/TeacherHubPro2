@@ -5,6 +5,7 @@ import type { ClassId, PortalLinkId, StudentId } from '@thp/domain';
 import { isLocale, type Locale } from '@thp/i18n';
 import { getAppContainer } from '../../container.ts';
 import { formErrors } from '../../server/error-messages.ts';
+import { record } from './activity.ts';
 import { requireUser } from './auth.ts';
 
 export interface PortalFormState {
@@ -64,6 +65,7 @@ export async function issuePortalLinkAction(
   const ref = refs(data);
   const issued = await getAppContainer().issuePortalLink.execute({ actor: user, ...ref });
   if (!issued.ok) return { errors: formErrors(issued.error, locale) };
+  await record(user, 'portal_link_issued', ref.classId);
   revalidatePath(pagePath(locale, ref.classId));
   return { url: issued.value.url };
 }
@@ -72,10 +74,12 @@ export async function revokePortalLinkAction(data: FormData): Promise<void> {
   const locale = localeOf(data);
   const { user } = await requireUser(locale);
   const classId = text(data, 'classId');
-  await getAppContainer().revokePortalLink.execute({
+  const linkId = text(data, 'linkId');
+  const revoked = await getAppContainer().revokePortalLink.execute({
     actor: user,
     classId: classId as ClassId,
-    linkId: text(data, 'linkId') as PortalLinkId,
+    linkId: linkId as PortalLinkId,
   });
+  if (revoked.ok) await record(user, 'portal_link_revoked', linkId);
   revalidatePath(pagePath(locale, classId));
 }

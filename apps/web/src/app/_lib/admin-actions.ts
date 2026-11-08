@@ -7,6 +7,7 @@ import { isLocale, type Locale } from '@thp/i18n';
 import { getAppContainer } from '../../container.ts';
 import { formErrors } from '../../server/error-messages.ts';
 import { importErrorMessages } from '../../server/import-messages.ts';
+import { record } from './activity.ts';
 import { requireUser } from './auth.ts';
 
 export interface AdminFormState {
@@ -73,13 +74,15 @@ export async function changeUserRoleAction(
   data: FormData,
 ): Promise<AdminFormState> {
   const { locale, actor } = await actorOf(data);
+  const userId = text(data, 'userId');
   const changed = await getAppContainer().changeUserRole.execute({
     actor,
-    userId: text(data, 'userId') as UserId,
+    userId: userId as UserId,
     role: roleOf(data),
     ...schoolOf(data),
   });
   if (!changed.ok) return { errors: formErrors(changed.error, locale) };
+  await record(actor, 'role_changed', userId, schoolOf(data).schoolId);
   revalidatePath(`/${locale}/app/admin`);
   return next(state, { notice: 'saved' });
 }
@@ -89,12 +92,14 @@ export async function sendPasswordLinkAction(
   data: FormData,
 ): Promise<AdminFormState> {
   const { locale, actor } = await actorOf(data);
+  const userId = text(data, 'userId');
   const sent = await getAppContainer().sendPasswordLink.execute({
     actor,
-    userId: text(data, 'userId') as UserId,
+    userId: userId as UserId,
     ...schoolOf(data),
   });
   if (!sent.ok) return { errors: formErrors(sent.error, locale) };
+  await record(actor, 'password_link_sent', userId, schoolOf(data).schoolId);
   return next(state, { notice: 'sent' });
 }
 
@@ -139,6 +144,7 @@ export async function updateSchoolAction(
     details: schoolDetails(data),
   });
   if (!updated.ok) return { errors: formErrors(updated.error, locale) };
+  await record(actor, 'school_updated', schoolId, schoolId);
   revalidatePath(`/${locale}/app/super-admin/schools/${schoolId}`);
   return next(state, { notice: 'saved' });
 }
@@ -224,12 +230,14 @@ export async function importTeachersAction(
   data: FormData,
 ): Promise<AdminFormState> {
   const { locale, actor } = await actorOf(data);
+  const schoolId = text(data, 'schoolId') as SchoolId;
   const imported = await getAppContainer().importTeachers.execute({
     actor,
-    schoolId: text(data, 'schoolId') as SchoolId,
+    schoolId,
     csv: await csvOf(data),
   });
   if (!imported.ok) return { rowErrors: importErrorMessages(imported.error, locale) };
+  await record(actor, 'teachers_imported', schoolId, schoolId);
   return next(state, { count: imported.value.imported });
 }
 
@@ -246,5 +254,6 @@ export async function importSchoolStudentsAction(
     csv: await csvOf(data),
   });
   if (!imported.ok) return { rowErrors: importErrorMessages(imported.error, locale) };
+  await record(actor, 'students_imported', classId, (schoolId ?? '') as SchoolId);
   return next(state, { count: imported.value.imported });
 }

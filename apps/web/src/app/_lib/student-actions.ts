@@ -6,6 +6,7 @@ import { isLocale, type Locale } from '@thp/i18n';
 import { getAppContainer } from '../../container.ts';
 import { parseAnswersForm } from '../../server/assignment-forms.ts';
 import { formErrors } from '../../server/error-messages.ts';
+import { throttle } from './limits.ts';
 
 export interface StudentFormState {
   readonly errors?: Readonly<Record<string, string>>;
@@ -29,6 +30,8 @@ export async function submitAnswersAction(
   const locale: Locale = isLocale(value) ? value : 'en';
   const token = text(data, 'token');
   const assignmentId = text(data, 'assignmentId');
+  const limited = await throttle([['linkSubmit', token]]);
+  if (limited !== null) return { errors: formErrors(limited, locale) };
   const submitted = await getAppContainer().submitAnswers.execute({
     token,
     assignmentId: assignmentId as AssignmentId,

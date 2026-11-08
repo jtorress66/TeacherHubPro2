@@ -38,3 +38,5 @@ export type * from './accounts/password-credential-repository.ts';
 export type * from './admin/admin-directories.ts';
 export type * from './marketing/marketing.ts';
 export type * from './ai/chatbot-writer.ts';
+export type { RateLimiter } from './security/rate-limiter.ts';
+export type { AuditLog } from './audit/audit-log.ts';

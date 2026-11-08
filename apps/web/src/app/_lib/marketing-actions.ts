@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { leadStatuses, type LeadId, type LeadStatus } from '@thp/domain';
 import { isLocale, type Locale } from '@thp/i18n';
+import { callerAddress, throttle } from './limits.ts';
 import { getAppContainer } from '../../container.ts';
 import { formErrors } from '../../server/error-messages.ts';
 import { requireUser } from './auth.ts';
@@ -33,6 +34,8 @@ export async function captureLeadAction(
   data: FormData,
 ): Promise<LeadFormState> {
   const locale = localeOf(data);
+  const limited = await throttle([['contact', await callerAddress()]]);
+  if (limited !== null) return { errors: formErrors(limited, locale) };
   const captured = await getAppContainer().captureLead.execute({
     name: text(data, 'name'),
     email: text(data, 'email'),

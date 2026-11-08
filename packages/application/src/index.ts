@@ -432,3 +432,4 @@ export {
   maxListedLeads,
   type LeadList,
 } from './marketing/leads.ts';
+export { ListActivity, RecordActivity, Throttle, maxListedActivity } from './security/hardening.ts';

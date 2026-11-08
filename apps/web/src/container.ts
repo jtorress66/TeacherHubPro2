@@ -112,6 +112,9 @@ import {
   CaptureLead,
   ListLeads,
   UpdateLeadStatus,
+  Throttle,
+  RecordActivity,
+  ListActivity,
   SetUpFirstSuperAdmin,
   RequestPasswordReset,
   SetPassword,
@@ -339,6 +342,9 @@ export interface AppContainer {
   readonly captureLead: CaptureLead;
   readonly listLeads: ListLeads;
   readonly updateLeadStatus: UpdateLeadStatus;
+  readonly throttle: Throttle;
+  readonly recordActivity: RecordActivity;
+  readonly listActivity: ListActivity;
   /** Whether the first super admin setup page is on (a key is set). */
   readonly superAdminSetupAvailable: boolean;
   readonly setUpFirstSuperAdmin: SetUpFirstSuperAdmin;
@@ -670,6 +676,9 @@ export function createAppContainer(
     captureLead: new CaptureLead(deps),
     listLeads: new ListLeads(deps),
     updateLeadStatus: new UpdateLeadStatus(deps),
+    throttle: new Throttle(deps),
+    recordActivity: new RecordActivity(deps),
+    listActivity: new ListActivity(deps),
     superAdminSetupAvailable: config.superAdminSetupKey !== null,
     setUpFirstSuperAdmin: new SetUpFirstSuperAdmin(deps),
     requestPasswordReset: new RequestPasswordReset(deps),
