@@ -32,6 +32,7 @@ describe('migrations', () => {
       'assignments',
       'attendance_entries',
       'attendance_sessions',
+      'audit_events',
       'chat_sessions',
       'chat_turns',
       'classes',
@@ -56,6 +57,7 @@ describe('migrations', () => {
       'portal_links',
       'prep_batches',
       'presentations',
+      'rate_limits',
       'report_card_comments',
       'schools',
       'semesters',
@@ -79,6 +81,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0021_hardening',
           '0020_plan_format',
           '0019_marketing',
           '0018_admin',

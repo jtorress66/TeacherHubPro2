@@ -4,13 +4,15 @@ import type { RateRuleName } from '@thp/domain';
 import { getAppContainer } from '../../container.ts';
 import { addressOf } from '../../server/chat-api.ts';
 
+const thisMachine = new Set(['unknown', '127.0.0.1', '::1', '::ffff:127.0.0.1']);
+
 /**
- * The caller's address as the proxy reports it; null without a proxy (local runs and tests), where
- * every caller would share one address.
+ * The caller's address as the proxy reports it; null when the request comes from this machine
+ * (local runs and tests), where every caller would share one address.
  */
 export async function callerAddress(): Promise<string | null> {
   const address = addressOf(await headers());
-  return address === 'unknown' ? null : address;
+  return thisMachine.has(address) ? null : address;
 }
 
 /**
