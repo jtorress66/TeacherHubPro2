@@ -31,10 +31,14 @@ interface SpeechJob {
   readonly parts: readonly { readonly text: string; readonly clipId: string }[];
 }
 
-/** Audio is ready to play, or a job is making the parts that are not cached yet. */
+/**
+ * Audio is ready to play, or a job is making the parts that are not cached yet; without a voice
+ * service, the plain text for the device's own voice.
+ */
 export type SpeechOutcome =
   | { readonly status: 'ready'; readonly clips: readonly string[] }
-  | { readonly status: 'queued'; readonly clips: readonly string[]; readonly job: Job };
+  | { readonly status: 'queued'; readonly clips: readonly string[]; readonly job: Job }
+  | { readonly status: 'device'; readonly text: string };
 
 const clipPattern = /^[0-9a-f]{64}$/;
 const clipKey = (schoolId: SchoolId, clipId: string) => `speech/${schoolId}/${clipId}.mp3`;
@@ -58,7 +62,8 @@ export class RequestSpeech {
       readonly clock: Clock;
       readonly files: FileStore;
       readonly tokenHasher: TokenHasher;
-      readonly voice: string;
+      /** The voice service's voice; null when there is none and the device reads aloud. */
+      readonly voice: string | null;
     },
   ) {}
 
@@ -74,6 +79,7 @@ export class RequestSpeech {
     if (!request.ok) return request;
     const { language, parts } = request.value;
     const { voice, tokenHasher, files } = this.deps;
+    if (voice === null) return ok({ status: 'device', text: parts.join('\n\n') });
     const clips = await Promise.all(
       parts.map(async (text) => ({
         text,

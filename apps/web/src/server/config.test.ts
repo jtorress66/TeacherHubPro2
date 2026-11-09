@@ -123,6 +123,18 @@ describe('parseWebConfig', () => {
     });
   });
 
+  it('leaves reading aloud to the device in production until OpenAI speech is on', () => {
+    expect(parseWebConfig({ ...production, TTS_PROVIDER: 'openai' })).toMatchObject({
+      value: { voice: 'nova' },
+    });
+    expect(parseWebConfig({ ...production, TTS_PROVIDER: 'local' })).toMatchObject({
+      value: { voice: null },
+    });
+    expect(parseWebConfig({ ...local, TTS_PROVIDER: 'local' })).toMatchObject({
+      value: { voice: 'nova' },
+    });
+  });
+
   it('reads a production setup with Stripe and Google', () => {
     expect(parseWebConfig(production)).toEqual({
       ok: true,
@@ -146,7 +158,7 @@ describe('parseWebConfig', () => {
           clientSecret: 'google-secret',
           encryptionKey: testEncryptionKey,
         },
-        voice: 'nova',
+        voice: null,
         realtime: {
           url: 'https://teacherhubpro-realtime.onrender.com',
           ticketSecret: production.REALTIME_TICKET_SECRET,

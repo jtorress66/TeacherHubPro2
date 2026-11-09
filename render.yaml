@@ -91,6 +91,10 @@ services:
       # Where high-priority website leads (schools, districts, demo requests) are emailed.
       - key: LEADS_NOTIFY_EMAIL
         sync: false
+      # Listen: "openai" plays the worker's OpenAI voice (set it on the worker too, with the key);
+      # anything else in production reads aloud with the device's own free voice.
+      - key: TTS_PROVIDER
+        sync: false
 
   - type: worker
     name: teacherhubpro-worker
@@ -141,6 +145,11 @@ services:
       - key: RESEND_API_KEY
         sync: false
       - key: MAIL_FROM # e.g. TeacherHubPro <hello@teacherhubpro.com>, on a domain verified in Resend
+        sync: false
+      # Listen with OpenAI text-to-speech: TTS_PROVIDER=openai here and on the web service.
+      - key: TTS_PROVIDER
+        sync: false
+      - key: OPENAI_API_KEY
         sync: false
 
   - type: web
