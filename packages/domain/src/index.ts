@@ -82,6 +82,8 @@ export * from './assistant/content-request.ts';
 export * from './assistant/generation.ts';
 export * from './presentations/presentation.ts';
 export * from './presentations/presentation-request.ts';
+export * from './rubrics/rubric.ts';
+export * from './rubrics/rubric-request.ts';
 export * from './substitutes/sub-packet.ts';
 export * from './speech/speech.ts';
 export * from './assignments/answers.ts';

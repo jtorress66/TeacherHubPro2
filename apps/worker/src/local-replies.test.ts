@@ -4,6 +4,7 @@ import {
   GameWriter,
   PathWriter,
   PresentationWriter,
+  RubricWriter,
   InsightWriter,
   QuestionExtractor,
   QuizWriter,
@@ -16,6 +17,7 @@ import {
   createGameRequest,
   createPathRequest,
   createPresentationRequest,
+  createRubricRequest,
   defaultGameModes,
   gameCountRange,
   leniencyFor,
@@ -90,6 +92,15 @@ describe('the local stand-in replies', () => {
     const draft = unwrap(await new PresentationWriter(local()).draft(request));
     expect(draft.slides).toHaveLength(4);
     expect(draft.slides[0]?.layout).toBe('title');
+  });
+
+  it('drafts a rubric with the criteria and levels asked for', async () => {
+    const request = unwrap(
+      createRubricRequest({ topic: 'Lab report', criteriaCount: 3, levelCount: 5, language: 'en' }),
+    );
+    const draft = unwrap(await new RubricWriter(local()).draft(request));
+    expect(draft.criteria).toHaveLength(3);
+    expect(draft.levels.map((level) => level.points)).toEqual([5, 4, 3, 2, 1]);
   });
 
   it('drafts a three-bullet insight that passes the writer’s checks', async () => {

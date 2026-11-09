@@ -25,6 +25,7 @@ export default async function AppLayout(props: LocaleParams & { readonly childre
         { href: `${base}/plans`, label: t('nav.lessonPlans'), icon: 'plans' },
         { href: `${base}/assistant`, label: t('nav.assistant'), icon: 'assistant' },
         { href: `${base}/presentations`, label: t('nav.presentations'), icon: 'presentations' },
+        { href: `${base}/rubrics`, label: t('nav.rubrics'), icon: 'rubrics' },
         { href: `${base}/prep`, label: t('nav.prep'), icon: 'prep', badge: readyPrep },
       ],
     },

@@ -59,6 +59,7 @@ describe('migrations', () => {
       'presentations',
       'rate_limits',
       'report_card_comments',
+      'rubrics',
       'schools',
       'semesters',
       'sent_mail',
@@ -81,6 +82,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0022_rubrics',
           '0021_hardening',
           '0020_plan_format',
           '0019_marketing',
@@ -132,10 +134,11 @@ describe('migrations', () => {
           '0019_marketing',
           '0020_plan_format',
           '0021_hardening',
+          '0022_rubrics',
         ],
       },
     });
-    expect(await tableNames()).toHaveLength(46);
+    expect(await tableNames()).toHaveLength(47);
   });
 
   it('turns plans saved before step 8 into valid plans of their kind', async () => {

@@ -313,6 +313,19 @@ export interface StudentInsightsTable {
   generated_at: Date;
 }
 
+export interface RubricsTable {
+  id: string;
+  school_id: string;
+  teacher_id: string;
+  title: string;
+  subject: string | null;
+  grade: string | null;
+  levels: Json;
+  criteria: Json;
+  created_at: Date;
+  updated_at: Date;
+}
+
 export interface RateLimitsTable {
   key: string;
   window_start: Date;
@@ -574,6 +587,7 @@ export interface Database {
   leads: LeadsTable;
   rate_limits: RateLimitsTable;
   audit_events: AuditEventsTable;
+  rubrics: RubricsTable;
   chat_sessions: ChatSessionsTable;
   chat_turns: ChatTurnsTable;
   attendance_sessions: AttendanceSessionsTable;

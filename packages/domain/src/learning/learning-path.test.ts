@@ -204,7 +204,11 @@ describe('createPathRequest', () => {
 
 describe('validatePathDraft', () => {
   it('checks what the writer returns with the same rules, and trims it', () => {
-    const draft = { title: ' Fractions ', description: '', lessons: [lesson(1), lesson(2), lesson(3)] };
+    const draft = {
+      title: ' Fractions ',
+      description: '',
+      lessons: [lesson(1), lesson(2), lesson(3)],
+    };
     expect(validatePathDraft(draft)).toMatchObject({ ok: true, value: { title: 'Fractions' } });
     expect(validatePathDraft({ ...draft, lessons: [lesson(1)] })).toMatchObject({
       ok: false,

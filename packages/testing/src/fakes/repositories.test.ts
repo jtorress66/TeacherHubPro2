@@ -84,6 +84,7 @@ import {
   InMemoryPlanTemplateRepository,
   InMemoryAiGenerationRepository,
   InMemoryPresentationRepository,
+  InMemoryRubricRepository,
   InMemorySubPacketRepository,
   InMemoryAttachmentRepository,
   InMemoryStudentLinkRepository,
@@ -161,6 +162,7 @@ plannerRepositoryContract('InMemory', () => ({
 }));
 
 assistantRepositoryContract('InMemory', () => ({
+  rubrics: new InMemoryRubricRepository(),
   generations: new InMemoryAiGenerationRepository(),
   presentations: new InMemoryPresentationRepository(),
   subPackets: new InMemorySubPacketRepository(),

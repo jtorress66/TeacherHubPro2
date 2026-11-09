@@ -151,6 +151,12 @@ import {
   MakeFormsQuiz,
   FindFormsQuiz,
   CreatePresentation,
+  CreateRubric,
+  DeleteRubric,
+  GetRubric,
+  ListRubrics,
+  RequestRubricDraft,
+  UpdateRubric,
   DeleteGeneration,
   DeletePresentation,
   GetGeneration,
@@ -308,6 +314,12 @@ export interface AppContainer {
   readonly getPresentation: GetPresentation;
   readonly updatePresentation: UpdatePresentation;
   readonly deletePresentation: DeletePresentation;
+  readonly requestRubricDraft: RequestRubricDraft;
+  readonly createRubric: CreateRubric;
+  readonly listRubrics: ListRubrics;
+  readonly getRubric: GetRubric;
+  readonly updateRubric: UpdateRubric;
+  readonly deleteRubric: DeleteRubric;
   readonly requestSpeech: RequestSpeech;
   readonly saveQuestions: SaveQuestions;
   readonly saveInstructions: SaveInstructions;
@@ -643,6 +655,12 @@ export function createAppContainer(
     getPresentation: new GetPresentation(deps),
     updatePresentation: new UpdatePresentation(deps),
     deletePresentation: new DeletePresentation(deps),
+    requestRubricDraft: new RequestRubricDraft(deps),
+    createRubric: new CreateRubric(deps),
+    listRubrics: new ListRubrics(deps),
+    getRubric: new GetRubric(deps),
+    updateRubric: new UpdateRubric(deps),
+    deleteRubric: new DeleteRubric(deps),
     requestSpeech: new RequestSpeech({ ...deps, voice: config.voice }),
     saveQuestions: new SaveQuestions(deps),
     saveInstructions: new SaveInstructions(deps),

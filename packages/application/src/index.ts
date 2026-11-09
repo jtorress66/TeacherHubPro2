@@ -195,6 +195,17 @@ export {
   type NewPresentation,
 } from './presentations/presentations.ts';
 export {
+  CreateRubric,
+  DeleteRubric,
+  GetRubric,
+  ListRubrics,
+  RequestRubricDraft,
+  RubricDraftHandler,
+  UpdateRubric,
+  rubricDraftJobKind,
+  type NewRubric,
+} from './rubrics/rubrics.ts';
+export {
   RequestSpeech,
   SpeechHandler,
   GetSpeechClip,

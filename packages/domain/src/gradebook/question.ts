@@ -15,6 +15,8 @@ export type QuestionType = (typeof questionTypes)[number];
 
 /** Points per question when none are given (as in the original app). */
 export const defaultQuestionPoints = 10;
+/** The longest an essay question's rubric may be. */
+export const maxEssayRubricLength = 2000;
 
 export interface MatchingPair {
   readonly left: string;
@@ -103,7 +105,7 @@ const bodyRules: { [T in QuestionType]: BodyRule<T> } = {
     return ok({ pairs: trimmed });
   },
   essay: ({ rubric }) => {
-    const text = optionalText('rubric', rubric, 2000);
+    const text = optionalText('rubric', rubric, maxEssayRubricLength);
     return text.ok ? ok({ rubric: text.value }) : text;
   },
 };

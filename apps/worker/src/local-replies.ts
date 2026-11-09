@@ -9,6 +9,7 @@ import {
   quizSystemPrompt,
   chatbotSystemPrompt,
   asksIfAi,
+  rubricSystemPrompt,
   slidesSystemPrompt,
 } from '@thp/agents';
 import type { ContentKind } from '@thp/domain';
@@ -235,9 +236,25 @@ function pathReply(request: LlmRequest): string {
   return JSON.stringify({ title: 'Local learning path', description: 'A local draft.', lessons });
 }
 
+function rubricReply(request: LlmRequest): string {
+  const prompt = promptOf(request);
+  const criteriaCount = Number(/exactly (\d+) criteria/.exec(prompt)?.[1] ?? 4);
+  const levelCount = Number(/exactly (\d+) levels/.exec(prompt)?.[1] ?? 4);
+  const points = Array.from({ length: levelCount }, (_, i) => levelCount - i);
+  return JSON.stringify({
+    title: 'Local rubric',
+    levels: points.map((p) => ({ label: `Level ${String(p)}`, points: p })),
+    criteria: Array.from({ length: criteriaCount }, (_, i) => ({
+      name: `Local criterion ${String(i + 1)}`,
+      descriptors: points.map((p) => `Work at level ${String(p)}`),
+    })),
+  });
+}
+
 const repliesBySystem: ReadonlyMap<string, (request: LlmRequest) => string> = new Map([
   [contentSystemPrompt, contentReply],
   [slidesSystemPrompt, slidesReply],
+  [rubricSystemPrompt, rubricReply],
   [extractorSystemPrompt, extractorReply],
   [graderSystemPrompt, graderReply],
   [insightSystemPrompt, insightReply],

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import type { AssignmentId, ClassId } from '@thp/domain';
+import { maxEssayRubricLength, rubricAsText, type AssignmentId, type ClassId } from '@thp/domain';
 import { createTranslator } from '@thp/i18n';
 import {
   AttachmentUploadForm,
@@ -40,6 +40,11 @@ export default async function AssignmentQuestionsPage(props: Props) {
   const { assignment, rows } = listed.value;
   const files = await app.listAttachments.execute(ref);
   const courses = await app.listClassroomCourses.execute({ actor: user });
+  const saved = await app.listRubrics.execute({ actor: user });
+  const rubrics = (saved.ok ? saved.value : []).map((rubric) => ({
+    title: rubric.title,
+    text: rubricAsText(rubric).slice(0, maxEssayRubricLength),
+  }));
   const quiz = await app.findFormsQuiz.execute(ref);
   const made = quiz.ok ? quiz.value : null;
   const day = new Intl.DateTimeFormat(locale, { dateStyle: 'medium' });
@@ -73,6 +78,7 @@ export default async function AssignmentQuestionsPage(props: Props) {
         questions={assignment.questions}
         instructions={assignment.instructions}
         locked={locked}
+        rubrics={rubrics}
       />
 
       {locked ? null : (
