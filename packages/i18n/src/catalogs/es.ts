@@ -500,6 +500,14 @@ export const es: Messages = {
     edit: 'Editar',
     delete: 'Quitar',
     empty: 'Aún no hay estudiantes. Agrégalos uno por uno o importa un archivo CSV.',
+    copyTitle: 'Copiar estudiantes de otra clase',
+    copyHelp:
+      'Copia los nombres, números de estudiante, correos de los padres y acomodos de otra de tus clases. Las notas y la asistencia se quedan en esa clase. Los estudiantes que ya están en esta clase no se repiten.',
+    copyFrom: 'Copiar de',
+    copy: 'Copiar estudiantes',
+    copied: 'Se copiaron {count} estudiantes ({skipped} ya estaban en esta clase).',
+    copyNone: 'Todavía no tienes otras clases de las que copiar.',
+    copyArchived: 'archivada',
     importTitle: 'Importar estudiantes desde un archivo CSV',
     importHelp:
       'Columnas: nombre, apellidos (obligatorias), número de estudiante, correo del padre o la madre, adaptaciones. No se importa nada si alguna fila tiene un problema.',

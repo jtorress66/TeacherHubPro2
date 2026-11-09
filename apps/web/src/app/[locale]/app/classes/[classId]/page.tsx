@@ -6,6 +6,7 @@ import { createTranslator } from '@thp/i18n';
 import {
   AddStudentForm,
   ClassForm,
+  CopyStudentsForm,
   ImportStudentsForm,
 } from '../../../../../components/roster-forms.tsx';
 import { ImportRosterForm } from '../../../../../components/assignment-tools.tsx';
@@ -32,10 +33,18 @@ export default async function ClassPage(props: Props) {
   const found = await app.getClass.execute({ actor: user, classId: classId as ClassId });
   if (!found.ok) notFound();
   const cls = found.value;
-  const [students, semesters] = await Promise.all([
+  const [students, semesters, classes] = await Promise.all([
     app.listStudents.execute({ actor: user, classId: cls.id }),
     app.listSemesters.execute({ actor: user }),
+    app.listClasses.execute({ actor: user, includeArchived: true }),
   ]);
+  const otherClasses = classes
+    .filter((other) => other.id !== cls.id)
+    .map((other) => ({
+      id: other.id,
+      name:
+        other.archivedAt === null ? other.name : `${other.name} (${t('students.copyArchived')})`,
+    }));
   const roster = students.ok ? students.value : [];
   const courses = await app.listClassroomCourses.execute({ actor: user });
   const archived = cls.archivedAt !== null;
@@ -157,6 +166,10 @@ export default async function ClassPage(props: Props) {
           <section className="card stack" aria-labelledby="import-heading">
             <h2 id="import-heading">{t('students.importTitle')}</h2>
             <ImportStudentsForm locale={locale} classId={cls.id} />
+          </section>
+          <section className="card stack" aria-labelledby="copy-heading">
+            <h2 id="copy-heading">{t('students.copyTitle')}</h2>
+            <CopyStudentsForm locale={locale} classId={cls.id} classes={otherClasses} />
           </section>
         </div>
       )}

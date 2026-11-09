@@ -492,6 +492,14 @@ export const en = {
     edit: 'Edit',
     delete: 'Remove',
     empty: 'No students yet. Add them one by one or import a CSV file.',
+    copyTitle: 'Copy students from another class',
+    copyHelp:
+      'Copies the names, student numbers, parent emails and accommodations from one of your other classes. Grades and attendance stay with that class. Students already in this class are skipped.',
+    copyFrom: 'Copy from',
+    copy: 'Copy students',
+    copied: '{count} students copied ({skipped} were already in this class).',
+    copyNone: 'You have no other classes to copy from yet.',
+    copyArchived: 'archived',
     importTitle: 'Import students from a CSV file',
     importHelp:
       'Columns: first name, last name (required), student number, parent email, accommodations. Nothing is imported if any row has a problem.',

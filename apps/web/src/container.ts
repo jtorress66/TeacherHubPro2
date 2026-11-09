@@ -113,6 +113,7 @@ import {
   ListLeads,
   UpdateLeadStatus,
   Throttle,
+  CopyStudents,
   RecordActivity,
   ListActivity,
   SetUpFirstSuperAdmin,
@@ -419,6 +420,7 @@ export interface AppContainer {
   readonly deleteStudent: DeleteStudent;
   readonly listStudents: ListStudents;
   readonly importStudents: ImportStudents;
+  readonly copyStudents: CopyStudents;
   readonly createSemester: CreateSemester;
   readonly updateSemester: UpdateSemester;
   readonly setActiveSemester: SetActiveSemester;
@@ -752,6 +754,7 @@ export function createAppContainer(
     deleteStudent: new DeleteStudent(deps),
     listStudents: new ListStudents(deps),
     importStudents: new ImportStudents(deps),
+    copyStudents: new CopyStudents(deps),
     createSemester: new CreateSemester(deps),
     updateSemester: new UpdateSemester(deps),
     setActiveSemester: new SetActiveSemester(deps),
