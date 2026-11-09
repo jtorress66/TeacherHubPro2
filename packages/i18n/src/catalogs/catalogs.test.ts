@@ -3,7 +3,7 @@ import { locales } from '../locales.ts';
 import { catalogs } from './index.ts';
 
 /** Translated in full; the others may still fall back to English. */
-const completeLocales = ['es', 'fr'] as const;
+const completeLocales = ['es', 'fr', 'pt'] as const;
 
 function leafEntries(tree: unknown, prefix = ''): [string, unknown][] {
   if (typeof tree !== 'object' || tree === null) return [[prefix, tree]];
