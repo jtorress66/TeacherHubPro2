@@ -34,6 +34,18 @@ test.describe('home page languages', () => {
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(catalogs.es.home.title);
   });
 
+  test('an old app address such as /dashboard still lands on the right page', async ({
+    request,
+    page,
+  }) => {
+    const moved = await request.get('/dashboard?lang=es', { maxRedirects: 0 });
+    expect(moved.status()).toBe(308);
+    expect(moved.headers().location).toMatch(/\/es\/app$/);
+
+    await page.goto('/dashboard?lang=es');
+    await expect(page).toHaveURL(/\/es\/login/);
+  });
+
   test('the workspace drawing shows the three feature phrases in the page’s language', async ({
     page,
   }) => {

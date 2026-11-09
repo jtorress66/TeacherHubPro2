@@ -189,6 +189,7 @@ pnpm test             # unit + contract tests with coverage thresholds
 pnpm test:int         # integration tests against a disposable Postgres (needs Docker running)
 pnpm test:e2e         # builds the web app and runs Playwright (needs `pnpm db:up && pnpm db:migrate`)
 pnpm test:e2e:stripe  # the Stripe test-mode journey (CI job e2e-stripe; needs a running app on :3000)
+pnpm test:smoke       # read-only checks of the live site (SMOKE_URL; daily in the "Live site check" workflow)
 pnpm stripe:setup     # creates the Stripe products and prices (STRIPE_SECRET_KEY)
 pnpm eval             # planner, assistant and presentation evals against Claude (needs ANTHROPIC_API_KEY)
 pnpm standards:import # re-imports the Common Core codes (network)

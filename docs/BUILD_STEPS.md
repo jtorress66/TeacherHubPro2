@@ -30,7 +30,7 @@ Place this file at `docs/BUILD_STEPS.md`. Work on one step at a time. Tick a ste
 
 ## Paid checks deferred to go-live
 
-No paid API calls until launch. Steps that need real AI meet their gate with the free replay evals (`evals/replays`, part of `pnpm test`); these real checks run once before go-live (step 21):
+No paid API calls until launch. Steps that need real AI meet their gate with the free replay evals (`evals/replays`, part of `pnpm test`); these real checks run once before go-live (step 21; click-by-click in [`docs/LAUNCH.md`](LAUNCH.md)):
 
 - `pnpm eval` against real Claude: planner, AI assistant and presentation suites (steps 8–9).
 - Listen with real OpenAI text-to-speech (`TTS_PROVIDER=openai`, `OPENAI_API_KEY`) (step 9).

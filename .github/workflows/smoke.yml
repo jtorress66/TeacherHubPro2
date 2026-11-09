@@ -1,0 +1,35 @@
+name: Live site check
+
+# Read-only checks of the live site every morning (no accounts made, nothing paid for).
+# GitHub emails the repository owner when a run fails. Set the repository variable SMOKE_URL
+# (Settings → Secrets and variables → Actions → Variables) to the site's address.
+on:
+  schedule:
+    - cron: '0 11 * * *' # 07:00 in Puerto Rico
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    name: Live site check
+    runs-on: ubuntu-latest
+    env:
+      SMOKE_URL: ${{ vars.SMOKE_URL || 'https://teacherhubpro-web.onrender.com' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @thp/web exec playwright install --with-deps chromium
+      - run: pnpm test:smoke
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: live-site-report
+          path: apps/web/playwright-report
+          retention-days: 7

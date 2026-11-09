@@ -1,4 +1,5 @@
 import { isLocale, resolveLocale, type Locale } from '@thp/i18n';
+import { currentPathFor } from './legacy-paths.ts';
 
 export interface LocaleRequest {
   readonly pathname: string;
@@ -9,7 +10,13 @@ export interface LocaleRequest {
 }
 
 export type LocaleRoute =
-  | { readonly kind: 'redirect'; readonly to: string; readonly save: Locale }
+  | {
+      readonly kind: 'redirect';
+      readonly to: string;
+      readonly save: Locale;
+      /** An old app address that moved for good (search engines update their links). */
+      readonly permanent?: true;
+    }
   | { readonly kind: 'next'; readonly save: Locale };
 
 /** Decides whether a request needs a language prefix and which language to remember. */
@@ -22,10 +29,14 @@ export function routeLocale({ pathname, search, saved }: LocaleRequest): LocaleR
   if (current !== undefined && !isLocale(queryLang)) return { kind: 'next', save: current };
 
   const locale = resolveLocale({ queryLang, saved: current ?? saved });
-  const remainder = current === undefined ? pathname : `/${rest.join('/')}`;
+  const moved = current === undefined ? currentPathFor(pathname) : null;
+  const remainder = moved ?? (current === undefined ? pathname : `/${rest.join('/')}`);
   params.delete('lang');
   const query = params.toString();
   const path = `/${locale}${remainder === '/' ? '' : remainder}`;
 
-  return { kind: 'redirect', to: query ? `${path}?${query}` : path, save: locale };
+  const to = query ? `${path}?${query}` : path;
+  return moved === null
+    ? { kind: 'redirect', to, save: locale }
+    : { kind: 'redirect', to, save: locale, permanent: true };
 }
