@@ -2,6 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { locales } from '../locales.ts';
 import { catalogs } from './index.ts';
 
+/** Translated in full; the others may still fall back to English. */
+const completeLocales = ['es', 'fr'] as const;
+
 function leafEntries(tree: unknown, prefix = ''): [string, unknown][] {
   if (typeof tree !== 'object' || tree === null) return [[prefix, tree]];
   return Object.entries(tree).flatMap(([key, value]) =>
@@ -21,6 +24,20 @@ describe('catalogs', () => {
 
   it('en and es catalogs have identical keys', () => {
     expect(keysOf(catalogs.es)).toEqual(keysOf(catalogs.en));
+  });
+
+  it.each(completeLocales)('the %s catalog has every English key', (locale) => {
+    expect(keysOf(catalogs[locale])).toEqual(keysOf(catalogs.en));
+  });
+
+  it('every translation keeps the English placeholders', () => {
+    const english = new Map(leafEntries(catalogs.en));
+    const placeholders = (text: unknown) => (String(text).match(/\{\w+\}/gu) ?? []).sort();
+    for (const locale of locales) {
+      for (const [key, value] of leafEntries(catalogs[locale])) {
+        expect(placeholders(value), `${locale}:${key}`).toEqual(placeholders(english.get(key)));
+      }
+    }
   });
 
   it('partial catalogs contain no keys unknown to English', () => {

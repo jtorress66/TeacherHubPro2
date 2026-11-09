@@ -1,4 +1,10 @@
-import type { PartialMessages } from '../messages.ts';
+import type { Messages } from '../messages.ts';
+import { frAppA } from './fr-app-a.ts';
+import { frAppB } from './fr-app-b.ts';
+import { marketingFr } from './marketing-fr.ts';
 
-/** Not translated yet: every key falls back to English. */
-export const fr: PartialMessages = {};
+export const fr: Messages = {
+  ...marketingFr,
+  ...frAppA,
+  ...frAppB,
+};

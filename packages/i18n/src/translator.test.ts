@@ -10,17 +10,17 @@ describe('createTranslator', () => {
     expect(createTranslator('es')('home.title')).not.toBe(catalogs.en.home.title);
   });
 
-  it('falls back to English for a key missing in French', () => {
-    const t = createTranslator('fr', { ...catalogs, fr: {} });
+  it('falls back to English for a key missing in German', () => {
+    const t = createTranslator('de', { ...catalogs, de: {} });
 
     expect(t('home.title')).toBe(catalogs.en.home.title);
   });
 
-  it('uses the French text once it exists', () => {
-    const withFrench: Catalogs = { ...catalogs, fr: { home: { title: 'Votre espace' } } };
-    const t = createTranslator('fr', withFrench);
+  it('uses the German text once it exists', () => {
+    const withGerman: Catalogs = { ...catalogs, de: { home: { title: 'Ihr Arbeitsbereich' } } };
+    const t = createTranslator('de', withGerman);
 
-    expect(t('home.title')).toBe('Votre espace');
+    expect(t('home.title')).toBe('Ihr Arbeitsbereich');
     expect(t('home.tagline')).toBe(catalogs.en.home.tagline);
   });
 
