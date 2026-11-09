@@ -14,6 +14,7 @@ export type Catalogs = {
   readonly fr: Messages;
   readonly pt: Messages;
   readonly de: Messages;
-} & Readonly<Record<Exclude<Locale, 'en' | 'es' | 'fr' | 'pt' | 'de'>, PartialMessages>>;
+  readonly it: Messages;
+} & Readonly<Record<Exclude<Locale, 'en' | 'es' | 'fr' | 'pt' | 'de' | 'it'>, PartialMessages>>;
 
 export const catalogs: Catalogs = { en, es, fr, pt, de, it, zh };
