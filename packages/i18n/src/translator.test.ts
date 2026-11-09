@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { Catalogs } from './catalogs/index.ts';
 import { catalogs } from './catalogs/index.ts';
-import { createTranslator } from './translator.ts';
+import { createTranslator, type TranslatorCatalogs } from './translator.ts';
 
 describe('createTranslator', () => {
   it('translates a key into the requested language', () => {
@@ -17,7 +16,7 @@ describe('createTranslator', () => {
   });
 
   it('uses the Chinese text once it exists', () => {
-    const withChinese: Catalogs = { ...catalogs, zh: { home: { title: '您的空间' } } };
+    const withChinese: TranslatorCatalogs = { ...catalogs, zh: { home: { title: '您的空间' } } };
     const t = createTranslator('zh', withChinese);
 
     expect(t('home.title')).toBe('您的空间');
@@ -25,7 +24,7 @@ describe('createTranslator', () => {
   });
 
   it('interpolates {name} placeholders', () => {
-    const withGreeting: Catalogs = {
+    const withGreeting: TranslatorCatalogs = {
       ...catalogs,
       es: { ...catalogs.es, home: { ...catalogs.es.home, title: 'Hola, {name} ({count})' } },
     };
@@ -35,7 +34,7 @@ describe('createTranslator', () => {
   });
 
   it('leaves a placeholder visible when its value is not given', () => {
-    const withGreeting: Catalogs = {
+    const withGreeting: TranslatorCatalogs = {
       ...catalogs,
       en: { ...catalogs.en, home: { ...catalogs.en.home, title: 'Hi, {name}' } },
     };

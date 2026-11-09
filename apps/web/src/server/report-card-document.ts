@@ -132,5 +132,6 @@ export function reportCardFileName(data: ReportCards, locale: Locale): string {
   const t = createTranslator(locale);
   const only = data.cards.length === 1 ? data.cards[0] : undefined;
   const name = only ? `${only.student.firstName} ${only.student.lastName}` : data.cls.name;
-  return `${slug(`${t('reportCards.fileName')} ${name}`)}.pdf`;
+  // Words without Latin letters slug to nothing; the file still needs a name.
+  return `${slug(`${t('reportCards.fileName')} ${name}`) || 'report-card'}.pdf`;
 }

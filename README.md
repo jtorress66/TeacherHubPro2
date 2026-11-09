@@ -1,6 +1,6 @@
 # TeacherHubPro
 
-AI workspace for teachers, schools and homeschool families: lesson planning, classes, attendance, gradebook and report cards, assignments with AI grading, educational and live games, adaptive learning, parent portals and a weekly lesson-prep agent. Available in English, Spanish, French, Portuguese, German, Italian and Chinese (English and Spanish fully translated; the others fall back to English for now).
+AI workspace for teachers, schools and homeschool families: lesson planning, classes, attendance, gradebook and report cards, assignments with AI grading, educational and live games, adaptive learning, parent portals and a weekly lesson-prep agent. Available in English, Spanish, French, Portuguese, German, Italian and Chinese, all fully translated.
 
 This is a clean rebuild of the original app, built step by step with Claude Code.
 
