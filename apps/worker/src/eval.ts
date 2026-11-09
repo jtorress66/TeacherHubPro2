@@ -19,13 +19,15 @@ import { runInsightEvals } from './evals/insight-evals.ts';
 import { runQuizEvals } from './evals/quiz-evals.ts';
 import { runChatbotEvals } from './evals/chatbot-evals.ts';
 import { runPathEvals } from './evals/path-evals.ts';
+import { chooseSuites } from './evals/choose-suites.ts';
 import { runExtractorEvals, runGraderEvals } from './evals/grading-evals.ts';
 import { runPlannerEvals } from './evals/planner-evals.ts';
 import { runPresentationEvals } from './evals/presentation-evals.ts';
 
 /**
- * CLI: `pnpm eval`. Runs every agent against real Claude on fixed cases and exits non-zero when
- * an average drops below evals/thresholds.json. Needs ANTHROPIC_API_KEY; costs real money.
+ * CLI: `pnpm eval` (or `pnpm eval -- grader game` for some suites). Runs the agents against real
+ * Claude on fixed cases and exits non-zero when an average drops below evals/thresholds.json.
+ * Needs ANTHROPIC_API_KEY; costs real money.
  */
 const apiKey = process.env.ANTHROPIC_API_KEY?.trim() ?? '';
 if (apiKey === '') {
@@ -68,7 +70,7 @@ const suites: readonly [string, () => Promise<EvalReport<string>>][] = [
 ];
 
 let failed = false;
-for (const [title, run] of suites) {
+for (const [title, run] of chooseSuites(suites, process.argv.slice(2))) {
   const report = await run();
   process.stdout.write(`${title}\n${formatReport(report)}\n\n`);
   failed ||= report.failing.length > 0;

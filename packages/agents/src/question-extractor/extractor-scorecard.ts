@@ -6,8 +6,11 @@ export type ExtractorScores = Readonly<Record<ExtractorMetric, number>>;
 
 /** What an eval case expects from a test's text. */
 export interface ExpectedExtraction {
-  /** One per question, in order: each blank, statement or item is its own question. */
-  readonly types: readonly QuestionType[];
+  /**
+   * One per question, in order: each blank, statement or item is its own question. A list allows
+   * any of its types, for a question that could fairly be read either way.
+   */
+  readonly types: readonly (QuestionType | readonly QuestionType[])[];
   /** Text (such as a word bank) that must reach at least one question's instructions. */
   readonly instructionsContain: string | null;
 }
@@ -18,7 +21,10 @@ export function scoreExtraction(
   test: ExtractedTest | null,
 ): ExtractorScores {
   if (test === null) return { structure: 0, questionCount: 0, types: 0, instructions: 0 };
-  const matching = expected.types.filter((type, i) => test.questions[i]?.type === type).length;
+  const matching = expected.types.filter((allowed, i) => {
+    const found = test.questions[i]?.type;
+    return found !== undefined && (typeof allowed === 'string' ? [allowed] : allowed).includes(found);
+  }).length;
   const needle = expected.instructionsContain;
   return {
     structure: 1,

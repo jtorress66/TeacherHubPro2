@@ -53,6 +53,16 @@ describe('scoreExtraction', () => {
     ).toEqual({ structure: 1, questionCount: 0, types: 0.5, instructions: 0 });
   });
 
+  it('accepts any of the types a case allows for a question that could fairly be either', () => {
+    const allowing = (third: readonly ('true_false' | 'essay')[]) =>
+      scoreExtraction(
+        { types: ['fill_blank', 'fill_blank', third], instructionsContain: null },
+        test,
+      ).types;
+    expect(allowing(['essay', 'true_false'])).toBe(1);
+    expect(allowing(['essay'])).toBeCloseTo(2 / 3);
+  });
+
   it('passes a case that expects nothing in particular', () => {
     expect(scoreExtraction({ types: [], instructionsContain: null }, test)).toMatchObject({
       types: 1,

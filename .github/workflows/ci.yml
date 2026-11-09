@@ -6,6 +6,11 @@ on:
   pull_request:
   # Run by hand (Actions → CI → Run workflow) to score the agents against real Claude.
   workflow_dispatch:
+    inputs:
+      suites:
+        description: 'Only these eval suites (e.g. "grader game"); empty runs all'
+        required: false
+        default: ''
 
 permissions:
   contents: read
@@ -201,5 +206,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
         if: env.ANTHROPIC_API_KEY != ''
-      - run: pnpm eval
+      - run: pnpm eval -- $SUITES
         if: env.ANTHROPIC_API_KEY != ''
+        env:
+          SUITES: ${{ inputs.suites }}

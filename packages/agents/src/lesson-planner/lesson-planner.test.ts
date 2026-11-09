@@ -90,6 +90,21 @@ describe('LessonPlanner (weekly)', () => {
     });
   });
 
+  it('drops a weekday the model put in front of a day’s theme, since the plan shows the day', async () => {
+    const days = ['Lunes: Introducción', 'Martes - Práctica', 'Miércoles', 'Jueves', 'Viernes'];
+    const llm = new FakeLlmClient().replyWith(weeklyReply({ days: days.map(day) }));
+    const draft = unwrap(await new LessonPlanner(llm).draft(request()));
+
+    expect(draft.kind === 'weekly' && draft.days.map((d) => d.theme)).toEqual([
+      'Introducción',
+      'Práctica',
+      'Miércoles',
+      'Jueves',
+      'Viernes',
+    ]);
+    expect(llm.requests[0]?.messages[0]?.content).toContain('without the weekday');
+  });
+
   it('merges activities of the same type in a day into one, keeping both notes', async () => {
     const twice = {
       ...day('Lunes'),

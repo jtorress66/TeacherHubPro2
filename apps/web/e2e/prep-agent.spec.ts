@@ -67,6 +67,10 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     await expect(page.getByTestId('nav-badge')).toHaveText('1');
 
     const review = page.getByRole('form', { name: t('prep.review') });
+    // The plan's day notes show their formatting (bold, a table), not the raw marks.
+    const plan = page.getByRole('region', { name: `${t('prep.preview')}: ${t('prep.item_plan')}` });
+    await expect(plan.getByRole('table').first()).toBeVisible();
+    await expect(plan).not.toContainText('**');
     await review.getByRole('button', { name: `${t('prep.show')}: ${t('prep.item_quiz')}` }).click();
     const preview = page.getByRole('region', {
       name: `${t('prep.preview')}: ${t('prep.item_quiz')}`,

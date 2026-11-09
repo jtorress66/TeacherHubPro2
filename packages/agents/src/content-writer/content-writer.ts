@@ -28,23 +28,30 @@ function standardsLines(request: ContentRequest): string {
   return `Common Core codes you may cite (at most 3 that fit the topic):\n${lines.join('\n')}`;
 }
 
-function prompt(request: ContentRequest): string {
-  return [
+/**
+ * The prompt in two parts: what every request for this subject and grade repeats (format, language,
+ * standards list, ESL guidance) first, so it can be cached, then this request's topic and details.
+ */
+function prompt(request: ContentRequest): { stablePrefix: string; text: string } {
+  const stablePrefix = [
     contentFormats[request.type](request),
     [
       `Write in ${languageNames[request.language]}.`,
       `Subject: ${subjectNames[request.subject]}`,
       `Grade: ${request.grade === 'K' ? 'Kindergarten' : request.grade}`,
-      `Topic: ${request.topic}`,
-      `Difficulty: ${request.difficulty}`,
-      ...(request.durationMinutes === null
-        ? []
-        : [`Class period: ${String(request.durationMinutes)} minutes`]),
-      ...(request.instructions === null ? [] : [`Teacher's instructions: ${request.instructions}`]),
     ].join('\n'),
     standardsLines(request),
     ...(request.esl ? [eslGuidance] : []),
   ].join('\n\n');
+  const details = [
+    `Topic: ${request.topic}`,
+    `Difficulty: ${request.difficulty}`,
+    ...(request.durationMinutes === null
+      ? []
+      : [`Class period: ${String(request.durationMinutes)} minutes`]),
+    ...(request.instructions === null ? [] : [`Teacher's instructions: ${request.instructions}`]),
+  ].join('\n');
+  return { stablePrefix, text: `${stablePrefix}\n\n${details}\n` };
 }
 
 /**
@@ -56,9 +63,11 @@ export class ContentWriter implements ContentWriterPort {
   constructor(private readonly llm: LlmClient) {}
 
   write(request: ContentRequest): Promise<Result<string, DraftError>> {
+    const { stablePrefix, text } = prompt(request);
     return draftWithReview(this.llm, {
       system: contentSystemPrompt,
-      prompt: prompt(request),
+      prompt: text,
+      stablePrefix,
       maxTokens,
       review: reviewContent,
       retry: (problem) => `That reply could not be used: ${problem} Write it again in full.`,

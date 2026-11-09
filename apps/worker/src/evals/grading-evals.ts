@@ -80,7 +80,8 @@ export const extractorCases: readonly ({
       '1. 小蝌蚪在哪里？ A. 池塘 B. 树上 C. 天上',
       '2. 用三句话写一写你喜欢的动物。',
     ].join('\n'),
-    types: ['multiple_choice', 'essay'],
+    // "Write three sentences" sits between a short answer and an essay: either reading is fair.
+    types: ['multiple_choice', ['essay', 'short_answer']],
     instructionsContain: '小蝌蚪在池塘里',
   },
 ];
@@ -168,7 +169,13 @@ export const graderCases: readonly {
         'essay',
         10,
         'Sollte die Schule später beginnen? Begründe deine Meinung.',
-        'Ja, die Schule sollte später beginnen. Studien zeigen, dass Jugendliche später müde werden und mehr Schlaf brauchen. Wenn sie ausgeschlafen sind, lernen sie besser und sind gesünder. Ein späterer Beginn kann aber den Nachmittag verkürzen, deshalb sollte man den Stundenplan anpassen.',
+        [
+          'Ich bin der Meinung, dass die Schule später beginnen sollte, weil Jugendliche dann ausgeschlafen und aufmerksamer lernen.',
+          'Erstens verschiebt sich in der Pubertät der Schlafrhythmus: Jugendliche werden abends später müde. Wer um 7.45 Uhr im Unterricht sitzt, hat oft nur sechs Stunden geschlafen. Untersuchungen der American Academy of Pediatrics empfehlen deshalb einen Beginn frühestens um 8.30 Uhr.',
+          'Zweitens hängen Schlaf und Leistung zusammen. Ausgeschlafene Schülerinnen und Schüler können sich länger konzentrieren, behalten mehr und sind seltener krank. Schulen, die später begonnen haben, berichten von weniger Verspätungen und besseren Noten.',
+          'Man könnte einwenden, dass ein späterer Beginn den Nachmittag verkürzt und Sport oder Nebenjobs erschwert. Dieses Problem lässt sich jedoch lösen, indem man die Mittagspause kürzt und Vereine ihre Trainingszeiten anpassen.',
+          'Zusammenfassend überwiegen die Vorteile: Ein späterer Schulbeginn schützt die Gesundheit der Jugendlichen und verbessert das Lernen. Deshalb sollte meine Schule den Unterricht um 8.30 Uhr beginnen lassen.',
+        ].join('\n\n'),
         'These, zwei Argumente, ein Gegenargument, Schluss.',
       ),
     ],
