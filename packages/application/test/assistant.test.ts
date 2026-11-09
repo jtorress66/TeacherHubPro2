@@ -88,6 +88,7 @@ describe('AI assistant', () => {
       questionCount: null,
       language: 'es',
       instructions: null,
+      esl: false,
     });
   });
 

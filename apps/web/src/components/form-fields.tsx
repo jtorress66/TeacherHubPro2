@@ -62,6 +62,20 @@ export function TextArea(props: {
   );
 }
 
+/** The "ESL support" switch: the AI then writes for English learners. */
+export function EslSwitch(props: { readonly label: string; readonly help: string }) {
+  return (
+    <div className="esl-switch">
+      <label className="checkbox">
+        <input type="checkbox" name="esl" aria-describedby="esl-help" /> {props.label}
+      </label>
+      <p id="esl-help" className="hint">
+        {props.help}
+      </p>
+    </div>
+  );
+}
+
 export function Checks<T extends string | number>(props: {
   readonly legend: string;
   readonly name: string;

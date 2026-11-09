@@ -9,6 +9,7 @@ async function writeWorksheet(page: Page, locale: Locale, topic: string): Promis
   const form = page.getByRole('form', { name: t('assistant.title') });
   await form.getByLabel(t('assistant.type')).selectOption('worksheet');
   await form.getByLabel(t('assistant.topic')).fill(topic);
+  await form.getByLabel(t('esl.label')).check();
   await form.getByRole('button', { name: t('assistant.submit') }).click();
   await expect(page).toHaveURL(/\/assistant\/[^/]+$/, { timeout: 30_000 });
   await expect(page).not.toHaveURL(/\/jobs\//);

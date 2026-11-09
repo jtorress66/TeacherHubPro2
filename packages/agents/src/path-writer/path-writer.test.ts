@@ -3,6 +3,7 @@ import { createPathRequest, type PathRequestInput } from '@thp/domain';
 import { FakeLlmClient, unwrap } from '@thp/testing';
 import { PathWriter, pathWriterSystemPrompt, reviewPath } from './path-writer.ts';
 import { pathMetrics, scorePath } from './path-scorecard.ts';
+import { eslGuidance } from '../drafting/esl.ts';
 
 const requestOf = (overrides: Partial<PathRequestInput> = {}) =>
   unwrap(
@@ -73,6 +74,17 @@ describe('PathWriter', () => {
     expect(prompt).toContain('Review first: Compare fractions with unlike denominators');
     expect(prompt).toContain('Already mastered (build on it, do not repeat): Halves');
     expect(prompt).toContain('Write everything in English.');
+  });
+
+  it('adds the ESL guidance to the request only when the switch is on', async () => {
+    const llm = new FakeLlmClient().replyWith(pathReply()).replyWith(pathReply());
+    const writer = new PathWriter(llm);
+    await writer.write(requestOf());
+    await writer.write(requestOf({ esl: true }));
+
+    const [plain, esl] = llm.requests.map((sent) => sent.messages[0]?.content ?? '');
+    expect(plain).not.toContain(eslGuidance);
+    expect(esl).toContain(eslGuidance);
   });
 
   it('lets the writer choose what comes next when there is no topic', async () => {

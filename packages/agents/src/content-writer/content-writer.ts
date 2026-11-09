@@ -1,6 +1,7 @@
 import { standardSubjectOf, standardsFor, type ContentRequest, type Result } from '@thp/domain';
 import type { ContentWriter as ContentWriterPort, DraftError, LlmClient } from '@thp/ports';
 import { draftWithReview } from '../drafting/draft-with-review.ts';
+import { eslGuidance } from '../drafting/esl.ts';
 import { languageNames } from '../drafting/language.ts';
 import { subjectNames } from '../drafting/subject-names.ts';
 import { contentFormats } from './content-formats.ts';
@@ -42,6 +43,7 @@ function prompt(request: ContentRequest): string {
       ...(request.instructions === null ? [] : [`Teacher's instructions: ${request.instructions}`]),
     ].join('\n'),
     standardsLines(request),
+    ...(request.esl ? [eslGuidance] : []),
   ].join('\n\n');
 }
 

@@ -12,6 +12,7 @@ import {
 import type { DraftError, LlmClient, LlmResponse, PathWriter as PathWriterPort } from '@thp/ports';
 import { draftWithReview } from '../drafting/draft-with-review.ts';
 import { objects, parseJsonObject, text, texts, type Json } from '../drafting/json-reply.ts';
+import { eslGuidance } from '../drafting/esl.ts';
 import { languageNames } from '../drafting/language.ts';
 import { ruleBroken } from '../drafting/rule-broken.ts';
 import { subjectNames } from '../drafting/subject-names.ts';
@@ -62,6 +63,7 @@ function prompt(request: PathRequest): string {
       : []),
     `Use ${wordingFor(request.grade)}.`,
     `Write everything in ${languageNames[request.language]}.`,
+    ...(request.esl ?[`\n${eslGuidance}`] : []),
   ].join('\n');
 }
 

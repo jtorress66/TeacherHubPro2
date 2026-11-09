@@ -1747,6 +1747,11 @@ export const en = {
     notFound: 'No game with that PIN is open. Check the PIN on the screen.',
     chooseAnswer: 'Answer {n}: {option}',
   },
+  esl: {
+    label: 'ESL support',
+    assistantHelp: 'Generate ESL-level material for English learners (WIDA + PR standards)',
+    learningHelp: 'Generate ESL-level lessons for English learners (WIDA + PR standards)',
+  },
   errors: {
     own_account: 'You cannot do this to your own account.',
     has_classes:

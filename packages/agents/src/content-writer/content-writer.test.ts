@@ -3,6 +3,7 @@ import type { ContentRequestInput } from '@thp/domain';
 import { FakeLlmClient, aContentRequest } from '@thp/testing';
 import { ContentWriter } from './content-writer.ts';
 import { reviewContent } from './content-review.ts';
+import { eslGuidance } from '../drafting/esl.ts';
 
 const request = (overrides: Partial<ContentRequestInput> = {}) => aContentRequest(overrides);
 
@@ -33,6 +34,18 @@ describe('ContentWriter', () => {
     expect(prompt).toContain("Teacher's instructions: Use pizza");
     expect(prompt).toContain('CCSS.Math.Content.4.NF.A.1:');
     expect(prompt).not.toContain('CCSS.Math.Content.7.');
+  });
+
+  it('adds the ESL guidance to the request only when the switch is on', async () => {
+    const llm = new FakeLlmClient().replyWith(worksheet).replyWith(worksheet);
+    const writer = new ContentWriter(llm);
+    await writer.write(request());
+    await writer.write(request({ esl: true }));
+
+    const [plain, esl] = llm.requests.map((sent) => sent.messages[0]?.content ?? '');
+    expect(plain).not.toContain(eslGuidance);
+    expect(esl).toContain(eslGuidance);
+    expect(llm.requests[0]?.system).toBe(llm.requests[1]?.system);
   });
 
   it('removes invented codes from the content and keeps official ones', async () => {
