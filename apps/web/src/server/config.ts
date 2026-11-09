@@ -28,8 +28,11 @@ export interface WebConfig {
   readonly billing: BillingConfig;
   readonly google: GoogleConfig;
   readonly classroom: ClassroomConfig;
-  /** The voice that reads text aloud (the worker makes the audio with the same one). */
-  readonly voice: string;
+  /**
+   * The voice that reads text aloud (the worker makes the audio with the same one); null when
+   * the device's own voice reads instead.
+   */
+  readonly voice: string | null;
   /** Live games: the realtime server's address, and the secret both use to sign tickets. */
   readonly realtime: { readonly url: string; readonly ticketSecret: string };
   readonly mail: MailConfig;
@@ -69,7 +72,18 @@ const required = (name: string) => ({ error: `${name} is required` });
 
 const defaultVoice = 'nova';
 
-const voiceFrom = (env: Readonly<Record<string, string | undefined>>): string => {
+/**
+ * The voice the worker reads aloud with (TTS_PROVIDER=openai, as on the worker). Production
+ * without it gets null: the device's own voice reads instead of the worker's silent stand-in.
+ */
+const voiceFrom = (
+  env: Readonly<Record<string, string | undefined>>,
+  appEnv: AppEnv,
+): string | null => {
+  const chosen = env.TTS_PROVIDER?.trim() ?? '';
+  const hasKey = (env.OPENAI_API_KEY?.trim() ?? '') !== '';
+  const provider = chosen !== '' ? chosen : hasKey ? 'openai' : 'local';
+  if (provider !== 'openai' && appEnv === 'production') return null;
   const voice = env.OPENAI_TTS_VOICE?.trim() ?? '';
   return voice === '' ? defaultVoice : voice;
 };
@@ -215,7 +229,7 @@ export function parseWebConfig(
             clientSecret: c.GOOGLE_CLIENT_SECRET,
           },
     classroom: classroom.value,
-    voice: voiceFrom(env),
+    voice: voiceFrom(env, c.APP_ENV),
     realtime: {
       url: c.REALTIME_URL.replace(/\/$/, ''),
       ticketSecret: c.REALTIME_TICKET_SECRET,

@@ -9,7 +9,8 @@ export const dynamic = 'force-dynamic';
 const body = z.object({ text: z.string().max(50_000), language: z.string(), locale: z.string() });
 
 /**
- * Asks for text to be read aloud: the clip ids when the audio is cached, or a job to poll.
+ * Asks for text to be read aloud: the clip ids when the audio is cached, a job to poll, or the
+ * plain text for the device's own voice.
  * Signed-in teachers with AI access only; the text is never logged.
  */
 export async function POST(request: Request): Promise<Response> {
@@ -26,11 +27,11 @@ export async function POST(request: Request): Promise<Response> {
   if (!outcome.ok) {
     return Response.json({ error: messageFor(outcome.error, locale) }, { status: 422, headers });
   }
-  const { status, clips } = outcome.value;
+  const speech = outcome.value;
   return Response.json(
-    outcome.value.status === 'queued'
-      ? { status, clips, jobId: outcome.value.job.id }
-      : { status, clips },
+    speech.status === 'queued'
+      ? { status: speech.status, clips: speech.clips, jobId: speech.job.id }
+      : speech,
     { headers },
   );
 }

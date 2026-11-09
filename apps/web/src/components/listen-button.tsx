@@ -5,17 +5,18 @@ import { createTranslator, type Locale } from '@thp/i18n';
 import { useJobStatus } from './job-progress.tsx';
 
 interface SpeechReply {
-  readonly status?: 'ready' | 'queued';
+  readonly status?: 'ready' | 'queued' | 'device';
   readonly clips?: readonly string[];
+  readonly text?: string;
   readonly jobId?: string;
   readonly error?: string;
 }
 
-type Phase = 'idle' | 'loading' | 'playing' | 'failed';
+type Phase = 'idle' | 'loading' | 'playing' | 'speaking' | 'failed';
 
 /**
  * Reads text aloud. The audio is made by a job the first time and cached for the school; the
- * parts then play one after another.
+ * parts then play one after another. Without a voice service, the device's own voice reads.
  */
 export function ListenButton(props: {
   readonly locale: Locale;
@@ -52,7 +53,26 @@ export function ListenButton(props: {
     setPhase('idle');
     setClips([]);
     setPart(0);
+    return () => {
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    };
   }, [props.text]);
+
+  const speakOnDevice = (text: string) => {
+    if (!('speechSynthesis' in window)) {
+      setPhase('failed');
+      setMessage(t('speech.failed'));
+      return;
+    }
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = props.language;
+    utterance.onend = () => {
+      setPhase('idle');
+    };
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+    setPhase('speaking');
+  };
 
   const start = async () => {
     setPhase('loading');
@@ -64,6 +84,10 @@ export function ListenButton(props: {
       body: JSON.stringify({ text: props.text, language: props.language, locale: props.locale }),
     }).catch(() => null);
     const reply = (await response?.json().catch(() => null)) as SpeechReply | null;
+    if (response?.ok && reply?.status === 'device' && reply.text !== undefined) {
+      speakOnDevice(reply.text);
+      return;
+    }
     if (!response?.ok || reply?.clips === undefined) {
       setPhase('failed');
       setMessage(reply?.error ?? t('speech.failed'));
@@ -76,6 +100,7 @@ export function ListenButton(props: {
 
   const stop = () => {
     audio.current?.pause();
+    if (phase === 'speaking') window.speechSynthesis.cancel();
     setPhase('idle');
   };
 
@@ -87,7 +112,7 @@ export function ListenButton(props: {
   const current = clips[part];
   return (
     <span className="listen">
-      {phase === 'playing' ? (
+      {phase === 'playing' || phase === 'speaking' ? (
         <button type="button" className="button secondary" onClick={stop}>
           {t('speech.stop')}
         </button>

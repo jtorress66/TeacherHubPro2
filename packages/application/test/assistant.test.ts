@@ -350,6 +350,7 @@ describe('Read aloud', () => {
     const queued = valueOf(
       await new RequestSpeech(speechDeps(world)).execute({ actor, text: 'Hola', language: 'es' }),
     );
+    if (queued.status !== 'queued') throw new Error('expected a job');
     await runJobs(world, new SpeechHandler({ ...world, tts: new FakeTextToSpeech() }));
     const [clipId] = queued.clips;
     if (clipId === undefined) throw new Error('no clip');
@@ -370,6 +371,21 @@ describe('Read aloud', () => {
     expect(
       await new RequestSpeech(speechDeps(world)).execute({ actor, text: 'Hola', language: 'es' }),
     ).toEqual(subscriptionRequired);
+  });
+
+  it('hands the plain text to the device voice when there is no voice service', async () => {
+    const world = makeWorld();
+    const actor = await teacher(world);
+    const speech = new RequestSpeech({ ...world, voice: null });
+
+    expect(
+      await speech.execute({ actor, text: '# Hola\n\n**Buenos** días.', language: 'es' }),
+    ).toEqual({ ok: true, value: { status: 'device', text: 'Hola\n\nBuenos días.' } });
+    expect(await world.jobs.claimNext([speechJobKind])).toBeNull();
+    advanceDays(world, 8);
+    expect(await speech.execute({ actor, text: 'Hola', language: 'es' })).toEqual(
+      subscriptionRequired,
+    );
   });
 
   it('fails the job as ai_unavailable when the voice service fails', async () => {
