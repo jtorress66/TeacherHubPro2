@@ -37,6 +37,7 @@ describe('currentPathFor', () => {
     expect(currentPathFor('/pricing')).toBeNull();
     expect(currentPathFor('/features/gradebook')).toBeNull();
     expect(currentPathFor('/app/plans')).toBeNull();
+    expect(currentPathFor('/auth/local-google')).toBeNull();
     expect(currentPathFor('/')).toBeNull();
     expect(currentPathFor('/dashboard/')).toBe('/app');
     expect(currentPathFor('/dashboards')).toBeNull();
