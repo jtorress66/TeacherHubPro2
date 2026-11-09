@@ -17,6 +17,7 @@ export interface RosterFormState {
   readonly messages?: readonly string[];
   readonly saved?: boolean;
   readonly imported?: number;
+  readonly copied?: { readonly copied: number; readonly skipped: number };
   /** Changes after each success so the form can clear itself. */
   readonly version?: number;
 }
@@ -167,6 +168,25 @@ export async function importStudentsAction(
   await record(user, 'students_imported', classId);
   revalidatePath(classPage(locale, classId));
   return { imported: result.value.imported, version: (state.version ?? 0) + 1 };
+}
+
+/** Copies another of the teacher's classes' students into this class. */
+export async function copyStudentsAction(
+  state: RosterFormState,
+  data: FormData,
+): Promise<RosterFormState> {
+  const locale = localeOf(data);
+  const { user } = await requireUser(locale);
+  const classId = text(data, 'classId');
+  const result = await getAppContainer().copyStudents.execute({
+    actor: user,
+    fromClassId: text(data, 'fromClassId') as ClassId,
+    toClassId: classId as ClassId,
+  });
+  if (!result.ok) return { errors: formErrors(result.error, locale) };
+  await record(user, 'students_imported', classId);
+  revalidatePath(classPage(locale, classId));
+  return { copied: result.value, version: (state.version ?? 0) + 1 };
 }
 
 export async function createSemesterAction(

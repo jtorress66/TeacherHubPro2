@@ -8,12 +8,14 @@ import {
   createClassAction,
   createSemesterAction,
   importStudentsAction,
+  copyStudentsAction,
   updateClassAction,
   updateSemesterAction,
   updateStudentAction,
   type RosterFormState,
 } from '../app/_lib/roster-actions.ts';
 import { Field, FormAlert, Submit } from './forms.tsx';
+import { Select, type Option } from './form-fields.tsx';
 
 const initial: RosterFormState = {};
 
@@ -267,6 +269,48 @@ export function ImportStudentsForm({
         message={state.imported !== undefined && t('students.imported', { count: state.imported })}
       />
       <Submit label={t('students.import')} />
+    </form>
+  );
+}
+
+/** Copies the students of another of the teacher's classes into this one. */
+export function CopyStudentsForm({
+  locale,
+  classId,
+  classes,
+}: {
+  readonly locale: Locale;
+  readonly classId: string;
+  readonly classes: readonly Option[];
+}) {
+  const t = createTranslator(locale);
+  const [state, action] = useActionState(copyStudentsAction, initial);
+  if (classes.length === 0) return <p className="muted">{t('students.copyNone')}</p>;
+  return (
+    <form
+      key={state.version ?? 0}
+      action={action}
+      className="stack"
+      aria-label={t('students.copyTitle')}
+    >
+      <input type="hidden" name="locale" value={locale} />
+      <input type="hidden" name="classId" value={classId} />
+      <p className="muted">{t('students.copyHelp')}</p>
+      <Select
+        id="copy-from"
+        name="fromClassId"
+        label={t('students.copyFrom')}
+        options={classes}
+        error={state.errors?.fromClassId}
+      />
+      <FormAlert message={state.errors?.form} />
+      <Notice
+        message={
+          state.copied !== undefined &&
+          t('students.copied', { count: state.copied.copied, skipped: state.copied.skipped })
+        }
+      />
+      <Submit label={t('students.copy')} />
     </form>
   );
 }
