@@ -4,7 +4,7 @@ import { signUp } from './helpers.ts';
 
 // The languages translated beyond English and Spanish: the site, Chat with Ed and the app speak
 // them on every page.
-for (const locale of ['fr', 'pt'] as const satisfies readonly Locale[]) {
+for (const locale of ['fr', 'pt', 'de'] as const satisfies readonly Locale[]) {
   const t = createTranslator(locale);
 
   test(`the site, Chat with Ed and the app are in this language (${locale})`, async ({ page }) => {
@@ -15,7 +15,9 @@ for (const locale of ['fr', 'pt'] as const satisfies readonly Locale[]) {
     await page.getByRole('button', { name: t('marketing.chat.open') }).click();
     const chat = page.getByRole('region', { name: t('marketing.chat.title') });
     await expect(chat).toContainText(t('marketing.chat.intro'));
-    await expect(chat.getByRole('button', { name: t('marketing.roles.teacher') })).toBeVisible();
+    await expect(
+      chat.getByRole('button', { name: t('marketing.roles.teacher'), exact: true }),
+    ).toBeVisible();
 
     await signUp(page, locale);
     await expect(page.getByRole('link', { name: t('nav.rubrics'), exact: true })).toBeVisible();

@@ -31,7 +31,7 @@ describe('portalLinkEmail', () => {
   });
 
   it('falls back to English for a language without the strings', () => {
-    expect(portalLinkEmail({ ...input, language: 'de' }).subject).toBe(
+    expect(portalLinkEmail({ ...input, language: 'zh' }).subject).toBe(
       'Ana’s progress at Escuela <Luna>',
     );
   });
