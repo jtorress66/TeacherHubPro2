@@ -135,6 +135,25 @@ describe('parseWebConfig', () => {
     });
   });
 
+  it('ignores spaces and line breaks pasted around a setting', () => {
+    const pasted = {
+      ...production,
+      STRIPE_SECRET_KEY: ' sk_live_xxxxxxxx\n',
+      STRIPE_WEBHOOK_SECRET: 'whsec_xxxxxxxx \r\n',
+      BILLING_PROVIDER: 'stripe ',
+    };
+    expect(parseWebConfig(pasted)).toMatchObject({
+      ok: true,
+      value: {
+        billing: {
+          provider: 'stripe',
+          secretKey: 'sk_live_xxxxxxxx',
+          webhookSecret: 'whsec_xxxxxxxx',
+        },
+      },
+    });
+  });
+
   it('reads a production setup with Stripe and Google', () => {
     expect(parseWebConfig(production)).toEqual({
       ok: true,

@@ -196,7 +196,11 @@ const setupKeyFrom = (env: Readonly<Record<string, string | undefined>>): string
 export function parseWebConfig(
   env: Readonly<Record<string, string | undefined>>,
 ): Result<WebConfig, string> {
-  const parsed = schema.safeParse(env);
+  // A key pasted into the host's settings often brings a space or line break along.
+  const trimmed = Object.fromEntries(
+    Object.entries(env).map(([name, value]) => [name, value?.trim()]),
+  );
+  const parsed = schema.safeParse(trimmed);
   if (!parsed.success) return err(parsed.error.issues[0]?.message ?? 'Invalid configuration');
   const c = parsed.data;
   if (c.APP_ENV === 'production' && c.BILLING_PROVIDER === 'local')
