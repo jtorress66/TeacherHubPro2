@@ -1,6 +1,6 @@
-import { catalogs as defaultCatalogs, type Catalogs } from './catalogs/index.ts';
+import { catalogs as defaultCatalogs } from './catalogs/index.ts';
 import type { Locale } from './locales.ts';
-import type { MessageKey } from './messages.ts';
+import type { MessageKey, Messages, PartialMessages } from './messages.ts';
 
 export type MessageParams = Readonly<Record<string, string | number>>;
 export type Translate = (key: MessageKey, params?: MessageParams) => string;
@@ -21,8 +21,16 @@ function interpolate(text: string, params: MessageParams): string {
   });
 }
 
+/** Catalogs to translate from: English in full; a key missing elsewhere falls back to it. */
+export type TranslatorCatalogs = { readonly en: Messages } & Readonly<
+  Partial<Record<Locale, PartialMessages>>
+>;
+
 /** Returns `t(key)` for a language; keys missing from that catalog fall back to English. */
-export function createTranslator(locale: Locale, catalogs: Catalogs = defaultCatalogs): Translate {
+export function createTranslator(
+  locale: Locale,
+  catalogs: TranslatorCatalogs = defaultCatalogs,
+): Translate {
   return (key, params = {}) => {
     const text = lookup(catalogs[locale], key) ?? lookup(catalogs.en, key) ?? key;
     return interpolate(text, params);

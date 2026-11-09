@@ -14,7 +14,7 @@ Legacy stack, for reference: FastAPI + MongoDB backend (`backend/server.py` is a
 | Student | Links only (assignment, game, learning path, Play to Learn PIN) | Take assignments, play games, do lessons |
 | Parent / homeschool parent | Portal link only | Read their child's grades, attendance and reports |
 
-Seven interface languages: English, Spanish, French, Portuguese, German, Italian and Chinese. English is the default; a `?lang=` link overrides the user's saved choice, which overrides the default (old file: `frontend/src/contexts/LanguageContext.js`). English and Spanish are fully translated; the other five fall back to English until translated.
+Seven interface languages: English, Spanish, French, Portuguese, German, Italian and Chinese. English is the default; a `?lang=` link overrides the user's saved choice, which overrides the default (old file: `frontend/src/contexts/LanguageContext.js`). All seven are fully translated.
 
 ---
 
@@ -252,7 +252,7 @@ Seven interface languages: English, Spanish, French, Portuguese, German, Italian
   - **Only confirmed grades:** the gradebook holds teacher entries only (AI drafts and game plays become grades only when the teacher confirms them), and pending work shows as "not graded yet", never with a score.
   - **Email** goes through a `Mailer` port: Resend's HTTP API in production at go-live, and until then a local stand-in that keeps mail in the database, readable at `/{locale}/dev/mail` outside production. While production has no real mailer, the app offers no email (copying a link still works) and sends no trial reminders, so nothing is lost or recorded as sent.
   - **Trial reminders** go to the account owner 3 days before the trial ends and on its last day, each once, in their language, from the worker's minute housekeeping; paid plans get none.
-  - Email texts live with the translations (`packages/i18n`), in English and Spanish; other languages fall back to English.
+  - Email texts live with the translations (`packages/i18n`), in all seven languages.
 - **Kept from the old app:** a portal link per student, emailed to the parent; a read-only portal with the student's grades, averages, recent and upcoming work and attendance summary; the homeschool view of learning progress and games; revoking a link; a bilingual email with the link and "read-only, contact the teacher"; trial reminder emails with the paid-plan check and no duplicates.
 - **Fixed from the old app:**
   - Portal tokens were stored in plain text: they are random, stored as a hash, revocable and expiring.

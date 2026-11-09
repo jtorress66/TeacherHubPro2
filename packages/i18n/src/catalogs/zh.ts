@@ -1,4 +1,10 @@
-import type { PartialMessages } from '../messages.ts';
+import type { Messages } from '../messages.ts';
+import { marketingZh } from './marketing-zh.ts';
+import { zhAppA } from './zh-app-a.ts';
+import { zhAppB } from './zh-app-b.ts';
 
-/** Not translated yet: every key falls back to English. */
-export const zh: PartialMessages = {};
+export const zh: Messages = {
+  ...marketingZh,
+  ...zhAppA,
+  ...zhAppB,
+};

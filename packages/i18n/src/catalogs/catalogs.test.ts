@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { locales } from '../locales.ts';
 import { catalogs } from './index.ts';
 
-/** Translated in full; the others may still fall back to English. */
-const completeLocales = ['es', 'fr', 'pt', 'de', 'it'] as const;
+/** Every language but English, which defines the keys. */
+const completeLocales = locales.filter((locale) => locale !== 'en');
 
 function leafEntries(tree: unknown, prefix = ''): [string, unknown][] {
   if (typeof tree !== 'object' || tree === null) return [[prefix, tree]];

@@ -177,4 +177,16 @@ describe('reportCardFileName', () => {
       'report-card-ciencias-5.pdf',
     );
   });
+
+  it('keeps a usable name when the words have no Latin letters', () => {
+    expect(reportCardFileName(cards(), 'zh')).toBe('report-card-ana-zayas.pdf');
+    const chinese = cards();
+    const only = chinese.cards[0];
+    if (only === undefined) throw new Error('card');
+    const renamed = {
+      ...chinese,
+      cards: [{ ...only, student: { ...only.student, firstName: '小明', lastName: '王' } }],
+    };
+    expect(reportCardFileName(renamed, 'zh')).toBe('report-card.pdf');
+  });
 });

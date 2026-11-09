@@ -4,7 +4,7 @@ import { signUp } from './helpers.ts';
 
 // The languages translated beyond English and Spanish: the site, Chat with Ed and the app speak
 // them on every page.
-for (const locale of ['fr', 'pt', 'de', 'it'] as const satisfies readonly Locale[]) {
+for (const locale of ['fr', 'pt', 'de', 'it', 'zh'] as const satisfies readonly Locale[]) {
   const t = createTranslator(locale);
 
   test(`the site, Chat with Ed and the app are in this language (${locale})`, async ({ page }) => {

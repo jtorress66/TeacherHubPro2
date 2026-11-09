@@ -59,15 +59,6 @@ test.describe('home page languages', () => {
     expect(shown).toEqual(['lesson-plan', 'classroom', 'parent-portal']);
   });
 
-  test('/zh renders English text where Chinese is not translated yet, with html lang=zh', async ({
-    page,
-  }) => {
-    await page.goto('/zh');
-
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText(catalogs.en.home.title);
-    await expect(page.locator('html')).toHaveAttribute('lang', 'zh');
-  });
-
   test('the language picker switches between /en and /es', async ({ page }) => {
     await page.goto('/en');
     const picker = page.getByRole('navigation', { name: catalogs.en.language.label });

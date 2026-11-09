@@ -6,6 +6,7 @@ import {
   trialReminderEmail,
   weeklyUpdateEmail,
 } from './emails.ts';
+import { locales } from './locales.ts';
 
 describe('portalLinkEmail', () => {
   const input = {
@@ -30,9 +31,12 @@ describe('portalLinkEmail', () => {
     expect(portalLinkEmail(input).html).not.toContain('<Luna>');
   });
 
-  it('falls back to English for a language without the strings', () => {
-    expect(portalLinkEmail({ ...input, language: 'zh' }).subject).toBe(
-      'Ana’s progress at Escuela <Luna>',
+  it('is written in every language', () => {
+    for (const language of locales) {
+      expect(portalLinkEmail({ ...input, language }).subject).toContain('Ana');
+    }
+    expect(portalLinkEmail({ ...input, language: 'zh' }).subject).not.toBe(
+      portalLinkEmail(input).subject,
     );
   });
 });

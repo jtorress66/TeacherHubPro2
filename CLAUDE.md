@@ -1,6 +1,6 @@
 # CLAUDE.md — TeacherHubPro
 
-TeacherHubPro is an AI workspace for teachers, schools and homeschool families: lesson planning, classes and rosters, attendance, gradebook and report cards, assignments with AI grading, educational games, live classroom games, adaptive learning, parent portals and a weekly lesson-prep agent. The interface supports seven languages (English, Spanish, French, Portuguese, German, Italian and Chinese); English and Spanish are fully translated and the others fall back to English until translated.
+TeacherHubPro is an AI workspace for teachers, schools and homeschool families: lesson planning, classes and rosters, attendance, gradebook and report cards, assignments with AI grading, educational games, live classroom games, adaptive learning, parent portals and a weekly lesson-prep agent. The interface supports seven languages (English, Spanish, French, Portuguese, German, Italian and Chinese), all fully translated.
 
 This repository is a clean rebuild. The previous version, built with Emergent, lives at `github.com/jtorress66/TeacherhubPro` and serves as a **reference only** (see "Legacy app" below).
 
@@ -58,7 +58,7 @@ Dependency rule: `domain` ← `ports` ← `application` ← `agents` / `adapters
 | Unit | Vitest | Domain, use cases, agents with `FakeLlmClient`. No network, no DB. |
 | Contract | Vitest shared suites | Every adapter runs the suite for its port. |
 | Integration | Vitest + Testcontainers + MSW | Real Postgres; external HTTP via recorded responses. |
-| E2E | Playwright | Critical journeys: sign-up, attendance, grading, student assignment, live game, parent portal. Run in English and Spanish (the fully translated languages). |
+| E2E | Playwright | Critical journeys: sign-up, attendance, grading, student assignment, live game, parent portal. Run in English and Spanish; `e2e/languages.spec.ts` checks the site, Chat with Ed and the app in the other five. |
 | LLM evals | `pnpm test` (replays), `pnpm eval` (real Claude) | Every push scores the saved model replies in `evals/replays` (free, part of the unit tests). Runs against real Claude cost money and happen only when the user asks (`pnpm eval`, or CI → Run workflow). When a prompt changes, update the saved replies to match its new shape. Scores must not drop below `evals/thresholds.json`. |
 
 Coverage thresholds (enforced in CI): `domain` and `agents` ≥ 90%, overall ≥ 80%.
@@ -91,7 +91,7 @@ Test names describe behaviour: `it("counts a tardy as present in the attendance 
 - TypeScript `strict`; no `any` (use `unknown` and narrow).
 - Errors: return typed `Result<T, E>` from use cases; throw only for programmer errors.
 - Validate all external input with Zod at the edges.
-- Every user-facing string goes through `packages/i18n`. Every key must exist in `en` and `es`; `fr`, `pt`, `de`, `it` and `zh` may omit keys, which fall back to English. English is the default language; a `?lang=` link overrides the user's saved choice, which overrides the default. AI output follows the language the teacher chose.
+- Every user-facing string goes through `packages/i18n`. Every key must exist in all seven catalogs (`en`, `es`, `fr`, `pt`, `de`, `it`, `zh`) with the same `{placeholders}`; a test enforces it. English is the default language; a `?lang=` link overrides the user's saved choice, which overrides the default. AI output follows the language the teacher chose.
 - Long AI work (generation, PDF parsing, grading, prep batches) runs as a job in `apps/worker`, stored in Postgres, polled or pushed to the UI. Never hold an HTTP request open for AI.
 - Prompt caching: an agent's system prompt is a fixed constant (no per-request data), and text that repeats across requests goes first in the prompt, passed as `stablePrefix`; per-request data comes after it.
 - Small files, small functions; prefer composition over inheritance.
