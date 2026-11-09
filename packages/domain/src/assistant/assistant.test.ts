@@ -32,8 +32,15 @@ describe('createContentRequest', () => {
         questionCount: null,
         language: 'en',
         instructions: null,
+        esl: false,
       },
     });
+  });
+
+  it('keeps the ESL switch for material written for English learners', () => {
+    const request = createContentRequest(input({ esl: true }));
+
+    expect(request.ok && request.value.esl).toBe(true);
   });
 
   it('gives a quiz a question count, 10 by default', () => {

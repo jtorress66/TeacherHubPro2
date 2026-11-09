@@ -8,7 +8,7 @@ import {
   type LearningFormState,
 } from '../../app/_lib/learning-actions.ts';
 import { Field, FormAlert, Submit } from '../forms.tsx';
-import { Hidden, Select, type Option } from '../form-fields.tsx';
+import { EslSwitch, Hidden, Select, type Option } from '../form-fields.tsx';
 
 const initial: LearningFormState = {};
 const option = (id: string, name: string): Option => ({ id, name });
@@ -77,6 +77,7 @@ export function DraftPathForm(props: {
           defaultValue={props.locale}
         />
       </div>
+      <EslSwitch label={t('esl.label')} help={t('esl.learningHelp')} />
       <Submit label={t('learning.draft')} />
     </form>
   );

@@ -34,7 +34,9 @@ async function setUp(world: World) {
   );
   const tokenOf = (studentId: string) =>
     links.find((row) => row.student.id === studentId)?.token ?? '';
-  const request = (input: { studentId?: StudentId; subject?: string; topic?: string } = {}) =>
+  const request = (
+    input: { studentId?: StudentId; subject?: string; topic?: string; esl?: boolean } = {},
+  ) =>
     new RequestLearningPath(world).execute({
       actor: setup.actor,
       classId: setup.cls.id,
@@ -43,6 +45,7 @@ async function setUp(world: World) {
       lessonCount: 3,
       ...(input.studentId === undefined ? {} : { studentId: input.studentId }),
       ...(input.topic === undefined ? {} : { topic: input.topic }),
+      ...(input.esl === undefined ? {} : { esl: input.esl }),
     });
   /** Runs a draft job, as the worker does, and returns the saved path. */
   const run = async (job: Job): Promise<LearningPath> => {
@@ -73,6 +76,15 @@ describe('RequestLearningPath', () => {
     const jobs = valueOf(await s.request());
     expect(jobs).toHaveLength(3);
     expect(jobs.every((job) => job.kind === 'learning.generate')).toBe(true);
+  });
+
+  it('asks for ESL-level lessons when the teacher turns on ESL support', async () => {
+    const world = makeWorld();
+    const s = await setUp(world);
+    const [job] = valueOf(await s.request({ studentId: s.ana.id, esl: true }));
+    if (job === undefined) throw new Error('no job');
+    await s.run(job);
+    expect(world.pathWriter.requests[0]).toMatchObject({ esl: true });
   });
 
   it('sends the writer no student data: subject, grade, level and focus only', async () => {

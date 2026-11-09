@@ -1762,6 +1762,13 @@ export const es: Messages = {
     notFound: 'No hay ningún juego abierto con ese PIN. Revisa el PIN en la pantalla.',
     chooseAnswer: 'Respuesta {n}: {option}',
   },
+  esl: {
+    label: 'Apoyo ESL',
+    assistantHelp:
+      'Generar material de nivel ESL para estudiantes que aprenden inglés (WIDA + estándares de PR)',
+    learningHelp:
+      'Generar lecciones de nivel ESL para estudiantes que aprenden inglés (WIDA + estándares de PR)',
+  },
   errors: {
     own_account: 'No puede hacer esto con su propia cuenta.',
     has_classes:

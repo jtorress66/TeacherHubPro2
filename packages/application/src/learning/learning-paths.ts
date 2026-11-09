@@ -88,6 +88,7 @@ export interface LearningPathInput {
   readonly language?: string;
   readonly lessonCount?: number;
   readonly topic?: string | null;
+  readonly esl?: boolean;
 }
 
 /**
@@ -115,6 +116,7 @@ export class RequestLearningPath {
       language: input.language ?? actor.language,
       ...(input.lessonCount === undefined ? {} : { lessonCount: input.lessonCount }),
       topic: input.topic ?? null,
+      esl: input.esl === true,
     };
     const valid = createPathRequest({ ...base, level: 3 });
     if (!valid.ok) return valid;

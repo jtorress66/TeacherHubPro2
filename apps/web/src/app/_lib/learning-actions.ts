@@ -45,6 +45,7 @@ export async function requestLearningPathsAction(
     grade: text(data, 'grade'),
     language: text(data, 'language'),
     topic: text(data, 'topic'),
+    esl: data.get('esl') === 'on',
     ...(lessons === '' ? {} : { lessonCount: Number(lessons) }),
   });
   if (!jobs.ok) return { errors: formErrors(jobs.error, locale) };

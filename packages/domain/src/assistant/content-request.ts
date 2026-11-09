@@ -54,6 +54,8 @@ export interface ContentRequest {
   readonly questionCount: number | null;
   readonly language: Language;
   readonly instructions: string | null;
+  /** Written for English learners (WIDA levels, vocabulary, sentence frames). */
+  readonly esl: boolean;
 }
 
 export interface ContentRequestInput {
@@ -66,6 +68,7 @@ export interface ContentRequestInput {
   readonly questionCount?: number;
   readonly language: string;
   readonly instructions?: string | null;
+  readonly esl?: boolean;
 }
 
 interface Range {
@@ -132,6 +135,7 @@ export function createContentRequest(
     questionCount: questionCount.value,
     language: input.language,
     instructions: instructions.value,
+    esl: input.esl === true,
   });
 }
 

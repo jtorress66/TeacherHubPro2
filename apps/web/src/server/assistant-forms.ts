@@ -57,6 +57,7 @@ export function parseContentForm(data: FormData): {
       ...numberField(data, 'questionCount'),
       language: languageOf(data, locale),
       instructions: optional(data, 'instructions'),
+      esl: data.get('esl') === 'on',
     },
   };
 }

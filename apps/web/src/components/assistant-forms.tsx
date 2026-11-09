@@ -21,7 +21,7 @@ import {
   type AssistantFormState,
 } from '../app/_lib/assistant-actions.ts';
 import { Field, FormAlert, Submit } from './forms.tsx';
-import { Hidden, Select, TextArea, type Option } from './form-fields.tsx';
+import { EslSwitch, Hidden, Select, TextArea, type Option } from './form-fields.tsx';
 import { ScheduleFields } from './schedule-fields.tsx';
 
 const initial: AssistantFormState = {};
@@ -124,6 +124,7 @@ export function ContentForm({ locale }: { readonly locale: Locale }) {
         label={t('assistant.instructions')}
         error={errors?.instructions}
       />
+      <EslSwitch label={t('esl.label')} help={t('esl.assistantHelp')} />
       <Submit label={t('assistant.submit')} />
     </form>
   );

@@ -39,8 +39,13 @@ describe('parseContentForm', () => {
         questionCount: 8,
         language: 'es',
         instructions: null,
+        esl: false,
       },
     });
+  });
+
+  it('turns on ESL support when the switch is checked', () => {
+    expect(parseContentForm(form([['esl', 'on']])).input.esl).toBe(true);
   });
 
   it('writes in the language chosen for the content, or the page’s language', () => {

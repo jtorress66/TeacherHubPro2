@@ -170,8 +170,15 @@ describe('createPathRequest', () => {
         topic: 'Fractions',
         review: ['Compare fractions'],
         mastered: [],
+        esl: false,
       },
     });
+  });
+
+  it('writes for English learners only when the ESL switch is on', () => {
+    const esl = createPathRequest({ ...request, esl: true });
+
+    expect(esl.ok && esl.value.esl).toBe(true);
   });
 
   it('a blank topic lets the writer choose; counts and levels stay in range', () => {

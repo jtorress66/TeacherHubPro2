@@ -29,6 +29,7 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     await form.getByLabel(t('learning.student')).selectOption({ label: 'Ana Zayas' });
     await form.getByLabel(t('learning.topic')).fill('Comparing numbers');
     await form.getByLabel(t('learning.lessonCount')).fill('3');
+    await form.getByLabel(t('esl.label')).check();
     await form.getByRole('button', { name: t('learning.draft') }).click();
 
     const drafts = page.getByRole('list', { name: t('learning.toReview') });

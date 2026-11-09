@@ -27,6 +27,8 @@ export interface PathRequest {
   readonly topic: string | null;
   readonly review: readonly string[];
   readonly mastered: readonly string[];
+  /** Written for English learners (WIDA levels, vocabulary, sentence frames). */
+  readonly esl: boolean;
 }
 
 export interface PathRequestInput {
@@ -38,6 +40,7 @@ export interface PathRequestInput {
   readonly topic?: string | null;
   readonly review?: readonly string[];
   readonly mastered?: readonly string[];
+  readonly esl?: boolean;
 }
 
 export const isSubject = (value: string): value is AssistantSubject =>
@@ -76,5 +79,6 @@ export function createPathRequest(input: PathRequestInput): Result<PathRequest, 
     topic: topic.value,
     review: focus(input.review),
     mastered: focus(input.mastered),
+    esl: input.esl === true,
   });
 }
