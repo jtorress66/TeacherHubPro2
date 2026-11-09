@@ -20,6 +20,8 @@ export interface GradebookFormState {
   readonly saved?: boolean;
   /** Changes after each success so the form can clear itself. */
   readonly version?: number;
+  /** The assignment just created, so the teacher can open it next. */
+  readonly created?: { readonly id: string; readonly title: string };
 }
 
 const localeOf = (data: FormData): Locale => {
@@ -120,7 +122,9 @@ export async function saveAssignmentAction(
         });
   if (!result.ok) return { errors: gradeEntryMessages(result.error, form.locale) };
   refresh(form.locale, form.classId);
-  return done(state);
+  const created =
+    form.assignmentId === '' ? { id: result.value.id, title: result.value.title } : null;
+  return created === null ? done(state) : { ...done(state), created };
 }
 
 export async function deleteAssignmentAction(data: FormData): Promise<void> {

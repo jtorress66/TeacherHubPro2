@@ -95,6 +95,7 @@ import {
   SubmitAnswers,
   GetStudentAttachment,
   ListSubmissions,
+  GetAssignmentOverview,
   RequestAiGrading,
   ConfirmGrade,
   GradeByHand,
@@ -338,6 +339,7 @@ export interface AppContainer {
   readonly submitAnswers: SubmitAnswers;
   readonly getStudentAttachment: GetStudentAttachment;
   readonly listSubmissions: ListSubmissions;
+  readonly getAssignmentOverview: GetAssignmentOverview;
   readonly requestAiGrading: RequestAiGrading;
   readonly confirmGrade: ConfirmGrade;
   readonly gradeByHand: GradeByHand;
@@ -679,6 +681,7 @@ export function createAppContainer(
     submitAnswers: new SubmitAnswers(deps),
     getStudentAttachment: new GetStudentAttachment(deps),
     listSubmissions: new ListSubmissions(deps),
+    getAssignmentOverview: new GetAssignmentOverview(deps),
     requestAiGrading: new RequestAiGrading(deps),
     confirmGrade: new ConfirmGrade(deps),
     gradeByHand: new GradeByHand(deps),

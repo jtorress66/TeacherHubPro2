@@ -77,6 +77,7 @@ export default async function GradebookPage(props: Props) {
         </p>
       )}
 
+      {assignments.length === 0 ? null : <p className="hint">{t('gradebook.openHint')}</p>}
       <div className="table-scroll">
         <table className="roster gradebook" data-testid="gradebook-grid">
           <thead>

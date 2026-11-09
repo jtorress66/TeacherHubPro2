@@ -252,6 +252,10 @@ export {
   gradingJobKind,
 } from './assignments/grading.ts';
 export {
+  GetAssignmentOverview,
+  type AssignmentOverview,
+} from './assignments/assignment-overview.ts';
+export {
   StartClassroomConnect,
   FinishClassroomConnect,
   DisconnectClassroom,
