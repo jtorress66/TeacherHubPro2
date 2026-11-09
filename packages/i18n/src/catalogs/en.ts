@@ -1313,7 +1313,7 @@ export const en = {
     connectedNotice: 'Google Classroom connected.',
     failedNotice: 'Google Classroom could not be connected. Please try again.',
     course: 'Course',
-    importRoster: 'Import students from Classroom',
+    importRoster: 'Import students from Google Classroom',
     imported: '{added} students added, {skipped} already in the class.',
     share: 'Share to Google Classroom',
     shared: 'Shared to Google Classroom.',
