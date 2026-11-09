@@ -68,7 +68,10 @@ export async function openLink(
 }
 
 /** Ready for students: it has questions or files to open. */
-async function isReady(deps: PortalDeps, assignment: Assignment): Promise<boolean> {
+export async function isReady(
+  deps: Pick<PortalDeps, 'attachments'>,
+  assignment: Assignment,
+): Promise<boolean> {
   if (assignment.questions.length > 0) return true;
   return (await deps.attachments.listByAssignment(assignment.schoolId, assignment.id)).length > 0;
 }

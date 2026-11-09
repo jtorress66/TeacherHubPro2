@@ -31,8 +31,15 @@ export default async function AssignmentPage(props: Props) {
   });
   if (!entry.ok) notFound();
   const categories = await app.listGradeCategories.execute(input);
+  const overview = await app.getAssignmentOverview.execute({
+    ...input,
+    assignmentId: assignmentId as AssignmentId,
+  });
+  if (!overview.ok) notFound();
   const { assignment, maxPoints, editable, rows } = entry.value;
+  const steps = overview.value;
   const gradebook = `/${locale}/app/classes/${classId}/gradebook`;
+  const base = `/${locale}/app/classes/${classId}`;
 
   return (
     <section className="stack">
@@ -42,20 +49,46 @@ export default async function AssignmentPage(props: Props) {
       <h1>
         {t('gradebook.enterGrades')}: {assignment.title}
       </h1>
-      <p className="button-row">
-        <Link
-          className="button"
-          href={`/${locale}/app/classes/${classId}/assignments/${assignment.id}/questions`}
-        >
-          {t('questions.open')}
-        </Link>
-        <Link
-          className="button secondary"
-          href={`/${locale}/app/classes/${classId}/assignments/${assignment.id}/submissions`}
-        >
-          {t('questions.submissions')}
-        </Link>
-      </p>
+      <ol className="list prep-steps assignment-steps" aria-label={t('questions.stepsTitle')}>
+        <li data-state={steps.ready ? 'done' : 'current'}>
+          <h2>{t('questions.stepQuestions')}</h2>
+          {steps.ready ? (
+            <p>
+              ✓{' '}
+              {t('questions.stepQuestionsDone', {
+                questions: steps.questionCount,
+                files: steps.fileCount,
+              })}
+            </p>
+          ) : (
+            <p className="notice">{t('questions.stepNotVisible')}</p>
+          )}
+          <Link className="button" href={`${base}/assignments/${assignment.id}/questions`}>
+            {t('questions.open')}
+          </Link>
+        </li>
+        <li data-state={steps.linkedCount === steps.studentCount ? 'done' : 'current'}>
+          <h2>{t('questions.stepShare')}</h2>
+          <p>
+            {t('questions.stepLinked', { linked: steps.linkedCount, total: steps.studentCount })}
+          </p>
+          <Link className="button secondary" href={`${base}/student-links`}>
+            {t('studentLinks.open')}
+          </Link>
+        </li>
+        <li data-state={steps.handedIn > 0 && steps.toReview === 0 ? 'done' : 'current'}>
+          <h2>{t('questions.stepAnswers')}</h2>
+          <p>
+            {t('questions.stepHandedIn', { handedIn: steps.handedIn, toReview: steps.toReview })}
+          </p>
+          <Link
+            className="button secondary"
+            href={`${base}/assignments/${assignment.id}/submissions`}
+          >
+            {t('questions.submissions')}
+          </Link>
+        </li>
+      </ol>
       {editable ? null : (
         <p role="status" className="notice">
           {t('gradebook.archivedNotice')}

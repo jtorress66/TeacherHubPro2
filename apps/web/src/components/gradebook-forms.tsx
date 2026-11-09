@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useActionState } from 'react';
 import type { Assignment, GradeCategory, GradeStatus } from '@thp/domain';
 import { createTranslator, type Locale } from '@thp/i18n';
@@ -154,6 +155,16 @@ export function AssignmentForm(
       <input type="hidden" name="assignmentId" value={assignment?.id ?? ''} />
       <FormAlert message={state.errors?.form} />
       <Saved message={assignment && state.saved && t('settings.saved')} />
+      {assignment || state.created === undefined ? null : (
+        <p role="status" className="notice">
+          {t('gradebook.created')}{' '}
+          <Link
+            href={`/${props.locale}/app/classes/${props.classId}/assignments/${state.created.id}`}
+          >
+            {t('gradebook.openCreated', { title: state.created.title })}
+          </Link>
+        </p>
+      )}
       <div className="field-row">
         <Field
           id="assignment-title"

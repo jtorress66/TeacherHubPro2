@@ -27,8 +27,12 @@ async function classWithAssignment(page: Page, locale: Locale, title: string): P
     .getByLabel(t('gradebook.category'), { exact: true })
     .selectOption({ label: t('gradebook.standard_test') });
   await form.getByRole('button', { name: t('gradebook.createAssignment') }).click();
-  await page.getByRole('link', { name: title, exact: true }).click();
+  await page.getByRole('link', { name: t('gradebook.openCreated', { title }) }).click();
   await expect(page.getByRole('heading', { level: 1 })).toContainText(title);
+  // Step 1 says students cannot see it until it has questions.
+  await expect(page.getByRole('list', { name: t('questions.stepsTitle') })).toContainText(
+    t('questions.stepNotVisible'),
+  );
   return classPath;
 }
 
@@ -89,6 +93,10 @@ for (const locale of ['es', 'en'] as const satisfies readonly Locale[]) {
 
     await page.goto(classPath + '/gradebook');
     await page.getByRole('link', { name: 'Quiz espacial', exact: true }).click();
+    const steps = page.getByRole('list', { name: t('questions.stepsTitle') });
+    await expect(steps).toContainText(t('questions.stepQuestionsDone', { questions: 3, files: 0 }));
+    await expect(steps).toContainText(t('questions.stepLinked', { linked: 3, total: 3 }));
+    await expect(steps).toContainText(t('questions.stepHandedIn', { handedIn: 1, toReview: 1 }));
     await page.getByRole('link', { name: t('questions.submissions') }).click();
     const ana = page.getByTestId('submission-Zayas');
     await expect(ana).toContainText(t('grading.status_submitted'));
