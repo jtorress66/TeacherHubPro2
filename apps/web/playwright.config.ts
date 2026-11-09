@@ -9,7 +9,7 @@ const databaseUrl =
 
 export default defineConfig({
   testDir: './e2e',
-  testIgnore: ['stripe/**'],
+  testIgnore: ['stripe/**', 'smoke/**'],
   forbidOnly: !!process.env.CI,
   // Locally, one test at a time: parallel workers compete for CPU with the app and the worker.
   ...(process.env.CI ? {} : { workers: 1 }),

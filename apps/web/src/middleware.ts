@@ -18,7 +18,7 @@ export function middleware(request: NextRequest): NextResponse {
 
   const response =
     route.kind === 'redirect'
-      ? NextResponse.redirect(new URL(route.to, request.url))
+      ? NextResponse.redirect(new URL(route.to, request.url), route.permanent ? 308 : 307)
       : loginPath === null
         ? NextResponse.next()
         : NextResponse.redirect(new URL(loginPath, request.url));

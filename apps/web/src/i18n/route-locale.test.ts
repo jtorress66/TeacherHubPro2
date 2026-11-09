@@ -34,6 +34,21 @@ describe('routeLocale', () => {
     });
   });
 
+  it('moves an old app address to its new page for good, in the saved language', () => {
+    expect(routeLocale({ pathname: '/planner', search: '', saved: 'es' })).toEqual({
+      kind: 'redirect',
+      to: '/es/app/plans',
+      save: 'es',
+      permanent: true,
+    });
+    expect(routeLocale({ pathname: '/portal/old', search: '?lang=fr', saved: 'es' })).toEqual({
+      kind: 'redirect',
+      to: '/fr',
+      save: 'fr',
+      permanent: true,
+    });
+  });
+
   it('switches an address that already has a language when ?lang= asks for another', () => {
     expect(routeLocale({ pathname: '/es/pricing', search: '?lang=en', saved: 'es' })).toEqual({
       kind: 'redirect',

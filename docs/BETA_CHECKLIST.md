@@ -42,6 +42,8 @@ Ticked items were checked in this repository on 2026-11-08. The items under "Own
 
 ## Owner, before go-live
 
+Step-by-step instructions for each item are in [`docs/LAUNCH.md`](LAUNCH.md).
+
 - [ ] Run the real-Claude evals once (`pnpm eval`, or CI → Run workflow) and check the scores.
 - [ ] Check text-to-speech with the real OpenAI voice.
 - [ ] Resend: verified domain, `MAIL_PROVIDER=resend`, `RESEND_API_KEY`, `MAIL_FROM`.
