@@ -183,8 +183,9 @@ function PlanPreview({ item, locale }: { readonly item: PrepItem; readonly local
         </p>
       )}
       <p>
-        <strong>{t('prep.objective')}:</strong> {plan.objective}
+        <strong>{t('prep.objective')}:</strong>
       </p>
+      <Markdown source={plan.objective} />
       {plan.standards.length === 0 ? null : (
         <p>
           <strong>{t('prep.standards')}:</strong> {plan.standards.join(', ')}
@@ -195,12 +196,12 @@ function PlanPreview({ item, locale }: { readonly item: PrepItem; readonly local
           <li key={planWeekdays[index]}>
             <strong>{t(`planner.day_${planWeekdays[index] ?? 'Mon'}`)}:</strong>{' '}
             {day.theme ?? t('prep.noTheme')}
-            {day.notes ? <p className="hint">{day.notes}</p> : null}
-            {(day.activities ?? []).map((activity, a) => (
-              <p key={a} className="hint">
-                {activity.notes ?? ''}
-              </p>
-            ))}
+            <div className="hint">
+              <Markdown source={day.notes} />
+              {(day.activities ?? []).map((activity, a) => (
+                <Markdown key={a} source={activity.notes} />
+              ))}
+            </div>
           </li>
         ))}
       </ol>

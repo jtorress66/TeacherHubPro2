@@ -30,6 +30,7 @@ export * from './lesson-plans/starter-templates.ts';
 export * from './lesson-plans/plan-draft.ts';
 export * from './lesson-plans/plan-format.ts';
 export * from './lesson-plans/plan-standards.ts';
+export * from './lesson-plans/weekday-label.ts';
 export { maxPlanTextLength } from './lesson-plans/plan-fields.ts';
 export * from './standards/common-core.ts';
 export * from './jobs/job.ts';

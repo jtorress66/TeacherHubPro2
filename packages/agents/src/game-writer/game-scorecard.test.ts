@@ -28,6 +28,26 @@ describe('scoreGame', () => {
     expect(scoreGame(request, null)).toEqual({ structure: 0, count: 0, language: 0, playable: 0 });
   });
 
+  it('judges language from the words that show it, not from single names and numbers', () => {
+    const spanish: GameContent = {
+      kind: 'questions',
+      items: [
+        { prompt: '¿Qué fracción es mayor?', options: ['1/2', '1/3', '1/4'], answer: 0 },
+        { prompt: '¿Cuál es el denominador de 3/4?', options: ['3', '4', '7'], answer: 1 },
+      ],
+    };
+    const portuguese: GameContent = {
+      kind: 'groups',
+      items: [
+        { name: 'Vertebrados', members: ['Gato', 'Cão', 'Peixe'] },
+        { name: 'Invertebrados', members: ['Polvo', 'Minhoca', 'Abelha'] },
+      ],
+    };
+    expect(scoreGame({ ...request, language: 'es' }, spanish).language).toBe(1);
+    expect(scoreGame({ ...request, language: 'pt' }, portuguese).language).toBe(1);
+    expect(scoreGame({ ...request, language: 'es' }, sampleGameContent.questions).language).toBe(0);
+  });
+
   it('marks the wrong count, the wrong language and terms too long for the grids', () => {
     const long: GameContent = {
       kind: 'pairs',

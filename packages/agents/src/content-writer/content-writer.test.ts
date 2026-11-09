@@ -36,6 +36,21 @@ describe('ContentWriter', () => {
     expect(prompt).not.toContain('CCSS.Math.Content.7.');
   });
 
+  it('puts what repeats for a subject and grade first, as a cacheable prefix, and the topic after', async () => {
+    const llm = new FakeLlmClient().replyWith(worksheet).replyWith(worksheet);
+    const writer = new ContentWriter(llm);
+    await writer.write(request({ topic: 'Monday: fractions' }));
+    await writer.write(request({ topic: 'Tuesday: decimals' }));
+
+    const [monday, tuesday] = llm.requests.map((sent) => sent.messages[0]);
+    expect(monday?.stablePrefix).toContain('CCSS.Math.Content.4.NF.A.1:');
+    expect(monday?.stablePrefix).toContain('Grade: 4');
+    expect(monday?.stablePrefix).not.toContain('Topic:');
+    expect(monday?.stablePrefix).toBe(tuesday?.stablePrefix);
+    expect(monday?.content.startsWith(monday.stablePrefix ?? '')).toBe(true);
+    expect(monday?.content).toContain('Topic: Monday: fractions');
+  });
+
   it('adds the ESL guidance to the request only when the switch is on', async () => {
     const llm = new FakeLlmClient().replyWith(worksheet).replyWith(worksheet);
     const writer = new ContentWriter(llm);

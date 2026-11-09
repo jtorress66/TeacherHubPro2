@@ -7,6 +7,7 @@ import {
   maxShortTextLength,
   maxSkills,
   standardsFor,
+  stripWeekdayLabel,
   type ConversationalDraft,
   type DraftRequest,
   type LessonPlanKind,
@@ -48,7 +49,7 @@ const weeklyShape = `{
   "standards": [code],
   "expectations": ${long},
   "days": [5 objects, Monday to Friday: {
-    "theme": ${short},
+    "theme": ${short}: the day's topic only, without the weekday,
     "dok": [numbers from 1 to 4],
     "activities": [{ "type": one of ${activityTypes.join(', ')}, "notes": ${long} }] (each type at most once),
     "materials": [any of ${materialTypes.join(', ')}],
@@ -62,6 +63,12 @@ Tuesday: guided practice (teacher modelling, checks for understanding).
 Wednesday: independent practice (stations, partners, small groups).
 Thursday: mastery and extension (higher-order thinking, real-world application).
 Friday: assessment and reflection (formative assessment, self-reflection, closure).`;
+
+/** The day's theme, without a weekday the model may have repeated in front of it. */
+const themeOf = (value: unknown): string | null => {
+  const theme = text(value);
+  return theme === null ? null : stripWeekdayLabel(theme);
+};
 
 /** A day ticks each activity type once, so repeats of a type become one with all their notes. */
 function mergedActivities(value: unknown): { type: ActivityType; notes: string | null }[] {
@@ -80,7 +87,7 @@ function mergedActivities(value: unknown): { type: ActivityType; notes: string |
 
 function weeklyDay(day: Json): PlanDayInput {
   return {
-    theme: text(day.theme),
+    theme: themeOf(day.theme),
     dok: allowed(day.dok, dokLevels),
     activities: mergedActivities(day.activities),
     materials: allowed(day.materials, materialTypes),
