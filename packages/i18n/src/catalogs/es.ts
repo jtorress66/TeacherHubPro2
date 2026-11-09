@@ -1327,7 +1327,7 @@ export const es: Messages = {
     connectedNotice: 'Google Classroom conectado.',
     failedNotice: 'No se pudo conectar Google Classroom. Inténtalo de nuevo.',
     course: 'Curso',
-    importRoster: 'Importar estudiantes de Classroom',
+    importRoster: 'Importar estudiantes de Google Classroom',
     imported: '{added} estudiantes añadidos, {skipped} ya estaban en la clase.',
     share: 'Compartir en Google Classroom',
     shared: 'Compartida en Google Classroom.',
