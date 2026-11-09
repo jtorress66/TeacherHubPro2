@@ -139,7 +139,7 @@ export function assistantRepositoryContract(name: string, make: () => AssistantR
       await repo.save(older);
       await repo.save(newer);
       await repo.save(
-        aRubric({ schoolId: schoolA, id: 'rubric-x' as RubricId, teacherId: 'other' as UserId }),
+        aRubric({ schoolId: schoolA, id: 'rubric-x' as RubricId, teacherId: 'teacher-2' as UserId }),
       );
       await repo.save(aRubric({ schoolId: schoolB, id: 'rubric-b' as RubricId }));
 
