@@ -8,9 +8,11 @@ import {
   createContentRequest,
   createGeneration,
   createPresentation,
+  createRubric,
   createSubPacket,
   type AiGeneration,
   type Presentation,
+  type Rubric,
   type SubPacket,
   createAssignment,
   createClass,
@@ -75,6 +77,7 @@ import type {
   StudentLinkId,
   GenerationId,
   PresentationId,
+  RubricId,
   ClassId,
   GameId,
   GradeCategoryId,
@@ -322,6 +325,26 @@ export const aPresentation = (overrides: Partial<Presentation> = {}): Presentati
         { layout: 'content', title: 'Parts', bullets: ['Roots', 'Stem', 'Leaves'] },
       ],
       now: new Date('2026-10-30T12:00:00Z'),
+    }),
+  ),
+  ...overrides,
+});
+
+export const aRubric = (overrides: Partial<Rubric> = {}): Rubric => ({
+  ...unwrap(
+    createRubric({
+      id: 'rubric-1' as RubricId,
+      schoolId,
+      teacherId,
+      title: 'Lab report',
+      subject: 'science',
+      grade: '6',
+      levels: [
+        { label: 'Excellent', points: 4 },
+        { label: 'Needs work', points: 1 },
+      ],
+      criteria: [{ name: 'Method', descriptors: ['Every step clear', 'Steps missing'] }],
+      now: new Date('2026-11-01T12:00:00Z'),
     }),
   ),
   ...overrides,

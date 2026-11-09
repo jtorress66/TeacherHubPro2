@@ -38,6 +38,7 @@ import type {
   PlanFolderId,
   PlanTemplate,
   Presentation,
+  Rubric,
   SubPacket,
   DateRange,
   LocalDate,
@@ -118,6 +119,11 @@ export interface PresentationRepository
   extends ScopedRepository<Presentation>, Deletable<Presentation> {
   /** Most recently updated first. */
   listByTeacher(schoolId: SchoolId, teacherId: UserId): Promise<readonly PresentationSummary[]>;
+}
+
+export interface RubricRepository extends ScopedRepository<Rubric>, Deletable<Rubric> {
+  /** Most recently updated first. */
+  listByTeacher(schoolId: SchoolId, teacherId: UserId): Promise<readonly Rubric[]>;
 }
 
 /** One substitute packet per class. */

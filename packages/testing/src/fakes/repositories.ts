@@ -12,6 +12,7 @@ import type {
   GenerationSummary,
   Presentation,
   PresentationSummary,
+  Rubric,
   SubPacket,
   AssignmentId,
   Assignment,
@@ -64,6 +65,7 @@ import type {
   StudentLinkRepository,
   AiGenerationRepository,
   PresentationRepository,
+  RubricRepository,
   SubPacketRepository,
   AssignmentRepository,
   AttendanceSessionRepository,
@@ -540,6 +542,16 @@ export class InMemoryPresentationRepository
     return [...rows]
       .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
       .map(presentationSummary);
+  }
+}
+
+export class InMemoryRubricRepository
+  extends InMemoryScopedRepository<Rubric>
+  implements RubricRepository
+{
+  async listByTeacher(schoolId: SchoolId, teacherId: UserId): Promise<readonly Rubric[]> {
+    const rows = await this.listWhere(schoolId, (row) => row.teacherId === teacherId);
+    return [...rows].sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
   }
 }
 

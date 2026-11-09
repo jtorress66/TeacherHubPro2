@@ -10,6 +10,8 @@ import {
   type LessonPlanDraft,
   type PresentationDraft,
   type PresentationRequest,
+  type RubricDraft,
+  type RubricRequest,
   type QuestionId,
   type Result,
 } from '@thp/domain';
@@ -22,6 +24,7 @@ import type {
   SubmissionGrader,
   ContentWriter,
   PresentationDrafter,
+  RubricDrafter,
   DraftError,
   LessonPlanDrafter,
   LlmClient,
@@ -133,6 +136,33 @@ export const aPresentationDraft = (
     { layout: 'title', title: 'Volcanoes', subtitle: 'Mountains of fire', emoji: '🌋' },
     { layout: 'content', title: 'How they form', bullets: ['Magma rises', 'Pressure builds'] },
     { layout: 'quote', title: 'Remember', content: 'Lava is magma above ground.' },
+  ],
+  ...overrides,
+});
+
+/** A scripted rubric drafter: returns the given draft (or error) and records each request. */
+export class FakeRubricDrafter implements RubricDrafter {
+  readonly requests: RubricRequest[] = [];
+
+  constructor(private readonly outcome: Result<RubricDraft, DraftError>) {}
+
+  draft(request: RubricRequest): Promise<Result<RubricDraft, DraftError>> {
+    this.requests.push(request);
+    return Promise.resolve(this.outcome);
+  }
+}
+
+/** A small valid rubric draft for tests. */
+export const aRubricDraft = (overrides: Partial<RubricDraft> = {}): RubricDraft => ({
+  title: 'Volcano poster',
+  levels: [
+    { label: 'Excellent', points: 3 },
+    { label: 'Good', points: 2 },
+    { label: 'Beginning', points: 1 },
+  ],
+  criteria: [
+    { name: 'Accuracy', descriptors: ['All facts right', 'Most facts right', 'Few facts right'] },
+    { name: 'Design', descriptors: ['Clear and neat', 'Mostly clear', 'Hard to read'] },
   ],
   ...overrides,
 });

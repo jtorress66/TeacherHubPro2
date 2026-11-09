@@ -43,6 +43,7 @@ function TypeFields(props: {
   readonly locale: Locale;
   readonly draft: QuestionDraft;
   readonly change: (patch: Partial<QuestionDraft>) => void;
+  readonly rubrics: readonly SavedRubric[];
 }) {
   const t = createTranslator(props.locale);
   const { draft, change } = props;
@@ -105,7 +106,7 @@ function TypeFields(props: {
   const entry = text[draft.type];
   if (entry === undefined) return null;
   const [field, label] = entry;
-  return (
+  const area = (
     <Area
       id={id(field)}
       label={t(label)}
@@ -116,6 +117,40 @@ function TypeFields(props: {
       }}
     />
   );
+  if (draft.type !== 'essay' || props.rubrics.length === 0) return area;
+  return (
+    <>
+      <div className="field">
+        <label htmlFor={id('use-rubric')}>{t('rubrics.use')}</label>
+        <select
+          id={id('use-rubric')}
+          value=""
+          aria-describedby={id('use-rubric-hint')}
+          onChange={(event) => {
+            const chosen = props.rubrics[Number(event.target.value)];
+            if (chosen !== undefined) change({ rubric: chosen.text });
+          }}
+        >
+          <option value="">—</option>
+          {props.rubrics.map((rubric, index) => (
+            <option key={index} value={index}>
+              {rubric.title}
+            </option>
+          ))}
+        </select>
+        <p id={id('use-rubric-hint')} className="hint">
+          {t('rubrics.useHint')}
+        </p>
+      </div>
+      {area}
+    </>
+  );
+}
+
+/** A saved rubric as the essay rubric box takes it. */
+export interface SavedRubric {
+  readonly title: string;
+  readonly text: string;
 }
 
 /**
@@ -130,6 +165,8 @@ export function QuestionBuilder(props: {
   readonly instructions: string | null;
   readonly locked: boolean;
   readonly imported?: boolean;
+  /** The teacher's rubrics, offered on essay questions. */
+  readonly rubrics?: readonly SavedRubric[];
 }) {
   const t = createTranslator(props.locale);
   const [state, action] = useActionState(saveQuestionsAction, initial);
@@ -208,7 +245,12 @@ export function QuestionBuilder(props: {
                   change(index)({ prompt });
                 }}
               />
-              <TypeFields locale={props.locale} draft={draft} change={change(index)} />
+              <TypeFields
+                locale={props.locale}
+                draft={draft}
+                change={change(index)}
+                rubrics={props.rubrics ?? []}
+              />
               <div className="field-row">
                 <div className="field">
                   <label htmlFor={`${draft.id}-points`}>{t('questions.points')}</label>

@@ -1575,3 +1575,34 @@ tr[aria-current='true'] {
 .pr-codes label {
   align-items: flex-start;
 }
+
+.rubric-grid {
+  border-collapse: collapse;
+  min-width: 100%;
+}
+
+.rubric-grid th,
+.rubric-grid td {
+  border: 1px solid var(--border);
+  padding: 0.5rem;
+  vertical-align: top;
+  text-align: left;
+}
+
+.rubric-grid input,
+.rubric-grid textarea {
+  width: 100%;
+  min-width: 8rem;
+}
+
+.rubric-grid thead input[type='number'] {
+  min-width: 4rem;
+  margin-top: 0.25rem;
+}
+
+.rubric-columns {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  align-items: start;
+}

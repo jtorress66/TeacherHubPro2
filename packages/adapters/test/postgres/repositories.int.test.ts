@@ -85,6 +85,7 @@ withParents(parentsFor.assistant, () => {
   assistantRepositoryContract('Postgres', () => ({
     generations: repos.generations,
     presentations: repos.presentations,
+    rubrics: repos.rubrics,
     subPackets: repos.subPackets,
   }));
 });

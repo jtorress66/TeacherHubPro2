@@ -63,7 +63,7 @@ function prompt(request: PathRequest): string {
       : []),
     `Use ${wordingFor(request.grade)}.`,
     `Write everything in ${languageNames[request.language]}.`,
-    ...(request.esl ?[`\n${eslGuidance}`] : []),
+    ...(request.esl ? [`\n${eslGuidance}`] : []),
   ].join('\n');
 }
 

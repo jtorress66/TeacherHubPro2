@@ -18,6 +18,7 @@ import type {
   StudentLinkRepository,
   AiGenerationRepository,
   PresentationRepository,
+  RubricRepository,
   SubPacketRepository,
   AssignmentRepository,
   AttendanceSessionRepository,
@@ -82,6 +83,7 @@ import {
   PostgresStudentNoteRepository,
 } from './repositories/postgres-student-360-repositories.ts';
 import { PostgresPrepBatchRepository } from './repositories/postgres-prep-batch-repository.ts';
+import { PostgresRubricRepository } from './repositories/postgres-rubric-repository.ts';
 import {
   PostgresPasswordTokenRepository,
   PostgresPlatformStats,
@@ -127,6 +129,7 @@ export interface PostgresRepositories {
   readonly planTemplates: PlanTemplateRepository;
   readonly generations: AiGenerationRepository;
   readonly presentations: PresentationRepository;
+  readonly rubrics: RubricRepository;
   readonly subPackets: SubPacketRepository;
   readonly attachments: AttachmentRepository;
   readonly studentLinks: StudentLinkRepository;
@@ -178,6 +181,7 @@ export function createPostgresRepositories(db: Kysely<Database>): PostgresReposi
     planTemplates: new PostgresPlanTemplateRepository(db),
     generations: new PostgresAiGenerationRepository(db),
     presentations: new PostgresPresentationRepository(db),
+    rubrics: new PostgresRubricRepository(db),
     subPackets: new PostgresSubPacketRepository(db),
     attachments: new PostgresAttachmentRepository(db),
     studentLinks: new PostgresStudentLinkRepository(db),

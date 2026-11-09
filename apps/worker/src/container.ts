@@ -30,6 +30,7 @@ import {
   ContentWriter,
   LessonPlanner,
   PresentationWriter,
+  RubricWriter,
   GameWriter,
   PathWriter,
   QuestionExtractor,
@@ -50,6 +51,7 @@ import {
   PrepStepHandler,
   LessonPlanDraftHandler,
   PresentationDraftHandler,
+  RubricDraftHandler,
   SpeechHandler,
   RunNextJob,
   RunNextChatTurn,
@@ -117,6 +119,7 @@ export function createJobRunner(
     new LessonPlanDraftHandler(new LessonPlanner(model)),
     new GenerationHandler({ writer: new ContentWriter(model), generations, ids, clock }),
     new PresentationDraftHandler(new PresentationWriter(model)),
+    new RubricDraftHandler(new RubricWriter(model)),
     new SpeechHandler({ tts: textToSpeech(tts), files }),
     new PdfImportHandler({
       files,

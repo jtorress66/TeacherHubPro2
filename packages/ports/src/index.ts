@@ -11,6 +11,7 @@ export type * from './ai/text-to-speech.ts';
 export type * from './ai/lesson-plan-drafter.ts';
 export type * from './ai/content-writer.ts';
 export type * from './ai/presentation-drafter.ts';
+export type * from './ai/rubric-drafter.ts';
 export type * from './ai/question-extractor.ts';
 export type * from './ai/insight-writer.ts';
 export type * from './ai/submission-grader.ts';

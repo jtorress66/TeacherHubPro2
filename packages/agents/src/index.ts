@@ -10,6 +10,7 @@ export {
   slidesSystemPrompt,
 } from './presentation-writer/presentation-writer.ts';
 export { reviewSlides } from './presentation-writer/slides-review.ts';
+export { RubricWriter, reviewRubric, rubricSystemPrompt } from './rubric-writer/rubric-writer.ts';
 export * from './presentation-writer/presentation-scorecard.ts';
 export { averageOf, failingMetrics, type Scores } from './drafting/scores.ts';
 export {

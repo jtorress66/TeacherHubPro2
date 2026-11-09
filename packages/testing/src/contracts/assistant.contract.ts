@@ -1,16 +1,25 @@
 import { describe, expect, it } from 'vitest';
-import type { ClassId, GenerationId, PresentationId, SchoolId, UserId } from '@thp/domain';
+import type {
+  ClassId,
+  GenerationId,
+  PresentationId,
+  RubricId,
+  SchoolId,
+  UserId,
+} from '@thp/domain';
 import type {
   AiGenerationRepository,
   PresentationRepository,
+  RubricRepository,
   SubPacketRepository,
 } from '@thp/ports';
-import { aGeneration, aPresentation, aSubPacket } from '../fixtures.ts';
+import { aGeneration, aPresentation, aRubric, aSubPacket } from '../fixtures.ts';
 import { deletableContract, scopedRepositoryContract } from './scoped-repository.contract.ts';
 
 export interface AssistantRepositories {
   readonly generations: AiGenerationRepository;
   readonly presentations: PresentationRepository;
+  readonly rubrics: RubricRepository;
   readonly subPackets: SubPacketRepository;
 }
 
@@ -97,6 +106,47 @@ export function assistantRepositoryContract(name: string, make: () => AssistantR
       expect(list.map((row) => row.id)).toEqual(['pres-new', 'pres-old']);
       expect(list[0]).not.toHaveProperty('slides');
       expect(list[0]?.slideCount).toBe(newer.slides.length);
+    });
+  });
+
+  const rubrics = {
+    make: () => make().rubrics,
+    sample: (schoolId: SchoolId, id: string) => aRubric({ schoolId, id: id as RubricId }),
+  };
+  scopedRepositoryContract(`${name} rubrics`, {
+    ...rubrics,
+    change: (rubric) => ({
+      ...rubric,
+      title: 'Changed',
+      criteria: [{ name: 'Clarity', descriptors: ['Clear', 'Unclear'] }],
+    }),
+  });
+  deletableContract(`${name} rubrics`, rubrics);
+
+  describe(`${name} (RubricRepository.listByTeacher)`, () => {
+    it('lists the teacher’s rubrics by last update, in their school only', async () => {
+      const repo = make().rubrics;
+      const older = aRubric({
+        schoolId: schoolA,
+        id: 'rubric-old' as RubricId,
+        updatedAt: new Date('2026-11-01T10:00:00Z'),
+      });
+      const newer = aRubric({
+        schoolId: schoolA,
+        id: 'rubric-new' as RubricId,
+        updatedAt: new Date('2026-11-05T10:00:00Z'),
+      });
+      await repo.save(older);
+      await repo.save(newer);
+      await repo.save(
+        aRubric({ schoolId: schoolA, id: 'rubric-x' as RubricId, teacherId: 'teacher-2' as UserId }),
+      );
+      await repo.save(aRubric({ schoolId: schoolB, id: 'rubric-b' as RubricId }));
+
+      const list = await repo.listByTeacher(schoolA, teacher);
+
+      expect(list.map((row) => row.id)).toEqual(['rubric-new', 'rubric-old']);
+      expect(list[0]?.criteria).toEqual(newer.criteria);
     });
   });
 
