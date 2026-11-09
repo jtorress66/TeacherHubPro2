@@ -59,11 +59,13 @@ test.describe('home page languages', () => {
     expect(shown).toEqual(['lesson-plan', 'classroom', 'parent-portal']);
   });
 
-  test('/fr renders English text with html lang=fr', async ({ page }) => {
-    await page.goto('/fr');
+  test('/de renders English text where German is not translated yet, with html lang=de', async ({
+    page,
+  }) => {
+    await page.goto('/de');
 
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(catalogs.en.home.title);
-    await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
+    await expect(page.locator('html')).toHaveAttribute('lang', 'de');
   });
 
   test('the language picker switches between /en and /es', async ({ page }) => {

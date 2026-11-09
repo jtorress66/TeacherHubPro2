@@ -8,8 +8,10 @@ import { it } from './it.ts';
 import { pt } from './pt.ts';
 import { zh } from './zh.ts';
 
-export type Catalogs = { readonly en: Messages; readonly es: Messages } & Readonly<
-  Record<Exclude<Locale, 'en' | 'es'>, PartialMessages>
->;
+export type Catalogs = {
+  readonly en: Messages;
+  readonly es: Messages;
+  readonly fr: Messages;
+} & Readonly<Record<Exclude<Locale, 'en' | 'es' | 'fr'>, PartialMessages>>;
 
 export const catalogs: Catalogs = { en, es, fr, pt, de, it, zh };
