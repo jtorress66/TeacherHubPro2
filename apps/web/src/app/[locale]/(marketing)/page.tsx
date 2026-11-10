@@ -16,6 +16,7 @@ import {
   TrialCta,
   UseCaseCards,
 } from '../../../components/marketing-sections.tsx';
+import { StructuredData } from '../../../components/site-facts.tsx';
 import { MarketingShell } from '../../../components/marketing-shell.tsx';
 import { marketingMetadata } from '../../../server/marketing-metadata.ts';
 import { LanguagePicker } from '../language-picker.tsx';
@@ -92,6 +93,7 @@ export default async function HomePage({
 
   return (
     <MarketingShell locale={locale} path="" languages={false}>
+      <StructuredData locale={locale} />
       <section className="hero">
         <div className="hero-copy">
           <h1>{t('home.title')}</h1>

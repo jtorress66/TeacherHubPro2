@@ -130,6 +130,43 @@ export const marketingEn = {
       learnMore: 'Learn more about {feature}',
       allFeatures: 'All features',
     },
+    included: {
+      title: 'Everything included',
+      intro: 'Every feature TeacherHubPro has today, in one list.',
+      prepAgent:
+        'Prep Agent: one sentence becomes a week of lesson plans, slides, worksheets, a Friday quiz and a parent email, ready for you to review',
+      planner:
+        'AI lesson planner with Common Core and Puerto Rico standards, in a simple or classic plan layout',
+      assistant:
+        'AI assistant for worksheets, quizzes, summaries and activities, with English-learner (ESL) support',
+      presentations:
+        'AI slide presentations you present full screen, print, or send to Google Classroom',
+      tests:
+        'Online tests students answer from a private link; write the questions or import a PDF test',
+      aiGrading: 'AI grading of open answers, as suggestions the teacher confirms',
+      gradebook: 'Weighted gradebook and report card PDFs with your school’s logo',
+      attendance: 'Daily attendance with tardies, excused absences and reports',
+      games: 'Educational games in many modes, and live classroom games students join with a PIN',
+      learning:
+        'Learning paths: AI-drafted lessons with checks, assigned through private student links',
+      families:
+        'Family portal: a private, read-only link to confirmed grades and attendance, plus weekly parent updates by email',
+      commandCenter:
+        'Command Center: today’s classes, what to grade, and students who may need help',
+      subPacket: 'Substitute teacher packets',
+      listen: 'Listen: plans and materials read aloud',
+      google:
+        'Google integration: Google sign-in, Google Classroom (import rosters, post assignments, Word documents and presentations), Google Forms quizzes, and files in your own Google Drive',
+      languages:
+        'Seven languages: English, Spanish, French, Portuguese, German, Italian and Chinese; the AI writes in the language you choose',
+      privacy:
+        'No student or parent accounts: private links stored only as hashes, which you can revoke and which expire; built for FERPA and COPPA',
+      aiDrafts:
+        'AI suggests, the teacher decides: grades, insights and parent emails stay drafts until you approve them',
+      schools:
+        'For schools and districts: admin pages, roles, and bulk import of teachers and students',
+      audiences: 'For classroom teachers, schools, tutors and homeschool families',
+    },
     features: {
       'lesson-planning': {
         title: 'Lesson planning',

@@ -138,6 +138,43 @@ export const marketingPt: MarketingMessages = {
       learnMore: 'Saiba mais sobre {feature}',
       allFeatures: 'Todos os recursos',
     },
+    included: {
+      title: 'Tudo incluído',
+      intro: 'Todos os recursos que o TeacherHubPro tem hoje, numa só lista.',
+      prepAgent:
+        'Agente de preparação: uma frase vira uma semana de planos de aula, slides, fichas, um quiz de sexta-feira e um e-mail para as famílias, prontos para você revisar',
+      planner:
+        'Planejador de aulas com IA e padrões Common Core e de Porto Rico, em layout simples ou clássico',
+      assistant:
+        'Assistente de IA para fichas, quizzes, resumos e atividades, com apoio a alunos de inglês (ESL)',
+      presentations:
+        'Apresentações com IA para mostrar em tela cheia, imprimir ou enviar ao Google Classroom',
+      tests:
+        'Provas online que os alunos respondem por um link privado; escreva as perguntas ou importe uma prova em PDF',
+      aiGrading: 'Correção com IA de respostas abertas, como sugestões que o professor confirma',
+      gradebook: 'Diário de notas ponderado e boletins em PDF com o logotipo da sua escola',
+      attendance: 'Chamada diária com atrasos, faltas justificadas e relatórios',
+      games: 'Jogos educativos em vários modos e jogos ao vivo em que os alunos entram com um PIN',
+      learning:
+        'Trilhas de aprendizagem: lições redigidas pela IA com verificações, atribuídas por links privados',
+      families:
+        'Portal da família: um link privado, somente leitura, com notas confirmadas e frequência, além de resumos semanais por e-mail',
+      commandCenter:
+        'Central de comando: as aulas de hoje, o que corrigir e os alunos que podem precisar de ajuda',
+      subPacket: 'Pacotes para professores substitutos',
+      listen: 'Ouvir: planos e materiais lidos em voz alta',
+      google:
+        'Integração com o Google: login com Google, Google Classroom (importar turmas, publicar tarefas, documentos Word e apresentações), quizzes no Google Forms e arquivos no seu próprio Google Drive',
+      languages:
+        'Sete idiomas: inglês, espanhol, francês, português, alemão, italiano e chinês; a IA escreve no idioma que você escolher',
+      privacy:
+        'Sem contas para alunos ou famílias: links privados guardados só como hash, que você pode revogar e que expiram; feito para FERPA e COPPA',
+      aiDrafts:
+        'A IA sugere, o professor decide: notas, análises e e-mails às famílias ficam como rascunho até você aprovar',
+      schools:
+        'Para escolas e redes de ensino: páginas de administração, funções e importação em massa de professores e alunos',
+      audiences: 'Para professores, escolas, tutores e famílias que educam em casa',
+    },
     features: {
       'lesson-planning': {
         title: 'Planejamento de aulas',
