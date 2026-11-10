@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { trialDays } from '@thp/domain';
 import { createTranslator } from '@thp/i18n';
 import { Faq, PageIntro, PlanCards } from '../../../../components/marketing-sections.tsx';
+import { StructuredData } from '../../../../components/site-facts.tsx';
 import { MarketingShell } from '../../../../components/marketing-shell.tsx';
 import { marketingMetadata } from '../../../../server/marketing-metadata.ts';
 import { localeFrom, type LocaleParams } from '../../locale-param.ts';
@@ -24,6 +25,7 @@ export default async function PricingPage(props: LocaleParams) {
   const t = createTranslator(locale);
   return (
     <MarketingShell locale={locale} path="/pricing">
+      <StructuredData locale={locale} />
       <PageIntro
         title={t('marketing.pricingPage.title')}
         intro={t('marketing.pricingPage.intro', { days: trialDays })}

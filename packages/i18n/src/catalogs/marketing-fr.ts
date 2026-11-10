@@ -141,6 +141,45 @@ export const marketingFr: MarketingMessages = {
       learnMore: 'En savoir plus sur {feature}',
       allFeatures: 'Toutes les fonctionnalités',
     },
+    included: {
+      title: 'Tout est inclus',
+      intro: 'Toutes les fonctionnalités de TeacherHubPro aujourd’hui, en une seule liste.',
+      prepAgent:
+        'Agent de préparation : une phrase devient une semaine de plans de cours, diaporamas, fiches d’exercices, un quiz du vendredi et un e-mail aux parents, prêts à être relus',
+      planner:
+        'Planificateur de cours IA avec les normes Common Core et de Porto Rico, en présentation simple ou classique',
+      assistant:
+        'Assistant IA pour fiches d’exercices, quiz, résumés et activités, avec un soutien pour les élèves allophones (ESL)',
+      presentations:
+        'Présentations IA à projeter en plein écran, imprimer ou envoyer vers Google Classroom',
+      tests:
+        'Évaluations en ligne auxquelles les élèves répondent via un lien privé ; rédigez les questions ou importez une évaluation PDF',
+      aiGrading:
+        'Correction IA des réponses ouvertes, sous forme de suggestions que l’enseignant confirme',
+      gradebook: 'Carnet de notes pondéré et bulletins PDF avec le logo de votre école',
+      attendance: 'Appel quotidien avec retards, absences justifiées et rapports',
+      games:
+        'Jeux éducatifs dans de nombreux modes, et jeux en direct que les élèves rejoignent avec un code PIN',
+      learning:
+        'Parcours d’apprentissage : leçons rédigées par l’IA avec vérifications, attribuées via des liens privés',
+      families:
+        'Portail familles : un lien privé en lecture seule vers les notes confirmées et les présences, plus un point hebdomadaire par e-mail',
+      commandCenter:
+        'Centre de commande : les cours du jour, ce qu’il reste à corriger et les élèves qui pourraient avoir besoin d’aide',
+      subPacket: 'Dossiers pour les remplaçants',
+      listen: 'Écouter : plans et supports lus à voix haute',
+      google:
+        'Intégration Google : connexion avec Google, Google Classroom (import des listes, publication de devoirs, documents Word et présentations), quiz Google Forms et fichiers dans votre propre Google Drive',
+      languages:
+        'Sept langues : anglais, espagnol, français, portugais, allemand, italien et chinois ; l’IA écrit dans la langue choisie',
+      privacy:
+        'Pas de comptes élèves ni parents : des liens privés stockés uniquement sous forme de hachage, révocables et qui expirent ; conçu pour FERPA et COPPA',
+      aiDrafts:
+        'L’IA suggère, l’enseignant décide : notes, analyses et e-mails aux parents restent des brouillons jusqu’à votre validation',
+      schools:
+        'Pour les écoles et les districts : pages d’administration, rôles et import groupé des enseignants et des élèves',
+      audiences: 'Pour les enseignants, les écoles, les tuteurs et l’instruction en famille',
+    },
     features: {
       'lesson-planning': {
         title: 'Planification des cours',

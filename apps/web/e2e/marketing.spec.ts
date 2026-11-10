@@ -22,6 +22,9 @@ test.describe('search engines', () => {
     const robots = await (await request.get('/robots.txt')).text();
     expect(robots).toContain('Disallow: /*/app');
     expect(robots).toContain('Sitemap:');
+    const llms = await request.get('/llms.txt');
+    expect(llms.headers()['content-type']).toContain('text/plain');
+    expect(await llms.text()).toContain('Google Classroom');
     const sitemap = await (await request.get('/sitemap.xml')).text();
     expect(sitemap).toContain('/es/pricing');
     expect(sitemap).toContain('/en/features/gradebook');
@@ -63,6 +66,11 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
       t('marketing.landing.metaDescription'),
     );
     expect(await axe(page)).toEqual([]);
+    const facts = page.locator('script[type="application/ld+json"]');
+    expect(JSON.parse((await facts.textContent()) ?? '{}')).toMatchObject({
+      '@type': 'SoftwareApplication',
+      featureList: expect.arrayContaining([t('marketing.included.google')]),
+    });
 
     // Navigation: features, a feature page, a use case, pricing and a legal page.
     const nav = page.getByRole('navigation', { name: t('marketing.nav.label') });
@@ -70,6 +78,9 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(
       t('marketing.featuresPage.title'),
     );
+    const included = page.getByRole('region', { name: t('marketing.included.title') });
+    await expect(included.getByRole('listitem')).toHaveCount(20);
+    await expect(included).toContainText(t('marketing.included.prepAgent'));
     await page
       .getByRole('link', { name: t('marketing.features.gradebook.title'), exact: true })
       .first()

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { createTranslator } from '@thp/i18n';
 import { FeatureGrid, PageIntro, TrialCta } from '../../../../components/marketing-sections.tsx';
+import { IncludedList, StructuredData } from '../../../../components/site-facts.tsx';
 import { MarketingShell } from '../../../../components/marketing-shell.tsx';
 import { marketingMetadata } from '../../../../server/marketing-metadata.ts';
 import { featureSlugs } from '../../../../server/marketing-pages.ts';
@@ -22,6 +23,7 @@ export default async function FeaturesPage(props: LocaleParams) {
   const t = createTranslator(locale);
   return (
     <MarketingShell locale={locale} path="/features">
+      <StructuredData locale={locale} />
       <PageIntro
         title={t('marketing.featuresPage.title')}
         intro={t('marketing.featuresPage.intro')}
@@ -41,6 +43,7 @@ export default async function FeaturesPage(props: LocaleParams) {
         </ul>
         <FeatureGrid locale={locale} />
       </section>
+      <IncludedList locale={locale} />
       <TrialCta locale={locale} />
     </MarketingShell>
   );

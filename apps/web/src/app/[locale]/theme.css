@@ -1809,6 +1809,13 @@ progress {
   list-style: none;
 }
 
+.m-included {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+  gap: 0.5rem 1.5rem;
+  padding-left: 1.25rem;
+}
+
 .m-pills a {
   display: inline-block;
   padding: 0.3rem 0.8rem;

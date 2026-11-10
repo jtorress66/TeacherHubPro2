@@ -140,6 +140,44 @@ export const marketingDe: MarketingMessages = {
       learnMore: 'Mehr erfahren über {feature}',
       allFeatures: 'Alle Funktionen',
     },
+    included: {
+      title: 'Alles inklusive',
+      intro: 'Alle Funktionen, die TeacherHubPro heute hat, in einer Liste.',
+      prepAgent:
+        'Vorbereitungsagent: Aus einem Satz wird eine Woche mit Unterrichtsplänen, Folien, Arbeitsblättern, einem Freitagsquiz und einer Elternmail, bereit zur Durchsicht',
+      planner:
+        'KI-Unterrichtsplaner mit Common-Core- und Puerto-Rico-Standards, im einfachen oder klassischen Layout',
+      assistant:
+        'KI-Assistent für Arbeitsblätter, Quizze, Zusammenfassungen und Aktivitäten, mit Unterstützung für Englischlernende (ESL)',
+      presentations:
+        'KI-Präsentationen im Vollbild zeigen, drucken oder an Google Classroom senden',
+      tests:
+        'Online-Tests, die Schüler über einen privaten Link beantworten; Fragen selbst schreiben oder einen PDF-Test importieren',
+      aiGrading: 'KI-Bewertung offener Antworten als Vorschläge, die die Lehrkraft bestätigt',
+      gradebook: 'Gewichtetes Notenbuch und Zeugnisse als PDF mit dem Logo Ihrer Schule',
+      attendance: 'Tägliche Anwesenheit mit Verspätungen, entschuldigten Fehlzeiten und Berichten',
+      games:
+        'Lernspiele in vielen Modi und Live-Spiele im Klassenzimmer, denen Schüler mit einer PIN beitreten',
+      learning:
+        'Lernpfade: von der KI entworfene Lektionen mit Lernkontrollen, über private Schülerlinks zugewiesen',
+      families:
+        'Elternportal: ein privater Link nur zum Lesen mit bestätigten Noten und Anwesenheit, dazu wöchentliche Updates per E-Mail',
+      commandCenter:
+        'Kommandozentrale: die heutigen Stunden, was zu bewerten ist und welche Schüler Hilfe brauchen könnten',
+      subPacket: 'Mappen für Vertretungslehrkräfte',
+      listen: 'Anhören: Pläne und Materialien vorgelesen',
+      google:
+        'Google-Integration: Anmeldung mit Google, Google Classroom (Klassenlisten importieren, Aufgaben, Word-Dokumente und Präsentationen posten), Google-Forms-Quizze und Dateien in Ihrem eigenen Google Drive',
+      languages:
+        'Sieben Sprachen: Englisch, Spanisch, Französisch, Portugiesisch, Deutsch, Italienisch und Chinesisch; die KI schreibt in der gewählten Sprache',
+      privacy:
+        'Keine Schüler- oder Elternkonten: private Links, nur als Hash gespeichert, widerrufbar und mit Ablaufdatum; entwickelt für FERPA und COPPA',
+      aiDrafts:
+        'Die KI schlägt vor, die Lehrkraft entscheidet: Noten, Einblicke und Elternmails bleiben Entwürfe, bis Sie sie freigeben',
+      schools:
+        'Für Schulen und Bezirke: Verwaltungsseiten, Rollen und Massenimport von Lehrkräften und Schülern',
+      audiences: 'Für Lehrkräfte, Schulen, Nachhilfelehrer und Familien mit Homeschooling',
+    },
     features: {
       'lesson-planning': {
         title: 'Unterrichtsplanung',

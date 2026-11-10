@@ -127,6 +127,33 @@ export const marketingZh: MarketingMessages = {
       learnMore: '进一步了解{feature}',
       allFeatures: '所有功能',
     },
+    included: {
+      title: '全部包含',
+      intro: 'TeacherHubPro 现有的全部功能，一览无余。',
+      prepAgent: '备课助手：一句话生成一周的教案、幻灯片、练习单、周五小测和家长邮件，供您审阅',
+      planner: 'AI 教案规划，支持共同核心标准（Common Core）和波多黎各标准，提供简洁或经典版式',
+      assistant: 'AI 助手：生成练习单、测验、摘要和活动，并支持英语学习者（ESL）',
+      presentations: 'AI 幻灯片演示：全屏放映、打印或发送到 Google Classroom',
+      tests: '在线测试：学生通过私密链接作答；可自行出题或导入 PDF 试卷',
+      aiGrading: 'AI 批改开放式答案，作为建议由教师确认',
+      gradebook: '加权成绩册和带学校徽标的 PDF 成绩单',
+      attendance: '每日考勤，包含迟到、请假和报告',
+      games: '多种模式的教育游戏，以及学生用 PIN 加入的课堂实时游戏',
+      learning: '学习路径：AI 起草的课程和检测，通过私密学生链接布置',
+      families: '家长门户：只读私密链接，查看已确认的成绩和考勤，并每周通过邮件收到更新',
+      commandCenter: '指挥中心：今天的课程、待批改的作业，以及可能需要帮助的学生',
+      subPacket: '代课教师资料包',
+      listen: '朗读：教案和材料可朗读出来',
+      google:
+        'Google 集成：Google 登录、Google Classroom（导入名单、发布作业、Word 文档和演示文稿）、Google 表单测验，以及保存在您自己 Google 云端硬盘中的文件',
+      languages:
+        '七种语言：英语、西班牙语、法语、葡萄牙语、德语、意大利语和中文；AI 用您选择的语言写作',
+      privacy:
+        '学生和家长无需账号：私密链接只以哈希形式保存，可随时撤销并会过期；按 FERPA 和 COPPA 要求设计',
+      aiDrafts: 'AI 建议，教师决定：成绩、分析和家长邮件在您批准前都只是草稿',
+      schools: '面向学校和学区：管理页面、角色，以及批量导入教师和学生',
+      audiences: '适用于课堂教师、学校、辅导老师和在家教育的家庭',
+    },
     features: {
       'lesson-planning': {
         title: '备课',
