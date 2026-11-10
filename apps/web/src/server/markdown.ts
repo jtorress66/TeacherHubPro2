@@ -1,6 +1,6 @@
 /**
- * The small Markdown that plans use: headings, paragraphs, lists, tables, **bold**, *italic* and
- * runs of underscores as fill-in-the-blank lines. It returns a tree that React renders as
+ * The small Markdown that plans use: headings, paragraphs, lists, tables, dividers, **bold**,
+ * *italic* and runs of underscores as fill-in-the-blank lines. It returns a tree that React renders as
  * elements, never raw HTML, so plan text cannot inject markup.
  */
 
@@ -13,6 +13,7 @@ export type Inline =
 export type Block =
   | { readonly kind: 'heading'; readonly level: 1 | 2 | 3; readonly content: readonly Inline[] }
   | { readonly kind: 'paragraph'; readonly lines: readonly (readonly Inline[])[] }
+  | { readonly kind: 'rule' }
   | {
       readonly kind: 'list';
       readonly ordered: boolean;
@@ -58,6 +59,8 @@ const isSeparator = (line: string): boolean =>
 
 const listItem = /^\s*(?:([-*+])|(\d+)[.)])\s+(.*)$/;
 const heading = /^(#{1,3})\s+(.*)$/;
+/** A divider: a line of only dashes (two or more) or stars (three or more), spaces allowed. */
+const isRule = (line: string): boolean => /^(?:-\s*){2,}$|^(?:\*\s*){3,}$/.test(line.trim());
 
 function table(lines: readonly string[]): Block {
   const [first, second, ...rest] = lines;
@@ -88,6 +91,9 @@ export function parseMarkdown(source: string): Block[] {
     const itemMatch = listItem.exec(line);
     if (trimmed === '') {
       index++;
+    } else if (isRule(trimmed)) {
+      blocks.push({ kind: 'rule' });
+      index++;
     } else if (headingMatch) {
       const level = (headingMatch[1] ?? '#').length as 1 | 2 | 3;
       blocks.push({
@@ -115,6 +121,7 @@ export function parseMarkdown(source: string): Block[] {
           l.trim() !== '' &&
           !l.trim().startsWith('|') &&
           !heading.test(l.trim()) &&
+          !isRule(l) &&
           !listItem.test(l),
       );
       blocks.push({

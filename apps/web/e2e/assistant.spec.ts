@@ -63,6 +63,11 @@ for (const locale of ['es', 'en'] as const satisfies readonly Locale[]) {
     const printed = page.getByTestId('print-generation');
     await expect(printed.locator('table.md-table')).toBeVisible();
     expect(await printed.innerText()).not.toContain('|---|');
+    // On paper, a table row or a heading is never split from what it belongs to.
+    await page.emulateMedia({ media: 'print' });
+    const row = printed.locator('table.md-table tr').first();
+    await expect(row).toHaveCSS('break-inside', 'avoid');
+    await expect(printed.locator('h3, h4, h5').first()).toHaveCSS('break-after', 'avoid');
   });
 
   // Build step 9 gate: generate a presentation.

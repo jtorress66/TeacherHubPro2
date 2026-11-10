@@ -66,6 +66,8 @@ function BlockView({ block }: { readonly block: Block }) {
           </tbody>
         </table>
       );
+    case 'rule':
+      return <hr />;
     case 'paragraph':
       return (
         <p>
