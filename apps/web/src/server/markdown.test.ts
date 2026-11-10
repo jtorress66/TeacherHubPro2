@@ -72,6 +72,19 @@ describe('parseMarkdown', () => {
     ]);
   });
 
+  it('reads a line of dashes or stars as a divider, not as text', () => {
+    expect(parseMarkdown('Before\n---\nAfter\n\n--\n* * *')).toEqual([
+      { kind: 'paragraph', lines: [[text('Before')]] },
+      { kind: 'rule' },
+      { kind: 'paragraph', lines: [[text('After')]] },
+      { kind: 'rule' },
+      { kind: 'rule' },
+    ]);
+    expect(parseMarkdown('- - item')).toEqual([
+      { kind: 'list', ordered: false, items: [[text('- item')]] },
+    ]);
+  });
+
   it('keeps HTML as plain text', () => {
     expect(parseMarkdown('<script>alert(1)</script>')).toEqual([
       { kind: 'paragraph', lines: [[text('<script>alert(1)</script>')]] },

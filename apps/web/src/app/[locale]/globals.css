@@ -688,8 +688,24 @@ details[open] > summary {
     break-inside: auto;
   }
 
-  .print-days tr {
+  .print-days tr,
+  .markdown tr {
     break-inside: avoid;
+  }
+
+  /* A heading stays on the same page as what follows it. */
+  .markdown :is(h3, h4, h5) {
+    break-after: avoid;
+  }
+
+  .markdown :is(p, li) {
+    orphans: 3;
+    widows: 3;
+  }
+
+  .markdown hr {
+    border: 0;
+    border-top: 1px solid #000;
   }
 
   .md-table th,
@@ -1502,9 +1518,19 @@ tr[aria-current='true'] {
 }
 
 @media print {
+  /* Ordinary pages keep a margin every printer can reach; only the classic plan, laid out to
+     fill the sheet, prints near the edge. */
   @page {
     size: letter;
+    margin: 0.5in;
+  }
+
+  @page classic-plan {
     margin: 0.2in 0.15in;
+  }
+
+  .classic-plan {
+    page: classic-plan;
   }
 
   body:has(.classic-plan),
