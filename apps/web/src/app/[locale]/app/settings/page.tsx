@@ -7,6 +7,7 @@ import { disconnectClassroomAction } from '../../../_lib/assignment-actions.ts';
 import { disconnectCanvaAction } from '../../../_lib/canva-actions.ts';
 import { disconnectMicrosoftAction } from '../../../_lib/microsoft-actions.ts';
 import { getAppContainer } from '../../../../container.ts';
+import { microsoftNotice } from '../../../../server/microsoft-notice.ts';
 import { requireUser } from '../../../_lib/auth.ts';
 import { localeFrom, type LocaleParams } from '../../locale-param.ts';
 
@@ -28,6 +29,8 @@ export default async function SettingsPage(
   const courses = await app.listClassroomCourses.execute({ actor: user });
   const canvaConnected = (await app.canva?.connected.execute({ actor: user })) ?? null;
   const microsoftConnected = (await app.microsoft?.connected.execute({ actor: user })) ?? null;
+  const teamsAllowed = (await app.teams?.allowed.execute({ actor: user })) ?? null;
+  const microsoftOutcome = microsoftNotice(search.microsoft);
 
   return (
     <section className="stack">
@@ -143,16 +146,14 @@ export default async function SettingsPage(
         {microsoftConnected === null ? null : (
           <section className="card stack" aria-labelledby="microsoft-heading">
             <h2 id="microsoft-heading">{t('microsoft.title')}</h2>
-            {search.microsoft === 'connected' ? (
-              <p role="status" className="notice">
-                {t('microsoft.connectedNotice')}
+            {microsoftOutcome === null ? null : (
+              <p
+                role={microsoftOutcome.role}
+                className={microsoftOutcome.role === 'status' ? 'notice' : 'alert'}
+              >
+                {t(microsoftOutcome.key)}
               </p>
-            ) : null}
-            {search.microsoft === 'failed' ? (
-              <p role="alert" className="alert">
-                {t('microsoft.failedNotice')}
-              </p>
-            ) : null}
+            )}
             {microsoftConnected ? (
               <>
                 <p>{t('microsoft.connected')}</p>
@@ -173,6 +174,27 @@ export default async function SettingsPage(
                   </a>
                 </p>
               </>
+            )}
+            {teamsAllowed === null ? null : (
+              <section className="stack" aria-labelledby="teams-heading">
+                <h3 id="teams-heading">{t('teams.title')}</h3>
+                {teamsAllowed ? (
+                  <p>{t('teams.allowed')}</p>
+                ) : (
+                  <>
+                    <p className="muted">{t('teams.notAllowed')}</p>
+                    <p>
+                      <a
+                        className="button secondary"
+                        href={`/api/microsoft/connect?locale=${locale}&teams=1`}
+                      >
+                        {t('teams.allow')}
+                      </a>
+                    </p>
+                  </>
+                )}
+                <p className="hint">{t('teams.note')}</p>
+              </section>
             )}
           </section>
         )}

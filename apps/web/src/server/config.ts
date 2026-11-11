@@ -55,6 +55,11 @@ export interface WebConfig {
   readonly canva: CanvaConfig;
   readonly microsoft: MicrosoftConfig;
   /**
+   * Microsoft Teams (class rosters and assignments, school accounts only): off in production until
+   * MICROSOFT_TEAMS=on, and only when Microsoft is on. OneDrive works either way.
+   */
+  readonly microsoftTeams: boolean;
+  /**
    * The voice that reads text aloud (the worker makes the audio with the same one); null when
    * the device's own voice reads instead.
    */
@@ -263,6 +268,26 @@ function microsoftFrom(
   return ok({ provider, clientId, clientSecret, encryptionKey });
 }
 
+/**
+ * Microsoft Teams: on by default in development and tests (with the local stand-in), off by
+ * default in production until the owner has tried it with a school account; MICROSOFT_TEAMS=on
+ * or off (any case) overrides. It needs Microsoft itself on.
+ */
+function microsoftTeamsFrom(
+  env: Readonly<Record<string, string | undefined>>,
+  appEnv: AppEnv,
+  microsoft: MicrosoftConfig,
+): Result<boolean, string> {
+  const chosen = env.MICROSOFT_TEAMS?.trim().toLowerCase() ?? '';
+  const setting = chosen === '' ? (appEnv === 'production' ? 'off' : 'on') : chosen;
+  if (setting !== 'on' && setting !== 'off') return err('MICROSOFT_TEAMS must be on or off');
+  if (setting === 'off') return ok(false);
+  if (microsoft.provider !== 'off') return ok(true);
+  return chosen === ''
+    ? ok(false)
+    : err('MICROSOFT_TEAMS=on needs Microsoft turned on (MICROSOFT_PROVIDER)');
+}
+
 /** The team address for high-priority leads, when it is a valid email; otherwise none. */
 const leadsNotifyFrom = (env: Readonly<Record<string, string | undefined>>): string | null => {
   const address = env.LEADS_NOTIFY_EMAIL?.trim() ?? '';
@@ -314,6 +339,7 @@ export function parseWebConfig(
   const microsoft = optional<MicrosoftConfig>(microsoftFrom(trimmed, c.APP_ENV), {
     provider: 'off',
   });
+  const microsoftTeams = optional(microsoftTeamsFrom(trimmed, c.APP_ENV, microsoft), false);
 
   return ok({
     databaseUrl: c.DATABASE_URL,
@@ -338,6 +364,7 @@ export function parseWebConfig(
     classroom: classroom.value,
     canva,
     microsoft,
+    microsoftTeams,
     voice: voiceFrom(trimmed, c.APP_ENV),
     realtime: {
       url: c.REALTIME_URL.replace(/\/$/, ''),

@@ -436,6 +436,27 @@ export const zhAppB = {
     connectFirst: '请在设置中连接 Microsoft，以便将此内容保存到 OneDrive。',
     settingsLink: '前往设置',
   },
+  teams: {
+    title: 'Microsoft Teams',
+    allowed: '已允许 Teams：您可以从 Teams 班级导入学生名单，并向这些班级分享作业。',
+    notAllowed:
+      '使用学校的 Microsoft 帐户，您还可以从 Microsoft Teams 导入学生名单，并向您的 Teams 班级分享作业。您学校的 IT 管理员可能需要先批准 TeacherHubPro。',
+    allow: '允许 Teams',
+    allowedNotice: '已允许 Microsoft Teams。',
+    class: 'Teams 班级',
+    importRoster: '从 Microsoft Teams 导入学生',
+    share: '分享到 Microsoft Teams',
+    shared: '已分享到 Microsoft Teams。',
+    sharedLink: '在 Teams 中打开',
+    shareNote: '学生通过各自的 TeacherHubPro 个人链接作答；Teams 会收到标题、说明和截止日期。',
+    wordTitle: '将 Word 文档发布到 Microsoft Teams',
+    wordIntro: '每位学生都会在 Teams 作业中收到您 Word 文档的一份副本，可直接在其中作答。',
+    wordSubmit: '发布到 Teams',
+    wordPosted: '已发布到 Microsoft Teams。',
+    wordNote:
+      '您的文档会原样存入该班级的 Teams 文件。不会经过 AI 读取，TeacherHubPro 也不会保存任何内容。',
+    note: '只导入学生的名字和姓氏。作业只包含标题、说明、截止日期和一个链接，绝不包含学生信息。',
+  },
   forms: {
     title: 'Google Forms 测验',
     intro:
@@ -918,6 +939,15 @@ export const zhAppB = {
     canva_failed: 'Canva 没有响应，请重试。',
     microsoft_not_connected: '请先在设置中连接 Microsoft。',
     microsoft_failed: 'Microsoft OneDrive 没有响应，请重试。',
+    microsoft_admin_approval:
+      '您学校的 IT 管理员需要为您的 Microsoft 帐户批准 TeacherHubPro。请联系管理员后重试。',
+    teams_not_allowed: '请先在设置中允许 Microsoft Teams。',
+    teams_admin_approval:
+      '您学校的 IT 管理员需要为 Microsoft Teams 批准 TeacherHubPro。请联系管理员后重试。',
+    teams_school_account: 'Microsoft Teams 需要学校的 Microsoft 帐户。您的帐户仍可用于 OneDrive。',
+    teams_declined:
+      '未允许 Microsoft Teams。如果 Microsoft 提示需要管理员批准，请联系您学校的 IT 管理员批准 TeacherHubPro。',
+    teams_failed: 'Microsoft Teams 没有响应，请重试。',
     grading_off: '请先为此游戏开启“计入成绩”。',
     name_taken: '这个名字已经在游戏中了。请选择你自己的名字。',
     email_failed: '无法发送电子邮件。请检查地址后重试。',

@@ -49,6 +49,7 @@ describe('parseWebConfig', () => {
         classroom: { provider: 'local' },
         canva: { provider: 'local' },
         microsoft: { provider: 'local' },
+        microsoftTeams: true,
         voice: 'nova',
         realtime: {
           url: 'http://localhost:3200',
@@ -182,6 +183,7 @@ describe('parseWebConfig', () => {
         },
         canva: { provider: 'off' },
         microsoft: { provider: 'off' },
+        microsoftTeams: false,
         voice: null,
         realtime: {
           url: 'https://teacherhubpro-realtime.onrender.com',
@@ -307,6 +309,45 @@ describe('parseWebConfig', () => {
         APP_ENV: 'development',
       }),
     ).toMatchObject(offWith('TOKEN_ENCRYPTION_KEY must be 32 random bytes, base64 encoded'));
+  });
+
+  it('keeps Microsoft Teams off in production until MICROSOFT_TEAMS=on, and on in development', () => {
+    const teams = (env: Record<string, string>) => {
+      const parsed = parseWebConfig(env);
+      return parsed.ok ? [parsed.value.microsoftTeams, parsed.value.warnings] : parsed.error;
+    };
+    const microsoft = {
+      ...production,
+      MICROSOFT_PROVIDER: 'microsoft',
+      MICROSOFT_CLIENT_ID: '00000000-aaaa',
+      MICROSOFT_CLIENT_SECRET: 'ms-secret',
+    };
+    expect(teams(microsoft)).toEqual([false, []]);
+    expect(teams({ ...microsoft, MICROSOFT_TEAMS: 'on' })).toEqual([true, []]);
+    expect(teams({ ...microsoft, MICROSOFT_TEAMS: ' On ' })).toEqual([true, []]);
+    expect(teams({ ...microsoft, MICROSOFT_TEAMS: 'OFF' })).toEqual([false, []]);
+    expect(teams(local)).toEqual([true, []]);
+    expect(teams({ ...local, MICROSOFT_TEAMS: 'off' })).toEqual([false, []]);
+  });
+
+  it('turns only Teams off, with a warning, when its setting is wrong or Microsoft is off', () => {
+    const teams = (env: Record<string, string>) => {
+      const parsed = parseWebConfig(env);
+      return parsed.ok
+        ? [parsed.value.microsoftTeams, parsed.value.microsoft.provider, parsed.value.warnings]
+        : parsed.error;
+    };
+    expect(teams({ ...local, MICROSOFT_TEAMS: 'yes' })).toEqual([
+      false,
+      'local',
+      ['MICROSOFT_TEAMS must be on or off'],
+    ]);
+    expect(teams({ ...production, MICROSOFT_TEAMS: 'on' })).toEqual([
+      false,
+      'off',
+      ['MICROSOFT_TEAMS=on needs Microsoft turned on (MICROSOFT_PROVIDER)'],
+    ]);
+    expect(teams({ ...local, MICROSOFT_PROVIDER: 'off' })).toEqual([false, 'off', []]);
   });
 
   it('assumes production when APP_ENV is not set', () => {

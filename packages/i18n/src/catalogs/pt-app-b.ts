@@ -452,6 +452,30 @@ export const ptAppB = {
     connectFirst: 'Conecte a Microsoft em Configurações para salvar isto no OneDrive.',
     settingsLink: 'Ir para Configurações',
   },
+  teams: {
+    title: 'Microsoft Teams',
+    allowed:
+      'O Teams está permitido: você pode importar listas de alunos das suas turmas do Teams e compartilhar tarefas com elas.',
+    notAllowed:
+      'Com uma conta Microsoft da escola, você também pode importar listas de alunos do Microsoft Teams e compartilhar tarefas com suas turmas do Teams. Talvez o administrador de TI da sua escola precise aprovar o TeacherHubPro primeiro.',
+    allow: 'Permitir o Teams',
+    allowedNotice: 'Microsoft Teams permitido.',
+    class: 'Turma do Teams',
+    importRoster: 'Importar alunos do Microsoft Teams',
+    share: 'Compartilhar no Microsoft Teams',
+    shared: 'Compartilhado no Microsoft Teams.',
+    sharedLink: 'Abrir no Teams',
+    shareNote:
+      'Os alunos respondem pelos seus links pessoais do TeacherHubPro; o Teams recebe o título, as instruções e a data de entrega.',
+    wordTitle: 'Publicar um documento do Word no Microsoft Teams',
+    wordIntro:
+      'Cada aluno recebe a própria cópia do seu documento do Word em uma tarefa do Teams, para escrever nela.',
+    wordSubmit: 'Publicar no Teams',
+    wordPosted: 'Publicado no Microsoft Teams.',
+    wordNote:
+      'Seu documento vai sem alterações para os arquivos da turma no Teams. Nenhuma IA o lê e nada fica guardado no TeacherHubPro.',
+    note: 'Só os nomes e sobrenomes são importados. As tarefas levam título, instruções, data de entrega e um link, nunca informações dos alunos.',
+  },
   forms: {
     title: 'Questionário do Google Forms',
     intro:
@@ -946,6 +970,16 @@ export const ptAppB = {
     canva_failed: 'O Canva não respondeu. Tente novamente.',
     microsoft_not_connected: 'Conecte a Microsoft em Configurações primeiro.',
     microsoft_failed: 'O Microsoft OneDrive não respondeu. Tente novamente.',
+    microsoft_admin_approval:
+      'O administrador de TI da sua escola precisa aprovar o TeacherHubPro para a sua conta Microsoft. Peça a ele e tente novamente.',
+    teams_not_allowed: 'Permita o Microsoft Teams em Configurações primeiro.',
+    teams_admin_approval:
+      'O administrador de TI da sua escola precisa aprovar o TeacherHubPro para o Microsoft Teams. Peça a ele e tente novamente.',
+    teams_school_account:
+      'O Microsoft Teams precisa de uma conta Microsoft da escola. Sua conta continua conectada para o OneDrive.',
+    teams_declined:
+      'O Microsoft Teams não foi permitido. Se a Microsoft disse que um administrador precisa aprovar, peça ao administrador de TI da sua escola que aprove o TeacherHubPro.',
+    teams_failed: 'O Microsoft Teams não respondeu. Tente novamente.',
     grading_off: 'Primeiro ative “Contar como nota” para este jogo.',
     name_taken: 'Esse nome já está jogando. Escolha o seu próprio nome.',
     email_failed: 'Não foi possível enviar o e-mail. Verifique o endereço e tente novamente.',

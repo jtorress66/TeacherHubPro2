@@ -47,6 +47,7 @@ export default async function ClassPage(props: Props) {
     }));
   const roster = students.ok ? students.value : [];
   const courses = await app.listClassroomCourses.execute({ actor: user });
+  const teamsClasses = (await app.teams?.listClasses.execute({ actor: user })) ?? null;
   const archived = cls.archivedAt !== null;
 
   return (
@@ -187,6 +188,18 @@ export default async function ClassPage(props: Props) {
             classId={cls.id}
             courses={courses.value.map((course) => ({ id: course.id, name: course.name }))}
           />
+        </section>
+      ) : null}
+      {teamsClasses?.ok === true && teamsClasses.value.length > 0 && !archived ? (
+        <section className="card stack" aria-labelledby="teams-import-heading">
+          <h2 id="teams-import-heading">{t('teams.importRoster')}</h2>
+          <ImportRosterForm
+            locale={locale}
+            classId={cls.id}
+            courses={teamsClasses.value}
+            destination="teams"
+          />
+          <p className="hint">{t('teams.note')}</p>
         </section>
       ) : null}
     </section>

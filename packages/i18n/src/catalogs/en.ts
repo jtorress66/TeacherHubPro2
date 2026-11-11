@@ -1370,6 +1370,30 @@ export const en = {
     connectFirst: 'Connect Microsoft in Settings to save this to OneDrive.',
     settingsLink: 'Go to Settings',
   },
+  teams: {
+    title: 'Microsoft Teams',
+    allowed:
+      'Teams is allowed: you can import class rosters from your Teams classes and share assignments to them.',
+    notAllowed:
+      "With a school Microsoft account, you can also import class rosters from Microsoft Teams and share assignments to your Teams classes. Your school's IT administrator may need to approve TeacherHubPro first.",
+    allow: 'Allow Teams',
+    allowedNotice: 'Microsoft Teams allowed.',
+    class: 'Teams class',
+    importRoster: 'Import students from Microsoft Teams',
+    share: 'Share to Microsoft Teams',
+    shared: 'Shared to Microsoft Teams.',
+    sharedLink: 'Open in Teams',
+    shareNote:
+      'Students answer through their personal TeacherHubPro links; Teams gets the title, instructions and due date.',
+    wordTitle: 'Post a Word document to Microsoft Teams',
+    wordIntro:
+      'Each student gets their own copy of your Word document in a Teams assignment, to type in.',
+    wordSubmit: 'Post to Teams',
+    wordPosted: 'Posted to Microsoft Teams.',
+    wordNote:
+      "Your document goes to the class's Teams files unchanged. No AI reads it, and nothing is kept in TeacherHubPro.",
+    note: 'Only first and last names are imported. Assignments carry their title, instructions, due date and a link, never student information.',
+  },
   forms: {
     title: 'Google Forms quiz',
     intro:
@@ -1865,6 +1889,16 @@ export const en = {
     canva_failed: 'Canva did not respond. Please try again.',
     microsoft_not_connected: 'Connect Microsoft in Settings first.',
     microsoft_failed: 'Microsoft OneDrive did not respond. Please try again.',
+    microsoft_admin_approval:
+      "Your school's IT administrator needs to approve TeacherHubPro for your Microsoft account. Ask them, then try again.",
+    teams_not_allowed: 'Allow Microsoft Teams in Settings first.',
+    teams_admin_approval:
+      "Your school's IT administrator needs to approve TeacherHubPro for Microsoft Teams. Ask them, then try again.",
+    teams_school_account:
+      'Microsoft Teams needs a school Microsoft account. Your account is still connected for OneDrive.',
+    teams_declined:
+      "Microsoft Teams was not allowed. If Microsoft said an administrator must approve it, ask your school's IT administrator to approve TeacherHubPro.",
+    teams_failed: 'Microsoft Teams did not respond. Please try again.',
     grading_off: 'Turn on “Count as a grade” for this game first.',
     name_taken: 'That name is already playing. Pick your own name.',
     email_failed: 'The email could not be sent. Check the address and try again.',

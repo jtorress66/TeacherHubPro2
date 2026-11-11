@@ -172,6 +172,8 @@ export const marketingDe: MarketingMessages = {
         'Canva: Präsentationen und Arbeitsblätter im eigenen Canva-Konto als bearbeitbare Designs öffnen',
       microsoft:
         'Microsoft OneDrive: Präsentationen als PowerPoint und Arbeitsblätter als Word-Dateien im eigenen OneDrive speichern',
+      teams:
+        'Microsoft Teams für Schulen, die Teams im Unterricht nutzen: auf Anfrage Klassenlisten aus einer Teams-Klasse importieren und Aufgaben mit ihr teilen. Die IT-Administration Ihrer Schule genehmigt die Verbindung einmalig.',
       languages:
         'Sieben Sprachen: Englisch, Spanisch, Französisch, Portugiesisch, Deutsch, Italienisch und Chinesisch; die KI schreibt in der gewählten Sprache',
       privacy:
@@ -416,6 +418,10 @@ export const marketingDe: MarketingMessages = {
       microsoft: 'Microsoft OneDrive',
       microsoftText:
         'Speichern Sie Präsentationen (PowerPoint) und Arbeitsblätter (Word) in einem Ordner „TeacherHubPro“ in Ihrem eigenen OneDrive. Gesendet werden nur die Dateien, die Sie speichern, niemals Daten von Schülerinnen und Schülern.',
+      teams: 'Microsoft Teams (für Schulen)',
+      teamsText:
+        'Nutzt Ihre Schule Microsoft Teams? Nehmen Sie Kontakt mit uns auf, und wir richten die Teams-Verbindung für Ihre Klassen ein: Klassenlisten aus einer Teams-Klasse importieren und Aufgaben mit ihr teilen. Die IT-Administration Ihrer Schule genehmigt sie einmalig.',
+      teamsContact: 'Kontakt aufnehmen',
       stripe: 'Stripe',
       stripeText: 'Sichere Zahlungen für Tarife; Kartendaten berühren nie unsere Server.',
       email: 'E-Mail',

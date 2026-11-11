@@ -17,6 +17,7 @@ const config: WebConfig = {
   classroom: { provider: 'local' },
   canva: { provider: 'local' },
   microsoft: { provider: 'local' },
+  microsoftTeams: true,
   voice: 'nova',
   realtime: {
     url: 'http://localhost:3998',

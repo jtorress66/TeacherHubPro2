@@ -487,6 +487,7 @@ export const aMicrosoftConnection = (
     schoolId,
     teacherId,
     encryptedRefreshToken: 'sealed-1',
+    teams: false,
     connectedAt: new Date('2026-09-01T12:00:00Z'),
   }),
   ...overrides,

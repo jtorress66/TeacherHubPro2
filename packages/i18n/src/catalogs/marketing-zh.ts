@@ -149,6 +149,8 @@ export const marketingZh: MarketingMessages = {
       canva: 'Canva：在您自己的 Canva 账户中将演示文稿和练习单作为可编辑设计打开',
       microsoft:
         'Microsoft OneDrive：将演示文稿保存为 PowerPoint、练习单保存为 Word 文件，存入您自己的 OneDrive',
+      teams:
+        'Microsoft Teams，适用于用 Teams 上课的学校：可应要求开通，从 Teams 班级导入班级名单并向其分享作业。您学校的 IT 管理员只需批准一次连接。',
       languages:
         '七种语言：英语、西班牙语、法语、葡萄牙语、德语、意大利语和中文；AI 用您选择的语言写作',
       privacy:
@@ -346,6 +348,10 @@ export const marketingZh: MarketingMessages = {
       microsoft: 'Microsoft OneDrive',
       microsoftText:
         '将演示文稿（PowerPoint）和练习单（Word）保存到您自己 OneDrive 中的 TeacherHubPro 文件夹。只发送您保存的文件，绝不发送学生数据。',
+      teams: 'Microsoft Teams（面向学校）',
+      teamsText:
+        '您的学校使用 Microsoft Teams 吗？联系我们，我们会为您的班级设置 Teams 连接：从 Teams 班级导入班级名单并向其分享作业。您学校的 IT 管理员只需批准一次。',
+      teamsContact: '联系我们',
       stripe: 'Stripe',
       stripeText: '方案的安全付款；银行卡信息从不经过我们的服务器。',
       email: '电子邮件',

@@ -10,8 +10,8 @@ import { localeFrom, type LocaleParams } from '../../locale-param.ts';
 export const metadata: Metadata = { title: 'TeacherHubPro' };
 
 /**
- * The AI assistant: ask for content, send a Word document to Google Classroom, and see everything
- * made so far.
+ * The AI assistant: ask for content, send a Word document to Google Classroom or Microsoft Teams,
+ * and see everything made so far.
  */
 export default async function AssistantPage(props: LocaleParams) {
   const locale = await localeFrom(props);
@@ -20,6 +20,7 @@ export default async function AssistantPage(props: LocaleParams) {
   const app = getAppContainer();
   const history = await app.listGenerations.execute({ actor: user });
   const courses = await app.listClassroomCourses.execute({ actor: user });
+  const teamsClasses = (await app.teams?.listClasses.execute({ actor: user })) ?? null;
   const items = history.ok ? history.value : [];
   const day = new Intl.DateTimeFormat(locale, { dateStyle: 'medium' });
   const connect = `/api/classroom/connect?locale=${locale}`;
@@ -59,6 +60,17 @@ export default async function AssistantPage(props: LocaleParams) {
           />
         )}
       </section>
+      {teamsClasses?.ok === true && teamsClasses.value.length > 0 ? (
+        <section
+          id="teams-word-post-card"
+          className="card stack"
+          aria-labelledby="teams-word-post-heading"
+        >
+          <h2 id="teams-word-post-heading">{t('teams.wordTitle')}</h2>
+          <p>{t('teams.wordIntro')}</p>
+          <PostWordForm locale={locale} courses={teamsClasses.value} destination="teams" />
+        </section>
+      ) : null}
       <h2>{t('assistant.history')}</h2>
       {items.length === 0 ? (
         <p>{t('assistant.historyEmpty')}</p>

@@ -171,6 +171,8 @@ export const marketingEs: MarketingMessages = {
         'Canva: abra presentaciones y hojas de trabajo en su propia cuenta de Canva como diseños editables',
       microsoft:
         'Microsoft OneDrive: guarde presentaciones en PowerPoint y hojas de trabajo en Word en su propio OneDrive',
+      teams:
+        'Microsoft Teams, para escuelas que usan Teams en sus clases: a pedido, importe listas de clase desde una clase de Teams y comparta tareas con ella. El administrador de TI de su escuela aprueba la conexión una sola vez.',
       languages:
         'Siete idiomas: inglés, español, francés, portugués, alemán, italiano y chino; la IA escribe en el idioma que usted elija',
       privacy:
@@ -409,6 +411,10 @@ export const marketingEs: MarketingMessages = {
       microsoft: 'Microsoft OneDrive',
       microsoftText:
         'Guarde presentaciones (PowerPoint) y hojas de trabajo (Word) en una carpeta TeacherHubPro de su propio OneDrive. Solo se envían los archivos que usted guarda, nunca datos de estudiantes.',
+      teams: 'Microsoft Teams (para escuelas)',
+      teamsText:
+        '¿Su escuela usa Microsoft Teams? Contáctenos y configuraremos la conexión con Teams para sus clases: importe listas de clase desde una clase de Teams y comparta tareas con ella. El administrador de TI de su escuela la aprueba una sola vez.',
+      teamsContact: 'Contáctenos',
       stripe: 'Stripe',
       stripeText:
         'Pagos seguros de los planes; los datos de la tarjeta nunca pasan por nuestros servidores.',

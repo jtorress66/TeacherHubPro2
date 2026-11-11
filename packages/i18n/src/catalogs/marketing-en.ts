@@ -161,6 +161,8 @@ export const marketingEn = {
         'Canva: open presentations and worksheets in your own Canva account as editable designs',
       microsoft:
         'Microsoft OneDrive: save presentations as PowerPoint and worksheets as Word files in your own OneDrive',
+      teams:
+        "Microsoft Teams, for schools that use Teams for classes: on request, import class lists from a Teams class and share assignments to it. Your school's IT administrator approves the connection once.",
       languages:
         'Seven languages: English, Spanish, French, Portuguese, German, Italian and Chinese; the AI writes in the language you choose',
       privacy:
@@ -382,6 +384,10 @@ export const marketingEn = {
       microsoft: 'Microsoft OneDrive',
       microsoftText:
         'Save presentations (PowerPoint) and worksheets (Word) to a TeacherHubPro folder in your own OneDrive. Only the files you save are sent, never student data.',
+      teams: 'Microsoft Teams (for schools)',
+      teamsText:
+        "Does your school use Microsoft Teams? Contact us and we'll set up the Teams connection for your classes: import class lists from a Teams class and share assignments to it. Your school's IT administrator approves it once.",
+      teamsContact: 'Contact us',
       stripe: 'Stripe',
       stripeText: 'Secure payments for plans; card details never touch our servers.',
       email: 'Email',

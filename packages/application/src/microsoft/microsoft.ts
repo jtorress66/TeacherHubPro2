@@ -23,7 +23,7 @@ import type {
   SecretCipher,
 } from '@thp/ports';
 import { findOwned } from '../assistant/owned.ts';
-import { fail, type UseCaseError } from '../errors.ts';
+import { fail, type ApplicationErrorCode, type UseCaseError } from '../errors.ts';
 
 const pptxType = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
 const docxType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
@@ -39,20 +39,28 @@ const microsoftFailed = (error: MicrosoftError) =>
   fail(error.code === 'unauthorized' ? 'microsoft_not_connected' : 'microsoft_failed');
 
 /**
- * A fresh access token. When Microsoft issues a new refresh token, the newest is kept
- * (encrypted); access Microsoft no longer accepts is forgotten, so Settings offers to connect
- * again.
+ * A fresh access token, for OneDrive or, with `teams`, for Teams too; refreshes ask only for
+ * what the call needs and the grant covers. When Microsoft issues a new refresh token, the newest
+ * is kept (encrypted). Access Microsoft no longer accepts is forgotten, so Settings offers to
+ * connect again; Teams that is no longer granted is forgotten alone, so Settings offers to allow
+ * it again.
  */
-async function microsoftAccess(
+export async function microsoftAccess(
   deps: MicrosoftConnectionDeps,
   actor: User,
+  { teams = false }: { readonly teams?: boolean } = {},
 ): Promise<Result<string, UseCaseError>> {
   const connection = await deps.microsoftConnections.find(actor.schoolId, actor.id);
   if (connection === null) return fail('microsoft_not_connected');
+  if (teams && !connection.teams) return fail('teams_not_allowed');
   const refresh = await deps.cipher.decrypt(connection.encryptedRefreshToken);
-  const granted = refresh.ok ? await deps.microsoftAuth.refresh(refresh.value) : null;
-  if (granted !== null && !granted.ok && granted.error.code !== 'unauthorized') {
-    return microsoftFailed(granted.error);
+  const granted = refresh.ok ? await deps.microsoftAuth.refresh(refresh.value, { teams }) : null;
+  if (granted !== null && !granted.ok) {
+    if (granted.error.code === 'insufficient_scope' && teams) {
+      await deps.microsoftConnections.save({ ...connection, teams: false });
+      return fail('teams_not_allowed');
+    }
+    if (granted.error.code !== 'unauthorized') return microsoftFailed(granted.error);
   }
   if (!refresh.ok || !granted?.ok) {
     await deps.microsoftConnections.delete(actor.schoolId, actor.id);
@@ -71,16 +79,21 @@ async function microsoftAccess(
 export class StartMicrosoftConnect {
   constructor(private readonly deps: { readonly microsoftAuth: MicrosoftAuthorization }) {}
 
+  /** With `teams`, also asks for Teams (school accounts; an administrator may need to approve). */
   execute(input: {
     readonly state: string;
     readonly codeChallenge: string;
     readonly redirectUri: string;
+    readonly teams?: boolean;
   }): string {
-    return this.deps.microsoftAuth.authorizationUrl(input);
+    return this.deps.microsoftAuth.authorizationUrl({ ...input, teams: input.teams ?? false });
   }
 }
 
-/** Keeps the granted access, encrypted. */
+/**
+ * Keeps the granted access, encrypted, and whether it includes Teams. Asked for Teams, a grant
+ * without it (a personal account) still keeps OneDrive, and says Teams needs a school account.
+ */
 export class FinishMicrosoftConnect {
   constructor(private readonly deps: MicrosoftConnectionDeps & { readonly clock: Clock }) {}
 
@@ -89,18 +102,60 @@ export class FinishMicrosoftConnect {
     readonly code: string;
     readonly codeVerifier: string;
     readonly redirectUri: string;
-  }): Promise<Result<true, UseCaseError>> {
-    const granted = await this.deps.microsoftAuth.exchangeCode(input);
+    readonly teams?: boolean;
+  }): Promise<Result<{ readonly teams: boolean }, UseCaseError>> {
+    const asked = input.teams ?? false;
+    const granted = await this.deps.microsoftAuth.exchangeCode({ ...input, teams: asked });
     if (!granted.ok) return fail('microsoft_failed');
     await this.deps.microsoftConnections.save(
       connectMicrosoft({
         schoolId: input.actor.schoolId,
         teacherId: input.actor.id,
         encryptedRefreshToken: await this.deps.cipher.encrypt(granted.value.refreshToken),
+        teams: granted.value.teams,
         connectedAt: this.deps.clock.now(),
       }),
     );
-    return ok(true);
+    if (asked && !granted.value.teams) return fail('teams_school_account');
+    return ok({ teams: granted.value.teams });
+  }
+}
+
+/** The teacher's fix when Microsoft sends back a refusal instead of a code. */
+export class ExplainMicrosoftRefusal {
+  constructor(private readonly deps: { readonly microsoftAuth: MicrosoftAuthorization }) {}
+
+  execute(input: {
+    readonly error: string;
+    readonly description: string | null;
+    /** Whether Teams was asked for. */
+    readonly teams: boolean;
+  }): { readonly code: ApplicationErrorCode } {
+    const { code } = this.deps.microsoftAuth.refusal({
+      error: input.error,
+      description: input.description,
+    });
+    if (code === 'admin_approval_required') {
+      return { code: input.teams ? 'teams_admin_approval' : 'microsoft_admin_approval' };
+    }
+    if (!input.teams) return { code: 'microsoft_failed' };
+    if (code === 'school_account_required') return { code: 'teams_school_account' };
+    return { code: code === 'declined' ? 'teams_declined' : 'microsoft_failed' };
+  }
+}
+
+/** Whether the teacher's Microsoft connection includes Teams. */
+export class TeamsAllowed {
+  constructor(
+    private readonly deps: { readonly microsoftConnections: MicrosoftConnectionRepository },
+  ) {}
+
+  async execute(input: { readonly actor: User }): Promise<boolean> {
+    const connection = await this.deps.microsoftConnections.find(
+      input.actor.schoolId,
+      input.actor.id,
+    );
+    return connection?.teams === true;
   }
 }
 

@@ -58,6 +58,15 @@ export default async function IntegrationsPage(props: LocaleParams) {
               art: 'presentations',
             },
             {
+              title: t('marketing.integrationsPage.teams'),
+              text: t('marketing.integrationsPage.teamsText'),
+              art: 'schools',
+              link: {
+                href: `/${locale}/contact`,
+                label: t('marketing.integrationsPage.teamsContact'),
+              },
+            },
+            {
               title: t('marketing.integrationsPage.stripe'),
               text: t('marketing.integrationsPage.stripeText'),
               art: 'shield',
