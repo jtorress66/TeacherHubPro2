@@ -150,7 +150,7 @@ export const marketingDe: MarketingMessages = {
       assistant:
         'KI-Assistent für Arbeitsblätter, Quizze, Zusammenfassungen und Aktivitäten, mit Unterstützung für Englischlernende (ESL)',
       presentations:
-        'KI-Präsentationen im Vollbild zeigen, drucken oder an Google Classroom senden',
+        'KI-Präsentationen im Vollbild zeigen, drucken, als PowerPoint herunterladen oder an Google Classroom senden',
       tests:
         'Online-Tests, die Schüler über einen privaten Link beantworten; Fragen selbst schreiben oder einen PDF-Test importieren',
       aiGrading: 'KI-Bewertung offener Antworten als Vorschläge, die die Lehrkraft bestätigt',
@@ -168,6 +168,8 @@ export const marketingDe: MarketingMessages = {
       listen: 'Anhören: Pläne und Materialien vorgelesen',
       google:
         'Google-Integration: Anmeldung mit Google, Google Classroom (Klassenlisten importieren, Aufgaben, Word-Dokumente und Präsentationen posten), Google-Forms-Quizze und Dateien in Ihrem eigenen Google Drive',
+      canva:
+        'Canva: Präsentationen und Arbeitsblätter im eigenen Canva-Konto als bearbeitbare Designs öffnen',
       languages:
         'Sieben Sprachen: Englisch, Spanisch, Französisch, Portugiesisch, Deutsch, Italienisch und Chinesisch; die KI schreibt in der gewählten Sprache',
       privacy:
@@ -392,7 +394,7 @@ export const marketingDe: MarketingMessages = {
     integrationsPage: {
       metaTitle: 'Integrationen | TeacherHubPro',
       metaDescription:
-        'Google-Anmeldung, Google Classroom, Forms, Drive und Slides, Stripe und E-Mail.',
+        'Google-Anmeldung, Google Classroom, Forms, Drive und Slides, Canva, Stripe und E-Mail.',
       title: 'Integrationen',
       intro:
         'Die Dienste, mit denen TeacherHubPro heute zusammenarbeitet, über ihre offiziellen APIs.',
@@ -406,6 +408,9 @@ export const marketingDe: MarketingMessages = {
       slides: 'Google Drive und Slides',
       slidesText:
         'Word-Dokumente und Präsentationen werden in Ihrem eigenen Google Drive erstellt.',
+      canva: 'Canva',
+      canvaText:
+        'Öffnen Sie Präsentationen und Arbeitsblätter in Ihrem eigenen Canva-Konto als bearbeitbare Designs. Gesendet wird nur, was Sie auswählen, niemals Daten von Schülerinnen und Schülern.',
       stripe: 'Stripe',
       stripeText: 'Sichere Zahlungen für Tarife; Kartendaten berühren nie unsere Server.',
       email: 'E-Mail',
@@ -560,10 +565,10 @@ export const marketingDe: MarketingMessages = {
         'Nur, um den Dienst für die Schule oder Lehrkraft zu betreiben, die sie eingegeben hat. Wir verkaufen keine personenbezogenen Daten und verwenden Schülerdaten nicht für Werbung.',
       s4Title: 'An wen wir sie weitergeben',
       s4Text:
-        'An Dienstleister, die die App betreiben: unseren Hosting- und Datenbankanbieter, Stripe für Zahlungen, einen E-Mail-Anbieter für Nachrichten, Anthropic (Claude) für KI-Entwürfe, OpenAI für vorgelesene Audioinhalte und Google, wenn eine Lehrkraft Google Classroom verbindet. Jeder erhält nur, was seine Aufgabe braucht.',
+        'An Dienstleister, die die App betreiben: unseren Hosting- und Datenbankanbieter, Stripe für Zahlungen, einen E-Mail-Anbieter für Nachrichten, Anthropic (Claude) für KI-Entwürfe, OpenAI für vorgelesene Audioinhalte, Google, wenn eine Lehrkraft Google Classroom verbindet, und Canva, wenn eine Lehrkraft Canva verbindet (nur die Präsentation oder das Arbeitsblatt, das sie dort öffnet, niemals Daten von Schülerinnen und Schülern). Jeder erhält nur, was seine Aufgabe braucht.',
       s5Title: 'Wie sie geschützt werden',
       s5Text:
-        'Passwörter werden als Einweg-Hashes gespeichert. Sitzungs-, Schüler-, Familien- und Passwort-Links sind zufällig und werden nur als Hashes gespeichert. Google-Classroom-Tokens sind verschlüsselt. Jeder Datensatz gehört zu genau einer Schule und ist nur für die Benutzer dieser Schule erreichbar.',
+        'Passwörter werden als Einweg-Hashes gespeichert. Sitzungs-, Schüler-, Familien- und Passwort-Links sind zufällig und werden nur als Hashes gespeichert. Google-Classroom- und Canva-Tokens sind verschlüsselt. Jeder Datensatz gehört zu genau einer Schule und ist nur für die Benutzer dieser Schule erreichbar.',
       s6Title: 'Aufbewahrung und Löschung von Daten',
       s6Text:
         'Die Daten bleiben erhalten, solange das Konto aktiv ist. Hochgeladene PDFs werden gelöscht, sobald sie gelesen wurden. Website-Chats werden nach 30 Tagen gelöscht. Um eine Kopie oder die Löschung Ihrer Daten anzufordern, schreiben Sie uns über die Kontaktseite.',

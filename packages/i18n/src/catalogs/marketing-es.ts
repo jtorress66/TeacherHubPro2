@@ -147,7 +147,7 @@ export const marketingEs: MarketingMessages = {
       assistant:
         'Asistente de IA para hojas de trabajo, exámenes, resúmenes y actividades, con apoyo para estudiantes de inglés (ESL)',
       presentations:
-        'Presentaciones con IA que puede presentar a pantalla completa, imprimir o enviar a Google Classroom',
+        'Presentaciones con IA que puede presentar a pantalla completa, imprimir, descargar en PowerPoint o enviar a Google Classroom',
       tests:
         'Exámenes en línea que los estudiantes contestan desde un enlace privado; escriba las preguntas o importe un examen en PDF',
       aiGrading:
@@ -167,6 +167,8 @@ export const marketingEs: MarketingMessages = {
       listen: 'Escuchar: planes y materiales leídos en voz alta',
       google:
         'Integración con Google: inicio de sesión con Google, Google Classroom (importar listas, publicar tareas, documentos Word y presentaciones), exámenes en Google Forms y archivos en su propio Google Drive',
+      canva:
+        'Canva: abra presentaciones y hojas de trabajo en su propia cuenta de Canva como diseños editables',
       languages:
         'Siete idiomas: inglés, español, francés, portugués, alemán, italiano y chino; la IA escribe en el idioma que usted elija',
       privacy:
@@ -386,7 +388,7 @@ export const marketingEs: MarketingMessages = {
     integrationsPage: {
       metaTitle: 'Integraciones | TeacherHubPro',
       metaDescription:
-        'Inicio de sesión con Google, Google Classroom, Forms, Drive y Slides, Stripe y correo.',
+        'Inicio de sesión con Google, Google Classroom, Forms, Drive y Slides, Canva, Stripe y correo.',
       title: 'Integraciones',
       intro:
         'Los servicios con los que TeacherHubPro trabaja hoy, mediante sus interfaces oficiales.',
@@ -399,6 +401,9 @@ export const marketingEs: MarketingMessages = {
       formsText: 'Convierta las preguntas de una tarea en una prueba de Google Forms.',
       slides: 'Google Drive y Slides',
       slidesText: 'Los documentos de Word y las presentaciones se crean en su propio Google Drive.',
+      canva: 'Canva',
+      canvaText:
+        'Abra presentaciones y hojas de trabajo en su propia cuenta de Canva como diseños editables. Solo se envía lo que usted elige, nunca datos de estudiantes.',
       stripe: 'Stripe',
       stripeText:
         'Pagos seguros de los planes; los datos de la tarjeta nunca pasan por nuestros servidores.',
@@ -548,10 +553,10 @@ export const marketingEs: MarketingMessages = {
         'Solo para dar el servicio a la escuela o al maestro que lo ingresó. No vendemos datos personales ni usamos datos de estudiantes para publicidad.',
       s4Title: 'Con quién lo compartimos',
       s4Text:
-        'Con los proveedores que hacen funcionar la app: nuestro proveedor de alojamiento y base de datos, Stripe para los pagos, un proveedor de correo, Anthropic (Claude) para los borradores de IA, OpenAI para el audio de lectura en voz alta, y Google cuando un maestro conecta Google Classroom. Cada uno recibe solo lo que su tarea necesita.',
+        'Con los proveedores que hacen funcionar la app: nuestro proveedor de alojamiento y base de datos, Stripe para los pagos, un proveedor de correo, Anthropic (Claude) para los borradores de IA, OpenAI para el audio de lectura en voz alta, Google cuando un maestro conecta Google Classroom, y Canva cuando un maestro conecta Canva (solo la presentación u hoja de trabajo que abre allí, nunca datos de estudiantes). Cada uno recibe solo lo que su tarea necesita.',
       s5Title: 'Cómo se protege',
       s5Text:
-        'Las contraseñas se guardan como hash de un solo sentido. Los enlaces de sesión, de estudiantes, de familias y de contraseña son aleatorios y se guardan solo como hash. Los tokens de Google Classroom se cifran. Cada registro pertenece a una escuela y solo lo pueden ver los usuarios de esa escuela.',
+        'Las contraseñas se guardan como hash de un solo sentido. Los enlaces de sesión, de estudiantes, de familias y de contraseña son aleatorios y se guardan solo como hash. Los tokens de Google Classroom y de Canva se cifran. Cada registro pertenece a una escuela y solo lo pueden ver los usuarios de esa escuela.',
       s6Title: 'Conservación y eliminación',
       s6Text:
         'Los datos se conservan mientras la cuenta esté activa. Los PDF subidos se eliminan una vez leídos. Los chats del sitio se eliminan a los 30 días. Para pedir una copia o la eliminación de sus datos, escríbanos desde la página de contacto.',

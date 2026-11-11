@@ -48,6 +48,11 @@ export default async function IntegrationsPage(props: LocaleParams) {
               art: 'presentations',
             },
             {
+              title: t('marketing.integrationsPage.canva'),
+              text: t('marketing.integrationsPage.canvaText'),
+              art: 'presentations',
+            },
+            {
               title: t('marketing.integrationsPage.stripe'),
               text: t('marketing.integrationsPage.stripeText'),
               art: 'shield',

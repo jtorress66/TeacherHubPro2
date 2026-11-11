@@ -25,6 +25,8 @@ export interface CanvaAuthorization {
   refresh(
     refreshToken: string,
   ): Promise<Result<{ readonly accessToken: string; readonly refreshToken: string }, CanvaError>>;
+  /** Cancels the grant at Canva: the refresh token and every token made from it stop working. */
+  revoke(refreshToken: string): Promise<Result<true, CanvaError>>;
 }
 
 /** A file for Canva to turn into an editable design. */

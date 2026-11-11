@@ -109,8 +109,20 @@ describe('Connecting Canva', () => {
     expect(await new CanvaConnected(deps).execute({ actor })).toBe(false);
   });
 
-  it('forgets the access when the teacher disconnects', async () => {
+  it('cancels the access at Canva and forgets it when the teacher disconnects', async () => {
     const { actor, deps } = await teacher(makeWorld());
+    valueOf(await new DisconnectCanva(deps).execute({ actor }));
+    expect(await new CanvaConnected(deps).execute({ actor })).toBe(false);
+    expect(await deps.canvaAuth.refresh('canva-refresh-1')).toEqual({
+      ok: false,
+      error: { code: 'unauthorized' },
+    });
+    expect(deps.canvaAuth.revoked).toEqual(['canva-refresh-1']);
+  });
+
+  it('still forgets the access when Canva cannot be reached to cancel it', async () => {
+    const { actor, deps } = await teacher(makeWorld());
+    deps.canvaAuth.revokeFails = true;
     valueOf(await new DisconnectCanva(deps).execute({ actor }));
     expect(await new CanvaConnected(deps).execute({ actor })).toBe(false);
   });

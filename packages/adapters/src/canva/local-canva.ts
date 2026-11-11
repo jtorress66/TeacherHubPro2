@@ -14,6 +14,7 @@ const challengeOf = (verifier: string) => createHash('sha256').update(verifier).
 /** Grants access at once: the address goes straight back to the app, the challenge in the code. */
 export class LocalCanvaAuthorization implements CanvaAuthorization {
   private issued = 0;
+  private readonly revoked = new Set<string>();
 
   authorizationUrl(input: {
     readonly state: string;
@@ -47,10 +48,15 @@ export class LocalCanvaAuthorization implements CanvaAuthorization {
     refreshToken: string,
   ): Promise<Result<{ readonly accessToken: string; readonly refreshToken: string }, CanvaError>> {
     return Promise.resolve(
-      refreshToken.startsWith(refreshPrefix)
+      refreshToken.startsWith(refreshPrefix) && !this.revoked.has(refreshToken)
         ? ok({ accessToken: localCanvaFixture.accessToken, refreshToken: this.next() })
         : err({ code: 'unauthorized' }),
     );
+  }
+
+  revoke(refreshToken: string): Promise<Result<true, CanvaError>> {
+    this.revoked.add(refreshToken);
+    return Promise.resolve(ok(true));
   }
 }
 

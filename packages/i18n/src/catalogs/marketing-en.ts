@@ -140,7 +140,7 @@ export const marketingEn = {
       assistant:
         'AI assistant for worksheets, quizzes, summaries and activities, with English-learner (ESL) support',
       presentations:
-        'AI slide presentations you present full screen, print, or send to Google Classroom',
+        'AI slide presentations you present full screen, print, download as PowerPoint, or send to Google Classroom',
       tests:
         'Online tests students answer from a private link; write the questions or import a PDF test',
       aiGrading: 'AI grading of open answers, as suggestions the teacher confirms',
@@ -157,6 +157,8 @@ export const marketingEn = {
       listen: 'Listen: plans and materials read aloud',
       google:
         'Google integration: Google sign-in, Google Classroom (import rosters, post assignments, Word documents and presentations), Google Forms quizzes, and files in your own Google Drive',
+      canva:
+        'Canva: open presentations and worksheets in your own Canva account as editable designs',
       languages:
         'Seven languages: English, Spanish, French, Portuguese, German, Italian and Chinese; the AI writes in the language you choose',
       privacy:
@@ -361,7 +363,7 @@ export const marketingEn = {
     integrationsPage: {
       metaTitle: 'Integrations | TeacherHubPro',
       metaDescription:
-        'Google sign-in, Google Classroom, Forms, Drive and Slides, Stripe and email.',
+        'Google sign-in, Google Classroom, Forms, Drive and Slides, Canva, Stripe and email.',
       title: 'Integrations',
       intro: 'The services TeacherHubPro works with today, through their official APIs.',
       googleSignIn: 'Google sign-in',
@@ -372,6 +374,9 @@ export const marketingEn = {
       formsText: 'Turn an assignment’s questions into a Google Forms quiz.',
       slides: 'Google Drive and Slides',
       slidesText: 'Word documents and presentations are created in your own Google Drive.',
+      canva: 'Canva',
+      canvaText:
+        'Open presentations and worksheets in your own Canva account as editable designs. Only what you choose is sent, never student data.',
       stripe: 'Stripe',
       stripeText: 'Secure payments for plans; card details never touch our servers.',
       email: 'Email',
@@ -515,10 +520,10 @@ export const marketingEn = {
         'Only to run the service for the school or teacher who entered it. We do not sell personal data or use student data for advertising.',
       s4Title: 'Who we share it with',
       s4Text:
-        'Service providers that run the app: our hosting and database provider, Stripe for payments, an email provider for messages, Anthropic (Claude) for AI drafts, OpenAI for read-aloud audio, and Google when a teacher connects Google Classroom. Each receives only what its task needs.',
+        'Service providers that run the app: our hosting and database provider, Stripe for payments, an email provider for messages, Anthropic (Claude) for AI drafts, OpenAI for read-aloud audio, Google when a teacher connects Google Classroom, and Canva when a teacher connects Canva (only the presentation or worksheet the teacher opens there, never student data). Each receives only what its task needs.',
       s5Title: 'How it is protected',
       s5Text:
-        'Passwords are stored as one-way hashes. Session, student, family and password links are random and stored only as hashes. Google Classroom tokens are encrypted. Every record belongs to one school and is reachable only by that school’s users.',
+        'Passwords are stored as one-way hashes. Session, student, family and password links are random and stored only as hashes. Google Classroom and Canva tokens are encrypted. Every record belongs to one school and is reachable only by that school’s users.',
       s6Title: 'Keeping and deleting data',
       s6Text:
         'Data stays while the account is active. Uploaded PDFs are deleted once they are read. Website chats are deleted after 30 days. To ask for a copy or deletion of your data, write to us from the contact page.',

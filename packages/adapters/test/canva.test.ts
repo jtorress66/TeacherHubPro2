@@ -31,12 +31,16 @@ function tokenApi() {
   };
   const fetchFn = async (input: string | URL | Request, init?: RequestInit) => {
     await Promise.resolve();
-    expect(urlOf(input)).toBe('https://api.canva.com/rest/v1/oauth/token');
     if (new Headers(init?.headers).get('authorization') !== basic) {
       return Response.json({ code: 'invalid_client' }, { status: 401 });
     }
     const body = new URLSearchParams(typeof init?.body === 'string' ? init.body : '');
     calls.push(body);
+    if (urlOf(input) === 'https://api.canva.com/rest/v1/oauth/revoke') {
+      live.delete(body.get('token') ?? '');
+      return Response.json({});
+    }
+    expect(urlOf(input)).toBe('https://api.canva.com/rest/v1/oauth/token');
     if (body.get('grant_type') === 'authorization_code') {
       return body.get('code') === 'code-1' && body.get('code_verifier') === 'verifier-1'
         ? next()

@@ -133,7 +133,7 @@ export const marketingZh: MarketingMessages = {
       prepAgent: '备课助手：一句话生成一周的教案、幻灯片、练习单、周五小测和家长邮件，供您审阅',
       planner: 'AI 教案规划，支持共同核心标准（Common Core）和波多黎各标准，提供简洁或经典版式',
       assistant: 'AI 助手：生成练习单、测验、摘要和活动，并支持英语学习者（ESL）',
-      presentations: 'AI 幻灯片演示：全屏放映、打印或发送到 Google Classroom',
+      presentations: 'AI 幻灯片演示：全屏放映、打印、下载为 PowerPoint 或发送到 Google Classroom',
       tests: '在线测试：学生通过私密链接作答；可自行出题或导入 PDF 试卷',
       aiGrading: 'AI 批改开放式答案，作为建议由教师确认',
       gradebook: '加权成绩册和带学校徽标的 PDF 成绩单',
@@ -146,6 +146,7 @@ export const marketingZh: MarketingMessages = {
       listen: '朗读：教案和材料可朗读出来',
       google:
         'Google 集成：Google 登录、Google Classroom（导入名单、发布作业、Word 文档和演示文稿）、Google 表单测验，以及保存在您自己 Google 云端硬盘中的文件',
+      canva: 'Canva：在您自己的 Canva 账户中将演示文稿和练习单作为可编辑设计打开',
       languages:
         '七种语言：英语、西班牙语、法语、葡萄牙语、德语、意大利语和中文；AI 用您选择的语言写作',
       privacy:
@@ -326,7 +327,7 @@ export const marketingZh: MarketingMessages = {
     integrationsPage: {
       metaTitle: '集成 | TeacherHubPro',
       metaDescription:
-        'Google 登录、Google Classroom、Forms、Drive 和 Slides、Stripe 以及电子邮件。',
+        'Google 登录、Google Classroom、Forms、Drive 和 Slides、Canva、Stripe 以及电子邮件。',
       title: '集成',
       intro: 'TeacherHubPro 目前通过官方 API 配合使用的服务。',
       googleSignIn: 'Google 登录',
@@ -337,6 +338,9 @@ export const marketingZh: MarketingMessages = {
       formsText: '将作业中的题目转换为 Google Forms 测验。',
       slides: 'Google Drive 和 Slides',
       slidesText: 'Word 文档和演示文稿会创建在您自己的 Google Drive 中。',
+      canva: 'Canva',
+      canvaText:
+        '在您自己的 Canva 账户中将演示文稿和练习单作为可编辑设计打开。只发送您选择的内容，绝不发送学生数据。',
       stripe: 'Stripe',
       stripeText: '方案的安全付款；银行卡信息从不经过我们的服务器。',
       email: '电子邮件',
@@ -472,10 +476,10 @@ export const marketingZh: MarketingMessages = {
         '仅用于为输入这些数据的学校或教师运行服务。我们不出售个人数据，也不将学生数据用于广告。',
       s4Title: '我们与谁共享',
       s4Text:
-        '运行本应用的服务提供商：我们的托管和数据库提供商、用于付款的 Stripe、用于发送消息的电子邮件提供商、用于 AI 草稿的 Anthropic（Claude）、用于朗读音频的 OpenAI，以及在教师连接 Google Classroom 时的 Google。每家提供商只会收到其任务所需的信息。',
+        '运行本应用的服务提供商：我们的托管和数据库提供商、用于付款的 Stripe、用于发送消息的电子邮件提供商、用于 AI 草稿的 Anthropic（Claude）、用于朗读音频的 OpenAI，在教师连接 Google Classroom 时的 Google，以及在教师连接 Canva 时的 Canva（仅限教师在其中打开的演示文稿或练习单，绝不包含学生数据）。每家提供商只会收到其任务所需的信息。',
       s5Title: '如何保护',
       s5Text:
-        '密码以单向哈希形式存储。会话、学生、家庭和密码链接是随机生成的，仅以哈希形式存储。Google Classroom 令牌经过加密。每条记录都只属于一所学校，只有该校的用户才能访问。',
+        '密码以单向哈希形式存储。会话、学生、家庭和密码链接是随机生成的，仅以哈希形式存储。Google Classroom 和 Canva 令牌经过加密。每条记录都只属于一所学校，只有该校的用户才能访问。',
       s6Title: '数据的保留和删除',
       s6Text:
         '账户处于活动状态期间，数据会一直保留。上传的 PDF 在读取后即被删除。网站聊天记录在 30 天后删除。如需获取您数据的副本或要求删除数据，请通过联系页面写信给我们。',
