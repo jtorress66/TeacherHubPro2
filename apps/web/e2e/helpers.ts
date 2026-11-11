@@ -115,3 +115,15 @@ export async function choosePlanFormat(
   await school.getByRole('button', { name: t('settings.save') }).click();
   await expect(school.getByRole('status')).toHaveText(t('settings.saved'));
 }
+
+/** Asks the assistant (the worker's scripted stand-in in tests) for a worksheet. */
+export async function writeWorksheet(page: Page, locale: Locale, topic: string): Promise<void> {
+  const t = createTranslator(locale);
+  await page.goto(`/${locale}/app/assistant`);
+  const form = page.getByRole('form', { name: t('assistant.title') });
+  await form.getByLabel(t('assistant.type')).selectOption('worksheet');
+  await form.getByLabel(t('assistant.topic')).fill(topic);
+  await form.getByRole('button', { name: t('assistant.submit') }).click();
+  await expect(page).toHaveURL(/\/assistant\/[^/]+$/, { timeout: 30_000 });
+  await expect(page).not.toHaveURL(/\/jobs\//);
+}

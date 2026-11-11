@@ -5,6 +5,7 @@ import { LogoForm } from '../../../../components/gradebook-forms.tsx';
 import { removeLogoAction } from '../../../_lib/gradebook-actions.ts';
 import { disconnectClassroomAction } from '../../../_lib/assignment-actions.ts';
 import { disconnectCanvaAction } from '../../../_lib/canva-actions.ts';
+import { disconnectMicrosoftAction } from '../../../_lib/microsoft-actions.ts';
 import { getAppContainer } from '../../../../container.ts';
 import { requireUser } from '../../../_lib/auth.ts';
 import { localeFrom, type LocaleParams } from '../../locale-param.ts';
@@ -14,7 +15,9 @@ export async function generateMetadata(props: LocaleParams): Promise<Metadata> {
 }
 
 export default async function SettingsPage(
-  props: LocaleParams & { readonly searchParams: Promise<{ classroom?: string; canva?: string }> },
+  props: LocaleParams & {
+    readonly searchParams: Promise<{ classroom?: string; canva?: string; microsoft?: string }>;
+  },
 ) {
   const locale = await localeFrom(props);
   const t = createTranslator(locale);
@@ -24,6 +27,7 @@ export default async function SettingsPage(
   const app = getAppContainer();
   const courses = await app.listClassroomCourses.execute({ actor: user });
   const canvaConnected = (await app.canva?.connected.execute({ actor: user })) ?? null;
+  const microsoftConnected = (await app.microsoft?.connected.execute({ actor: user })) ?? null;
 
   return (
     <section className="stack">
@@ -130,6 +134,42 @@ export default async function SettingsPage(
                 <p>
                   <a className="button" href={`/api/canva/connect?locale=${locale}`}>
                     {t('canva.connect')}
+                  </a>
+                </p>
+              </>
+            )}
+          </section>
+        )}
+        {microsoftConnected === null ? null : (
+          <section className="card stack" aria-labelledby="microsoft-heading">
+            <h2 id="microsoft-heading">{t('microsoft.title')}</h2>
+            {search.microsoft === 'connected' ? (
+              <p role="status" className="notice">
+                {t('microsoft.connectedNotice')}
+              </p>
+            ) : null}
+            {search.microsoft === 'failed' ? (
+              <p role="alert" className="alert">
+                {t('microsoft.failedNotice')}
+              </p>
+            ) : null}
+            {microsoftConnected ? (
+              <>
+                <p>{t('microsoft.connected')}</p>
+                <form action={disconnectMicrosoftAction}>
+                  <input type="hidden" name="locale" value={locale} />
+                  <button type="submit" className="button secondary">
+                    {t('microsoft.disconnect')}
+                  </button>
+                </form>
+                <p className="muted">{t('microsoft.disconnectNote')}</p>
+              </>
+            ) : (
+              <>
+                <p className="muted">{t('microsoft.notConnected')}</p>
+                <p>
+                  <a className="button" href={`/api/microsoft/connect?locale=${locale}`}>
+                    {t('microsoft.connect')}
                   </a>
                 </p>
               </>

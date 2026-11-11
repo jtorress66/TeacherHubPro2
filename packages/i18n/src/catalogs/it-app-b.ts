@@ -433,6 +433,25 @@ export const itAppB = {
     settingsLink: 'Vai alle Impostazioni',
     downloadPptx: 'Scarica PowerPoint',
   },
+  microsoft: {
+    title: 'Microsoft OneDrive',
+    connected: 'Microsoft è collegato.',
+    notConnected:
+      'Colleghi Microsoft per salvare le Sue presentazioni e schede di lavoro nel Suo OneDrive.',
+    connect: 'Collega Microsoft',
+    disconnect: 'Scollega',
+    disconnectNote:
+      'Scollegando qui, TeacherHubPro smette di usare il Suo account Microsoft. Può anche rimuovere TeacherHubPro dalle autorizzazioni delle app del Suo account Microsoft.',
+    connectedNotice: 'Microsoft collegato.',
+    failedNotice: 'Non è stato possibile collegare Microsoft. Riprovi.',
+    save: 'Salva su OneDrive',
+    saving: 'Salvataggio su OneDrive…',
+    saved: 'Salvato su OneDrive.',
+    openFile: 'Apri in OneDrive',
+    note: 'Solo questo file va nel Suo OneDrive, in una cartella TeacherHubPro, mai informazioni sugli studenti.',
+    connectFirst: 'Colleghi Microsoft nelle Impostazioni per salvarlo su OneDrive.',
+    settingsLink: 'Vai alle Impostazioni',
+  },
   forms: {
     title: 'Quiz di Google Forms',
     intro:
@@ -929,6 +948,8 @@ export const itAppB = {
     classroom_failed: 'Google Classroom non ha risposto. Riprovi.',
     canva_not_connected: 'Colleghi prima Canva nelle Impostazioni.',
     canva_failed: 'Canva non ha risposto. Riprovi.',
+    microsoft_not_connected: 'Colleghi prima Microsoft nelle Impostazioni.',
+    microsoft_failed: 'Microsoft OneDrive non ha risposto. Riprovi.',
     grading_off: 'Prima attivi “Conta come voto” per questo gioco.',
     name_taken: 'Questo nome sta già giocando. Scegli il tuo nome.',
     email_failed: "Non è stato possibile inviare l'email. Verifichi l'indirizzo e riprovi.",

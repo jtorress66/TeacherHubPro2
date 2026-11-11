@@ -48,6 +48,7 @@ describe('parseWebConfig', () => {
         google: { provider: 'local', secret: local.LOCAL_GOOGLE_SECRET },
         classroom: { provider: 'local' },
         canva: { provider: 'local' },
+        microsoft: { provider: 'local' },
         voice: 'nova',
         realtime: {
           url: 'http://localhost:3200',
@@ -179,6 +180,7 @@ describe('parseWebConfig', () => {
           encryptionKey: testEncryptionKey,
         },
         canva: { provider: 'off' },
+        microsoft: { provider: 'off' },
         voice: null,
         realtime: {
           url: 'https://teacherhubpro-realtime.onrender.com',
@@ -226,6 +228,48 @@ describe('parseWebConfig', () => {
     expect(parseWebConfig({ ...local, CANVA_PROVIDER: 'adobe' })).toEqual({
       ok: false,
       error: 'CANVA_PROVIDER must be off, local or canva',
+    });
+  });
+
+  it('turns Microsoft on with its client and the token key, and keeps it off in production until then', () => {
+    const microsoft = {
+      MICROSOFT_PROVIDER: 'microsoft',
+      MICROSOFT_CLIENT_ID: '00000000-aaaa',
+      MICROSOFT_CLIENT_SECRET: 'ms-secret',
+    };
+    expect(parseWebConfig({ ...production, ...microsoft })).toMatchObject({
+      ok: true,
+      value: {
+        microsoft: {
+          provider: 'microsoft',
+          clientId: '00000000-aaaa',
+          clientSecret: 'ms-secret',
+          encryptionKey: testEncryptionKey,
+        },
+      },
+    });
+    expect(parseWebConfig({ ...production, MICROSOFT_PROVIDER: 'off' })).toMatchObject({
+      value: { microsoft: { provider: 'off' } },
+    });
+    expect(parseWebConfig({ ...production, MICROSOFT_PROVIDER: 'local' })).toEqual({
+      ok: false,
+      error: expect.stringContaining('MICROSOFT_PROVIDER') as string,
+    });
+    expect(parseWebConfig({ ...production, MICROSOFT_PROVIDER: 'microsoft' })).toEqual({
+      ok: false,
+      error: 'MICROSOFT_PROVIDER=microsoft needs MICROSOFT_CLIENT_ID and MICROSOFT_CLIENT_SECRET',
+    });
+    expect(
+      parseWebConfig({
+        ...without(production, 'TOKEN_ENCRYPTION_KEY'),
+        ...microsoft,
+        CLASSROOM_PROVIDER: 'local',
+        APP_ENV: 'development',
+      }),
+    ).toEqual({ ok: false, error: 'TOKEN_ENCRYPTION_KEY must be 32 random bytes, base64 encoded' });
+    expect(parseWebConfig({ ...local, MICROSOFT_PROVIDER: 'onedrive' })).toEqual({
+      ok: false,
+      error: 'MICROSOFT_PROVIDER must be off, local or microsoft',
     });
   });
 

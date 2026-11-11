@@ -7,6 +7,7 @@ import type {
   ClassId,
   ClassroomConnection,
   FormsExport,
+  MicrosoftConnection,
   SchoolId,
   StudentLink,
   StudentLinkId,
@@ -17,6 +18,7 @@ import type {
   CanvaConnectionRepository,
   ClassroomConnectionRepository,
   FormsExportRepository,
+  MicrosoftConnectionRepository,
   StudentLinkRepository,
 } from '@thp/ports';
 import {
@@ -24,6 +26,7 @@ import {
   canvaConnectionMapper,
   classroomConnectionMapper,
   formsExportMapper,
+  microsoftConnectionMapper,
   studentLinkMapper,
 } from '../mappers/assignment-mappers.ts';
 import type { Database } from '../schema.ts';
@@ -165,6 +168,37 @@ export class PostgresCanvaConnectionRepository implements CanvaConnectionReposit
   async delete(schoolId: SchoolId, teacherId: UserId): Promise<void> {
     await this.db
       .deleteFrom('canva_connections')
+      .where('school_id', '=', schoolId)
+      .where('teacher_id', '=', teacherId)
+      .execute();
+  }
+}
+
+export class PostgresMicrosoftConnectionRepository implements MicrosoftConnectionRepository {
+  constructor(private readonly db: Kysely<Database>) {}
+
+  async find(schoolId: SchoolId, teacherId: UserId): Promise<MicrosoftConnection | null> {
+    const row = await this.db
+      .selectFrom('microsoft_connections')
+      .selectAll()
+      .where('school_id', '=', schoolId)
+      .where('teacher_id', '=', teacherId)
+      .executeTakeFirst();
+    return row === undefined ? null : microsoftConnectionMapper.fromRow(row);
+  }
+
+  async save(connection: MicrosoftConnection): Promise<void> {
+    const row = microsoftConnectionMapper.toRow(connection);
+    await this.db
+      .insertInto('microsoft_connections')
+      .values(row)
+      .onConflict((conflict) => conflict.column('teacher_id').doUpdateSet(row))
+      .execute();
+  }
+
+  async delete(schoolId: SchoolId, teacherId: UserId): Promise<void> {
+    await this.db
+      .deleteFrom('microsoft_connections')
       .where('school_id', '=', schoolId)
       .where('teacher_id', '=', teacherId)
       .execute();

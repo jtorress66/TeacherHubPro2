@@ -55,6 +55,12 @@ export {
   LocalCanvaDesigns,
   localCanvaFixture,
 } from './canva/local-canva.ts';
+export { MicrosoftIdentityAuthorization, OneDriveGraphFiles } from './microsoft/microsoft-graph.ts';
+export {
+  LocalMicrosoftAuthorization,
+  LocalOneDriveFiles,
+  localMicrosoftFixture,
+} from './microsoft/local-microsoft.ts';
 export { PptxPresentationWriter } from './documents/pptx-presentation-writer.ts';
 export { DocxDocumentWriter } from './documents/docx-document-writer.ts';
 export { ResendMailer, type ResendConfig } from './mail/resend-mailer.ts';

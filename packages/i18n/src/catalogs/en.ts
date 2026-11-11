@@ -1352,6 +1352,24 @@ export const en = {
     settingsLink: 'Go to Settings',
     downloadPptx: 'Download PowerPoint',
   },
+  microsoft: {
+    title: 'Microsoft OneDrive',
+    connected: 'Microsoft is connected.',
+    notConnected: 'Connect Microsoft to save your presentations and worksheets to your OneDrive.',
+    connect: 'Connect Microsoft',
+    disconnect: 'Disconnect',
+    disconnectNote:
+      'Disconnecting here stops TeacherHubPro from using your Microsoft account. You can also remove TeacherHubPro from the app permissions in your Microsoft account.',
+    connectedNotice: 'Microsoft connected.',
+    failedNotice: 'Microsoft could not be connected. Please try again.',
+    save: 'Save to OneDrive',
+    saving: 'Saving to OneDrive…',
+    saved: 'Saved to OneDrive.',
+    openFile: 'Open in OneDrive',
+    note: 'Only this file goes to your OneDrive, in a TeacherHubPro folder, never student information.',
+    connectFirst: 'Connect Microsoft in Settings to save this to OneDrive.',
+    settingsLink: 'Go to Settings',
+  },
   forms: {
     title: 'Google Forms quiz',
     intro:
@@ -1845,6 +1863,8 @@ export const en = {
     classroom_failed: 'Google Classroom did not respond. Please try again.',
     canva_not_connected: 'Connect Canva in Settings first.',
     canva_failed: 'Canva did not respond. Please try again.',
+    microsoft_not_connected: 'Connect Microsoft in Settings first.',
+    microsoft_failed: 'Microsoft OneDrive did not respond. Please try again.',
     grading_off: 'Turn on “Count as a grade” for this game first.',
     name_taken: 'That name is already playing. Pick your own name.',
     email_failed: 'The email could not be sent. Check the address and try again.',

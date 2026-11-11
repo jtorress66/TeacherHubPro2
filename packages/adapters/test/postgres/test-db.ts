@@ -37,6 +37,7 @@ import {
 export const connect = (): Kysely<Database> => createDatabase(inject('databaseUrl'));
 
 const tables = [
+  'microsoft_connections',
   'canva_connections',
   'rubrics',
   'rate_limits',

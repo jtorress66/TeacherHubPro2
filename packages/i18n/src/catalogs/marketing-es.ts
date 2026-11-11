@@ -169,6 +169,8 @@ export const marketingEs: MarketingMessages = {
         'Integración con Google: inicio de sesión con Google, Google Classroom (importar listas, publicar tareas, documentos Word y presentaciones), exámenes en Google Forms y archivos en su propio Google Drive',
       canva:
         'Canva: abra presentaciones y hojas de trabajo en su propia cuenta de Canva como diseños editables',
+      microsoft:
+        'Microsoft OneDrive: guarde presentaciones en PowerPoint y hojas de trabajo en Word en su propio OneDrive',
       languages:
         'Siete idiomas: inglés, español, francés, portugués, alemán, italiano y chino; la IA escribe en el idioma que usted elija',
       privacy:
@@ -388,7 +390,7 @@ export const marketingEs: MarketingMessages = {
     integrationsPage: {
       metaTitle: 'Integraciones | TeacherHubPro',
       metaDescription:
-        'Inicio de sesión con Google, Google Classroom, Forms, Drive y Slides, Canva, Stripe y correo.',
+        'Inicio de sesión con Google, Google Classroom, Forms, Drive y Slides, Canva, Microsoft OneDrive, Stripe y correo.',
       title: 'Integraciones',
       intro:
         'Los servicios con los que TeacherHubPro trabaja hoy, mediante sus interfaces oficiales.',
@@ -404,6 +406,9 @@ export const marketingEs: MarketingMessages = {
       canva: 'Canva',
       canvaText:
         'Abra presentaciones y hojas de trabajo en su propia cuenta de Canva como diseños editables. Solo se envía lo que usted elige, nunca datos de estudiantes.',
+      microsoft: 'Microsoft OneDrive',
+      microsoftText:
+        'Guarde presentaciones (PowerPoint) y hojas de trabajo (Word) en una carpeta TeacherHubPro de su propio OneDrive. Solo se envían los archivos que usted guarda, nunca datos de estudiantes.',
       stripe: 'Stripe',
       stripeText:
         'Pagos seguros de los planes; los datos de la tarjeta nunca pasan por nuestros servidores.',
@@ -553,10 +558,10 @@ export const marketingEs: MarketingMessages = {
         'Solo para dar el servicio a la escuela o al maestro que lo ingresó. No vendemos datos personales ni usamos datos de estudiantes para publicidad.',
       s4Title: 'Con quién lo compartimos',
       s4Text:
-        'Con los proveedores que hacen funcionar la app: nuestro proveedor de alojamiento y base de datos, Stripe para los pagos, un proveedor de correo, Anthropic (Claude) para los borradores de IA, OpenAI para el audio de lectura en voz alta, Google cuando un maestro conecta Google Classroom, y Canva cuando un maestro conecta Canva (solo la presentación u hoja de trabajo que abre allí, nunca datos de estudiantes). Cada uno recibe solo lo que su tarea necesita.',
+        'Con los proveedores que hacen funcionar la app: nuestro proveedor de alojamiento y base de datos, Stripe para los pagos, un proveedor de correo, Anthropic (Claude) para los borradores de IA, OpenAI para el audio de lectura en voz alta, Google cuando un maestro conecta Google Classroom, Canva cuando un maestro conecta Canva (solo la presentación u hoja de trabajo que abre allí, nunca datos de estudiantes), y Microsoft cuando un maestro conecta Microsoft (solo los archivos que guarda en OneDrive, nunca datos de estudiantes). Cada uno recibe solo lo que su tarea necesita.',
       s5Title: 'Cómo se protege',
       s5Text:
-        'Las contraseñas se guardan como hash de un solo sentido. Los enlaces de sesión, de estudiantes, de familias y de contraseña son aleatorios y se guardan solo como hash. Los tokens de Google Classroom y de Canva se cifran. Cada registro pertenece a una escuela y solo lo pueden ver los usuarios de esa escuela.',
+        'Las contraseñas se guardan como hash de un solo sentido. Los enlaces de sesión, de estudiantes, de familias y de contraseña son aleatorios y se guardan solo como hash. Los tokens de Google Classroom, de Canva y de Microsoft se cifran. Cada registro pertenece a una escuela y solo lo pueden ver los usuarios de esa escuela.',
       s6Title: 'Conservación y eliminación',
       s6Text:
         'Los datos se conservan mientras la cuenta esté activa. Los PDF subidos se eliminan una vez leídos. Los chats del sitio se eliminan a los 30 días. Para pedir una copia o la eliminación de sus datos, escríbanos desde la página de contacto.',

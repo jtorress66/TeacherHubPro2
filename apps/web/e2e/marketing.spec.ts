@@ -79,9 +79,10 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
       t('marketing.featuresPage.title'),
     );
     const included = page.getByRole('region', { name: t('marketing.included.title') });
-    await expect(included.getByRole('listitem')).toHaveCount(21);
+    await expect(included.getByRole('listitem')).toHaveCount(22);
     await expect(included).toContainText(t('marketing.included.prepAgent'));
     await expect(included).toContainText(t('marketing.included.canva'));
+    await expect(included).toContainText(t('marketing.included.microsoft'));
     await page
       .getByRole('link', { name: t('marketing.features.gradebook.title'), exact: true })
       .first()
@@ -92,6 +93,9 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     await page.goto(`/${locale}/integrations`);
     await expect(
       page.getByRole('heading', { name: t('marketing.integrationsPage.canva') }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: t('marketing.integrationsPage.microsoft') }),
     ).toBeVisible();
     await page.goto(`/${locale}/use-cases/schools`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(

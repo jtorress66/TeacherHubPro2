@@ -1369,6 +1369,25 @@ export const es: Messages = {
     settingsLink: 'Ir a Configuración',
     downloadPptx: 'Descargar PowerPoint',
   },
+  microsoft: {
+    title: 'Microsoft OneDrive',
+    connected: 'Microsoft está conectado.',
+    notConnected:
+      'Conecta Microsoft para guardar tus presentaciones y hojas de trabajo en tu OneDrive.',
+    connect: 'Conectar Microsoft',
+    disconnect: 'Desconectar',
+    disconnectNote:
+      'Al desconectar aquí, TeacherHubPro deja de usar tu cuenta de Microsoft. También puedes quitar TeacherHubPro de los permisos de aplicaciones de tu cuenta de Microsoft.',
+    connectedNotice: 'Microsoft conectado.',
+    failedNotice: 'No se pudo conectar Microsoft. Inténtalo de nuevo.',
+    save: 'Guardar en OneDrive',
+    saving: 'Guardando en OneDrive…',
+    saved: 'Guardado en OneDrive.',
+    openFile: 'Abrir en OneDrive',
+    note: 'Solo este archivo va a tu OneDrive, en una carpeta TeacherHubPro, nunca información de estudiantes.',
+    connectFirst: 'Conecta Microsoft en Configuración para guardar esto en OneDrive.',
+    settingsLink: 'Ir a Configuración',
+  },
   forms: {
     title: 'Prueba de Google Forms',
     intro:
@@ -1865,6 +1884,8 @@ export const es: Messages = {
     classroom_failed: 'Google Classroom no respondió. Inténtalo de nuevo.',
     canva_not_connected: 'Conecta Canva en Configuración primero.',
     canva_failed: 'Canva no respondió. Inténtalo de nuevo.',
+    microsoft_not_connected: 'Conecta Microsoft en Configuración primero.',
+    microsoft_failed: 'Microsoft OneDrive no respondió. Inténtalo de nuevo.',
     grading_off: 'Primero activa «Cuenta como nota» para este juego.',
     name_taken: 'Ese nombre ya está jugando. Elige tu propio nombre.',
     email_failed: 'No se pudo enviar el correo. Revise la dirección e inténtelo de nuevo.',

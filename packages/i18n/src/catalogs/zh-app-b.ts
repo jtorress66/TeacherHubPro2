@@ -418,6 +418,24 @@ export const zhAppB = {
     settingsLink: '前往设置',
     downloadPptx: '下载 PowerPoint',
   },
+  microsoft: {
+    title: 'Microsoft OneDrive',
+    connected: 'Microsoft 已连接。',
+    notConnected: '连接 Microsoft，即可将您的演示文稿和练习单保存到您的 OneDrive。',
+    connect: '连接 Microsoft',
+    disconnect: '断开连接',
+    disconnectNote:
+      '在此断开连接后，TeacherHubPro 将不再使用您的 Microsoft 账户。您也可以在 Microsoft 账户的应用权限中移除 TeacherHubPro。',
+    connectedNotice: 'Microsoft 已连接。',
+    failedNotice: '无法连接 Microsoft，请重试。',
+    save: '保存到 OneDrive',
+    saving: '正在保存到 OneDrive…',
+    saved: '已保存到 OneDrive。',
+    openFile: '在 OneDrive 中打开',
+    note: '只有此文件会保存到您 OneDrive 的 TeacherHubPro 文件夹中，绝不包含学生信息。',
+    connectFirst: '请在设置中连接 Microsoft，以便将此内容保存到 OneDrive。',
+    settingsLink: '前往设置',
+  },
   forms: {
     title: 'Google Forms 测验',
     intro:
@@ -898,6 +916,8 @@ export const zhAppB = {
     classroom_failed: 'Google Classroom 没有响应，请重试。',
     canva_not_connected: '请先在设置中连接 Canva。',
     canva_failed: 'Canva 没有响应，请重试。',
+    microsoft_not_connected: '请先在设置中连接 Microsoft。',
+    microsoft_failed: 'Microsoft OneDrive 没有响应，请重试。',
     grading_off: '请先为此游戏开启“计入成绩”。',
     name_taken: '这个名字已经在游戏中了。请选择你自己的名字。',
     email_failed: '无法发送电子邮件。请检查地址后重试。',

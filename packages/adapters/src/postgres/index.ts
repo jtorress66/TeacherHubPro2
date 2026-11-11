@@ -4,6 +4,7 @@ import type {
   RateLimiter,
   AttachmentRepository,
   CanvaConnectionRepository,
+  MicrosoftConnectionRepository,
   ClassroomConnectionRepository,
   FormsExportRepository,
   StudentInsightRepository,
@@ -76,6 +77,7 @@ import { PostgresPlanTemplateRepository } from './repositories/postgres-plan-tem
 import {
   PostgresAttachmentRepository,
   PostgresCanvaConnectionRepository,
+  PostgresMicrosoftConnectionRepository,
   PostgresClassroomConnectionRepository,
   PostgresFormsExportRepository,
   PostgresStudentLinkRepository,
@@ -137,6 +139,7 @@ export interface PostgresRepositories {
   readonly studentLinks: StudentLinkRepository;
   readonly classroomConnections: ClassroomConnectionRepository;
   readonly canvaConnections: CanvaConnectionRepository;
+  readonly microsoftConnections: MicrosoftConnectionRepository;
   readonly formsExports: FormsExportRepository;
   readonly studentNotes: StudentNoteRepository;
   readonly studentInsights: StudentInsightRepository;
@@ -190,6 +193,7 @@ export function createPostgresRepositories(db: Kysely<Database>): PostgresReposi
     studentLinks: new PostgresStudentLinkRepository(db),
     classroomConnections: new PostgresClassroomConnectionRepository(db),
     canvaConnections: new PostgresCanvaConnectionRepository(db),
+    microsoftConnections: new PostgresMicrosoftConnectionRepository(db),
     formsExports: new PostgresFormsExportRepository(db),
     studentNotes: new PostgresStudentNoteRepository(db),
     studentInsights: new PostgresStudentInsightRepository(db),

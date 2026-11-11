@@ -1,19 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { createTranslator, type Locale } from '@thp/i18n';
-import { signUp } from './helpers.ts';
-
-/** Asks the assistant (the worker's scripted stand-in in tests) for a worksheet. */
-async function writeWorksheet(page: Page, locale: Locale, topic: string): Promise<void> {
-  const t = createTranslator(locale);
-  await page.goto(`/${locale}/app/assistant`);
-  const form = page.getByRole('form', { name: t('assistant.title') });
-  await form.getByLabel(t('assistant.type')).selectOption('worksheet');
-  await form.getByLabel(t('assistant.topic')).fill(topic);
-  await form.getByRole('button', { name: t('assistant.submit') }).click();
-  await expect(page).toHaveURL(/\/assistant\/[^/]+$/, { timeout: 30_000 });
-  await expect(page).not.toHaveURL(/\/jobs\//);
-}
+import { signUp, writeWorksheet } from './helpers.ts';
 
 for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
   const t = createTranslator(locale);

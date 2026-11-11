@@ -1,6 +1,7 @@
 import type {
   Attachment,
   CanvaConnection,
+  MicrosoftConnection,
   ClassroomConnection,
   FormsExport,
   StudentInsight,
@@ -189,6 +190,12 @@ export interface ClassroomConnectionRepository {
 export interface CanvaConnectionRepository {
   find(schoolId: SchoolId, teacherId: UserId): Promise<CanvaConnection | null>;
   save(connection: CanvaConnection): Promise<void>;
+  delete(schoolId: SchoolId, teacherId: UserId): Promise<void>;
+}
+
+export interface MicrosoftConnectionRepository {
+  find(schoolId: SchoolId, teacherId: UserId): Promise<MicrosoftConnection | null>;
+  save(connection: MicrosoftConnection): Promise<void>;
   delete(schoolId: SchoolId, teacherId: UserId): Promise<void>;
 }
 

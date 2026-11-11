@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import {
   CANVA_OAUTH_COOKIE,
-  decodeCanvaOAuth,
+  MICROSOFT_OAUTH_COOKIE,
+  decodePkceOAuth,
   decodeOAuthState,
-  encodeCanvaOAuth,
+  encodePkceOAuth,
   encodeOAuthState,
   oauthStateCookieOptions,
   sessionCookieOptions,
@@ -47,11 +48,12 @@ describe('Google sign-in state cookie', () => {
   });
 });
 
-describe('Canva connect cookie', () => {
-  it('carries the state, the PKCE verifier and the language, under its own name', () => {
+describe('Canva and Microsoft connect cookies', () => {
+  it('carry the state, the PKCE verifier and the language, each under its own name', () => {
     expect(CANVA_OAUTH_COOKIE).toBe('thp_canva_oauth');
-    const value = encodeCanvaOAuth({ state: 'st_1-x', verifier: 'v-erifier_9', locale: 'es' });
-    expect(decodeCanvaOAuth(value)).toEqual({
+    expect(MICROSOFT_OAUTH_COOKIE).toBe('thp_microsoft_oauth');
+    const value = encodePkceOAuth({ state: 'st_1-x', verifier: 'v-erifier_9', locale: 'es' });
+    expect(decodePkceOAuth(value)).toEqual({
       state: 'st_1-x',
       verifier: 'v-erifier_9',
       locale: 'es',
@@ -59,10 +61,10 @@ describe('Canva connect cookie', () => {
   });
 
   it('rejects a damaged value and falls back to the default language', () => {
-    expect(decodeCanvaOAuth(undefined)).toBeNull();
-    expect(decodeCanvaOAuth('only-state')).toBeNull();
-    expect(decodeCanvaOAuth('.v.es')).toBeNull();
-    expect(decodeCanvaOAuth('s..es')).toBeNull();
-    expect(decodeCanvaOAuth('s.v.xx')).toEqual({ state: 's', verifier: 'v', locale: 'en' });
+    expect(decodePkceOAuth(undefined)).toBeNull();
+    expect(decodePkceOAuth('only-state')).toBeNull();
+    expect(decodePkceOAuth('.v.es')).toBeNull();
+    expect(decodePkceOAuth('s..es')).toBeNull();
+    expect(decodePkceOAuth('s.v.xx')).toEqual({ state: 's', verifier: 'v', locale: 'en' });
   });
 });

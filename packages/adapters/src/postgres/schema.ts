@@ -294,6 +294,13 @@ export interface CanvaConnectionsTable {
   connected_at: Date;
 }
 
+export interface MicrosoftConnectionsTable {
+  teacher_id: string;
+  school_id: string;
+  encrypted_refresh_token: string;
+  connected_at: Date;
+}
+
 export interface FormsExportsTable {
   assignment_id: string;
   school_id: string;
@@ -587,6 +594,7 @@ export interface Database {
   student_links: StudentLinksTable;
   classroom_connections: ClassroomConnectionsTable;
   canva_connections: CanvaConnectionsTable;
+  microsoft_connections: MicrosoftConnectionsTable;
   forms_exports: FormsExportsTable;
   student_notes: StudentNotesTable;
   student_insights: StudentInsightsTable;

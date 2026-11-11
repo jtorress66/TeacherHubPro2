@@ -1,6 +1,7 @@
 import type {
   Attachment,
   CanvaConnection,
+  MicrosoftConnection,
   ClassroomConnection,
   FormsExport,
   StudentInsight,
@@ -97,6 +98,7 @@ import type {
   SubscriptionRepository,
   UserRepository,
   CanvaConnectionRepository,
+  MicrosoftConnectionRepository,
 } from '@thp/ports';
 
 /** In-memory storage shared by the fake repositories. Every read is scoped to a school. */
@@ -621,6 +623,25 @@ export class InMemoryCanvaConnectionRepository implements CanvaConnectionReposit
   }
 
   save(connection: CanvaConnection): Promise<void> {
+    this.rows.set(connection.teacherId, connection);
+    return Promise.resolve();
+  }
+
+  delete(schoolId: SchoolId, teacherId: UserId): Promise<void> {
+    if (this.rows.get(teacherId)?.schoolId === schoolId) this.rows.delete(teacherId);
+    return Promise.resolve();
+  }
+}
+
+export class InMemoryMicrosoftConnectionRepository implements MicrosoftConnectionRepository {
+  private readonly rows = new Map<UserId, MicrosoftConnection>();
+
+  find(schoolId: SchoolId, teacherId: UserId): Promise<MicrosoftConnection | null> {
+    const row = this.rows.get(teacherId);
+    return Promise.resolve(row?.schoolId === schoolId ? row : null);
+  }
+
+  save(connection: MicrosoftConnection): Promise<void> {
     this.rows.set(connection.teacherId, connection);
     return Promise.resolve();
   }

@@ -16,6 +16,7 @@ describe('site facts for search engines and AI assistants', () => {
       'Google Forms',
       'Canva',
       'PowerPoint',
+      'Microsoft OneDrive',
       'live classroom games',
       'Family portal',
       'report card',

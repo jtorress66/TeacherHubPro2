@@ -7,6 +7,7 @@ import type {
   ClassId,
   ClassroomConnection,
   FormsExport,
+  MicrosoftConnection,
   SchoolId,
   StudentId,
   StudentLink,
@@ -18,6 +19,7 @@ import type {
   CanvaConnectionsTable,
   ClassroomConnectionsTable,
   FormsExportsTable,
+  MicrosoftConnectionsTable,
   StudentLinksTable,
 } from '../schema.ts';
 import type { Row, RowMapper } from './columns.ts';
@@ -88,6 +90,22 @@ export const canvaConnectionMapper = {
     connected_at: connection.connectedAt,
   }),
   fromRow: (row: Selectable<CanvaConnectionsTable>): CanvaConnection => ({
+    id: row.teacher_id as UserId,
+    schoolId: row.school_id as SchoolId,
+    teacherId: row.teacher_id as UserId,
+    encryptedRefreshToken: row.encrypted_refresh_token,
+    connectedAt: row.connected_at,
+  }),
+};
+
+export const microsoftConnectionMapper = {
+  toRow: (connection: MicrosoftConnection): Row<MicrosoftConnectionsTable> => ({
+    teacher_id: connection.teacherId,
+    school_id: connection.schoolId,
+    encrypted_refresh_token: connection.encryptedRefreshToken,
+    connected_at: connection.connectedAt,
+  }),
+  fromRow: (row: Selectable<MicrosoftConnectionsTable>): MicrosoftConnection => ({
     id: row.teacher_id as UserId,
     schoolId: row.school_id as SchoolId,
     teacherId: row.teacher_id as UserId,
