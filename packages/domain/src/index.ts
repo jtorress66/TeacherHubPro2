@@ -9,6 +9,12 @@ export * from './shared/weekday.ts';
 export * from './shared/language.ts';
 export * from './shared/url.ts';
 export * from './shared/schedule.ts';
+export {
+  parseInline,
+  parseMarkdown,
+  type Block as MarkdownBlock,
+  type Inline as MarkdownInline,
+} from './shared/markdown.ts';
 
 export * from './accounts/session.ts';
 export * from './accounts/password-policy.ts';
@@ -109,6 +115,7 @@ export * from './prep/parent-email.ts';
 export * from './prep/prep-request.ts';
 export * from './prep/prep-batch.ts';
 export * from './presentations/google-slides.ts';
+export * from './canva/canva.ts';
 export * from './accounts/password-token.ts';
 export * from './users/admin-rules.ts';
 export * from './billing/access.ts';

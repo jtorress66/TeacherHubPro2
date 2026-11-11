@@ -33,6 +33,7 @@ describe('migrations', () => {
       'attendance_entries',
       'attendance_sessions',
       'audit_events',
+      'canva_connections',
       'chat_sessions',
       'chat_turns',
       'classes',
@@ -82,6 +83,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0023_canva_connections',
           '0022_rubrics',
           '0021_hardening',
           '0020_plan_format',
@@ -135,10 +137,11 @@ describe('migrations', () => {
           '0020_plan_format',
           '0021_hardening',
           '0022_rubrics',
+          '0023_canva_connections',
         ],
       },
     });
-    expect(await tableNames()).toHaveLength(47);
+    expect(await tableNames()).toHaveLength(48);
   });
 
   it('turns plans saved before step 8 into valid plans of their kind', async () => {

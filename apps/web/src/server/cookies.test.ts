@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
+  CANVA_OAUTH_COOKIE,
+  decodeCanvaOAuth,
   decodeOAuthState,
+  encodeCanvaOAuth,
   encodeOAuthState,
   oauthStateCookieOptions,
   sessionCookieOptions,
@@ -41,5 +44,25 @@ describe('Google sign-in state cookie', () => {
     expect(decodeOAuthState('no-separator')).toBeNull();
     expect(decodeOAuthState('.es')).toBeNull();
     expect(decodeOAuthState('abc.ru')).toEqual({ state: 'abc', locale: 'en' });
+  });
+});
+
+describe('Canva connect cookie', () => {
+  it('carries the state, the PKCE verifier and the language, under its own name', () => {
+    expect(CANVA_OAUTH_COOKIE).toBe('thp_canva_oauth');
+    const value = encodeCanvaOAuth({ state: 'st_1-x', verifier: 'v-erifier_9', locale: 'es' });
+    expect(decodeCanvaOAuth(value)).toEqual({
+      state: 'st_1-x',
+      verifier: 'v-erifier_9',
+      locale: 'es',
+    });
+  });
+
+  it('rejects a damaged value and falls back to the default language', () => {
+    expect(decodeCanvaOAuth(undefined)).toBeNull();
+    expect(decodeCanvaOAuth('only-state')).toBeNull();
+    expect(decodeCanvaOAuth('.v.es')).toBeNull();
+    expect(decodeCanvaOAuth('s..es')).toBeNull();
+    expect(decodeCanvaOAuth('s.v.xx')).toEqual({ state: 's', verifier: 'v', locale: 'en' });
   });
 });

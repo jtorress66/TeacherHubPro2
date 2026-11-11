@@ -400,6 +400,15 @@ export {
 export { makePrepRunners, type PrepItemRunner, type PrepRunners } from './prep/prep-runners.ts';
 export { PublishPrepBatch } from './prep/publish-prep.ts';
 export { SendPresentationToClassroom } from './presentations/presentation-to-classroom.ts';
+export {
+  CanvaConnected,
+  DisconnectCanva,
+  DownloadPresentationFile,
+  FinishCanvaConnect,
+  SendGenerationToCanva,
+  SendPresentationToCanva,
+  StartCanvaConnect,
+} from './canva/canva.ts';
 export { adminSchool, requireSuperAdmin } from './admin/admin-access.ts';
 export {
   PasswordLinks,

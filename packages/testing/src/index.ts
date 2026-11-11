@@ -15,6 +15,7 @@ export * from './fakes/security.ts';
 export * from './fakes/job-queue.ts';
 export * from './fakes/google.ts';
 export * from './fakes/documents.ts';
+export * from './fakes/canva.ts';
 export * from './fakes/games.ts';
 export * from './fakes/learning.ts';
 
@@ -28,6 +29,7 @@ export * from './contracts/security.contract.ts';
 export * from './contracts/files.contract.ts';
 export * from './contracts/services.contract.ts';
 export * from './contracts/google.contract.ts';
+export * from './contracts/canva.contract.ts';
 export * from './contracts/job-queue.contract.ts';
 export * from './contracts/gradebook.contract.ts';
 export * from './contracts/planner.contract.ts';

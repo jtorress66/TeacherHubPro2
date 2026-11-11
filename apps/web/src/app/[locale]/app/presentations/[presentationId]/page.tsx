@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import type { PresentationId } from '@thp/domain';
 import { createTranslator } from '@thp/i18n';
 import { PresentationClassroomForm } from '../../../../../components/assistant-forms.tsx';
+import { OpenInCanvaForm } from '../../../../../components/canva-forms.tsx';
 import { SlideEditor } from '../../../../../components/slide-editor.tsx';
 import { getAppContainer } from '../../../../../container.ts';
 import { deletePresentationAction } from '../../../../_lib/assistant-actions.ts';
@@ -46,6 +47,9 @@ export default async function PresentationPage(props: Props) {
         <Link className="button secondary" href={`${base}/${presentation.id}/print`}>
           {t('presentations.print')}
         </Link>
+        <a className="button secondary" href={`${base}/${presentation.id}/pptx`} download>
+          {t('canva.downloadPptx')}
+        </a>
         <form action={deletePresentationAction}>
           <input type="hidden" name="locale" value={locale} />
           <input type="hidden" name="presentationId" value={presentation.id} />
@@ -87,6 +91,12 @@ export default async function PresentationPage(props: Props) {
           />
         )}
       </section>
+      {app.canva === null ? null : (
+        <section className="card stack" aria-labelledby="slides-canva-heading">
+          <h2 id="slides-canva-heading">{t('canva.title')}</h2>
+          <OpenInCanvaForm locale={locale} kind="presentation" id={presentation.id} />
+        </section>
+      )}
     </section>
   );
 }

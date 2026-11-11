@@ -21,6 +21,7 @@ import * as marketing from './0019_marketing.ts';
 import * as planFormat from './0020_plan_format.ts';
 import * as hardening from './0021_hardening.ts';
 import * as rubrics from './0022_rubrics.ts';
+import * as canvaConnections from './0023_canva_connections.ts';
 
 /** Ordered list of migrations, bundled with the code (no filesystem lookups at runtime). */
 const migrations: Readonly<Record<string, Migration>> = {
@@ -46,6 +47,7 @@ const migrations: Readonly<Record<string, Migration>> = {
   '0020_plan_format': planFormat,
   '0021_hardening': hardening,
   '0022_rubrics': rubrics,
+  '0023_canva_connections': canvaConnections,
 };
 
 export const migrationProvider: MigrationProvider = {

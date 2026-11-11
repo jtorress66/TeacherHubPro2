@@ -641,7 +641,8 @@ export const es: Messages = {
     noAssignments: 'Todavía no hay asignaciones.',
     created: 'Asignación creada.',
     openCreated: 'Abre «{title}» para añadir preguntas →',
-    openHint: 'Haz clic en el nombre de una asignación para abrirla, añadir preguntas y ver las respuestas.',
+    openHint:
+      'Haz clic en el nombre de una asignación para abrirla, añadir preguntas y ver las respuestas.',
     needCategory: 'Agrega una categoría de calificación antes de crear asignaciones.',
     editAssignment: 'Editar asignación',
     saveAssignment: 'Guardar cambios',
@@ -1232,10 +1233,13 @@ export const es: Messages = {
     submissions: 'Respuestas de los estudiantes',
     stepsTitle: 'Pasos de esta asignación',
     stepQuestions: 'Añade preguntas o archivos',
-    stepQuestionsDone: 'Preguntas: {questions} · Archivos: {files}. Los estudiantes pueden ver esta asignación.',
-    stepNotVisible: 'Los estudiantes aún no pueden ver esta asignación: añade preguntas o archivos y guarda.',
+    stepQuestionsDone:
+      'Preguntas: {questions} · Archivos: {files}. Los estudiantes pueden ver esta asignación.',
+    stepNotVisible:
+      'Los estudiantes aún no pueden ver esta asignación: añade preguntas o archivos y guarda.',
     stepShare: 'Comparte con los estudiantes',
-    stepLinked: '{linked} de {total} estudiantes tienen un enlace activo. Cada estudiante usa un solo enlace para todas sus asignaciones.',
+    stepLinked:
+      '{linked} de {total} estudiantes tienen un enlace activo. Cada estudiante usa un solo enlace para todas sus asignaciones.',
     stepAnswers: 'Respuestas de los estudiantes',
     stepHandedIn: '{handedIn} entregadas · {toReview} por revisar',
     back: 'Volver a la asignación',
@@ -1346,6 +1350,24 @@ export const es: Messages = {
     sharedLink: 'Abrir en Classroom',
     shareNote:
       'Los estudiantes contestan con sus enlaces personales de TeacherHubPro; Classroom recibe el título, las instrucciones y la fecha de entrega.',
+  },
+  canva: {
+    title: 'Canva',
+    connected: 'Canva está conectado.',
+    notConnected:
+      'Conecta Canva para abrir allí tus presentaciones y hojas de trabajo y seguir diseñándolas.',
+    connect: 'Conectar Canva',
+    disconnect: 'Desconectar',
+    connectedNotice: 'Canva conectado.',
+    failedNotice: 'No se pudo conectar Canva. Inténtalo de nuevo.',
+    open: 'Abrir en Canva',
+    sending: 'Enviando a Canva…',
+    ready: 'Tu diseño está listo en Canva.',
+    openDesign: 'Abrir el diseño en Canva',
+    note: 'Solo este material va a tu cuenta de Canva, nunca información de estudiantes.',
+    connectFirst: 'Conecta Canva en Configuración para abrir esto en Canva.',
+    settingsLink: 'Ir a Configuración',
+    downloadPptx: 'Descargar PowerPoint',
   },
   forms: {
     title: 'Prueba de Google Forms',
@@ -1841,6 +1863,8 @@ export const es: Messages = {
     not_shareable: 'Añade preguntas o un archivo antes de compartir esta asignación.',
     classroom_not_connected: 'Primero conecta Google Classroom en Configuración.',
     classroom_failed: 'Google Classroom no respondió. Inténtalo de nuevo.',
+    canva_not_connected: 'Conecta Canva en Configuración primero.',
+    canva_failed: 'Canva no respondió. Inténtalo de nuevo.',
     grading_off: 'Primero activa «Cuenta como nota» para este juego.',
     name_taken: 'Ese nombre ya está jugando. Elige tu propio nombre.',
     email_failed: 'No se pudo enviar el correo. Revise la dirección e inténtelo de nuevo.',

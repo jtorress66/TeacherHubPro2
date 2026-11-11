@@ -302,10 +302,13 @@ export const deAppB = {
     submissions: 'Antworten der Schülerinnen und Schüler',
     stepsTitle: 'Schritte für diese Aufgabe',
     stepQuestions: 'Fragen oder Dateien hinzufügen',
-    stepQuestionsDone: 'Fragen: {questions} · Dateien: {files}. Die Schülerinnen und Schüler sehen diese Aufgabe.',
-    stepNotVisible: 'Die Schülerinnen und Schüler sehen diese Aufgabe noch nicht: Fragen oder Dateien hinzufügen und speichern.',
+    stepQuestionsDone:
+      'Fragen: {questions} · Dateien: {files}. Die Schülerinnen und Schüler sehen diese Aufgabe.',
+    stepNotVisible:
+      'Die Schülerinnen und Schüler sehen diese Aufgabe noch nicht: Fragen oder Dateien hinzufügen und speichern.',
     stepShare: 'Mit der Klasse teilen',
-    stepLinked: '{linked} von {total} Schülerinnen und Schülern haben einen gültigen Link. Jede Person nutzt einen Link für alle Aufgaben.',
+    stepLinked:
+      '{linked} von {total} Schülerinnen und Schülern haben einen gültigen Link. Jede Person nutzt einen Link für alle Aufgaben.',
     stepAnswers: 'Antworten der Schülerinnen und Schüler',
     stepHandedIn: '{handedIn} abgegeben · {toReview} zu prüfen',
     back: 'Zurück zur Aufgabe',
@@ -418,6 +421,24 @@ export const deAppB = {
     sharedLink: 'In Classroom öffnen',
     shareNote:
       'Schülerinnen und Schüler antworten über ihre persönlichen TeacherHubPro-Links; Classroom erhält Titel, Hinweise und Abgabetermin.',
+  },
+  canva: {
+    title: 'Canva',
+    connected: 'Canva ist verbunden.',
+    notConnected:
+      'Verbinden Sie Canva, um Ihre Präsentationen und Arbeitsblätter dort zu öffnen und weiterzugestalten.',
+    connect: 'Canva verbinden',
+    disconnect: 'Trennen',
+    connectedNotice: 'Canva verbunden.',
+    failedNotice: 'Canva konnte nicht verbunden werden. Bitte versuchen Sie es erneut.',
+    open: 'In Canva öffnen',
+    sending: 'Wird an Canva gesendet…',
+    ready: 'Ihr Design ist in Canva bereit.',
+    openDesign: 'Design in Canva öffnen',
+    note: 'Nur dieses Material geht an Ihr Canva-Konto, niemals Daten von Schülerinnen und Schülern.',
+    connectFirst: 'Verbinden Sie Canva in den Einstellungen, um dies in Canva zu öffnen.',
+    settingsLink: 'Zu den Einstellungen',
+    downloadPptx: 'Als PowerPoint herunterladen',
   },
   forms: {
     title: 'Google Forms-Quiz',
@@ -915,6 +936,8 @@ export const deAppB = {
     not_shareable: 'Fügen Sie Fragen oder eine Datei hinzu, bevor Sie diese Aufgabe teilen.',
     classroom_not_connected: 'Verbinden Sie zuerst Google Classroom in den Einstellungen.',
     classroom_failed: 'Google Classroom hat nicht geantwortet. Bitte versuchen Sie es erneut.',
+    canva_not_connected: 'Verbinden Sie zuerst Canva in den Einstellungen.',
+    canva_failed: 'Canva hat nicht geantwortet. Bitte versuchen Sie es erneut.',
     grading_off: 'Aktivieren Sie zuerst „Als Note zählen“ für dieses Spiel.',
     name_taken: 'Mit diesem Namen spielt schon jemand. Wähle deinen eigenen Namen.',
     email_failed:

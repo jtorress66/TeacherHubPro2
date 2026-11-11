@@ -47,6 +47,7 @@ describe('parseWebConfig', () => {
         billing: { provider: 'local', secret: local.LOCAL_BILLING_SECRET },
         google: { provider: 'local', secret: local.LOCAL_GOOGLE_SECRET },
         classroom: { provider: 'local' },
+        canva: { provider: 'local' },
         voice: 'nova',
         realtime: {
           url: 'http://localhost:3200',
@@ -177,6 +178,7 @@ describe('parseWebConfig', () => {
           clientSecret: 'google-secret',
           encryptionKey: testEncryptionKey,
         },
+        canva: { provider: 'off' },
         voice: null,
         realtime: {
           url: 'https://teacherhubpro-realtime.onrender.com',
@@ -186,6 +188,44 @@ describe('parseWebConfig', () => {
         superAdminSetupKey: null,
         leadsNotifyEmail: null,
       },
+    });
+  });
+
+  it('turns Canva on with its client and the token key, and keeps it off in production until then', () => {
+    const canva = { CANVA_PROVIDER: 'canva', CANVA_CLIENT_ID: 'OC-1', CANVA_CLIENT_SECRET: 'cnvs' };
+    expect(parseWebConfig({ ...production, ...canva })).toMatchObject({
+      ok: true,
+      value: {
+        canva: {
+          provider: 'canva',
+          clientId: 'OC-1',
+          clientSecret: 'cnvs',
+          encryptionKey: testEncryptionKey,
+        },
+      },
+    });
+    expect(parseWebConfig({ ...production, CANVA_PROVIDER: 'off' })).toMatchObject({
+      value: { canva: { provider: 'off' } },
+    });
+    expect(parseWebConfig({ ...production, CANVA_PROVIDER: 'local' })).toEqual({
+      ok: false,
+      error: expect.stringContaining('CANVA_PROVIDER') as string,
+    });
+    expect(parseWebConfig({ ...production, CANVA_PROVIDER: 'canva' })).toEqual({
+      ok: false,
+      error: 'CANVA_PROVIDER=canva needs CANVA_CLIENT_ID and CANVA_CLIENT_SECRET',
+    });
+    expect(
+      parseWebConfig({
+        ...without(production, 'TOKEN_ENCRYPTION_KEY'),
+        ...canva,
+        CLASSROOM_PROVIDER: 'local',
+        APP_ENV: 'development',
+      }),
+    ).toEqual({ ok: false, error: 'TOKEN_ENCRYPTION_KEY must be 32 random bytes, base64 encoded' });
+    expect(parseWebConfig({ ...local, CANVA_PROVIDER: 'adobe' })).toEqual({
+      ok: false,
+      error: 'CANVA_PROVIDER must be off, local or canva',
     });
   });
 

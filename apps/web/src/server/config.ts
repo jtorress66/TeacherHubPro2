@@ -21,6 +21,18 @@ export type ClassroomConfig =
       readonly encryptionKey: string;
     };
 
+/** Canva: off (no button anywhere), the local stand-in, or Canva's Connect API. */
+export type CanvaConfig =
+  | { readonly provider: 'off' }
+  | { readonly provider: 'local' }
+  | {
+      readonly provider: 'canva';
+      readonly clientId: string;
+      readonly clientSecret: string;
+      /** Encrypts teachers' Canva refresh tokens at rest. */
+      readonly encryptionKey: string;
+    };
+
 export interface WebConfig {
   readonly databaseUrl: string;
   readonly appUrl: string;
@@ -28,6 +40,7 @@ export interface WebConfig {
   readonly billing: BillingConfig;
   readonly google: GoogleConfig;
   readonly classroom: ClassroomConfig;
+  readonly canva: CanvaConfig;
   /**
    * The voice that reads text aloud (the worker makes the audio with the same one); null when
    * the device's own voice reads instead.
@@ -177,6 +190,34 @@ function classroomFrom(
   return ok({ provider, clientId, clientSecret, encryptionKey });
 }
 
+/**
+ * Canva: the local stand-in by default in development and tests, off by default in production
+ * (where the stand-in is refused), and Canva's API with CANVA_PROVIDER=canva, which needs the
+ * Canva client and TOKEN_ENCRYPTION_KEY.
+ */
+function canvaFrom(
+  env: Readonly<Record<string, string | undefined>>,
+  appEnv: AppEnv,
+): Result<CanvaConfig, string> {
+  const chosen = env.CANVA_PROVIDER?.trim() ?? '';
+  const provider = chosen === '' ? (appEnv === 'production' ? 'off' : 'local') : chosen;
+  if (provider === 'off') return ok({ provider });
+  if (provider === 'local') {
+    return appEnv === 'production' ? err(localOnly('CANVA_PROVIDER')) : ok({ provider });
+  }
+  if (provider !== 'canva') return err('CANVA_PROVIDER must be off, local or canva');
+  const clientId = env.CANVA_CLIENT_ID?.trim() ?? '';
+  const clientSecret = env.CANVA_CLIENT_SECRET?.trim() ?? '';
+  if (clientId === '' || clientSecret === '') {
+    return err('CANVA_PROVIDER=canva needs CANVA_CLIENT_ID and CANVA_CLIENT_SECRET');
+  }
+  const encryptionKey = env.TOKEN_ENCRYPTION_KEY?.trim() ?? '';
+  if (Buffer.from(encryptionKey, 'base64').length !== 32) {
+    return err('TOKEN_ENCRYPTION_KEY must be 32 random bytes, base64 encoded');
+  }
+  return ok({ provider, clientId, clientSecret, encryptionKey });
+}
+
 /** The team address for high-priority leads, when it is a valid email; otherwise none. */
 const leadsNotifyFrom = (env: Readonly<Record<string, string | undefined>>): string | null => {
   const address = env.LEADS_NOTIFY_EMAIL?.trim() ?? '';
@@ -211,6 +252,8 @@ export function parseWebConfig(
   if (!classroom.ok) return classroom;
   const mail = mailFrom(env, c.APP_ENV);
   if (!mail.ok) return mail;
+  const canva = canvaFrom(env, c.APP_ENV);
+  if (!canva.ok) return canva;
 
   return ok({
     databaseUrl: c.DATABASE_URL,
@@ -233,6 +276,7 @@ export function parseWebConfig(
             clientSecret: c.GOOGLE_CLIENT_SECRET,
           },
     classroom: classroom.value,
+    canva: canva.value,
     voice: voiceFrom(env, c.APP_ENV),
     realtime: {
       url: c.REALTIME_URL.replace(/\/$/, ''),
