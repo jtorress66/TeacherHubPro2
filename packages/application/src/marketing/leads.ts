@@ -23,8 +23,8 @@ import { fail, type UseCaseError } from '../errors.ts';
 export const maxListedLeads = 200;
 
 /**
- * Keeps a lead from the chatbot or contact form, and emails the team about high-priority ones
- * (when a team address is set). The email failing never loses the lead.
+ * Keeps a lead from the chatbot or contact form, and emails the team about every contact form
+ * message and high-priority chat leads (when a team address is set). The email failing never loses the lead.
  */
 export class CaptureLead {
   constructor(
@@ -58,7 +58,9 @@ export class CaptureLead {
     if (!lead.ok) return lead;
     await this.deps.leads.save(lead.value);
     const notify = this.deps.leadsNotifyEmail;
-    if (lead.value.score === 'high' && notify !== null) {
+    // Someone who wrote through the contact form is waiting for an answer; chat leads only when high.
+    const wanted = lead.value.source === 'contact' || lead.value.score === 'high';
+    if (wanted && notify !== null) {
       await this.deps.mailer.send({
         to: notify as Lead['email'],
         ...this.deps.mailTemplates.leadNotice({ lead: lead.value }),
