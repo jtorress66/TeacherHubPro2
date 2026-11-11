@@ -51,6 +51,7 @@ describe('migrations', () => {
       'live_answers',
       'live_players',
       'live_sessions',
+      'microsoft_connections',
       'password_credentials',
       'password_tokens',
       'plan_folders',
@@ -83,6 +84,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0024_microsoft_connections',
           '0023_canva_connections',
           '0022_rubrics',
           '0021_hardening',
@@ -138,10 +140,11 @@ describe('migrations', () => {
           '0021_hardening',
           '0022_rubrics',
           '0023_canva_connections',
+          '0024_microsoft_connections',
         ],
       },
     });
-    expect(await tableNames()).toHaveLength(48);
+    expect(await tableNames()).toHaveLength(49);
   });
 
   it('turns plans saved before step 8 into valid plans of their kind', async () => {

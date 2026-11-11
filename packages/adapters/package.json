@@ -19,7 +19,8 @@
     "pdf-lib": "1.17.1",
     "pg": "8.23.1",
     "pptxgenjs": "4.0.1",
-    "stripe": "22.6.2"
+    "stripe": "22.6.2",
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@thp/testing": "workspace:*",

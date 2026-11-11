@@ -5,6 +5,7 @@ import type { PresentationId } from '@thp/domain';
 import { createTranslator } from '@thp/i18n';
 import { PresentationClassroomForm } from '../../../../../components/assistant-forms.tsx';
 import { OpenInCanvaForm } from '../../../../../components/canva-forms.tsx';
+import { SaveToOneDriveForm } from '../../../../../components/microsoft-forms.tsx';
 import { SlideEditor } from '../../../../../components/slide-editor.tsx';
 import { getAppContainer } from '../../../../../container.ts';
 import { deletePresentationAction } from '../../../../_lib/assistant-actions.ts';
@@ -95,6 +96,12 @@ export default async function PresentationPage(props: Props) {
         <section className="card stack" aria-labelledby="slides-canva-heading">
           <h2 id="slides-canva-heading">{t('canva.title')}</h2>
           <OpenInCanvaForm locale={locale} kind="presentation" id={presentation.id} />
+        </section>
+      )}
+      {app.microsoft === null ? null : (
+        <section className="card stack" aria-labelledby="slides-onedrive-heading">
+          <h2 id="slides-onedrive-heading">{t('microsoft.title')}</h2>
+          <SaveToOneDriveForm locale={locale} kind="presentation" id={presentation.id} />
         </section>
       )}
     </section>

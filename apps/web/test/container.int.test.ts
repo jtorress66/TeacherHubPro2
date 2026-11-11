@@ -16,6 +16,7 @@ const config: WebConfig = {
   google: { provider: 'local', secret: 'google-secret-for-int-tests' },
   classroom: { provider: 'local' },
   canva: { provider: 'local' },
+  microsoft: { provider: 'local' },
   voice: 'nova',
   realtime: {
     url: 'http://localhost:3998',

@@ -33,6 +33,18 @@ export type CanvaConfig =
       readonly encryptionKey: string;
     };
 
+/** Microsoft (OneDrive): off (no button anywhere), the local stand-in, or Microsoft itself. */
+export type MicrosoftConfig =
+  | { readonly provider: 'off' }
+  | { readonly provider: 'local' }
+  | {
+      readonly provider: 'microsoft';
+      readonly clientId: string;
+      readonly clientSecret: string;
+      /** Encrypts teachers' Microsoft refresh tokens at rest. */
+      readonly encryptionKey: string;
+    };
+
 export interface WebConfig {
   readonly databaseUrl: string;
   readonly appUrl: string;
@@ -41,6 +53,7 @@ export interface WebConfig {
   readonly google: GoogleConfig;
   readonly classroom: ClassroomConfig;
   readonly canva: CanvaConfig;
+  readonly microsoft: MicrosoftConfig;
   /**
    * The voice that reads text aloud (the worker makes the audio with the same one); null when
    * the device's own voice reads instead.
@@ -218,6 +231,36 @@ function canvaFrom(
   return ok({ provider, clientId, clientSecret, encryptionKey });
 }
 
+/**
+ * Microsoft (OneDrive): the local stand-in by default in development and tests, off by default
+ * in production (where the stand-in is refused), and the Microsoft identity platform and Graph
+ * with MICROSOFT_PROVIDER=microsoft, which needs the app's client and TOKEN_ENCRYPTION_KEY.
+ */
+function microsoftFrom(
+  env: Readonly<Record<string, string | undefined>>,
+  appEnv: AppEnv,
+): Result<MicrosoftConfig, string> {
+  const chosen = env.MICROSOFT_PROVIDER?.trim() ?? '';
+  const provider = chosen === '' ? (appEnv === 'production' ? 'off' : 'local') : chosen;
+  if (provider === 'off') return ok({ provider });
+  if (provider === 'local') {
+    return appEnv === 'production' ? err(localOnly('MICROSOFT_PROVIDER')) : ok({ provider });
+  }
+  if (provider !== 'microsoft') return err('MICROSOFT_PROVIDER must be off, local or microsoft');
+  const clientId = env.MICROSOFT_CLIENT_ID?.trim() ?? '';
+  const clientSecret = env.MICROSOFT_CLIENT_SECRET?.trim() ?? '';
+  if (clientId === '' || clientSecret === '') {
+    return err(
+      'MICROSOFT_PROVIDER=microsoft needs MICROSOFT_CLIENT_ID and MICROSOFT_CLIENT_SECRET',
+    );
+  }
+  const encryptionKey = env.TOKEN_ENCRYPTION_KEY?.trim() ?? '';
+  if (Buffer.from(encryptionKey, 'base64').length !== 32) {
+    return err('TOKEN_ENCRYPTION_KEY must be 32 random bytes, base64 encoded');
+  }
+  return ok({ provider, clientId, clientSecret, encryptionKey });
+}
+
 /** The team address for high-priority leads, when it is a valid email; otherwise none. */
 const leadsNotifyFrom = (env: Readonly<Record<string, string | undefined>>): string | null => {
   const address = env.LEADS_NOTIFY_EMAIL?.trim() ?? '';
@@ -254,6 +297,8 @@ export function parseWebConfig(
   if (!mail.ok) return mail;
   const canva = canvaFrom(env, c.APP_ENV);
   if (!canva.ok) return canva;
+  const microsoft = microsoftFrom(env, c.APP_ENV);
+  if (!microsoft.ok) return microsoft;
 
   return ok({
     databaseUrl: c.DATABASE_URL,
@@ -277,6 +322,7 @@ export function parseWebConfig(
           },
     classroom: classroom.value,
     canva: canva.value,
+    microsoft: microsoft.value,
     voice: voiceFrom(env, c.APP_ENV),
     realtime: {
       url: c.REALTIME_URL.replace(/\/$/, ''),

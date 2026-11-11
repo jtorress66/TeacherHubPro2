@@ -53,6 +53,11 @@ export default async function IntegrationsPage(props: LocaleParams) {
               art: 'presentations',
             },
             {
+              title: t('marketing.integrationsPage.microsoft'),
+              text: t('marketing.integrationsPage.microsoftText'),
+              art: 'presentations',
+            },
+            {
               title: t('marketing.integrationsPage.stripe'),
               text: t('marketing.integrationsPage.stripeText'),
               art: 'shield',

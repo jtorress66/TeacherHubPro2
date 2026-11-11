@@ -30,6 +30,8 @@ export type ApplicationErrorCode =
   | 'classroom_failed'
   | 'canva_not_connected'
   | 'canva_failed'
+  | 'microsoft_not_connected'
+  | 'microsoft_failed'
   | 'grading_off'
   | 'name_taken'
   | 'email_failed'

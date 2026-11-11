@@ -5,6 +5,10 @@ import {
   DocxDocumentWriter,
   LocalCanvaAuthorization,
   LocalCanvaDesigns,
+  LocalMicrosoftAuthorization,
+  LocalOneDriveFiles,
+  MicrosoftIdentityAuthorization,
+  OneDriveGraphFiles,
   PptxPresentationWriter,
   LocalMailer,
   loggedMailer,
@@ -119,6 +123,12 @@ import {
   CanvaConnected,
   SendPresentationToCanva,
   SendGenerationToCanva,
+  StartMicrosoftConnect,
+  FinishMicrosoftConnect,
+  DisconnectMicrosoft,
+  MicrosoftConnected,
+  SavePresentationToOneDrive,
+  SaveGenerationToOneDrive,
   DownloadPresentationFile,
   StartChat,
   SendChatMessage,
@@ -269,6 +279,7 @@ import {
   parseWebConfig,
   type BillingConfig,
   type CanvaConfig,
+  type MicrosoftConfig,
   type ClassroomConfig,
   type GoogleConfig,
   type WebConfig,
@@ -284,6 +295,15 @@ export interface CanvaFeature {
   readonly connected: CanvaConnected;
   readonly sendPresentation: SendPresentationToCanva;
   readonly sendGeneration: SendGenerationToCanva;
+}
+
+export interface MicrosoftFeature {
+  readonly startConnect: StartMicrosoftConnect;
+  readonly finishConnect: FinishMicrosoftConnect;
+  readonly disconnect: DisconnectMicrosoft;
+  readonly connected: MicrosoftConnected;
+  readonly savePresentation: SavePresentationToOneDrive;
+  readonly saveGeneration: SaveGenerationToOneDrive;
 }
 
 export interface AppContainer {
@@ -368,6 +388,8 @@ export interface AppContainer {
   readonly sendPresentationToClassroom: SendPresentationToClassroom;
   /** Canva, when it is on; null hides every Canva button. */
   readonly canva: CanvaFeature | null;
+  /** Microsoft (OneDrive), when it is on; null hides every OneDrive button. */
+  readonly microsoft: MicrosoftFeature | null;
   readonly downloadPresentationFile: DownloadPresentationFile;
   readonly startChat: StartChat;
   readonly sendChatMessage: SendChatMessage;
@@ -582,6 +604,31 @@ function canvaFor(config: CanvaConfig) {
   };
 }
 
+/**
+ * The Microsoft identity platform and Graph, their stand-ins for development and tests (fake
+ * tokens, sealed with a fixed key), or nothing when it is off.
+ */
+function microsoftFor(config: MicrosoftConfig) {
+  if (config.provider === 'off') return null;
+  if (config.provider === 'local') {
+    return {
+      cipher: new AesGcmCipher(
+        createHash('sha256').update('teacherhubpro-local-microsoft').digest('base64'),
+      ),
+      microsoftAuth: new LocalMicrosoftAuthorization(),
+      oneDriveFiles: new LocalOneDriveFiles(),
+    };
+  }
+  return {
+    cipher: new AesGcmCipher(config.encryptionKey),
+    microsoftAuth: new MicrosoftIdentityAuthorization({
+      clientId: config.clientId,
+      clientSecret: config.clientSecret,
+    }),
+    oneDriveFiles: new OneDriveGraphFiles(),
+  };
+}
+
 function billingFor(config: BillingConfig, appUrl: string): Billing {
   if (config.provider === 'local') {
     return {
@@ -655,6 +702,8 @@ export function createAppContainer(
   };
   const canva = canvaFor(config.canva);
   const canvaDeps = canva === null ? null : { ...deps, ...canva };
+  const microsoft = microsoftFor(config.microsoft);
+  const microsoftDeps = microsoft === null ? null : { ...deps, ...microsoft };
 
   return {
     appUrl: config.appUrl,
@@ -744,6 +793,17 @@ export function createAppContainer(
             connected: new CanvaConnected(canvaDeps),
             sendPresentation: new SendPresentationToCanva(canvaDeps),
             sendGeneration: new SendGenerationToCanva(canvaDeps),
+          },
+    microsoft:
+      microsoftDeps === null
+        ? null
+        : {
+            startConnect: new StartMicrosoftConnect(microsoftDeps),
+            finishConnect: new FinishMicrosoftConnect(microsoftDeps),
+            disconnect: new DisconnectMicrosoft(microsoftDeps),
+            connected: new MicrosoftConnected(microsoftDeps),
+            savePresentation: new SavePresentationToOneDrive(microsoftDeps),
+            saveGeneration: new SaveGenerationToOneDrive(microsoftDeps),
           },
     downloadPresentationFile: new DownloadPresentationFile(deps),
     startChat: new StartChat(deps),

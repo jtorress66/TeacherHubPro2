@@ -409,6 +409,14 @@ export {
   SendPresentationToCanva,
   StartCanvaConnect,
 } from './canva/canva.ts';
+export {
+  DisconnectMicrosoft,
+  FinishMicrosoftConnect,
+  MicrosoftConnected,
+  SaveGenerationToOneDrive,
+  SavePresentationToOneDrive,
+  StartMicrosoftConnect,
+} from './microsoft/microsoft.ts';
 export { adminSchool, requireSuperAdmin } from './admin/admin-access.ts';
 export {
   PasswordLinks,

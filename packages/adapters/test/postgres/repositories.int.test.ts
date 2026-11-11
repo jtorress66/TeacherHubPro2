@@ -39,6 +39,7 @@ import {
   assistantRepositoryContract,
   assignmentRepositoryContract,
   canvaConnectionRepositoryContract,
+  microsoftConnectionRepositoryContract,
   student360RepositoryContract,
   prepBatchRepositoryContract,
   adminContract,
@@ -100,6 +101,7 @@ withParents(parentsFor.grading, () => {
     formsExports: repos.formsExports,
   }));
   canvaConnectionRepositoryContract('Postgres', () => repos.canvaConnections);
+  microsoftConnectionRepositoryContract('Postgres', () => repos.microsoftConnections);
 });
 
 withParents(parentsFor.none, () => {

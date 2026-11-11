@@ -23,6 +23,7 @@ export const includedFeatures = [
   'listen',
   'google',
   'canva',
+  'microsoft',
   'languages',
   'privacy',
   'aiDrafts',

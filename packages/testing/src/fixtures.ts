@@ -1,5 +1,6 @@
 import {
   connectCanva,
+  connectMicrosoft,
   connectClassroom,
   createAttachment,
   createStudentLink,
@@ -62,6 +63,7 @@ import {
 } from '@thp/domain';
 import type {
   CanvaConnection,
+  MicrosoftConnection,
   GamePlay,
   LiveAnswer,
   LivePlayer,
@@ -470,6 +472,18 @@ export const aClassroomConnection = (
 
 export const aCanvaConnection = (overrides: Partial<CanvaConnection> = {}): CanvaConnection => ({
   ...connectCanva({
+    schoolId,
+    teacherId,
+    encryptedRefreshToken: 'sealed-1',
+    connectedAt: new Date('2026-09-01T12:00:00Z'),
+  }),
+  ...overrides,
+});
+
+export const aMicrosoftConnection = (
+  overrides: Partial<MicrosoftConnection> = {},
+): MicrosoftConnection => ({
+  ...connectMicrosoft({
     schoolId,
     teacherId,
     encryptedRefreshToken: 'sealed-1',

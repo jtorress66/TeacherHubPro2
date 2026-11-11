@@ -35,18 +35,20 @@ export function decodeOAuthState(
 }
 
 export const CANVA_OAUTH_COOKIE = 'thp_canva_oauth';
+export const MICROSOFT_OAUTH_COOKIE = 'thp_microsoft_oauth';
 
 /**
- * Connecting Canva: the random state, the PKCE verifier (kept here, never sent until the code
- * comes back) and the page language. Neither random value contains a dot.
+ * Connecting Canva or Microsoft (each under its own cookie): the random state, the PKCE verifier
+ * (kept here, never sent until the code comes back) and the page language. Neither random value
+ * contains a dot.
  */
-export const encodeCanvaOAuth = (value: {
+export const encodePkceOAuth = (value: {
   readonly state: string;
   readonly verifier: string;
   readonly locale: Locale;
 }): string => `${value.state}.${value.verifier}.${value.locale}`;
 
-export function decodeCanvaOAuth(
+export function decodePkceOAuth(
   value: string | undefined,
 ): { state: string; verifier: string; locale: Locale } | null {
   const [state, verifier, locale, ...rest] = (value ?? '').split('.');

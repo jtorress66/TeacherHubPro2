@@ -170,6 +170,8 @@ export const marketingDe: MarketingMessages = {
         'Google-Integration: Anmeldung mit Google, Google Classroom (Klassenlisten importieren, Aufgaben, Word-Dokumente und Präsentationen posten), Google-Forms-Quizze und Dateien in Ihrem eigenen Google Drive',
       canva:
         'Canva: Präsentationen und Arbeitsblätter im eigenen Canva-Konto als bearbeitbare Designs öffnen',
+      microsoft:
+        'Microsoft OneDrive: Präsentationen als PowerPoint und Arbeitsblätter als Word-Dateien im eigenen OneDrive speichern',
       languages:
         'Sieben Sprachen: Englisch, Spanisch, Französisch, Portugiesisch, Deutsch, Italienisch und Chinesisch; die KI schreibt in der gewählten Sprache',
       privacy:
@@ -394,7 +396,7 @@ export const marketingDe: MarketingMessages = {
     integrationsPage: {
       metaTitle: 'Integrationen | TeacherHubPro',
       metaDescription:
-        'Google-Anmeldung, Google Classroom, Forms, Drive und Slides, Canva, Stripe und E-Mail.',
+        'Google-Anmeldung, Google Classroom, Forms, Drive und Slides, Canva, Microsoft OneDrive, Stripe und E-Mail.',
       title: 'Integrationen',
       intro:
         'Die Dienste, mit denen TeacherHubPro heute zusammenarbeitet, über ihre offiziellen APIs.',
@@ -411,6 +413,9 @@ export const marketingDe: MarketingMessages = {
       canva: 'Canva',
       canvaText:
         'Öffnen Sie Präsentationen und Arbeitsblätter in Ihrem eigenen Canva-Konto als bearbeitbare Designs. Gesendet wird nur, was Sie auswählen, niemals Daten von Schülerinnen und Schülern.',
+      microsoft: 'Microsoft OneDrive',
+      microsoftText:
+        'Speichern Sie Präsentationen (PowerPoint) und Arbeitsblätter (Word) in einem Ordner „TeacherHubPro“ in Ihrem eigenen OneDrive. Gesendet werden nur die Dateien, die Sie speichern, niemals Daten von Schülerinnen und Schülern.',
       stripe: 'Stripe',
       stripeText: 'Sichere Zahlungen für Tarife; Kartendaten berühren nie unsere Server.',
       email: 'E-Mail',
@@ -565,10 +570,10 @@ export const marketingDe: MarketingMessages = {
         'Nur, um den Dienst für die Schule oder Lehrkraft zu betreiben, die sie eingegeben hat. Wir verkaufen keine personenbezogenen Daten und verwenden Schülerdaten nicht für Werbung.',
       s4Title: 'An wen wir sie weitergeben',
       s4Text:
-        'An Dienstleister, die die App betreiben: unseren Hosting- und Datenbankanbieter, Stripe für Zahlungen, einen E-Mail-Anbieter für Nachrichten, Anthropic (Claude) für KI-Entwürfe, OpenAI für vorgelesene Audioinhalte, Google, wenn eine Lehrkraft Google Classroom verbindet, und Canva, wenn eine Lehrkraft Canva verbindet (nur die Präsentation oder das Arbeitsblatt, das sie dort öffnet, niemals Daten von Schülerinnen und Schülern). Jeder erhält nur, was seine Aufgabe braucht.',
+        'An Dienstleister, die die App betreiben: unseren Hosting- und Datenbankanbieter, Stripe für Zahlungen, einen E-Mail-Anbieter für Nachrichten, Anthropic (Claude) für KI-Entwürfe, OpenAI für vorgelesene Audioinhalte, Google, wenn eine Lehrkraft Google Classroom verbindet, Canva, wenn eine Lehrkraft Canva verbindet (nur die Präsentation oder das Arbeitsblatt, das sie dort öffnet, niemals Daten von Schülerinnen und Schülern), und Microsoft, wenn eine Lehrkraft Microsoft verbindet (nur die Dateien, die sie in OneDrive speichert, niemals Daten von Schülerinnen und Schülern). Jeder erhält nur, was seine Aufgabe braucht.',
       s5Title: 'Wie sie geschützt werden',
       s5Text:
-        'Passwörter werden als Einweg-Hashes gespeichert. Sitzungs-, Schüler-, Familien- und Passwort-Links sind zufällig und werden nur als Hashes gespeichert. Google-Classroom- und Canva-Tokens sind verschlüsselt. Jeder Datensatz gehört zu genau einer Schule und ist nur für die Benutzer dieser Schule erreichbar.',
+        'Passwörter werden als Einweg-Hashes gespeichert. Sitzungs-, Schüler-, Familien- und Passwort-Links sind zufällig und werden nur als Hashes gespeichert. Google-Classroom-, Canva- und Microsoft-Tokens sind verschlüsselt. Jeder Datensatz gehört zu genau einer Schule und ist nur für die Benutzer dieser Schule erreichbar.',
       s6Title: 'Aufbewahrung und Löschung von Daten',
       s6Text:
         'Die Daten bleiben erhalten, solange das Konto aktiv ist. Hochgeladene PDFs werden gelöscht, sobald sie gelesen wurden. Website-Chats werden nach 30 Tagen gelöscht. Um eine Kopie oder die Löschung Ihrer Daten anzufordern, schreiben Sie uns über die Kontaktseite.',

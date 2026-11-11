@@ -5,6 +5,7 @@ import type { GenerationId } from '@thp/domain';
 import { createTranslator } from '@thp/i18n';
 import { CopyButton } from '../../../../../components/assistant-forms.tsx';
 import { OpenInCanvaForm } from '../../../../../components/canva-forms.tsx';
+import { SaveToOneDriveForm } from '../../../../../components/microsoft-forms.tsx';
 import { ListenButton } from '../../../../../components/listen-button.tsx';
 import { Markdown } from '../../../../../components/markdown.tsx';
 import { getAppContainer } from '../../../../../container.ts';
@@ -65,6 +66,12 @@ export default async function GenerationPage(props: Props) {
         <section className="card stack" aria-labelledby="generation-canva-heading">
           <h2 id="generation-canva-heading">{t('canva.title')}</h2>
           <OpenInCanvaForm locale={locale} kind="generation" id={generation.id} />
+        </section>
+      )}
+      {app.microsoft === null ? null : (
+        <section className="card stack" aria-labelledby="generation-onedrive-heading">
+          <h2 id="generation-onedrive-heading">{t('microsoft.title')}</h2>
+          <SaveToOneDriveForm locale={locale} kind="generation" id={generation.id} />
         </section>
       )}
     </section>

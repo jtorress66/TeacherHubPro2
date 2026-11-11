@@ -3,7 +3,7 @@ import { defaultLocale, isLocale } from '@thp/i18n';
 import { getAppContainer } from '../../../../container.ts';
 import {
   CANVA_OAUTH_COOKIE,
-  encodeCanvaOAuth,
+  encodePkceOAuth,
   oauthStateCookieOptions,
 } from '../../../../server/cookies.ts';
 import { codeChallenge } from '../../../../server/pkce.ts';
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   );
   response.cookies.set(
     CANVA_OAUTH_COOKIE,
-    encodeCanvaOAuth({ state, verifier, locale }),
+    encodePkceOAuth({ state, verifier, locale }),
     oauthStateCookieOptions(app.appUrl),
   );
   return response;

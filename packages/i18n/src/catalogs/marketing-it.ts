@@ -170,6 +170,8 @@ export const marketingIt: MarketingMessages = {
         'Integrazione con Google: accesso con Google, Google Classroom (importa le classi, pubblica compiti, documenti Word e presentazioni), quiz in Google Moduli e file nel tuo Google Drive',
       canva:
         'Canva: apra presentazioni e schede di lavoro nel Suo account Canva come design modificabili',
+      microsoft:
+        'Microsoft OneDrive: salvi presentazioni in PowerPoint e schede di lavoro in Word nel Suo OneDrive',
       languages:
         'Sette lingue: inglese, spagnolo, francese, portoghese, tedesco, italiano e cinese; l’IA scrive nella lingua che scegli',
       privacy:
@@ -390,7 +392,7 @@ export const marketingIt: MarketingMessages = {
     integrationsPage: {
       metaTitle: 'Integrazioni | TeacherHubPro',
       metaDescription:
-        'Accesso con Google, Google Classroom, Forms, Drive e Slides, Canva, Stripe ed email.',
+        'Accesso con Google, Google Classroom, Forms, Drive e Slides, Canva, Microsoft OneDrive, Stripe ed email.',
       title: 'Integrazioni',
       intro: 'I servizi con cui TeacherHubPro funziona oggi, tramite le loro API ufficiali.',
       googleSignIn: 'Accesso con Google',
@@ -405,6 +407,9 @@ export const marketingIt: MarketingMessages = {
       canva: 'Canva',
       canvaText:
         'Apra presentazioni e schede di lavoro nel Suo account Canva come design modificabili. Viene inviato solo ciò che sceglie, mai dati degli studenti.',
+      microsoft: 'Microsoft OneDrive',
+      microsoftText:
+        'Salvi presentazioni (PowerPoint) e schede di lavoro (Word) in una cartella TeacherHubPro del Suo OneDrive. Vengono inviati solo i file che salva, mai dati degli studenti.',
       stripe: 'Stripe',
       stripeText:
         'Pagamenti sicuri per i piani; i dati delle carte non passano mai dai nostri server.',
@@ -559,10 +564,10 @@ export const marketingIt: MarketingMessages = {
         'Solo per fornire il servizio alla scuola o al docente che li ha inseriti. Non vendiamo dati personali né usiamo i dati degli studenti per la pubblicità.',
       s4Title: 'Con chi li condividiamo',
       s4Text:
-        "Fornitori di servizi che fanno funzionare l'app: il nostro fornitore di hosting e database, Stripe per i pagamenti, un fornitore di email per i messaggi, Anthropic (Claude) per le bozze dell'IA, OpenAI per l'audio di lettura ad alta voce, Google quando un docente collega Google Classroom e Canva quando un docente collega Canva (solo la presentazione o la scheda che vi apre, mai dati degli studenti). Ciascuno riceve solo ciò che serve al proprio compito.",
+        "Fornitori di servizi che fanno funzionare l'app: il nostro fornitore di hosting e database, Stripe per i pagamenti, un fornitore di email per i messaggi, Anthropic (Claude) per le bozze dell'IA, OpenAI per l'audio di lettura ad alta voce, Google quando un docente collega Google Classroom, Canva quando un docente collega Canva (solo la presentazione o la scheda che vi apre, mai dati degli studenti) e Microsoft quando un docente collega Microsoft (solo i file che salva su OneDrive, mai dati degli studenti). Ciascuno riceve solo ciò che serve al proprio compito.",
       s5Title: 'Come sono protetti',
       s5Text:
-        'Le password sono conservate come hash unidirezionali. I link di sessione, per studenti, per famiglie e per la password sono casuali e conservati solo come hash. I token di Google Classroom e di Canva sono cifrati. Ogni dato appartiene a una sola scuola ed è accessibile solo agli utenti di quella scuola.',
+        'Le password sono conservate come hash unidirezionali. I link di sessione, per studenti, per famiglie e per la password sono casuali e conservati solo come hash. I token di Google Classroom, di Canva e di Microsoft sono cifrati. Ogni dato appartiene a una sola scuola ed è accessibile solo agli utenti di quella scuola.',
       s6Title: 'Conservazione e cancellazione dei dati',
       s6Text:
         "I dati restano finché l'account è attivo. I PDF caricati vengono eliminati una volta letti. Le chat del sito vengono eliminate dopo 30 giorni. Per chiedere una copia o la cancellazione dei Suoi dati, ci scriva dalla pagina dei contatti.",
