@@ -66,6 +66,8 @@ export interface WebConfig {
   readonly superAdminSetupKey: string | null;
   /** Where high-priority website leads are emailed; null sends none. */
   readonly leadsNotifyEmail: string | null;
+  /** Optional integrations turned off because their settings are wrong; logged, never fatal. */
+  readonly warnings: readonly string[];
 }
 
 /**
@@ -280,9 +282,15 @@ const setupKeyFrom = (env: Readonly<Record<string, string | undefined>>): string
 export function parseWebConfig(
   env: Readonly<Record<string, string | undefined>>,
 ): Result<WebConfig, string> {
-  // A key pasted into the host's settings often brings a space or line break along.
+  // A key pasted into the host's settings often brings a space or line break along, and a
+  // provider name or environment is easily typed with a capital ("Microsoft", "Production").
   const trimmed = Object.fromEntries(
-    Object.entries(env).map(([name, value]) => [name, value?.trim()]),
+    Object.entries(env).map(([name, value]) => [
+      name,
+      name.endsWith('_PROVIDER') || name === 'APP_ENV'
+        ? value?.trim().toLowerCase()
+        : value?.trim(),
+    ]),
   );
   const parsed = schema.safeParse(trimmed);
   if (!parsed.success) return err(parsed.error.issues[0]?.message ?? 'Invalid configuration');
@@ -291,14 +299,21 @@ export function parseWebConfig(
     return err(localOnly('BILLING_PROVIDER'));
   if (c.APP_ENV === 'production' && c.GOOGLE_AUTH_PROVIDER === 'local')
     return err(localOnly('GOOGLE_AUTH_PROVIDER'));
-  const classroom = classroomFrom(env, c.APP_ENV);
+  const classroom = classroomFrom(trimmed, c.APP_ENV);
   if (!classroom.ok) return classroom;
-  const mail = mailFrom(env, c.APP_ENV);
+  const mail = mailFrom(trimmed, c.APP_ENV);
   if (!mail.ok) return mail;
-  const canva = canvaFrom(env, c.APP_ENV);
-  if (!canva.ok) return canva;
-  const microsoft = microsoftFrom(env, c.APP_ENV);
-  if (!microsoft.ok) return microsoft;
+  // Canva and Microsoft are optional: a wrong setting turns only that integration off.
+  const warnings: string[] = [];
+  const optional = <T>(setting: Result<T, string>, off: T): T => {
+    if (setting.ok) return setting.value;
+    warnings.push(setting.error);
+    return off;
+  };
+  const canva = optional<CanvaConfig>(canvaFrom(trimmed, c.APP_ENV), { provider: 'off' });
+  const microsoft = optional<MicrosoftConfig>(microsoftFrom(trimmed, c.APP_ENV), {
+    provider: 'off',
+  });
 
   return ok({
     databaseUrl: c.DATABASE_URL,
@@ -321,9 +336,9 @@ export function parseWebConfig(
             clientSecret: c.GOOGLE_CLIENT_SECRET,
           },
     classroom: classroom.value,
-    canva: canva.value,
-    microsoft: microsoft.value,
-    voice: voiceFrom(env, c.APP_ENV),
+    canva,
+    microsoft,
+    voice: voiceFrom(trimmed, c.APP_ENV),
     realtime: {
       url: c.REALTIME_URL.replace(/\/$/, ''),
       ticketSecret: c.REALTIME_TICKET_SECRET,
@@ -331,5 +346,6 @@ export function parseWebConfig(
     mail: mail.value,
     superAdminSetupKey: setupKeyFrom(env),
     leadsNotifyEmail: leadsNotifyFrom(env),
+    warnings,
   });
 }

@@ -962,6 +962,9 @@ export function getAppContainer(): AppContainer {
   if (instance) return instance;
   const config = parseWebConfig(process.env);
   if (!config.ok) throw new Error(`Invalid configuration: ${config.error}`);
+  for (const warning of config.value.warnings) {
+    process.stderr.write(`Integration turned off: ${warning}\n`);
+  }
   instance = createAppContainer(config.value);
   return instance;
 }

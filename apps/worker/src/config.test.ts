@@ -158,3 +158,22 @@ describe('parseMailConfig', () => {
     expect(parseMailConfig({ ...base, MAIL_PROVIDER: 'pigeon' }).ok).toBe(false);
   });
 });
+
+describe('provider names', () => {
+  it('are read whatever their capitals', () => {
+    expect(parseLlmConfig({ LLM_PROVIDER: 'Local' })).toEqual({
+      ok: true,
+      value: { provider: 'local' },
+    });
+    expect(parseTtsConfig({ TTS_PROVIDER: 'LOCAL' })).toMatchObject({
+      value: { provider: 'local' },
+    });
+    expect(
+      parseMailConfig({
+        APP_URL: 'https://teacherhubpro.com',
+        APP_ENV: 'Production',
+        MAIL_PROVIDER: 'Local',
+      }),
+    ).toMatchObject({ value: { provider: 'local', delivers: false } });
+  });
+});

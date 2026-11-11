@@ -57,6 +57,7 @@ describe('parseWebConfig', () => {
         mail: { provider: 'local', delivers: true },
         superAdminSetupKey: null,
         leadsNotifyEmail: null,
+        warnings: [],
       },
     });
   });
@@ -189,6 +190,7 @@ describe('parseWebConfig', () => {
         mail: { provider: 'local', delivers: false },
         superAdminSetupKey: null,
         leadsNotifyEmail: null,
+        warnings: [],
       },
     });
   });
@@ -209,25 +211,56 @@ describe('parseWebConfig', () => {
     expect(parseWebConfig({ ...production, CANVA_PROVIDER: 'off' })).toMatchObject({
       value: { canva: { provider: 'off' } },
     });
-    expect(parseWebConfig({ ...production, CANVA_PROVIDER: 'local' })).toEqual({
-      ok: false,
-      error: expect.stringContaining('CANVA_PROVIDER') as string,
+  });
+
+  it('turns only Canva off, with a warning, when its settings are wrong', () => {
+    const offWith = (warning: string | RegExp) => ({
+      ok: true,
+      value: {
+        canva: { provider: 'off' },
+        warnings: [typeof warning === 'string' ? warning : expect.stringMatching(warning)],
+      },
     });
-    expect(parseWebConfig({ ...production, CANVA_PROVIDER: 'canva' })).toEqual({
-      ok: false,
-      error: 'CANVA_PROVIDER=canva needs CANVA_CLIENT_ID and CANVA_CLIENT_SECRET',
-    });
+    expect(parseWebConfig({ ...production, CANVA_PROVIDER: 'local' })).toMatchObject(
+      offWith(/CANVA_PROVIDER/u),
+    );
+    expect(parseWebConfig({ ...production, CANVA_PROVIDER: 'canva' })).toMatchObject(
+      offWith('CANVA_PROVIDER=canva needs CANVA_CLIENT_ID and CANVA_CLIENT_SECRET'),
+    );
     expect(
       parseWebConfig({
         ...without(production, 'TOKEN_ENCRYPTION_KEY'),
-        ...canva,
+        CANVA_PROVIDER: 'canva',
+        CANVA_CLIENT_ID: 'OC-1',
+        CANVA_CLIENT_SECRET: 'cnvs',
         CLASSROOM_PROVIDER: 'local',
         APP_ENV: 'development',
       }),
-    ).toEqual({ ok: false, error: 'TOKEN_ENCRYPTION_KEY must be 32 random bytes, base64 encoded' });
-    expect(parseWebConfig({ ...local, CANVA_PROVIDER: 'adobe' })).toEqual({
-      ok: false,
-      error: 'CANVA_PROVIDER must be off, local or canva',
+    ).toMatchObject(offWith('TOKEN_ENCRYPTION_KEY must be 32 random bytes, base64 encoded'));
+    expect(parseWebConfig({ ...local, CANVA_PROVIDER: 'adobe' })).toMatchObject(
+      offWith('CANVA_PROVIDER must be off, local or canva'),
+    );
+  });
+
+  it('reads provider names and the environment whatever their capitals', () => {
+    const config = parseWebConfig({
+      ...production,
+      APP_ENV: 'Production',
+      CANVA_PROVIDER: 'Canva',
+      CANVA_CLIENT_ID: 'OC-1',
+      CANVA_CLIENT_SECRET: 'cnvs',
+      MICROSOFT_PROVIDER: 'Microsoft',
+      MICROSOFT_CLIENT_ID: '00000000-aaaa',
+      MICROSOFT_CLIENT_SECRET: 'ms-secret',
+    });
+    expect(config).toMatchObject({
+      ok: true,
+      value: {
+        env: 'production',
+        canva: { provider: 'canva', clientSecret: 'cnvs' },
+        microsoft: { provider: 'microsoft', clientSecret: 'ms-secret' },
+        warnings: [],
+      },
     });
   });
 
@@ -251,26 +284,29 @@ describe('parseWebConfig', () => {
     expect(parseWebConfig({ ...production, MICROSOFT_PROVIDER: 'off' })).toMatchObject({
       value: { microsoft: { provider: 'off' } },
     });
-    expect(parseWebConfig({ ...production, MICROSOFT_PROVIDER: 'local' })).toEqual({
-      ok: false,
-      error: expect.stringContaining('MICROSOFT_PROVIDER') as string,
+  });
+
+  it('turns only Microsoft off, with a warning, when its settings are wrong', () => {
+    const offWith = (warning: string) => ({
+      ok: true,
+      value: { microsoft: { provider: 'off' }, warnings: [warning] },
     });
-    expect(parseWebConfig({ ...production, MICROSOFT_PROVIDER: 'microsoft' })).toEqual({
-      ok: false,
-      error: 'MICROSOFT_PROVIDER=microsoft needs MICROSOFT_CLIENT_ID and MICROSOFT_CLIENT_SECRET',
-    });
+    expect(parseWebConfig({ ...production, MICROSOFT_PROVIDER: 'microsoft' })).toMatchObject(
+      offWith('MICROSOFT_PROVIDER=microsoft needs MICROSOFT_CLIENT_ID and MICROSOFT_CLIENT_SECRET'),
+    );
+    expect(parseWebConfig({ ...local, MICROSOFT_PROVIDER: 'onedrive' })).toMatchObject(
+      offWith('MICROSOFT_PROVIDER must be off, local or microsoft'),
+    );
     expect(
       parseWebConfig({
         ...without(production, 'TOKEN_ENCRYPTION_KEY'),
-        ...microsoft,
+        MICROSOFT_PROVIDER: 'microsoft',
+        MICROSOFT_CLIENT_ID: '00000000-aaaa',
+        MICROSOFT_CLIENT_SECRET: 'ms-secret',
         CLASSROOM_PROVIDER: 'local',
         APP_ENV: 'development',
       }),
-    ).toEqual({ ok: false, error: 'TOKEN_ENCRYPTION_KEY must be 32 random bytes, base64 encoded' });
-    expect(parseWebConfig({ ...local, MICROSOFT_PROVIDER: 'onedrive' })).toEqual({
-      ok: false,
-      error: 'MICROSOFT_PROVIDER must be off, local or microsoft',
-    });
+    ).toMatchObject(offWith('TOKEN_ENCRYPTION_KEY must be 32 random bytes, base64 encoded'));
   });
 
   it('assumes production when APP_ENV is not set', () => {

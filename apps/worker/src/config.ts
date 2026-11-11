@@ -55,7 +55,7 @@ export function parseLlmConfig(
   env: Readonly<Record<string, string | undefined>>,
 ): Result<LlmConfig, string> {
   const apiKey = env.ANTHROPIC_API_KEY?.trim() ?? '';
-  const chosen = env.LLM_PROVIDER?.trim() ?? '';
+  const chosen = env.LLM_PROVIDER?.trim().toLowerCase() ?? '';
   const provider = chosen !== '' ? chosen : apiKey === '' ? 'local' : 'anthropic';
   if (provider === 'local') return ok({ provider });
   if (provider !== 'anthropic') return err('LLM_PROVIDER must be "anthropic" or "local".');
@@ -78,7 +78,7 @@ export function parseTtsConfig(
   env: Readonly<Record<string, string | undefined>>,
 ): Result<TtsConfig, string> {
   const apiKey = env.OPENAI_API_KEY?.trim() ?? '';
-  const chosen = env.TTS_PROVIDER?.trim() ?? '';
+  const chosen = env.TTS_PROVIDER?.trim().toLowerCase() ?? '';
   const chosenVoice = env.OPENAI_TTS_VOICE?.trim() ?? '';
   const voice = chosenVoice === '' ? defaultVoice : chosenVoice;
   const provider = chosen !== '' ? chosen : apiKey === '' ? 'local' : 'openai';
@@ -111,10 +111,10 @@ export function parseMailConfig(
   const appUrl = (env.APP_URL?.trim() ?? '').replace(/\/$/u, '');
   // Without the site address emails would carry broken links: start anyway, sending nothing.
   if (appUrl === '') return ok({ provider: 'local', appUrl, delivers: false });
-  const chosen = env.MAIL_PROVIDER?.trim() ?? '';
+  const chosen = env.MAIL_PROVIDER?.trim().toLowerCase() ?? '';
   const provider = chosen === '' ? 'local' : chosen;
   if (provider === 'local') {
-    return ok({ provider, appUrl, delivers: env.APP_ENV?.trim() !== 'production' });
+    return ok({ provider, appUrl, delivers: env.APP_ENV?.trim().toLowerCase() !== 'production' });
   }
   if (provider !== 'resend') return err('MAIL_PROVIDER must be "resend" or "local".');
   const apiKey = env.RESEND_API_KEY?.trim() ?? '';
