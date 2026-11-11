@@ -76,6 +76,29 @@ describe('toGoogleSlides', () => {
     });
   });
 
+  it('keeps a numbered point as written, without adding a bullet before its number', () => {
+    const deck = toGoogleSlides(
+      presentation([slide({ bullets: ['1. Heat', '2) Pressure', '10. Time', '1/2 cup water'] })]),
+    );
+    expect(deck.slides[0]?.body).toEqual([
+      { text: '1. Heat', bullet: false },
+      { text: '2) Pressure', bullet: false },
+      { text: '10. Time', bullet: false },
+      { text: '1/2 cup water', bullet: true },
+    ]);
+  });
+
+  it('drops a typed bullet mark so the point gets a single bullet', () => {
+    const deck = toGoogleSlides(
+      presentation([slide({ bullets: ['• Heat', '- Pressure', '* Time'] })]),
+    );
+    expect(deck.slides[0]?.body).toEqual([
+      { text: 'Heat', bullet: true },
+      { text: 'Pressure', bullet: true },
+      { text: 'Time', bullet: true },
+    ]);
+  });
+
   it('leaves out empty text', () => {
     const deck = toGoogleSlides(
       presentation([slide({ title: '  ', content: ' \n ', bullets: ['', ' One '] })]),

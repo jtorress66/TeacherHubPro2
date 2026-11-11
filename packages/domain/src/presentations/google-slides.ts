@@ -39,6 +39,15 @@ const lines = (text: string | null, bullet: boolean): GoogleSlideLine[] =>
     .filter((line) => line !== '')
     .map((line) => ({ text: line, bullet }));
 
+const numbered = /^\d+[.)]\s/u;
+const typedBullet = /^[•\-*]\s+/u;
+
+/** A point already numbered keeps its number and gets no bullet; a typed bullet mark is dropped. */
+const point = (line: GoogleSlideLine): GoogleSlideLine =>
+  numbered.test(line.text)
+    ? { text: line.text, bullet: false }
+    : { text: line.text.replace(typedBullet, ''), bullet: true };
+
 function googleSlide(slide: Slide): GoogleSlide {
   const title = slide.title.trim();
   return {
@@ -47,7 +56,7 @@ function googleSlide(slide: Slide): GoogleSlide {
     body: [
       ...lines(slide.subtitle, false),
       ...lines(slide.content, false),
-      ...slide.bullets.flatMap((bullet) => lines(bullet, true)),
+      ...slide.bullets.flatMap((bullet) => lines(bullet, true).map(point)),
     ],
   };
 }
