@@ -27,6 +27,11 @@ export class CanvaConnectAuthorization implements CanvaAuthorization {
     private readonly fetchFn: Fetch = fetch,
   ) {}
 
+  /** The client ID and secret for HTTP Basic authentication, sent only from the server. */
+  private credentials(): string {
+    return Buffer.from(`${this.client.clientId}:${this.client.clientSecret}`).toString('base64');
+  }
+
   authorizationUrl(input: {
     readonly state: string;
     readonly codeChallenge: string;
@@ -47,13 +52,10 @@ export class CanvaConnectAuthorization implements CanvaAuthorization {
     body: Record<string, string>,
   ): Promise<Result<{ readonly accessToken: string; readonly refreshToken: string }, CanvaError>> {
     try {
-      const credentials = Buffer.from(
-        `${this.client.clientId}:${this.client.clientSecret}`,
-      ).toString('base64');
       const response = await this.fetchFn(`${api}/oauth/token`, {
         method: 'POST',
         headers: {
-          authorization: `Basic ${credentials}`,
+          authorization: `Basic ${this.credentials()}`,
           'content-type': 'application/x-www-form-urlencoded',
         },
         body: new URLSearchParams(body).toString(),
@@ -94,6 +96,23 @@ export class CanvaConnectAuthorization implements CanvaAuthorization {
     refreshToken: string,
   ): Promise<Result<{ readonly accessToken: string; readonly refreshToken: string }, CanvaError>> {
     return this.token({ grant_type: 'refresh_token', refresh_token: refreshToken });
+  }
+
+  /** Revoking a refresh token cancels its whole lineage and the teacher's consent. */
+  async revoke(refreshToken: string): Promise<Result<true, CanvaError>> {
+    try {
+      const response = await this.fetchFn(`${api}/oauth/revoke`, {
+        method: 'POST',
+        headers: {
+          authorization: `Basic ${this.credentials()}`,
+          'content-type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({ token: refreshToken }).toString(),
+      });
+      return response.ok ? ok(true) : err(failureOf(response.status));
+    } catch {
+      return err({ code: 'unavailable' });
+    }
   }
 }
 

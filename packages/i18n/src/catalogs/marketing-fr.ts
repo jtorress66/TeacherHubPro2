@@ -151,7 +151,7 @@ export const marketingFr: MarketingMessages = {
       assistant:
         'Assistant IA pour fiches d’exercices, quiz, résumés et activités, avec un soutien pour les élèves allophones (ESL)',
       presentations:
-        'Présentations IA à projeter en plein écran, imprimer ou envoyer vers Google Classroom',
+        'Présentations IA à projeter en plein écran, imprimer, télécharger en PowerPoint ou envoyer vers Google Classroom',
       tests:
         'Évaluations en ligne auxquelles les élèves répondent via un lien privé ; rédigez les questions ou importez une évaluation PDF',
       aiGrading:
@@ -170,6 +170,8 @@ export const marketingFr: MarketingMessages = {
       listen: 'Écouter : plans et supports lus à voix haute',
       google:
         'Intégration Google : connexion avec Google, Google Classroom (import des listes, publication de devoirs, documents Word et présentations), quiz Google Forms et fichiers dans votre propre Google Drive',
+      canva:
+        'Canva : ouvrez vos présentations et fiches dans votre propre compte Canva comme designs modifiables',
       languages:
         'Sept langues : anglais, espagnol, français, portugais, allemand, italien et chinois ; l’IA écrit dans la langue choisie',
       privacy:
@@ -400,7 +402,7 @@ export const marketingFr: MarketingMessages = {
     integrationsPage: {
       metaTitle: 'Intégrations | TeacherHubPro',
       metaDescription:
-        'Connexion avec Google, Google Classroom, Forms, Drive et Slides, Stripe et e-mail.',
+        'Connexion avec Google, Google Classroom, Forms, Drive et Slides, Canva, Stripe et e-mail.',
       title: 'Intégrations',
       intro:
         "Les services avec lesquels TeacherHubPro fonctionne aujourd'hui, via leurs API officielles.",
@@ -414,6 +416,9 @@ export const marketingFr: MarketingMessages = {
       slides: 'Google Drive et Slides',
       slidesText:
         'Les documents Word et les présentations sont créés dans votre propre Google Drive.',
+      canva: 'Canva',
+      canvaText:
+        "Ouvrez vos présentations et fiches dans votre propre compte Canva comme designs modifiables. Seul ce que vous choisissez est envoyé, jamais de données d'élèves.",
       stripe: 'Stripe',
       stripeText:
         'Des paiements sécurisés pour les formules ; les données de carte ne passent jamais par nos serveurs.',
@@ -572,10 +577,10 @@ export const marketingFr: MarketingMessages = {
         "Uniquement pour faire fonctionner le service pour l'école ou l'enseignant qui les a saisies. Nous ne vendons pas de données personnelles et n'utilisons pas les données des élèves à des fins publicitaires.",
       s4Title: 'Avec qui nous les partageons',
       s4Text:
-        "Les prestataires qui font fonctionner l'application : notre hébergeur et fournisseur de base de données, Stripe pour les paiements, un fournisseur d'e-mail pour les messages, Anthropic (Claude) pour les brouillons de l'IA, OpenAI pour l'audio de lecture à voix haute, et Google lorsqu'un enseignant connecte Google Classroom. Chacun ne reçoit que ce dont sa tâche a besoin.",
+        "Les prestataires qui font fonctionner l'application : notre hébergeur et fournisseur de base de données, Stripe pour les paiements, un fournisseur d'e-mail pour les messages, Anthropic (Claude) pour les brouillons de l'IA, OpenAI pour l'audio de lecture à voix haute, Google lorsqu'un enseignant connecte Google Classroom, et Canva lorsqu'un enseignant connecte Canva (uniquement la présentation ou la fiche qu'il y ouvre, jamais de données d'élèves). Chacun ne reçoit que ce dont sa tâche a besoin.",
       s5Title: 'Comment elles sont protégées',
       s5Text:
-        "Les mots de passe sont stockés sous forme de hachages à sens unique. Les liens de session, d'élève, de famille et de mot de passe sont aléatoires et stockés uniquement sous forme de hachages. Les jetons Google Classroom sont chiffrés. Chaque donnée appartient à une seule école et n'est accessible qu'aux utilisateurs de cette école.",
+        "Les mots de passe sont stockés sous forme de hachages à sens unique. Les liens de session, d'élève, de famille et de mot de passe sont aléatoires et stockés uniquement sous forme de hachages. Les jetons Google Classroom et Canva sont chiffrés. Chaque donnée appartient à une seule école et n'est accessible qu'aux utilisateurs de cette école.",
       s6Title: 'Conservation et suppression des données',
       s6Text:
         'Les données sont conservées tant que le compte est actif. Les PDF téléversés sont supprimés une fois lus. Les conversations du chat du site sont supprimées après 30 jours. Pour demander une copie ou la suppression de vos données, écrivez-nous depuis la page de contact.',

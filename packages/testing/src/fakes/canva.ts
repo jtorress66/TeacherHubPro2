@@ -16,6 +16,9 @@ export class FakeCanvaAuthorization implements CanvaAuthorization {
   static readonly code = 'canva-code';
   static readonly verifier = 'canva-verifier';
   static readonly accessToken = 'canva-access';
+  readonly revoked: string[] = [];
+  /** Makes revoking fail, as when Canva cannot be reached. */
+  revokeFails = false;
   private issued = 0;
   private readonly live = new Set<string>();
 
@@ -58,6 +61,13 @@ export class FakeCanvaAuthorization implements CanvaAuthorization {
     return Promise.resolve(
       ok({ accessToken: FakeCanvaAuthorization.accessToken, refreshToken: this.next() }),
     );
+  }
+
+  revoke(refreshToken: string): Promise<Result<true, CanvaError>> {
+    if (this.revokeFails) return Promise.resolve(err({ code: 'unavailable' }));
+    this.live.delete(refreshToken);
+    this.revoked.push(refreshToken);
+    return Promise.resolve(ok(true));
   }
 }
 

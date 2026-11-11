@@ -14,6 +14,8 @@ describe('site facts for search engines and AI assistants', () => {
       'Prep Agent',
       'Google Classroom',
       'Google Forms',
+      'Canva',
+      'PowerPoint',
       'live classroom games',
       'Family portal',
       'report card',

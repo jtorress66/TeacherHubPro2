@@ -101,10 +101,18 @@ export class FinishCanvaConnect {
   }
 }
 
+/**
+ * Cancels the grant at Canva, then forgets it. The local copy is deleted even when Canva cannot
+ * be reached, so a disconnect always works on our side.
+ */
 export class DisconnectCanva {
-  constructor(private readonly deps: { readonly canvaConnections: CanvaConnectionRepository }) {}
+  constructor(private readonly deps: CanvaConnectionDeps) {}
 
   async execute(input: { readonly actor: User }): Promise<Result<true, UseCaseError>> {
+    const connection = await this.deps.canvaConnections.find(input.actor.schoolId, input.actor.id);
+    if (connection === null) return ok(true);
+    const refresh = await this.deps.cipher.decrypt(connection.encryptedRefreshToken);
+    if (refresh.ok) await this.deps.canvaAuth.revoke(refresh.value);
     await this.deps.canvaConnections.delete(input.actor.schoolId, input.actor.id);
     return ok(true);
   }

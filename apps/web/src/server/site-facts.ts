@@ -22,6 +22,7 @@ export const includedFeatures = [
   'subPacket',
   'listen',
   'google',
+  'canva',
   'languages',
   'privacy',
   'aiDrafts',

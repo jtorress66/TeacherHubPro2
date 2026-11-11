@@ -74,6 +74,17 @@ export function canvaAuthorizationContract(
       expect((await auth.refresh(first.value.refreshToken)).ok).toBe(true);
     });
 
+    it('revokes a refresh token, after which it no longer works', async () => {
+      const { auth, code, codeVerifier } = make();
+      const granted = await auth.exchangeCode({ code, codeVerifier, redirectUri });
+      if (!granted.ok) throw new Error('exchange failed');
+      await auth.revoke(granted.value.refreshToken);
+      expect(await auth.refresh(granted.value.refreshToken)).toEqual({
+        ok: false,
+        error: { code: 'unauthorized' },
+      });
+    });
+
     it('refuses a code with the wrong verifier', async () => {
       const { auth, code } = make();
       expect(await auth.exchangeCode({ code, codeVerifier: 'wrong', redirectUri })).toEqual({
