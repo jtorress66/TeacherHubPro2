@@ -166,22 +166,38 @@ describe('leads', () => {
     page: '/en/contact',
   };
 
-  it('keeps a lead and emails the team only about high-priority ones', async () => {
+  it('emails the team about every contact form message, whatever its priority', async () => {
     const world = marketingWorld();
     const high = valueOf(await new CaptureLead(world).execute(input));
     expect(high.score).toBe('high');
     expect(world.mailer.outbox.map((m) => m.to)).toEqual(['team@teacherhubpro.com']);
     expect(world.mailer.outbox[0]?.text).toContain('pat@lincoln.edu');
 
-    const low = valueOf(
+    const help = valueOf(
       await new CaptureLead(world).execute({
         ...input,
+        email: 'teacher@x.com',
+        role: 'teacher',
+        interest: 'support',
+      }),
+    );
+    expect(help.score).toBe('medium');
+    expect(world.mailer.outbox).toHaveLength(2);
+    expect(world.mailer.outbox[1]?.text).toContain('teacher@x.com');
+  });
+
+  it('emails the team only about high-priority leads from the website chat', async () => {
+    const world = marketingWorld();
+    const chat = { ...input, source: 'chat' as const };
+    valueOf(await new CaptureLead(world).execute(chat));
+    valueOf(
+      await new CaptureLead(world).execute({
+        ...chat,
         email: 'curious@x.com',
         role: 'other',
         interest: 'other',
       }),
     );
-    expect(low.score).toBe('medium');
     expect(world.mailer.outbox).toHaveLength(1);
   });
 
