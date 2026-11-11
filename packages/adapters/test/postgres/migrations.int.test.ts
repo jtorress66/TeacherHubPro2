@@ -33,6 +33,7 @@ describe('migrations', () => {
       'attendance_entries',
       'attendance_sessions',
       'audit_events',
+      'canva_connections',
       'chat_sessions',
       'chat_turns',
       'classes',
@@ -82,6 +83,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0023_canva_connections',
           '0022_rubrics',
           '0021_hardening',
           '0020_plan_format',
@@ -135,6 +137,7 @@ describe('migrations', () => {
           '0020_plan_format',
           '0021_hardening',
           '0022_rubrics',
+          '0023_canva_connections',
         ],
       },
     });
