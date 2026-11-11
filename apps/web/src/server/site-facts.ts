@@ -24,6 +24,7 @@ export const includedFeatures = [
   'google',
   'canva',
   'microsoft',
+  'teams',
   'languages',
   'privacy',
   'aiDrafts',

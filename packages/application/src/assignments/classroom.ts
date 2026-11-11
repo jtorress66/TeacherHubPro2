@@ -1,12 +1,9 @@
 import {
   connectClassroom,
-  createStudent,
   ok,
   type ClassId,
   type ClassroomConnection,
   type Result,
-  type Student,
-  type StudentId,
   type User,
 } from '@thp/domain';
 import type {
@@ -24,6 +21,7 @@ import type {
 } from '@thp/ports';
 import { fail, type UseCaseError } from '../errors.ts';
 import { findEditableClass } from '../gradebook/gradebook-access.ts';
+import { addToRoster } from './roster-import.ts';
 import {
   editableAssignment,
   type AssignmentAccessDeps,
@@ -116,13 +114,6 @@ export class ListClassroomCourses {
   }
 }
 
-const sameName = (
-  a: { firstName: string; lastName: string },
-  b: { firstName: string; lastName: string },
-) =>
-  `${a.firstName} ${a.lastName}`.trim().toLowerCase() ===
-  `${b.firstName} ${b.lastName}`.trim().toLowerCase();
-
 /** Adds a Classroom course's students to a class, skipping names already on the roster. */
 export class ImportClassroomRoster {
   constructor(
@@ -145,22 +136,7 @@ export class ImportClassroomRoster {
     if (!token.ok) return token;
     const roster = await this.deps.classroomCourses.listRoster(token.value, input.courseId);
     if (!roster.ok) return googleFailed(roster.error);
-    const current = await this.deps.students.listByClass(cls.value.schoolId, cls.value.id);
-    const added: Student[] = [];
-    for (const person of roster.value) {
-      if (current.some((s) => sameName(s, person)) || added.some((s) => sameName(s, person)))
-        continue;
-      const student = createStudent({
-        id: this.deps.ids.next() as StudentId,
-        schoolId: cls.value.schoolId,
-        classId: cls.value.id,
-        firstName: person.firstName,
-        lastName: person.lastName,
-      });
-      if (student.ok) added.push(student.value);
-    }
-    await this.deps.students.saveMany(added);
-    return ok({ added: added.length, skipped: roster.value.length - added.length });
+    return ok(await addToRoster(this.deps, cls.value, roster.value));
   }
 }
 

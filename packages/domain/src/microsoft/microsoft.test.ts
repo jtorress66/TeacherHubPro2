@@ -3,13 +3,14 @@ import type { SchoolId, UserId } from '../shared/ids.ts';
 import { connectMicrosoft, oneDriveFileName } from './microsoft.ts';
 
 describe('Microsoft', () => {
-  it('keeps one connection per teacher, identified by the teacher', () => {
+  it('keeps one connection per teacher, identified by the teacher, with or without Teams', () => {
     const connectedAt = new Date('2026-11-11T12:00:00Z');
     expect(
       connectMicrosoft({
         schoolId: 'school-1' as SchoolId,
         teacherId: 'teacher-1' as UserId,
         encryptedRefreshToken: 'sealed',
+        teams: false,
         connectedAt,
       }),
     ).toEqual({
@@ -17,6 +18,7 @@ describe('Microsoft', () => {
       schoolId: 'school-1',
       teacherId: 'teacher-1',
       encryptedRefreshToken: 'sealed',
+      teams: false,
       connectedAt,
     });
   });

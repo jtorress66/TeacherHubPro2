@@ -411,12 +411,20 @@ export {
 } from './canva/canva.ts';
 export {
   DisconnectMicrosoft,
+  ExplainMicrosoftRefusal,
   FinishMicrosoftConnect,
   MicrosoftConnected,
   SaveGenerationToOneDrive,
   SavePresentationToOneDrive,
   StartMicrosoftConnect,
+  TeamsAllowed,
 } from './microsoft/microsoft.ts';
+export {
+  ImportTeamsRoster,
+  ListTeamsClasses,
+  PostWordToTeams,
+  ShareAssignmentToTeams,
+} from './microsoft/teams.ts';
 export { adminSchool, requireSuperAdmin } from './admin/admin-access.ts';
 export {
   PasswordLinks,

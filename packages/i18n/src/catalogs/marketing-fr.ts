@@ -174,6 +174,8 @@ export const marketingFr: MarketingMessages = {
         'Canva : ouvrez vos présentations et fiches dans votre propre compte Canva comme designs modifiables',
       microsoft:
         'Microsoft OneDrive : enregistrez vos présentations en PowerPoint et vos fiches en Word dans votre propre OneDrive',
+      teams:
+        'Microsoft Teams, pour les écoles qui utilisent Teams en classe : sur demande, importez les listes de classe depuis une classe Teams et partagez-y des devoirs. L’administrateur informatique de votre école approuve la connexion une seule fois.',
       languages:
         'Sept langues : anglais, espagnol, français, portugais, allemand, italien et chinois ; l’IA écrit dans la langue choisie',
       privacy:
@@ -424,6 +426,10 @@ export const marketingFr: MarketingMessages = {
       microsoft: 'Microsoft OneDrive',
       microsoftText:
         "Enregistrez vos présentations (PowerPoint) et vos fiches (Word) dans un dossier TeacherHubPro de votre propre OneDrive. Seuls les fichiers que vous enregistrez sont envoyés, jamais de données d'élèves.",
+      teams: 'Microsoft Teams (pour les écoles)',
+      teamsText:
+        'Votre école utilise Microsoft Teams ? Contactez-nous et nous configurerons la connexion Teams pour vos classes : importez les listes de classe depuis une classe Teams et partagez-y des devoirs. L’administrateur informatique de votre école l’approuve une seule fois.',
+      teamsContact: 'Nous contacter',
       stripe: 'Stripe',
       stripeText:
         'Des paiements sécurisés pour les formules ; les données de carte ne passent jamais par nos serveurs.',

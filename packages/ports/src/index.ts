@@ -34,6 +34,7 @@ export type * from './google/drive.ts';
 export type * from './google/slides.ts';
 export type * from './canva/canva.ts';
 export type * from './microsoft/microsoft.ts';
+export type * from './microsoft/teams.ts';
 export type * from './jobs/job-queue.ts';
 export type * from './repositories/scoped-repository.ts';
 export type * from './repositories/repositories.ts';

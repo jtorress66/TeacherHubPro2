@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState, useState } from 'react';
-import { createTranslator, type Locale } from '@thp/i18n';
+import { createTranslator, type Locale, type MessageKey } from '@thp/i18n';
 import {
   gradeSubmissionAction,
   importRosterAction,
@@ -14,11 +14,87 @@ import {
   uploadAttachmentAction,
   type AssignmentFormState,
 } from '../app/_lib/assignment-actions.ts';
+import {
+  importTeamsRosterAction,
+  postWordToTeamsAction,
+  shareToTeamsAction,
+} from '../app/_lib/teams-actions.ts';
 import { Field, FormAlert, Submit } from './forms.tsx';
 import { Hidden, Select, TextArea, type Option } from './form-fields.tsx';
 import { ScheduleFields } from './schedule-fields.tsx';
 
 const initial: AssignmentFormState = {};
+
+type FormAction = (state: AssignmentFormState, data: FormData) => Promise<AssignmentFormState>;
+
+/**
+ * Where an assignment or a roster comes from or goes: Google Classroom or Microsoft Teams. A new
+ * destination is a new entry here, not a branch in the forms.
+ */
+interface Destination {
+  /** Distinguishes the fields when both destinations are on one page. */
+  readonly idPrefix: string;
+  /** The form field that carries the chosen course or class. */
+  readonly field: string;
+  readonly share: FormAction;
+  readonly importRoster: FormAction;
+  readonly postWord: FormAction;
+  readonly keys: {
+    readonly target: MessageKey;
+    readonly share: MessageKey;
+    readonly shared: MessageKey;
+    readonly openLink: MessageKey;
+    readonly shareNote: MessageKey;
+    readonly importRoster: MessageKey;
+    readonly wordSubmit: MessageKey;
+    readonly wordPosted: MessageKey;
+    readonly wordOpen: MessageKey;
+    readonly wordNote: MessageKey;
+  };
+}
+
+const destinations = {
+  classroom: {
+    idPrefix: '',
+    field: 'courseId',
+    share: shareAssignmentAction,
+    importRoster: importRosterAction,
+    postWord: postWordToClassroomAction,
+    keys: {
+      target: 'classroom.course',
+      share: 'classroom.share',
+      shared: 'classroom.shared',
+      openLink: 'classroom.sharedLink',
+      shareNote: 'classroom.shareNote',
+      importRoster: 'classroom.importRoster',
+      wordSubmit: 'wordPost.submit',
+      wordPosted: 'wordPost.posted',
+      wordOpen: 'wordPost.openClassroom',
+      wordNote: 'wordPost.note',
+    },
+  },
+  teams: {
+    idPrefix: 'teams-',
+    field: 'teamsClassId',
+    share: shareToTeamsAction,
+    importRoster: importTeamsRosterAction,
+    postWord: postWordToTeamsAction,
+    keys: {
+      target: 'teams.class',
+      share: 'teams.share',
+      shared: 'teams.shared',
+      openLink: 'teams.sharedLink',
+      shareNote: 'teams.shareNote',
+      importRoster: 'teams.importRoster',
+      wordSubmit: 'teams.wordSubmit',
+      wordPosted: 'teams.wordPosted',
+      wordOpen: 'teams.sharedLink',
+      wordNote: 'teams.wordNote',
+    },
+  },
+} as const satisfies Record<string, Destination>;
+
+export type DestinationName = keyof typeof destinations;
 
 interface AssignmentProps {
   readonly locale: Locale;
@@ -94,41 +170,49 @@ export function PdfImportForm(props: AssignmentProps) {
   );
 }
 
+/** Shares the assignment to a Classroom course (by default) or a Teams class. */
 export function ShareToClassroomForm(
-  props: AssignmentProps & { readonly courses: readonly Option[] },
+  props: AssignmentProps & {
+    readonly courses: readonly Option[];
+    readonly destination?: DestinationName;
+  },
 ) {
   const t = createTranslator(props.locale);
-  const [state, action] = useActionState(shareAssignmentAction, initial);
+  const to: Destination = destinations[props.destination ?? 'classroom'];
+  const [state, action] = useActionState(to.share, initial);
   return (
-    <form action={action} className="stack" aria-label={t('classroom.share')}>
+    <form action={action} className="stack" aria-label={t(to.keys.share)}>
       <Hidden values={hidden(props)} />
       <FormAlert message={allErrors(state)} />
       {state.url === undefined ? null : (
         <p role="status" className="notice">
-          {t('classroom.shared')} <a href={state.url}>{t('classroom.sharedLink')}</a>
+          {t(to.keys.shared)} <a href={state.url}>{t(to.keys.openLink)}</a>
         </p>
       )}
       <Select
-        id="share-course"
-        name="courseId"
-        label={t('classroom.course')}
+        id={`${to.idPrefix}share-course`}
+        name={to.field}
+        label={t(to.keys.target)}
         options={props.courses}
       />
-      <p className="hint">{t('classroom.shareNote')}</p>
-      <Submit label={t('classroom.share')} />
+      <p className="hint">{t(to.keys.shareNote)}</p>
+      <Submit label={t(to.keys.share)} />
     </form>
   );
 }
 
+/** Imports a Classroom course's (by default) or a Teams class's students into a class. */
 export function ImportRosterForm(props: {
   readonly locale: Locale;
   readonly classId: string;
   readonly courses: readonly Option[];
+  readonly destination?: DestinationName;
 }) {
   const t = createTranslator(props.locale);
-  const [state, action] = useActionState(importRosterAction, initial);
+  const to: Destination = destinations[props.destination ?? 'classroom'];
+  const [state, action] = useActionState(to.importRoster, initial);
   return (
-    <form action={action} className="stack" aria-label={t('classroom.importRoster')}>
+    <form action={action} className="stack" aria-label={t(to.keys.importRoster)}>
       <Hidden values={{ locale: props.locale, classId: props.classId }} />
       <FormAlert message={allErrors(state)} />
       {state.message === undefined ? null : (
@@ -137,12 +221,12 @@ export function ImportRosterForm(props: {
         </p>
       )}
       <Select
-        id="roster-course"
-        name="courseId"
-        label={t('classroom.course')}
+        id={`${to.idPrefix}roster-course`}
+        name={to.field}
+        label={t(to.keys.target)}
         options={props.courses}
       />
-      <Submit label={t('classroom.importRoster')} />
+      <Submit label={t(to.keys.importRoster)} />
     </form>
   );
 }
@@ -338,24 +422,30 @@ export function FormsQuizForm(props: AssignmentProps & { readonly made: boolean 
   );
 }
 
-/** The teacher's own Word document, posted to a Classroom course as a Google Doc. */
+/**
+ * The teacher's own Word document, posted to a Classroom course as a Google Doc (by default) or
+ * to a Teams class: either way, each student gets their own copy.
+ */
 export function PostWordForm(props: {
   readonly locale: Locale;
   readonly courses: readonly Option[];
+  readonly destination?: DestinationName;
 }) {
   const t = createTranslator(props.locale);
-  const [state, action] = useActionState(postWordToClassroomAction, initial);
+  const to: Destination = destinations[props.destination ?? 'classroom'];
+  const [state, action] = useActionState(to.postWord, initial);
   const errors = state.errors ?? {};
+  const id = (name: string) => `${to.idPrefix}word-post-${name}`;
   return (
-    <form action={action} className="stack" aria-label={t('wordPost.submit')} key={state.version}>
+    <form action={action} className="stack" aria-label={t(to.keys.wordSubmit)} key={state.version}>
       <Hidden values={{ locale: props.locale }} />
       <FormAlert message={errors.form} />
       {state.url === undefined ? null : (
         <p role="status" className="notice">
           {state.scheduledFor === undefined
-            ? t('wordPost.posted')
+            ? t(to.keys.wordPosted)
             : t('schedule.scheduledFor', { when: state.scheduledFor })}{' '}
-          <a href={state.url}>{t('wordPost.openClassroom')}</a>
+          <a href={state.url}>{t(to.keys.wordOpen)}</a>
           {state.docUrl === undefined ? null : (
             <>
               {' · '}
@@ -365,42 +455,46 @@ export function PostWordForm(props: {
         </p>
       )}
       <Select
-        id="word-post-course"
-        name="courseId"
-        label={t('classroom.course')}
+        id={id('course')}
+        name={to.field}
+        label={t(to.keys.target)}
         options={props.courses}
-        error={errors.courseId}
+        error={errors[to.field]}
       />
       <Field
-        id="word-post-title"
+        id={id('title')}
         name="title"
         label={t('wordPost.name')}
         error={errors.title}
         required
       />
       <TextArea
-        id="word-post-instructions"
+        id={id('instructions')}
         name="instructions"
         label={t('wordPost.instructions')}
         error={errors.instructions}
       />
       <Field
-        id="word-post-due"
+        id={id('due')}
         name="dueDate"
         type="date"
         label={t('wordPost.dueDate')}
         error={errors.dueDate}
       />
-      <ScheduleFields locale={props.locale} idPrefix="word-post" error={errors.scheduledAt} />
+      <ScheduleFields
+        locale={props.locale}
+        idPrefix={`${to.idPrefix}word-post`}
+        error={errors.scheduledAt}
+      />
       <FileField
-        id="word-post-file"
+        id={id('file')}
         name="file"
         label={t('wordPost.file')}
         accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
         error={errors.file}
       />
-      <p className="hint">{t('wordPost.note')}</p>
-      <Submit label={t('wordPost.submit')} />
+      <p className="hint">{t(to.keys.wordNote)}</p>
+      <Submit label={t(to.keys.wordSubmit)} />
     </form>
   );
 }

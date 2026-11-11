@@ -22,7 +22,10 @@ type Props = LocaleParams & {
 
 export const metadata: Metadata = { title: 'TeacherHubPro' };
 
-/** The online assignment: questions, files, PDF import, and sending to Classroom or Forms. */
+/**
+ * The online assignment: questions, files, PDF import, and sending to Classroom, Forms or
+ * Microsoft Teams.
+ */
 export default async function AssignmentQuestionsPage(props: Props) {
   const locale = await localeFrom(props);
   const t = createTranslator(locale);
@@ -40,6 +43,7 @@ export default async function AssignmentQuestionsPage(props: Props) {
   const { assignment, rows } = listed.value;
   const files = await app.listAttachments.execute(ref);
   const courses = await app.listClassroomCourses.execute({ actor: user });
+  const teamsClasses = (await app.teams?.listClasses.execute({ actor: user })) ?? null;
   const saved = await app.listRubrics.execute({ actor: user });
   const rubrics = (saved.ok ? saved.value : []).map((rubric) => ({
     title: rubric.title,
@@ -154,6 +158,13 @@ export default async function AssignmentQuestionsPage(props: Props) {
           </div>
         )}
       </section>
+
+      {teamsClasses?.ok === true && teamsClasses.value.length > 0 ? (
+        <section className="card stack" aria-labelledby="teams-share-heading">
+          <h2 id="teams-share-heading">{t('teams.share')}</h2>
+          <ShareToClassroomForm {...ids} courses={teamsClasses.value} destination="teams" />
+        </section>
+      ) : null}
     </section>
   );
 }

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { parseEmail } from './email.ts';
 import { type SchoolId } from './ids.ts';
 import { defaultLanguage, isLanguage, languages } from './language.ts';
-import { addDays, compareDates, localDateIn, parseLocalDate } from './local-date.ts';
+import { addDays, compareDates, instantIn, localDateIn, parseLocalDate } from './local-date.ts';
 import { andThen, err, ok } from './result.ts';
 import { minutesOf, parseTimeOfDay } from './time-of-day.ts';
 import { optionalText, requiredText } from './validation.ts';
@@ -63,6 +63,30 @@ describe('local date arithmetic', () => {
 
   it('falls back to UTC for an unknown time zone', () => {
     expect(localDateIn(new Date('2026-10-30T02:30:00Z'), 'Not/AZone')).toBe('2026-10-30');
+  });
+
+  it('gives the instant of a wall-clock time on a date in a time zone', () => {
+    expect(instantIn(date('2026-12-01'), 23, 59, 'America/Puerto_Rico')).toEqual(
+      new Date('2026-12-02T03:59:00Z'),
+    );
+    expect(instantIn(date('2026-12-01'), 23, 59, 'Asia/Shanghai')).toEqual(
+      new Date('2026-12-01T15:59:00Z'),
+    );
+  });
+
+  it('uses the offset of the moment itself around a daylight-saving change', () => {
+    expect(instantIn(date('2026-03-08'), 12, 0, 'America/New_York')).toEqual(
+      new Date('2026-03-08T16:00:00Z'),
+    );
+    expect(instantIn(date('2026-11-01'), 12, 0, 'America/New_York')).toEqual(
+      new Date('2026-11-01T17:00:00Z'),
+    );
+  });
+
+  it('reads an unknown time zone as UTC', () => {
+    expect(instantIn(date('2026-12-01'), 23, 59, 'Not/AZone')).toEqual(
+      new Date('2026-12-01T23:59:00Z'),
+    );
   });
 });
 

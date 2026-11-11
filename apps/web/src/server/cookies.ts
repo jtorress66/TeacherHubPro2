@@ -40,19 +40,27 @@ export const MICROSOFT_OAUTH_COOKIE = 'thp_microsoft_oauth';
 /**
  * Connecting Canva or Microsoft (each under its own cookie): the random state, the PKCE verifier
  * (kept here, never sent until the code comes back) and the page language. Neither random value
- * contains a dot.
+ * contains a dot. Connecting Microsoft also remembers whether Teams was asked for.
  */
 export const encodePkceOAuth = (value: {
   readonly state: string;
   readonly verifier: string;
   readonly locale: Locale;
-}): string => `${value.state}.${value.verifier}.${value.locale}`;
+  readonly teams?: boolean;
+}): string =>
+  `${value.state}.${value.verifier}.${value.locale}${value.teams === true ? '.teams' : ''}`;
 
 export function decodePkceOAuth(
   value: string | undefined,
-): { state: string; verifier: string; locale: Locale } | null {
+): { state: string; verifier: string; locale: Locale; teams: boolean } | null {
   const [state, verifier, locale, ...rest] = (value ?? '').split('.');
   if (state === undefined || state === '' || verifier === undefined || verifier === '') return null;
-  if (locale === undefined || rest.length > 0) return null;
-  return { state, verifier, locale: isLocale(locale) ? locale : defaultLocale };
+  if (locale === undefined || rest.length > 1) return null;
+  if (rest.length === 1 && rest[0] !== 'teams') return null;
+  return {
+    state,
+    verifier,
+    locale: isLocale(locale) ? locale : defaultLocale,
+    teams: rest.length === 1,
+  };
 }

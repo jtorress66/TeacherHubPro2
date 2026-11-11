@@ -154,6 +154,8 @@ export function Points(props: {
     readonly title: string;
     readonly text: string;
     readonly art: ArtName;
+    /** An optional next step, such as the contact page. */
+    readonly link?: { readonly href: string; readonly label: string };
   }[];
 }) {
   return (
@@ -163,6 +165,11 @@ export function Points(props: {
           <MarketingArt name={item.art} />
           <h2>{item.title}</h2>
           <p>{item.text}</p>
+          {item.link === undefined ? null : (
+            <p>
+              <a href={item.link.href}>{item.link.label}</a>
+            </p>
+          )}
         </li>
       ))}
     </ul>

@@ -57,7 +57,24 @@ describe('Canva and Microsoft connect cookies', () => {
       state: 'st_1-x',
       verifier: 'v-erifier_9',
       locale: 'es',
+      teams: false,
     });
+  });
+
+  it('remember when the teacher is allowing Microsoft Teams', () => {
+    const value = encodePkceOAuth({ state: 's', verifier: 'v', locale: 'en', teams: true });
+    expect(value).toBe('s.v.en.teams');
+    expect(decodePkceOAuth(value)).toEqual({
+      state: 's',
+      verifier: 'v',
+      locale: 'en',
+      teams: true,
+    });
+    expect(encodePkceOAuth({ state: 's', verifier: 'v', locale: 'en', teams: false })).toBe(
+      's.v.en',
+    );
+    expect(decodePkceOAuth('s.v.en.other')).toBeNull();
+    expect(decodePkceOAuth('s.v.en.teams.x')).toBeNull();
   });
 
   it('rejects a damaged value and falls back to the default language', () => {
@@ -65,6 +82,11 @@ describe('Canva and Microsoft connect cookies', () => {
     expect(decodePkceOAuth('only-state')).toBeNull();
     expect(decodePkceOAuth('.v.es')).toBeNull();
     expect(decodePkceOAuth('s..es')).toBeNull();
-    expect(decodePkceOAuth('s.v.xx')).toEqual({ state: 's', verifier: 'v', locale: 'en' });
+    expect(decodePkceOAuth('s.v.xx')).toEqual({
+      state: 's',
+      verifier: 'v',
+      locale: 'en',
+      teams: false,
+    });
   });
 });

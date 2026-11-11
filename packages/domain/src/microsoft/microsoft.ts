@@ -1,8 +1,8 @@
 import type { SchoolId, UserId } from '../shared/ids.ts';
 
 /**
- * A teacher's link to their Microsoft account (OneDrive). Only the encrypted refresh token is
- * kept; when Microsoft issues a new one, the newest is saved.
+ * A teacher's link to their Microsoft account (OneDrive, and Teams when allowed). Only the
+ * encrypted refresh token is kept; when Microsoft issues a new one, the newest is saved.
  */
 export interface MicrosoftConnection {
   /** One connection per teacher, so the teacher's id. */
@@ -10,6 +10,11 @@ export interface MicrosoftConnection {
   readonly schoolId: SchoolId;
   readonly teacherId: UserId;
   readonly encryptedRefreshToken: string;
+  /**
+   * Whether the teacher also allowed Microsoft Teams (class rosters and assignments), which only
+   * school accounts can grant. Token refreshes ask only for what was granted.
+   */
+  readonly teams: boolean;
   readonly connectedAt: Date;
 }
 

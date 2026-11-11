@@ -79,10 +79,11 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
       t('marketing.featuresPage.title'),
     );
     const included = page.getByRole('region', { name: t('marketing.included.title') });
-    await expect(included.getByRole('listitem')).toHaveCount(22);
+    await expect(included.getByRole('listitem')).toHaveCount(23);
     await expect(included).toContainText(t('marketing.included.prepAgent'));
     await expect(included).toContainText(t('marketing.included.canva'));
     await expect(included).toContainText(t('marketing.included.microsoft'));
+    await expect(included).toContainText(t('marketing.included.teams'));
     await page
       .getByRole('link', { name: t('marketing.features.gradebook.title'), exact: true })
       .first()
@@ -97,6 +98,13 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     await expect(
       page.getByRole('heading', { name: t('marketing.integrationsPage.microsoft') }),
     ).toBeVisible();
+    const teamsCard = page
+      .getByRole('listitem')
+      .filter({ has: page.getByRole('heading', { name: t('marketing.integrationsPage.teams') }) });
+    await expect(teamsCard).toContainText(t('marketing.integrationsPage.teamsText'));
+    await expect(
+      teamsCard.getByRole('link', { name: t('marketing.integrationsPage.teamsContact') }),
+    ).toHaveAttribute('href', `/${locale}/contact`);
     await page.goto(`/${locale}/use-cases/schools`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(
       t('marketing.useCases.schools.title'),

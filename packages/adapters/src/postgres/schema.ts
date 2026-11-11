@@ -298,6 +298,8 @@ export interface MicrosoftConnectionsTable {
   teacher_id: string;
   school_id: string;
   encrypted_refresh_token: string;
+  /** Whether the connection also allows Teams (school accounts only). */
+  teams: Generated<boolean>;
   connected_at: Date;
 }
 

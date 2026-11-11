@@ -103,6 +103,7 @@ export const microsoftConnectionMapper = {
     teacher_id: connection.teacherId,
     school_id: connection.schoolId,
     encrypted_refresh_token: connection.encryptedRefreshToken,
+    teams: connection.teams,
     connected_at: connection.connectedAt,
   }),
   fromRow: (row: Selectable<MicrosoftConnectionsTable>): MicrosoftConnection => ({
@@ -110,6 +111,7 @@ export const microsoftConnectionMapper = {
     schoolId: row.school_id as SchoolId,
     teacherId: row.teacher_id as UserId,
     encryptedRefreshToken: row.encrypted_refresh_token,
+    teams: row.teams,
     connectedAt: row.connected_at,
   }),
 };

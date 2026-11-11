@@ -7,8 +7,10 @@ import {
   LocalCanvaDesigns,
   LocalMicrosoftAuthorization,
   LocalOneDriveFiles,
+  LocalTeams,
   MicrosoftIdentityAuthorization,
   OneDriveGraphFiles,
+  TeamsGraph,
   PptxPresentationWriter,
   LocalMailer,
   loggedMailer,
@@ -125,8 +127,14 @@ import {
   SendGenerationToCanva,
   StartMicrosoftConnect,
   FinishMicrosoftConnect,
+  ExplainMicrosoftRefusal,
   DisconnectMicrosoft,
   MicrosoftConnected,
+  TeamsAllowed,
+  ListTeamsClasses,
+  ImportTeamsRoster,
+  ShareAssignmentToTeams,
+  PostWordToTeams,
   SavePresentationToOneDrive,
   SaveGenerationToOneDrive,
   DownloadPresentationFile,
@@ -274,6 +282,8 @@ import type {
   GoogleProfile,
   RandomTokenGenerator,
   ReportCardRenderer,
+  TeamsAssignments,
+  TeamsClasses,
 } from '@thp/ports';
 import {
   parseWebConfig,
@@ -300,10 +310,20 @@ export interface CanvaFeature {
 export interface MicrosoftFeature {
   readonly startConnect: StartMicrosoftConnect;
   readonly finishConnect: FinishMicrosoftConnect;
+  readonly explainRefusal: ExplainMicrosoftRefusal;
   readonly disconnect: DisconnectMicrosoft;
   readonly connected: MicrosoftConnected;
   readonly savePresentation: SavePresentationToOneDrive;
   readonly saveGeneration: SaveGenerationToOneDrive;
+}
+
+/** Microsoft Teams (school accounts): rosters and assignments, through the Microsoft connection. */
+export interface TeamsFeature {
+  readonly allowed: TeamsAllowed;
+  readonly listClasses: ListTeamsClasses;
+  readonly importRoster: ImportTeamsRoster;
+  readonly shareAssignment: ShareAssignmentToTeams;
+  readonly postWord: PostWordToTeams;
 }
 
 export interface AppContainer {
@@ -390,6 +410,8 @@ export interface AppContainer {
   readonly canva: CanvaFeature | null;
   /** Microsoft (OneDrive), when it is on; null hides every OneDrive button. */
   readonly microsoft: MicrosoftFeature | null;
+  /** Microsoft Teams, when Microsoft and the Teams switch are on; null hides every Teams button. */
+  readonly teams: TeamsFeature | null;
   readonly downloadPresentationFile: DownloadPresentationFile;
   readonly startChat: StartChat;
   readonly sendChatMessage: SendChatMessage;
@@ -604,6 +626,12 @@ function canvaFor(config: CanvaConfig) {
   };
 }
 
+/** Teams reads classes and posts assignments through one adapter. */
+const teamsOf = (teams: TeamsClasses & TeamsAssignments) => ({
+  teamsClasses: teams,
+  teamsAssignments: teams,
+});
+
 /**
  * The Microsoft identity platform and Graph, their stand-ins for development and tests (fake
  * tokens, sealed with a fixed key), or nothing when it is off.
@@ -617,6 +645,7 @@ function microsoftFor(config: MicrosoftConfig) {
       ),
       microsoftAuth: new LocalMicrosoftAuthorization(),
       oneDriveFiles: new LocalOneDriveFiles(),
+      ...teamsOf(new LocalTeams()),
     };
   }
   return {
@@ -626,6 +655,7 @@ function microsoftFor(config: MicrosoftConfig) {
       clientSecret: config.clientSecret,
     }),
     oneDriveFiles: new OneDriveGraphFiles(),
+    ...teamsOf(new TeamsGraph()),
   };
 }
 
@@ -800,10 +830,21 @@ export function createAppContainer(
         : {
             startConnect: new StartMicrosoftConnect(microsoftDeps),
             finishConnect: new FinishMicrosoftConnect(microsoftDeps),
+            explainRefusal: new ExplainMicrosoftRefusal(microsoftDeps),
             disconnect: new DisconnectMicrosoft(microsoftDeps),
             connected: new MicrosoftConnected(microsoftDeps),
             savePresentation: new SavePresentationToOneDrive(microsoftDeps),
             saveGeneration: new SaveGenerationToOneDrive(microsoftDeps),
+          },
+    teams:
+      microsoftDeps === null || !config.microsoftTeams
+        ? null
+        : {
+            allowed: new TeamsAllowed(microsoftDeps),
+            listClasses: new ListTeamsClasses(microsoftDeps),
+            importRoster: new ImportTeamsRoster(microsoftDeps),
+            shareAssignment: new ShareAssignmentToTeams(microsoftDeps),
+            postWord: new PostWordToTeams(microsoftDeps),
           },
     downloadPresentationFile: new DownloadPresentationFile(deps),
     startChat: new StartChat(deps),

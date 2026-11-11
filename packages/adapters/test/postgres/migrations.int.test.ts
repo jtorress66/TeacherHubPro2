@@ -6,6 +6,7 @@ import { aUser } from '@thp/testing';
 import { migrateDown, migrateToLatest } from '../../src/postgres/index.ts';
 import { userMapper } from '../../src/postgres/mappers/school-mappers.ts';
 import { migrationProvider } from '../../src/postgres/migrations/index.ts';
+import { PostgresMicrosoftConnectionRepository } from '../../src/postgres/repositories/postgres-assignment-repositories.ts';
 import { PostgresLessonPlanRepository } from '../../src/postgres/repositories/postgres-lesson-plan-repository.ts';
 import { connect, schoolA, truncateAll } from './test-db.ts';
 
@@ -84,6 +85,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0025_microsoft_teams',
           '0024_microsoft_connections',
           '0023_canva_connections',
           '0022_rubrics',
@@ -141,6 +143,7 @@ describe('migrations', () => {
           '0022_rubrics',
           '0023_canva_connections',
           '0024_microsoft_connections',
+          '0025_microsoft_teams',
         ],
       },
     });
@@ -177,6 +180,27 @@ describe('migrations', () => {
     for (const plan of plans) {
       expect(createLessonPlan({ ...plan, body: plan.body }).ok, plan.id).toBe(true);
     }
+    await truncateAll(db);
+  });
+
+  it('keeps Microsoft connections made before Teams as OneDrive only', async () => {
+    const migrator = new Migrator({ db, provider: migrationProvider });
+    await truncateAll(db);
+    expect((await migrator.migrateTo('0024_microsoft_connections')).error).toBeUndefined();
+    await sql`INSERT INTO schools (id, name) VALUES (${schoolA}, 'Lincoln')`.execute(db);
+    await db
+      .insertInto('users')
+      .values(userMapper.toRow(aUser({ id: 'teacher-1' as UserId, schoolId: schoolA })))
+      .execute();
+    await sql`INSERT INTO microsoft_connections (teacher_id, school_id, encrypted_refresh_token, connected_at)
+        VALUES ('teacher-1', ${schoolA}, 'sealed', now())`.execute(db);
+
+    expect((await migrateToLatest(db)).ok).toBe(true);
+    const connection = await new PostgresMicrosoftConnectionRepository(db).find(
+      schoolA,
+      'teacher-1' as UserId,
+    );
+    expect(connection).toMatchObject({ encryptedRefreshToken: 'sealed', teams: false });
     await truncateAll(db);
   });
 });
