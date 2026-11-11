@@ -99,7 +99,7 @@ export const ptAppB = {
     intro: 'A IA escreve um primeiro rascunho. Revise-o antes de usá-lo em aula.',
     type: 'O que criar',
     type_lesson_plan: 'Plano de aula',
-    type_quiz: 'Questionário',
+    type_quiz: 'Quiz/Prova',
     type_summary: 'Resumo do tema',
     type_activities: 'Atividades de aula',
     type_worksheet: 'Folha de exercícios',

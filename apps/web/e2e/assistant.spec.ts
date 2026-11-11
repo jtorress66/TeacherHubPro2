@@ -104,6 +104,23 @@ for (const locale of ['es', 'en'] as const satisfies readonly Locale[]) {
     await page.getByRole('link', { name: t('presentations.print') }).click();
     await expect(page.getByTestId('print-slides').locator('.print-slide')).toHaveCount(4);
   });
+
+  test(`a quiz or test numbers its questions 1, 2, 3 with answer choices between them (${locale})`, async ({
+    page,
+  }) => {
+    await signUp(page, locale);
+    await page.getByRole('link', { name: t('nav.assistant'), exact: true }).click();
+    const form = page.getByRole('form', { name: t('assistant.title') });
+    await form.getByLabel(t('assistant.type')).selectOption({ label: t('assistant.type_quiz') });
+    await form.getByLabel(t('assistant.topic')).fill('Parts of speech');
+    await form.getByLabel(t('assistant.questionCount')).fill('3');
+    await form.getByRole('button', { name: t('assistant.submit') }).click();
+    await expect(page).toHaveURL(/\/assistant\/[^/]+$/, { timeout: 30_000 });
+
+    const questions = page.locator('article.generated ol');
+    await expect(questions.nth(1)).toHaveAttribute('start', '2');
+    await expect(questions.nth(2)).toHaveAttribute('start', '3');
+  });
 }
 
 test('slides can be reordered, duplicated and removed before saving', async ({ page }) => {

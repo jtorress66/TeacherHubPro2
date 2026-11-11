@@ -30,7 +30,7 @@ function BlockView({ block }: { readonly block: Block }) {
     case 'list': {
       const Tag = block.ordered ? 'ol' : 'ul';
       return (
-        <Tag>
+        <Tag start={block.ordered && block.start !== 1 ? block.start : undefined}>
           {block.items.map((item, index) => (
             <li key={index}>
               <Inlines items={item} />

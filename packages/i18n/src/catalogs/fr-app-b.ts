@@ -100,7 +100,7 @@ export const frAppB = {
     intro: "L'IA rédige un premier brouillon. Relisez-le avant de l'utiliser en classe.",
     type: 'Que créer',
     type_lesson_plan: 'Plan de leçon',
-    type_quiz: 'Quiz',
+    type_quiz: 'Quiz/Contrôle',
     type_summary: 'Résumé du sujet',
     type_activities: 'Activités de classe',
     type_worksheet: "Fiche d'exercices",

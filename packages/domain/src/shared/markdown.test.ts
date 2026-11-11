@@ -64,11 +64,21 @@ describe('parseMarkdown', () => {
       {
         kind: 'list',
         ordered: false,
+        start: 1,
         items: [[text('one')], [{ kind: 'strong', children: [text('two')] }]],
       },
-      { kind: 'list', ordered: true, items: [[text('first')], [text('second')]] },
+      { kind: 'list', ordered: true, start: 1, items: [[text('first')], [text('second')]] },
       { kind: 'paragraph', lines: [[text('Line one')], [text('Line two')]] },
       { kind: 'paragraph', lines: [[text('After')]] },
+    ]);
+  });
+
+  it('keeps the number a list starts at, so questions split by their choices count on', () => {
+    expect(parseMarkdown('1. Noun?\n\na) tall\nb) girl\n\n2. Verb?\n\n10) Last?')).toEqual([
+      { kind: 'list', ordered: true, start: 1, items: [[text('Noun?')]] },
+      { kind: 'paragraph', lines: [[text('a) tall')], [text('b) girl')]] },
+      { kind: 'list', ordered: true, start: 2, items: [[text('Verb?')]] },
+      { kind: 'list', ordered: true, start: 10, items: [[text('Last?')]] },
     ]);
   });
 
@@ -81,7 +91,7 @@ describe('parseMarkdown', () => {
       { kind: 'rule' },
     ]);
     expect(parseMarkdown('- - item')).toEqual([
-      { kind: 'list', ordered: false, items: [[text('- item')]] },
+      { kind: 'list', ordered: false, start: 1, items: [[text('- item')]] },
     ]);
   });
 

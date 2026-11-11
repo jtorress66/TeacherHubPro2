@@ -99,7 +99,7 @@ export const itAppB = {
     intro: "L'IA scrive una prima bozza. La riveda prima di usarla in classe.",
     type: 'Cosa creare',
     type_lesson_plan: 'Piano di lezione',
-    type_quiz: 'Quiz',
+    type_quiz: 'Quiz/Verifica',
     type_summary: "Sintesi dell'argomento",
     type_activities: 'Attività in classe',
     type_worksheet: 'Scheda di lavoro',

@@ -1023,7 +1023,7 @@ export const en = {
     intro: 'The AI writes a first draft. Review it before you use it in class.',
     type: 'What to make',
     type_lesson_plan: 'Lesson plan',
-    type_quiz: 'Quiz',
+    type_quiz: 'Quiz/Test',
     type_summary: 'Topic summary',
     type_activities: 'Class activities',
     type_worksheet: 'Worksheet',

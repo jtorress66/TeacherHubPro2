@@ -99,4 +99,15 @@ describe('DocxDocumentWriter', () => {
       expect(body).toContain(text);
     expect(await xml(bytes, /^docProps\/core\.xml$/)).toContain('Fractions');
   });
+
+  it('keeps counting questions whose answer choices come between them', async () => {
+    const blocks = parseMarkdown('1. Noun?\n\na) girl\n\n2. Verb?\n\nb) sang\n\n3. Adverb?');
+    const body = await xml(
+      await new DocxDocumentWriter().docx({ title: 'Quiz', blocks }),
+      /^word\/document\.xml$/,
+    );
+    expect(body).toContain('1. ');
+    expect(body).toContain('2. ');
+    expect(body).toContain('3. ');
+  });
 });

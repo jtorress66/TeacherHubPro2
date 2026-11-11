@@ -1036,7 +1036,7 @@ export const es: Messages = {
     intro: 'La IA escribe un primer borrador. Revísalo antes de usarlo en clase.',
     type: 'Qué crear',
     type_lesson_plan: 'Plan de clase',
-    type_quiz: 'Prueba',
+    type_quiz: 'Prueba/Examen',
     type_summary: 'Resumen del tema',
     type_activities: 'Actividades de clase',
     type_worksheet: 'Hoja de trabajo',

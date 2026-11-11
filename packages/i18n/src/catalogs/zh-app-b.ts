@@ -95,7 +95,7 @@ export const zhAppB = {
     intro: 'AI 会写出初稿。在课堂上使用前请先审阅。',
     type: '要生成的内容',
     type_lesson_plan: '教案',
-    type_quiz: '测验',
+    type_quiz: '测验/考试',
     type_summary: '主题摘要',
     type_activities: '课堂活动',
     type_worksheet: '练习单',

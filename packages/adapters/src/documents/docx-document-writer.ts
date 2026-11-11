@@ -65,7 +65,7 @@ function blockParts(block: MarkdownBlock): (Paragraph | Table)[] {
     case 'list':
       return block.items.map((item, index) =>
         block.ordered
-          ? new Paragraph({ children: [new TextRun(`${String(index + 1)}. `), ...runs(item)] })
+          ? new Paragraph({ children: [new TextRun(`${String(block.start + index)}. `), ...runs(item)] })
           : new Paragraph({ bullet: { level: 0 }, children: runs(item) }),
       );
     case 'table':

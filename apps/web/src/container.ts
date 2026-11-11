@@ -274,15 +274,7 @@ import {
   type WebConfig,
 } from './server/config.ts';
 import { loggedCoursework, loggedSlides, loggedDrive } from './server/google-failure-log.ts';
-import {
-  createTranslator,
-  locales,
-  portalLinkEmail,
-  trialReminderEmail,
-  weeklyUpdateEmail,
-  setPasswordEmail,
-  leadNoticeEmail,
-} from '@thp/i18n';
+import { createTranslator, locales, emailTemplates } from '@thp/i18n';
 import { defaultGameModes, localDateIn, type LocalDate } from '@thp/domain';
 
 export interface CanvaFeature {
@@ -657,13 +649,7 @@ export function createAppContainer(
             (line) => process.stdout.write(line),
           )
         : localMailer,
-    mailTemplates: {
-      portalLink: portalLinkEmail,
-      trialReminder: trialReminderEmail,
-      weeklyUpdate: weeklyUpdateEmail,
-      setPassword: setPasswordEmail,
-      leadNotice: leadNoticeEmail,
-    },
+    mailTemplates: emailTemplates(config.appUrl),
     presentationFiles: new PptxPresentationWriter(),
     documentFiles: new DocxDocumentWriter(),
   };
