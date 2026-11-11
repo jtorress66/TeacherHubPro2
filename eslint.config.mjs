@@ -11,6 +11,9 @@ const sdkModules = [
   'resend',
   'googleapis',
   'google-auth-library',
+  'pptxgenjs',
+  'docx',
+  'jszip',
 ];
 
 const sdkPatterns = sdkModules.map((name) => ({

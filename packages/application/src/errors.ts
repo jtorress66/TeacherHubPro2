@@ -28,6 +28,8 @@ export type ApplicationErrorCode =
   | 'not_shareable'
   | 'classroom_not_connected'
   | 'classroom_failed'
+  | 'canva_not_connected'
+  | 'canva_failed'
   | 'grading_off'
   | 'name_taken'
   | 'email_failed'

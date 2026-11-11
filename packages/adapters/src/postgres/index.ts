@@ -3,6 +3,7 @@ import type {
   AuditLog,
   RateLimiter,
   AttachmentRepository,
+  CanvaConnectionRepository,
   ClassroomConnectionRepository,
   FormsExportRepository,
   StudentInsightRepository,
@@ -74,6 +75,7 @@ import { PostgresPlanFolderRepository } from './repositories/postgres-plan-folde
 import { PostgresPlanTemplateRepository } from './repositories/postgres-plan-template-repository.ts';
 import {
   PostgresAttachmentRepository,
+  PostgresCanvaConnectionRepository,
   PostgresClassroomConnectionRepository,
   PostgresFormsExportRepository,
   PostgresStudentLinkRepository,
@@ -134,6 +136,7 @@ export interface PostgresRepositories {
   readonly attachments: AttachmentRepository;
   readonly studentLinks: StudentLinkRepository;
   readonly classroomConnections: ClassroomConnectionRepository;
+  readonly canvaConnections: CanvaConnectionRepository;
   readonly formsExports: FormsExportRepository;
   readonly studentNotes: StudentNoteRepository;
   readonly studentInsights: StudentInsightRepository;
@@ -186,6 +189,7 @@ export function createPostgresRepositories(db: Kysely<Database>): PostgresReposi
     attachments: new PostgresAttachmentRepository(db),
     studentLinks: new PostgresStudentLinkRepository(db),
     classroomConnections: new PostgresClassroomConnectionRepository(db),
+    canvaConnections: new PostgresCanvaConnectionRepository(db),
     formsExports: new PostgresFormsExportRepository(db),
     studentNotes: new PostgresStudentNoteRepository(db),
     studentInsights: new PostgresStudentInsightRepository(db),

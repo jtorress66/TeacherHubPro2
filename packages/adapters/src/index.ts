@@ -49,6 +49,14 @@ export {
   LocalClassroomAuthorization,
   localClassroomFixture,
 } from './google/local-classroom.ts';
+export { CanvaConnectAuthorization, CanvaConnectDesigns } from './canva/canva-connect.ts';
+export {
+  LocalCanvaAuthorization,
+  LocalCanvaDesigns,
+  localCanvaFixture,
+} from './canva/local-canva.ts';
+export { PptxPresentationWriter } from './documents/pptx-presentation-writer.ts';
+export { DocxDocumentWriter } from './documents/docx-document-writer.ts';
 export { ResendMailer, type ResendConfig } from './mail/resend-mailer.ts';
 export { LocalMailer } from './mail/local-mailer.ts';
 export { loggedMailer } from './mail/logged-mailer.ts';

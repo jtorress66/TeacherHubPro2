@@ -3,6 +3,7 @@ import type {
   AssignmentId,
   Attachment,
   AttachmentId,
+  CanvaConnection,
   ClassId,
   ClassroomConnection,
   FormsExport,
@@ -13,12 +14,14 @@ import type {
 } from '@thp/domain';
 import type {
   AttachmentRepository,
+  CanvaConnectionRepository,
   ClassroomConnectionRepository,
   FormsExportRepository,
   StudentLinkRepository,
 } from '@thp/ports';
 import {
   attachmentMapper,
+  canvaConnectionMapper,
   classroomConnectionMapper,
   formsExportMapper,
   studentLinkMapper,
@@ -131,6 +134,37 @@ export class PostgresClassroomConnectionRepository implements ClassroomConnectio
   async delete(schoolId: SchoolId, teacherId: UserId): Promise<void> {
     await this.db
       .deleteFrom('classroom_connections')
+      .where('school_id', '=', schoolId)
+      .where('teacher_id', '=', teacherId)
+      .execute();
+  }
+}
+
+export class PostgresCanvaConnectionRepository implements CanvaConnectionRepository {
+  constructor(private readonly db: Kysely<Database>) {}
+
+  async find(schoolId: SchoolId, teacherId: UserId): Promise<CanvaConnection | null> {
+    const row = await this.db
+      .selectFrom('canva_connections')
+      .selectAll()
+      .where('school_id', '=', schoolId)
+      .where('teacher_id', '=', teacherId)
+      .executeTakeFirst();
+    return row === undefined ? null : canvaConnectionMapper.fromRow(row);
+  }
+
+  async save(connection: CanvaConnection): Promise<void> {
+    const row = canvaConnectionMapper.toRow(connection);
+    await this.db
+      .insertInto('canva_connections')
+      .values(row)
+      .onConflict((conflict) => conflict.column('teacher_id').doUpdateSet(row))
+      .execute();
+  }
+
+  async delete(schoolId: SchoolId, teacherId: UserId): Promise<void> {
+    await this.db
+      .deleteFrom('canva_connections')
       .where('school_id', '=', schoolId)
       .where('teacher_id', '=', teacherId)
       .execute();

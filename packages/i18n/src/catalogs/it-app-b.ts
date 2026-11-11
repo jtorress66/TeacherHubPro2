@@ -296,10 +296,13 @@ export const itAppB = {
     submissions: 'Risposte degli studenti',
     stepsTitle: 'Passaggi di questo compito',
     stepQuestions: 'Aggiungi domande o file',
-    stepQuestionsDone: 'Domande: {questions} · File: {files}. Gli studenti possono vedere questo compito.',
-    stepNotVisible: 'Gli studenti non vedono ancora questo compito: aggiungi domande o file e salva.',
+    stepQuestionsDone:
+      'Domande: {questions} · File: {files}. Gli studenti possono vedere questo compito.',
+    stepNotVisible:
+      'Gli studenti non vedono ancora questo compito: aggiungi domande o file e salva.',
     stepShare: 'Condividi con gli studenti',
-    stepLinked: '{linked} studenti su {total} hanno un link attivo. Ogni studente usa un solo link per tutti i compiti.',
+    stepLinked:
+      '{linked} studenti su {total} hanno un link attivo. Ogni studente usa un solo link per tutti i compiti.',
     stepAnswers: 'Risposte degli studenti',
     stepHandedIn: '{handedIn} consegnati · {toReview} da rivedere',
     back: 'Torna al compito',
@@ -411,6 +414,24 @@ export const itAppB = {
     sharedLink: 'Apri in Classroom',
     shareNote:
       'Gli studenti rispondono tramite i loro link personali di TeacherHubPro; Classroom riceve il titolo, le istruzioni e la scadenza.',
+  },
+  canva: {
+    title: 'Canva',
+    connected: 'Canva è collegato.',
+    notConnected:
+      'Colleghi Canva per aprirvi le Sue presentazioni e schede di lavoro e continuare a progettarle.',
+    connect: 'Collega Canva',
+    disconnect: 'Scollega',
+    connectedNotice: 'Canva collegato.',
+    failedNotice: 'Non è stato possibile collegare Canva. Riprovi.',
+    open: 'Apri in Canva',
+    sending: 'Invio a Canva…',
+    ready: 'Il Suo design è pronto in Canva.',
+    openDesign: 'Apri il design in Canva',
+    note: 'Solo questo materiale va al Suo account Canva, mai informazioni sugli studenti.',
+    connectFirst: 'Colleghi Canva nelle Impostazioni per aprirlo in Canva.',
+    settingsLink: 'Vai alle Impostazioni',
+    downloadPptx: 'Scarica PowerPoint',
   },
   forms: {
     title: 'Quiz di Google Forms',
@@ -906,6 +927,8 @@ export const itAppB = {
     not_shareable: 'Aggiunga domande o un file prima di condividere questo compito.',
     classroom_not_connected: 'Prima colleghi Google Classroom nelle Impostazioni.',
     classroom_failed: 'Google Classroom non ha risposto. Riprovi.',
+    canva_not_connected: 'Colleghi prima Canva nelle Impostazioni.',
+    canva_failed: 'Canva non ha risposto. Riprovi.',
     grading_off: 'Prima attivi “Conta come voto” per questo gioco.',
     name_taken: 'Questo nome sta già giocando. Scegli il tuo nome.',
     email_failed: "Non è stato possibile inviare l'email. Verifichi l'indirizzo e riprovi.",

@@ -3,6 +3,7 @@ import type {
   AssignmentId,
   Attachment,
   AttachmentId,
+  CanvaConnection,
   ClassId,
   ClassroomConnection,
   FormsExport,
@@ -14,6 +15,7 @@ import type {
 } from '@thp/domain';
 import type {
   AssignmentAttachmentsTable,
+  CanvaConnectionsTable,
   ClassroomConnectionsTable,
   FormsExportsTable,
   StudentLinksTable,
@@ -70,6 +72,22 @@ export const classroomConnectionMapper = {
     connected_at: connection.connectedAt,
   }),
   fromRow: (row: Selectable<ClassroomConnectionsTable>): ClassroomConnection => ({
+    id: row.teacher_id as UserId,
+    schoolId: row.school_id as SchoolId,
+    teacherId: row.teacher_id as UserId,
+    encryptedRefreshToken: row.encrypted_refresh_token,
+    connectedAt: row.connected_at,
+  }),
+};
+
+export const canvaConnectionMapper = {
+  toRow: (connection: CanvaConnection): Row<CanvaConnectionsTable> => ({
+    teacher_id: connection.teacherId,
+    school_id: connection.schoolId,
+    encrypted_refresh_token: connection.encryptedRefreshToken,
+    connected_at: connection.connectedAt,
+  }),
+  fromRow: (row: Selectable<CanvaConnectionsTable>): CanvaConnection => ({
     id: row.teacher_id as UserId,
     schoolId: row.school_id as SchoolId,
     teacherId: row.teacher_id as UserId,

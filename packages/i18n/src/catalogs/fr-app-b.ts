@@ -298,10 +298,13 @@ export const frAppB = {
     submissions: 'Réponses des élèves',
     stepsTitle: 'Étapes de ce devoir',
     stepQuestions: 'Ajoutez des questions ou des fichiers',
-    stepQuestionsDone: 'Questions : {questions} · Fichiers : {files}. Les élèves peuvent voir ce devoir.',
-    stepNotVisible: 'Les élèves ne voient pas encore ce devoir : ajoutez des questions ou des fichiers, puis enregistrez.',
+    stepQuestionsDone:
+      'Questions : {questions} · Fichiers : {files}. Les élèves peuvent voir ce devoir.',
+    stepNotVisible:
+      'Les élèves ne voient pas encore ce devoir : ajoutez des questions ou des fichiers, puis enregistrez.',
     stepShare: 'Partagez avec les élèves',
-    stepLinked: '{linked} élèves sur {total} ont un lien actif. Chaque élève utilise un seul lien pour tous ses devoirs.',
+    stepLinked:
+      '{linked} élèves sur {total} ont un lien actif. Chaque élève utilise un seul lien pour tous ses devoirs.',
     stepAnswers: 'Réponses des élèves',
     stepHandedIn: '{handedIn} rendus · {toReview} à corriger',
     back: 'Retour au devoir',
@@ -414,6 +417,24 @@ export const frAppB = {
     sharedLink: 'Ouvrir dans Classroom',
     shareNote:
       'Les élèves répondent via leur lien TeacherHubPro personnel ; Classroom reçoit le titre, les instructions et la date limite.',
+  },
+  canva: {
+    title: 'Canva',
+    connected: 'Canva est connecté.',
+    notConnected:
+      'Connectez Canva pour y ouvrir vos présentations et fiches de travail et continuer à les concevoir.',
+    connect: 'Connecter Canva',
+    disconnect: 'Déconnecter',
+    connectedNotice: 'Canva connecté.',
+    failedNotice: "Canva n'a pas pu être connecté. Veuillez réessayer.",
+    open: 'Ouvrir dans Canva',
+    sending: 'Envoi vers Canva…',
+    ready: 'Votre design est prêt dans Canva.',
+    openDesign: 'Ouvrir le design dans Canva',
+    note: "Seul ce contenu est envoyé à votre compte Canva, jamais d'informations sur les élèves.",
+    connectFirst: 'Connectez Canva dans les Paramètres pour ouvrir ceci dans Canva.',
+    settingsLink: 'Aller aux Paramètres',
+    downloadPptx: 'Télécharger en PowerPoint',
   },
   forms: {
     title: 'Quiz Google Forms',
@@ -915,6 +936,8 @@ export const frAppB = {
     not_shareable: 'Ajoutez des questions ou un fichier avant de partager ce devoir.',
     classroom_not_connected: "Connectez d'abord Google Classroom dans les Paramètres.",
     classroom_failed: "Google Classroom n'a pas répondu. Veuillez réessayer.",
+    canva_not_connected: "Connectez d'abord Canva dans les Paramètres.",
+    canva_failed: "Canva n'a pas répondu. Veuillez réessayer.",
     grading_off: "Activez d'abord « Compter comme une note » pour ce jeu.",
     name_taken: 'Ce nom est déjà en jeu. Choisis ton propre nom.',
     email_failed: "L'e-mail n'a pas pu être envoyé. Vérifiez l'adresse et réessayez.",

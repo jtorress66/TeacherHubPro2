@@ -1,4 +1,5 @@
 import {
+  connectCanva,
   connectClassroom,
   createAttachment,
   createStudentLink,
@@ -60,6 +61,7 @@ import {
   type UserInput,
 } from '@thp/domain';
 import type {
+  CanvaConnection,
   GamePlay,
   LiveAnswer,
   LivePlayer,
@@ -458,6 +460,16 @@ export const aClassroomConnection = (
   overrides: Partial<ClassroomConnection> = {},
 ): ClassroomConnection => ({
   ...connectClassroom({
+    schoolId,
+    teacherId,
+    encryptedRefreshToken: 'sealed-1',
+    connectedAt: new Date('2026-09-01T12:00:00Z'),
+  }),
+  ...overrides,
+});
+
+export const aCanvaConnection = (overrides: Partial<CanvaConnection> = {}): CanvaConnection => ({
+  ...connectCanva({
     schoolId,
     teacherId,
     encryptedRefreshToken: 'sealed-1',

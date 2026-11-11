@@ -33,3 +33,24 @@ export function decodeOAuthState(
   const locale = value.slice(separator + 1);
   return { state: value.slice(0, separator), locale: isLocale(locale) ? locale : defaultLocale };
 }
+
+export const CANVA_OAUTH_COOKIE = 'thp_canva_oauth';
+
+/**
+ * Connecting Canva: the random state, the PKCE verifier (kept here, never sent until the code
+ * comes back) and the page language. Neither random value contains a dot.
+ */
+export const encodeCanvaOAuth = (value: {
+  readonly state: string;
+  readonly verifier: string;
+  readonly locale: Locale;
+}): string => `${value.state}.${value.verifier}.${value.locale}`;
+
+export function decodeCanvaOAuth(
+  value: string | undefined,
+): { state: string; verifier: string; locale: Locale } | null {
+  const [state, verifier, locale, ...rest] = (value ?? '').split('.');
+  if (state === undefined || state === '' || verifier === undefined || verifier === '') return null;
+  if (locale === undefined || rest.length > 0) return null;
+  return { state, verifier, locale: isLocale(locale) ? locale : defaultLocale };
+}

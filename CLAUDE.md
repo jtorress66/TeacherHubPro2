@@ -36,7 +36,7 @@ packages/domain       entities, value objects, state machines — NO I/O, NO fra
 packages/ports        interfaces only
 packages/application  use cases: orchestrate domain + ports, return Result — NO I/O, NO framework imports
 packages/agents       lesson planner, materials writer, question extractor, grader, game writer, adaptive path, insight, prep agent, chatbot — depend on ports only
-packages/adapters     claude, openai-tts, stripe, resend, google (sign-in + classroom), postgres, file storage, pdf text — implement ports
+packages/adapters     claude, openai-tts, stripe, resend, google (sign-in + classroom), canva, postgres, file storage, pdf text, office files — implement ports
 packages/i18n         message catalogs (en, es, fr, pt, de, it, zh) and helpers
 packages/testing      fakes, fixtures, shared contract test suites
 ```
@@ -49,7 +49,7 @@ Dependency rule: `domain` ← `ports` ← `application` ← `agents` / `adapters
 - **O — Open/closed:** add behaviour by adding a class that implements a port and registering it (e.g. a new game mode in `GameModeRegistry`), not by adding `if/switch` branches on a type field.
 - **L — Liskov substitution:** every implementation of a port must pass that port's shared contract suite in `packages/testing/contracts/`. Add the contract test before the implementation.
 - **I — Interface segregation:** keep ports small (`LlmClient`, `TextToSpeech`, `FileStore`, `PdfTextExtractor`, `Mailer`, `Clock`, `IdGenerator`, repositories). Split an interface when a consumer uses only part of it.
-- **D — Dependency inversion:** depend on ports, inject via constructors. No `new SomeAdapter()` or SDK/database-driver import (e.g. `kysely`, `pg`, `stripe`, `@anthropic-ai/sdk`, `openai`) outside `adapters/` and composition roots. Time, randomness, and IDs come through injected ports so tests are deterministic.
+- **D — Dependency inversion:** depend on ports, inject via constructors. No `new SomeAdapter()` or SDK/database-driver import (e.g. `kysely`, `pg`, `stripe`, `@anthropic-ai/sdk`, `openai`, `pptxgenjs`, `docx`) outside `adapters/` and composition roots. Time, randomness, and IDs come through injected ports so tests are deterministic.
 
 ## Testing
 
@@ -84,7 +84,7 @@ Test names describe behaviour: `it("counts a tardy as present in the attendance 
 - **AI data minimisation.** Send the model only the fields a task needs. Never send student names when an ID or first name suffices. Never log prompts, student work or personal data.
 - **No invented facts.** Agents must not invent grades, attendance, standards codes, prices or features. The marketing chatbot states real plan prices from the plan catalog and says it is an AI assistant when asked.
 - **Secrets.** Never commit `.env` files, cookies, tokens or credentials. OAuth tokens and API keys are encrypted at rest; never log secrets. gitleaks runs in CI.
-- **Official APIs only** for Google, Stripe, Resend, Anthropic and OpenAI.
+- **Official APIs only** for Google, Canva, Stripe, Resend, Anthropic and OpenAI.
 
 ## Conventions
 

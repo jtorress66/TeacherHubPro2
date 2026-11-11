@@ -38,6 +38,7 @@ import {
   plannerRepositoryContract,
   assistantRepositoryContract,
   assignmentRepositoryContract,
+  canvaConnectionRepositoryContract,
   student360RepositoryContract,
   prepBatchRepositoryContract,
   adminContract,
@@ -98,6 +99,7 @@ withParents(parentsFor.grading, () => {
     classroomConnections: repos.classroomConnections,
     formsExports: repos.formsExports,
   }));
+  canvaConnectionRepositoryContract('Postgres', () => repos.canvaConnections);
 });
 
 withParents(parentsFor.none, () => {

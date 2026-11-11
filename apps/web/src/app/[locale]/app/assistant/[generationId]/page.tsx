@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import type { GenerationId } from '@thp/domain';
 import { createTranslator } from '@thp/i18n';
 import { CopyButton } from '../../../../../components/assistant-forms.tsx';
+import { OpenInCanvaForm } from '../../../../../components/canva-forms.tsx';
 import { ListenButton } from '../../../../../components/listen-button.tsx';
 import { Markdown } from '../../../../../components/markdown.tsx';
 import { getAppContainer } from '../../../../../container.ts';
@@ -21,7 +22,8 @@ export default async function GenerationPage(props: Props) {
   const t = createTranslator(locale);
   const { generationId } = await props.params;
   const { user } = await requireUser(locale);
-  const found = await getAppContainer().getGeneration.execute({
+  const app = getAppContainer();
+  const found = await app.getGeneration.execute({
     actor: user,
     generationId: generationId as GenerationId,
   });
@@ -59,6 +61,12 @@ export default async function GenerationPage(props: Props) {
       <article className="card generated" lang={generation.language}>
         <Markdown source={generation.content} />
       </article>
+      {app.canva === null ? null : (
+        <section className="card stack" aria-labelledby="generation-canva-heading">
+          <h2 id="generation-canva-heading">{t('canva.title')}</h2>
+          <OpenInCanvaForm locale={locale} kind="generation" id={generation.id} />
+        </section>
+      )}
     </section>
   );
 }

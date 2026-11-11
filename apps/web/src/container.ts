@@ -1,5 +1,11 @@
 import { createHash } from 'node:crypto';
 import {
+  CanvaConnectAuthorization,
+  CanvaConnectDesigns,
+  DocxDocumentWriter,
+  LocalCanvaAuthorization,
+  LocalCanvaDesigns,
+  PptxPresentationWriter,
   LocalMailer,
   loggedMailer,
   ResendMailer,
@@ -107,6 +113,13 @@ import {
   ShareAssignment,
   PostWordToClassroom,
   SendPresentationToClassroom,
+  StartCanvaConnect,
+  FinishCanvaConnect,
+  DisconnectCanva,
+  CanvaConnected,
+  SendPresentationToCanva,
+  SendGenerationToCanva,
+  DownloadPresentationFile,
   StartChat,
   SendChatMessage,
   GetChat,
@@ -255,6 +268,7 @@ import type {
 import {
   parseWebConfig,
   type BillingConfig,
+  type CanvaConfig,
   type ClassroomConfig,
   type GoogleConfig,
   type WebConfig,
@@ -270,6 +284,15 @@ import {
   leadNoticeEmail,
 } from '@thp/i18n';
 import { defaultGameModes, localDateIn, type LocalDate } from '@thp/domain';
+
+export interface CanvaFeature {
+  readonly startConnect: StartCanvaConnect;
+  readonly finishConnect: FinishCanvaConnect;
+  readonly disconnect: DisconnectCanva;
+  readonly connected: CanvaConnected;
+  readonly sendPresentation: SendPresentationToCanva;
+  readonly sendGeneration: SendGenerationToCanva;
+}
 
 export interface AppContainer {
   readonly appUrl: string;
@@ -351,6 +374,9 @@ export interface AppContainer {
   readonly shareAssignment: ShareAssignment;
   readonly postWordToClassroom: PostWordToClassroom;
   readonly sendPresentationToClassroom: SendPresentationToClassroom;
+  /** Canva, when it is on; null hides every Canva button. */
+  readonly canva: CanvaFeature | null;
+  readonly downloadPresentationFile: DownloadPresentationFile;
   readonly startChat: StartChat;
   readonly sendChatMessage: SendChatMessage;
   readonly getChat: GetChat;
@@ -539,6 +565,31 @@ function classroomFor(config: ClassroomConfig) {
   };
 }
 
+/**
+ * Canva's Connect API, its stand-in for development and tests (fake tokens, sealed with a fixed
+ * key), or nothing when it is off.
+ */
+function canvaFor(config: CanvaConfig) {
+  if (config.provider === 'off') return null;
+  if (config.provider === 'local') {
+    return {
+      cipher: new AesGcmCipher(
+        createHash('sha256').update('teacherhubpro-local-canva').digest('base64'),
+      ),
+      canvaAuth: new LocalCanvaAuthorization(),
+      canvaDesigns: new LocalCanvaDesigns(),
+    };
+  }
+  return {
+    cipher: new AesGcmCipher(config.encryptionKey),
+    canvaAuth: new CanvaConnectAuthorization({
+      clientId: config.clientId,
+      clientSecret: config.clientSecret,
+    }),
+    canvaDesigns: new CanvaConnectDesigns(),
+  };
+}
+
 function billingFor(config: BillingConfig, appUrl: string): Billing {
   if (config.provider === 'local') {
     return {
@@ -613,7 +664,11 @@ export function createAppContainer(
       setPassword: setPasswordEmail,
       leadNotice: leadNoticeEmail,
     },
+    presentationFiles: new PptxPresentationWriter(),
+    documentFiles: new DocxDocumentWriter(),
   };
+  const canva = canvaFor(config.canva);
+  const canvaDeps = canva === null ? null : { ...deps, ...canva };
 
   return {
     appUrl: config.appUrl,
@@ -693,6 +748,18 @@ export function createAppContainer(
     shareAssignment: new ShareAssignment(deps),
     postWordToClassroom: new PostWordToClassroom(deps),
     sendPresentationToClassroom: new SendPresentationToClassroom(deps),
+    canva:
+      canvaDeps === null
+        ? null
+        : {
+            startConnect: new StartCanvaConnect(canvaDeps),
+            finishConnect: new FinishCanvaConnect(canvaDeps),
+            disconnect: new DisconnectCanva(canvaDeps),
+            connected: new CanvaConnected(canvaDeps),
+            sendPresentation: new SendPresentationToCanva(canvaDeps),
+            sendGeneration: new SendGenerationToCanva(canvaDeps),
+          },
+    downloadPresentationFile: new DownloadPresentationFile(deps),
     startChat: new StartChat(deps),
     sendChatMessage: new SendChatMessage(deps),
     getChat: new GetChat(deps),

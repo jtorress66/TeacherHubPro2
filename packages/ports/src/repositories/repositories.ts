@@ -1,5 +1,6 @@
 import type {
   Attachment,
+  CanvaConnection,
   ClassroomConnection,
   FormsExport,
   StudentInsight,
@@ -182,6 +183,12 @@ export interface StudentLinkRepository extends ScopedRepository<StudentLink> {
 export interface ClassroomConnectionRepository {
   find(schoolId: SchoolId, teacherId: UserId): Promise<ClassroomConnection | null>;
   save(connection: ClassroomConnection): Promise<void>;
+  delete(schoolId: SchoolId, teacherId: UserId): Promise<void>;
+}
+
+export interface CanvaConnectionRepository {
+  find(schoolId: SchoolId, teacherId: UserId): Promise<CanvaConnection | null>;
+  save(connection: CanvaConnection): Promise<void>;
   delete(schoolId: SchoolId, teacherId: UserId): Promise<void>;
 }
 
