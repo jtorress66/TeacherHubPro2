@@ -19,13 +19,7 @@ import {
   SystemClock,
   UuidIdGenerator,
 } from '@thp/adapters';
-import {
-  portalLinkEmail,
-  leadNoticeEmail,
-  setPasswordEmail,
-  trialReminderEmail,
-  weeklyUpdateEmail,
-} from '@thp/i18n';
+import { emailTemplates } from '@thp/i18n';
 import {
   ContentWriter,
   LessonPlanner,
@@ -83,14 +77,8 @@ function textToSpeech(config: TtsConfig): TextToSpeech {
   return new OpenAiTextToSpeech({ apiKey: config.apiKey });
 }
 
-/** Email wording, from the translations; the same templates the web app uses. */
-export const mailTemplates: MailTemplates = {
-  portalLink: portalLinkEmail,
-  trialReminder: trialReminderEmail,
-  weeklyUpdate: weeklyUpdateEmail,
-  setPassword: setPasswordEmail,
-  leadNotice: leadNoticeEmail,
-};
+/** Email wording, from the translations, branded for the site; the same templates the web app uses. */
+export const mailTemplatesFor = (appUrl: string): MailTemplates => emailTemplates(appUrl);
 
 function mailerFor(config: MailConfig, db: ReturnType<typeof createDatabase>): Mailer {
   return config.provider === 'resend'
@@ -153,7 +141,7 @@ export function createJobRunner(
     trialReminders: repos.trialReminders,
     users: repos.users,
     mailer: mailerFor(mail, db),
-    mailTemplates,
+    mailTemplates: mailTemplatesFor(mail.appUrl),
     clock,
     appUrl: mail.appUrl,
   });

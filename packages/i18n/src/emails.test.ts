@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  emailTemplates,
   portalLinkEmail,
   leadNoticeEmail,
   setPasswordEmail,
@@ -126,5 +127,55 @@ describe('leadNoticeEmail', () => {
     expect(mail.text).toContain('Email: pat@lincoln.edu');
     expect(mail.text).toContain('A demo, please.');
     expect(mail.html).toContain('Pat &lt;Principal&gt;');
+  });
+});
+
+describe('emailTemplates', () => {
+  const site = 'https://teacherhubpro.com';
+  const lead = {
+    name: 'Pat',
+    email: 'pat@lincoln.edu',
+    organization: null,
+    role: 'principal',
+    phone: null,
+    interest: 'demo',
+    source: 'contact',
+    message: null,
+    page: null,
+    score: 'high',
+  };
+
+  it('brands every email with the logo, the name and a link to the site', () => {
+    const templates = emailTemplates(site);
+    const mails = [
+      templates.leadNotice({ lead }),
+      templates.trialReminder({ language: 'es', name: 'Ana', daysLeft: 3, billingUrl: site }),
+      templates.setPassword({ language: 'fr', name: 'Ana', url: site, purpose: 'reset' }),
+      templates.portalLink({
+        language: 'en',
+        firstName: 'Ana',
+        schoolName: 'Luna',
+        className: '5A',
+        url: site,
+      }),
+      templates.weeklyUpdate({ language: 'en', subject: 'Week', body: 'Hi', schoolName: 'Luna' }),
+    ];
+    for (const mail of mails) {
+      expect(mail.html).toContain(`<img src="${site}/brand/logo-mark.png"`);
+      expect(mail.html).toContain('alt="TeacherHubPro"');
+      expect(mail.html).toContain(`href="${site}"`);
+      expect(mail.text).toContain(site);
+    }
+  });
+
+  it('puts the logo beside the team signature', () => {
+    const html = emailTemplates(site).leadNotice({ lead }).html;
+    expect(html).toMatch(/logo-mark\.png"[^>]*>\s*<\/td>\s*<td[^>]*>The TeacherHubPro team/u);
+  });
+
+  it('shows no image when the site address is not configured', () => {
+    const mail = emailTemplates('').leadNotice({ lead });
+    expect(mail.html).not.toContain('<img');
+    expect(mail.html).toContain('The TeacherHubPro team');
   });
 });

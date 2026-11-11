@@ -77,6 +77,8 @@ describe('the local stand-in replies', () => {
     );
     const questions = content.split('## Answer key')[0]?.match(/^\d+\. /gm) ?? [];
     expect(questions).toHaveLength(4);
+    // Like a real quiz, answer choices come between the numbered questions.
+    expect(content).toContain('2. Question ___?\n\na) Yes\nb) No');
   });
 
   it('drafts the number of slides asked for, starting with a title slide', async () => {

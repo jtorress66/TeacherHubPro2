@@ -17,6 +17,8 @@ export type Block =
   | {
       readonly kind: 'list';
       readonly ordered: boolean;
+      /** The first item's number, so a numbered list split by other text keeps counting. */
+      readonly start: number;
       readonly items: readonly (readonly Inline[])[];
     }
   | {
@@ -113,6 +115,7 @@ export function parseMarkdown(source: string): Block[] {
       blocks.push({
         kind: 'list',
         ordered,
+        start: ordered ? Number(itemMatch[2]) : 1,
         items: items.map((item) => parseInline(unescape(listItem.exec(item)?.[3] ?? ''))),
       });
     } else {

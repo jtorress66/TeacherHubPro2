@@ -24,7 +24,10 @@ const promptOf = (request: LlmRequest) => request.messages[0]?.content ?? '';
 function contentReply(request: LlmRequest): string {
   const prompt = promptOf(request);
   const count = Number(/exactly (\d+) questions/.exec(prompt)?.[1] ?? 0);
-  const questions = Array.from({ length: count }, (_, i) => `${String(i + 1)}. Question ___?`);
+  const questions = Array.from(
+    { length: count },
+    (_, i) => `${String(i + 1)}. Question ___?\n\na) Yes\nb) No\n`,
+  );
   return [
     '# Local draft',
     '',

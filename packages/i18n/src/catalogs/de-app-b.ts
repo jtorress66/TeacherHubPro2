@@ -102,7 +102,7 @@ export const deAppB = {
       'Die KI schreibt einen ersten Entwurf. Prüfen Sie ihn, bevor Sie ihn im Unterricht verwenden.',
     type: 'Was erstellen',
     type_lesson_plan: 'Stundenplanung',
-    type_quiz: 'Quiz',
+    type_quiz: 'Quiz/Test',
     type_summary: 'Zusammenfassung des Themas',
     type_activities: 'Unterrichtsaktivitäten',
     type_worksheet: 'Arbeitsblatt',
