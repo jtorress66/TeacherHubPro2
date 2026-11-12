@@ -79,6 +79,8 @@ export const userMapper: RowMapper<User, UsersTable> = {
     language: user.language,
     picture: user.picture,
     onboarding_status: user.onboardingStatus,
+    email_confirmed_at: user.emailConfirmedAt,
+    suspended_at: user.suspendedAt,
   }),
   fromRow: (row) => ({
     id: row.id as UserId,
@@ -89,6 +91,8 @@ export const userMapper: RowMapper<User, UsersTable> = {
     language: oneOf(languages, row.language, 'users.language'),
     picture: row.picture,
     onboardingStatus: oneOf(onboardingStatuses, row.onboarding_status, 'users.onboarding_status'),
+    emailConfirmedAt: row.email_confirmed_at,
+    suspendedAt: row.suspended_at,
   }),
 };
 

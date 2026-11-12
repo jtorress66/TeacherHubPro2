@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { isAdminOf } from '@thp/domain';
+import { hasConfirmedEmail, isAdminOf } from '@thp/domain';
 import { createTranslator } from '@thp/i18n';
 import { AppNav, type NavGroup } from '../../../components/app-nav.tsx';
 import { TimeZoneCookie } from '../../../components/browser-helpers.tsx';
+import { ConfirmEmailBanner } from '../../../components/confirm-email-forms.tsx';
 import { Logo } from '../../../components/logo.tsx';
 import { getAppContainer } from '../../../container.ts';
 import { requireUser } from '../../_lib/auth.ts';
@@ -78,7 +79,10 @@ export default async function AppLayout(props: LocaleParams & { readonly childre
           groups={groups}
         />
       </aside>
-      <main className="app-main">{props.children}</main>
+      <main className="app-main">
+        {hasConfirmedEmail(user) ? null : <ConfirmEmailBanner locale={locale} email={user.email} />}
+        {props.children}
+      </main>
       <TimeZoneCookie />
     </div>
   );

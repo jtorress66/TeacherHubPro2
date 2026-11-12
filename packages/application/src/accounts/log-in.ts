@@ -34,6 +34,8 @@ export class LogIn {
     const hash = credential?.passwordHash ?? (await this.decoyHash);
     const matches = await this.deps.passwordHasher.verify(input.password, hash);
     if (!user || !credential || !matches) return fail('invalid_credentials');
+    // Only told after the right password, so a suspension never reveals that an account exists.
+    if (user.suspendedAt !== null) return fail('account_suspended');
 
     if (this.deps.passwordHasher.needsRehash(credential.passwordHash)) {
       const passwordHash = await this.deps.passwordHasher.hash(input.password);

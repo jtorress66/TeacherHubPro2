@@ -33,3 +33,17 @@ export async function makeSchoolAdmin(email: string): Promise<void> {
     await db.destroy();
   }
 }
+
+/** Test-only: makes the account with this email a super admin, without the one-time setup page. */
+export async function makeSuperAdmin(email: string): Promise<void> {
+  const db = createDatabase(databaseUrl);
+  try {
+    await db
+      .updateTable('users')
+      .set({ role: 'super_admin' })
+      .where('email', '=', email.toLowerCase())
+      .execute();
+  } finally {
+    await db.destroy();
+  }
+}

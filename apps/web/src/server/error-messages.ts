@@ -12,6 +12,9 @@ const passwordKeys: Partial<Record<ValidationCode, MessageKey>> = {
 const fieldOf: Partial<Record<ApplicationErrorCode, string>> = {
   email_taken: 'email',
   below_minimum_seats: 'quantity',
+  adult_required: 'adult',
+  throwaway_email: 'email',
+  blocked_domain: 'email',
 };
 
 function keyFor(error: UseCaseError): MessageKey {

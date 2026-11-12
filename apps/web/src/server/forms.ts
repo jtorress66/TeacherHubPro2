@@ -15,7 +15,18 @@ export const locale = z
   .optional()
   .transform((value): Locale => (isLocale(value) ? value : defaultLocale));
 
-export const signUpForm = z.object({ name: text, email: text, password: text, locale });
+/** A ticked checkbox sends "on"; an unticked one sends nothing. */
+export const checkbox = z
+  .string()
+  .optional()
+  .transform((value) => value === 'on');
+export const signUpForm = z.object({
+  name: text,
+  email: text,
+  password: text,
+  locale,
+  adult: checkbox,
+});
 export const logInForm = z.object({ email: text, password: text, locale });
 export const profileForm = z.object({ name: text, language: text, locale });
 export const schoolForm = z.object({

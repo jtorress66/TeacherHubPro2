@@ -48,4 +48,6 @@ export * from './contracts/prep.contract.ts';
 export * from './contracts/admin.contract.ts';
 export * from './contracts/marketing.contract.ts';
 export * from './fakes/hardening.ts';
+export * from './fakes/account-protections.ts';
+export * from './contracts/account-protections.contract.ts';
 export * from './contracts/hardening.contract.ts';

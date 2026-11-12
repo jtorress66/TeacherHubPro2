@@ -2,12 +2,11 @@ import { sql } from 'kysely';
 import { Migrator } from 'kysely/migration';
 import { afterAll, describe, expect, it } from 'vitest';
 import { createLessonPlan, type UserId } from '@thp/domain';
-import { aUser } from '@thp/testing';
 import { migrateDown, migrateToLatest } from '../../src/postgres/index.ts';
-import { userMapper } from '../../src/postgres/mappers/school-mappers.ts';
 import { migrationProvider } from '../../src/postgres/migrations/index.ts';
 import { PostgresMicrosoftConnectionRepository } from '../../src/postgres/repositories/postgres-assignment-repositories.ts';
 import { PostgresLessonPlanRepository } from '../../src/postgres/repositories/postgres-lesson-plan-repository.ts';
+import { PostgresUserRepository } from '../../src/postgres/repositories/postgres-user-repository.ts';
 import { connect, schoolA, truncateAll } from './test-db.ts';
 
 const db = connect();
@@ -20,6 +19,11 @@ const tableNames = async (): Promise<string[]> => {
     ORDER BY table_name`.execute(db);
   return rows.map((row) => row.table_name);
 };
+
+/** A user as stored before 0026, without the confirmation and suspension columns. */
+const oldUser = (id: string, email: string, role: string) =>
+  sql`INSERT INTO users (id, school_id, email, name, role, language, onboarding_status)
+      VALUES (${id}, ${schoolA}, ${email}, 'Ana', ${role}, 'en', 'not_started')`.execute(db);
 
 describe('migrations', () => {
   it('the test database is already at the latest schema, so nothing runs again', async () => {
@@ -34,11 +38,13 @@ describe('migrations', () => {
       'attendance_entries',
       'attendance_sessions',
       'audit_events',
+      'blocked_domains',
       'canva_connections',
       'chat_sessions',
       'chat_turns',
       'classes',
       'classroom_connections',
+      'email_confirmations',
       'forms_exports',
       'game_plays',
       'games',
@@ -85,6 +91,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0026_account_protections',
           '0025_microsoft_teams',
           '0024_microsoft_connections',
           '0023_canva_connections',
@@ -144,10 +151,11 @@ describe('migrations', () => {
           '0023_canva_connections',
           '0024_microsoft_connections',
           '0025_microsoft_teams',
+          '0026_account_protections',
         ],
       },
     });
-    expect(await tableNames()).toHaveLength(49);
+    expect(await tableNames()).toHaveLength(51);
   });
 
   it('turns plans saved before step 8 into valid plans of their kind', async () => {
@@ -156,10 +164,7 @@ describe('migrations', () => {
     expect((await migrator.migrateTo('0005_gradebook')).error).toBeUndefined();
     // A school as stored at 0005, before later columns (such as plan_format) existed.
     await sql`INSERT INTO schools (id, name) VALUES (${schoolA}, 'Lincoln')`.execute(db);
-    await db
-      .insertInto('users')
-      .values(userMapper.toRow(aUser({ id: 'teacher-1' as UserId, schoolId: schoolA })))
-      .execute();
+    await oldUser('teacher-1', 'teacher-1@school.edu', 'teacher');
     const old = (id: string, kind: string, title: string | null) =>
       sql`INSERT INTO lesson_plans (id, school_id, teacher_id, kind, title, week_start, days, standards)
           VALUES (${id}, ${schoolA}, 'teacher-1', ${kind}, ${title}, '2026-09-07', '[]', '["X"]')`.execute(
@@ -188,10 +193,7 @@ describe('migrations', () => {
     await truncateAll(db);
     expect((await migrator.migrateTo('0024_microsoft_connections')).error).toBeUndefined();
     await sql`INSERT INTO schools (id, name) VALUES (${schoolA}, 'Lincoln')`.execute(db);
-    await db
-      .insertInto('users')
-      .values(userMapper.toRow(aUser({ id: 'teacher-1' as UserId, schoolId: schoolA })))
-      .execute();
+    await oldUser('teacher-1', 'teacher-1@school.edu', 'teacher');
     await sql`INSERT INTO microsoft_connections (teacher_id, school_id, encrypted_refresh_token, connected_at)
         VALUES ('teacher-1', ${schoolA}, 'sealed', now())`.execute(db);
 
@@ -201,6 +203,30 @@ describe('migrations', () => {
       'teacher-1' as UserId,
     );
     expect(connection).toMatchObject({ encryptedRefreshToken: 'sealed', teams: false });
+    await truncateAll(db);
+  });
+
+  it('leaves existing accounts unconfirmed, except super admins and accounts without a password', async () => {
+    const migrator = new Migrator({ db, provider: migrationProvider });
+    await truncateAll(db);
+    expect((await migrator.migrateTo('0025_microsoft_teams')).error).toBeUndefined();
+    await sql`INSERT INTO schools (id, name) VALUES (${schoolA}, 'Lincoln')`.execute(db);
+    await oldUser('with-password', 'pw@school.edu', 'teacher');
+    await oldUser('google-only', 'g@school.edu', 'teacher');
+    await oldUser('root', 'root@school.edu', 'super_admin');
+    for (const id of ['with-password', 'root']) {
+      await sql`INSERT INTO password_credentials (user_id, password_hash) VALUES (${id}, 'hash')`.execute(
+        db,
+      );
+    }
+
+    expect((await migrateToLatest(db)).ok).toBe(true);
+    const users = new PostgresUserRepository(db);
+    const read = (id: string) => users.findById(schoolA, id as UserId);
+    expect((await read('with-password'))?.emailConfirmedAt).toBeNull();
+    expect((await read('google-only'))?.emailConfirmedAt).toBeInstanceOf(Date);
+    expect((await read('root'))?.emailConfirmedAt).toBeInstanceOf(Date);
+    expect((await read('with-password'))?.suspendedAt).toBeNull();
     await truncateAll(db);
   });
 });

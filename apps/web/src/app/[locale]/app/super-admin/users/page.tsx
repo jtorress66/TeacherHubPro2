@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { SchoolId } from '@thp/domain';
 import { createTranslator } from '@thp/i18n';
+import { AccountStatusForm } from '../../../../../components/protection-forms.tsx';
 import { SuperAdminNav } from '../../../../../components/super-admin-nav.tsx';
 import { getAppContainer } from '../../../../../container.ts';
 import { requireUser } from '../../../../_lib/auth.ts';
@@ -60,14 +61,28 @@ export default async function UsersPage(props: Props) {
         <p className="muted">{t('superAdmin.noUsers')}</p>
       ) : (
         <ul className="list" aria-label={t('superAdmin.users')}>
-          {users.value.map(({ user: person, schoolName }) => (
+          {users.value.map(({ user: person, schoolName, aiDrafts, heavyAiUse }) => (
             <li key={person.id}>
               <Link href={`${base}/schools/${person.schoolId}/users/${person.id}`}>
                 {person.name}
               </Link>{' '}
               <span className="hint">
-                {person.email} · {t(`admin.role_${person.role}`)} · {schoolName}
-              </span>
+                {person.email} · {t(`admin.role_${person.role}`)} · {schoolName} ·{' '}
+                {t('superAdmin.aiDrafts', { count: aiDrafts })}
+              </span>{' '}
+              {heavyAiUse ? <span className="chip">{t('superAdmin.heavyAiUse')}</span> : null}
+              {person.role === 'super_admin' || person.id === user.id ? null : (
+                <AccountStatusForm
+                  locale={locale}
+                  person={{
+                    id: person.id,
+                    schoolId: person.schoolId,
+                    name: person.name,
+                    email: person.email,
+                  }}
+                  suspended={person.suspendedAt !== null}
+                />
+              )}
             </li>
           ))}
         </ul>

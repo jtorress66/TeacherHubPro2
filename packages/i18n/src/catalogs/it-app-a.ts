@@ -61,6 +61,9 @@ export const itAppA = {
     continueWithGoogle: 'Continua con Google',
     or: 'oppure',
     sessionExpired: 'La sessione è scaduta. Acceda di nuovo.',
+    adultConfirm:
+      'Ho almeno 18 anni e sono un insegnante, un membro del personale scolastico, un tutor o un genitore.',
+    contactUs: 'Contattaci',
   },
   dashboard: {
     ownerAccess: 'Proprietario: accesso completo',
@@ -343,6 +346,23 @@ export const itAppA = {
     sample: 'Scarica un file di esempio',
     importButton: 'Importa',
     imported: 'Importati: {count}.',
+    aiDrafts: 'Bozze IA (30 giorni): {count}',
+    heavyAiUse: 'Uso intenso di IA',
+    suspendedBadge: 'Sospeso',
+    suspend: 'Sospendi',
+    reinstate: 'Riattiva',
+    userSuspended: '{email} è sospeso.',
+    userReinstated: '{email} può accedere di nuovo.',
+    accountActions: 'Account di {name}',
+    blockedDomains: 'Domini bloccati',
+    blockedDomainsIntro:
+      "Chi ha un'email su questi domini, o sui loro sottodomini, non può registrarsi. Bloccare un dominio sospende anche gli account già presenti, tranne quelli dei super amministratori.",
+    domain: 'Dominio',
+    blockDomain: 'Blocca dominio',
+    unblock: 'Sblocca',
+    noBlockedDomains: 'Nessun dominio bloccato.',
+    domainBlocked: '{domain} è bloccato. Account sospesi: {count}.',
+    suspendedAccounts: 'Account sospesi',
   },
   passwords: {
     forgot: 'Password dimenticata?',
@@ -644,7 +664,8 @@ export const itAppA = {
     noAssignments: 'Ancora nessun compito.',
     created: 'Compito creato.',
     openCreated: 'Apri «{title}» per aggiungere domande →',
-    openHint: 'Fai clic sul nome di un compito per aprirlo, aggiungere domande e vedere le risposte.',
+    openHint:
+      'Fai clic sul nome di un compito per aprirlo, aggiungere domande e vedere le risposte.',
     needCategory: 'Aggiunga una categoria di voto prima di creare compiti.',
     editAssignment: 'Modifica compito',
     saveAssignment: 'Salva modifiche',

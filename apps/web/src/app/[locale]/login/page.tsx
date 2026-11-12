@@ -13,6 +13,8 @@ export async function generateMetadata(props: LocaleParams): Promise<Metadata> {
 const notices: Readonly<Record<string, MessageKey>> = {
   google_failed: 'errors.google_failed',
   google_email_unverified: 'errors.google_email_unverified',
+  account_suspended: 'errors.account_suspended',
+  blocked_domain: 'errors.blocked_domain',
 };
 
 export default async function LogInPage(
@@ -30,6 +32,12 @@ export default async function LogInPage(
       notice={noticeKey === undefined ? undefined : t(noticeKey)}
       footer={
         <>
+          {error === 'account_suspended' ? (
+            <>
+              <Link href={`/${locale}/contact`}>{t('auth.contactUs')}</Link>
+              <br />
+            </>
+          ) : null}
           <Link href={`/${locale}/forgot-password`}>{t('passwords.forgot')}</Link>
           <br />
           {t('auth.noAccount')} <Link href={`/${locale}/signup`}>{t('auth.createAccount')}</Link>

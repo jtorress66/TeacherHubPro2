@@ -1,4 +1,12 @@
-import { roles, type PasswordToken, type Role, type SchoolId, type UserId } from '@thp/domain';
+import {
+  emailDomain,
+  isWithinDomain,
+  roles,
+  type PasswordToken,
+  type Role,
+  type SchoolId,
+  type UserId,
+} from '@thp/domain';
 import type {
   PasswordTokenRepository,
   PlatformCounts,
@@ -76,6 +84,12 @@ export class InMemoryUserDirectory implements UserDirectory {
         )
         .reverse()
         .slice(0, query.limit),
+    );
+  }
+
+  listByEmailDomain(domain: string) {
+    return Promise.resolve(
+      this.stores.users.all().filter((u) => isWithinDomain(emailDomain(u.email), domain)),
     );
   }
 

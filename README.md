@@ -105,6 +105,8 @@ Nobody ever sees another person's password: new accounts and resets get an email
 
 Super admins always have full access, with no trial or plan; the other teachers of their school use the trial or a plan.
 
+**Account protections.** Accounts are for adults: sign-up needs the box "I am 18 or older and a teacher, school staff member, tutor or parent", and refuses temporary-inbox addresses (`isThrowawayEmail`) and blocked domains. A password sign-up gets a "Confirm your email" link (`/confirm-email`, secret in the `#hash`, stored only as a hash, single use, 3 days); everything works before that except the AI tools, and the app shows a banner with **Resend** (5 a day). Google sign-in, setting a password from an emailed link, and super admins count as confirmed; accounts that existed before this had to confirm once, except super admins and accounts without a password. Super admins see each user's AI drafts (background AI jobs) in the last 30 days, flagged at 150 or more; can **Suspend** (ends every session; log in, Google sign-in and sessions are refused) and **Reinstate** anyone but themselves and other super admins; and keep a list of **Blocked domains** (a domain and its subdomains cannot sign up; blocking one suspends the accounts already there, except super admins). Suspension only stops the person signing in: the student and family links they made keep working. End-to-end tests confirm the email through the development mailbox (`signUp` in `apps/web/e2e/helpers.ts`).
+
 **First super admin:** set `SUPER_ADMIN_SETUP_KEY` on the web service, sign up, open `/en/setup`, enter your email and the key. It works only while there is no super admin; then remove the key.
 
 ## Prep Agent

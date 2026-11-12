@@ -109,6 +109,7 @@ const classId = 'class-1' as ClassId;
 export const aSchool = (overrides: Partial<SchoolInput> = {}) =>
   unwrap(createSchool({ id: schoolId, name: 'Escuela Luz', ...overrides }));
 
+/** An established teacher, who confirmed their email long ago. */
 export const aUser = (overrides: Partial<UserInput> = {}) =>
   unwrap(
     createUser({
@@ -116,6 +117,7 @@ export const aUser = (overrides: Partial<UserInput> = {}) =>
       schoolId,
       email: 'teacher@school.edu',
       name: 'Ana López',
+      emailConfirmedAt: new Date('2026-01-01T00:00:00.000Z'),
       ...overrides,
     }),
   );

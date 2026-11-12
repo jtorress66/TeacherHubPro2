@@ -61,6 +61,9 @@ export const frAppA = {
     continueWithGoogle: 'Continuer avec Google',
     or: 'ou',
     sessionExpired: 'Votre session a expiré. Veuillez vous reconnecter.',
+    adultConfirm:
+      "J'ai 18 ans ou plus et je suis enseignant, membre du personnel scolaire, tuteur ou parent.",
+    contactUs: 'Nous contacter',
   },
   dashboard: {
     ownerAccess: 'Propriétaire : accès complet',
@@ -342,6 +345,23 @@ export const frAppA = {
     sample: 'Télécharger un fichier exemple',
     importButton: 'Importer',
     imported: 'Importés : {count}.',
+    aiDrafts: 'Brouillons IA (30 jours) : {count}',
+    heavyAiUse: "Usage intensif de l'IA",
+    suspendedBadge: 'Suspendu',
+    suspend: 'Suspendre',
+    reinstate: 'Réactiver',
+    userSuspended: '{email} est suspendu.',
+    userReinstated: '{email} peut de nouveau se connecter.',
+    accountActions: 'Compte de {name}',
+    blockedDomains: 'Domaines bloqués',
+    blockedDomainsIntro:
+      "Les personnes ayant une adresse e-mail sur ces domaines, ou leurs sous-domaines, ne peuvent pas s'inscrire. Bloquer un domaine suspend aussi les comptes qui y existent déjà, sauf ceux des super administrateurs.",
+    domain: 'Domaine',
+    blockDomain: 'Bloquer le domaine',
+    unblock: 'Débloquer',
+    noBlockedDomains: 'Aucun domaine bloqué.',
+    domainBlocked: '{domain} est bloqué. Comptes suspendus : {count}.',
+    suspendedAccounts: 'Comptes suspendus',
   },
   passwords: {
     forgot: 'Mot de passe oublié ?',
@@ -644,7 +664,8 @@ export const frAppA = {
     noAssignments: 'Aucun devoir pour le moment.',
     created: 'Devoir créé.',
     openCreated: 'Ouvrez « {title} » pour ajouter des questions →',
-    openHint: 'Cliquez sur le nom d’un devoir pour l’ouvrir, ajouter des questions et voir les réponses.',
+    openHint:
+      'Cliquez sur le nom d’un devoir pour l’ouvrir, ajouter des questions et voir les réponses.',
     needCategory: 'Ajoutez une catégorie de notes avant de créer des devoirs.',
     editAssignment: 'Modifier le devoir',
     saveAssignment: 'Enregistrer les modifications',

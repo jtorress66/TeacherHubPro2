@@ -547,7 +547,7 @@ export const marketingEn = {
         'TeacherHubPro is a web app for teaching: planning, classes, attendance, grades, assignments, AI drafting tools and family portals.',
       s2Title: 'Your account',
       s2Text:
-        'Keep your password safe, use the app for teaching and learning, and follow the acceptable use rules. You are responsible for the content you create and the student information you enter, and for having the right to enter it.',
+        'Accounts are for adults: teachers, school staff, tutors and parents. Students do not have accounts; they use the private links their teacher shares. Keep your password safe, use the app for teaching and learning, and follow the acceptable use rules. You are responsible for the content you create and the student information you enter, and for having the right to enter it.',
       s3Title: 'AI drafts',
       s3Text:
         'AI features make drafts that can contain mistakes. You review and approve them before use; grades and reports count only once you confirm them.',
@@ -594,7 +594,7 @@ export const marketingEn = {
       s1Text: 'Use TeacherHubPro to plan, teach, assess and communicate with families.',
       s2Title: 'Do not',
       s2Text:
-        'Do not enter student information you are not allowed to share, try to reach another school’s data, share private student or family links publicly, overload or attack the service, or use the AI tools to make harmful, illegal or unrelated content.',
+        'Do not enter student information you are not allowed to share, try to reach another school’s data, share private student or family links publicly, overload or attack the service, use the AI tools to make harmful, illegal or unrelated content, or use it as a student to do your own schoolwork.',
       s3Title: 'If rules are broken',
       s3Text: 'We may suspend access that puts students, schools or the service at risk.',
     },

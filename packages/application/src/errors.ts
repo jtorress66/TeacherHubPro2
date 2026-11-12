@@ -49,7 +49,13 @@ export type ApplicationErrorCode =
   | 'invalid_link'
   | 'setup_unavailable'
   | 'already_set_up'
-  | 'rate_limited';
+  | 'rate_limited'
+  | 'adult_required'
+  | 'throwaway_email'
+  | 'blocked_domain'
+  | 'email_unconfirmed'
+  | 'resend_limit'
+  | 'account_suspended';
 
 /**
  * What a use case can report: a broken validation rule (with its field) or an application-level

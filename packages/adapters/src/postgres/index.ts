@@ -1,6 +1,9 @@
 import type { Kysely } from 'kysely';
 import type {
+  AiUsageStats,
   AuditLog,
+  BlockedDomainRepository,
+  EmailConfirmationRepository,
   RateLimiter,
   AttachmentRepository,
   CanvaConnectionRepository,
@@ -112,6 +115,11 @@ import { PostgresSubscriptionRepository } from './repositories/postgres-subscrip
 import { PostgresUserRepository } from './repositories/postgres-user-repository.ts';
 import { PostgresSessionRepository } from './repositories/postgres-session-repository.ts';
 import { PostgresPasswordCredentialRepository } from './repositories/postgres-password-credential-repository.ts';
+import {
+  PostgresAiUsageStats,
+  PostgresBlockedDomainRepository,
+  PostgresEmailConfirmationRepository,
+} from './repositories/postgres-account-protections.ts';
 import type { Database } from './schema.ts';
 
 export { createDatabase } from './database.ts';
@@ -169,6 +177,9 @@ export interface PostgresRepositories {
   readonly subscriptions: SubscriptionRepository & TrialEndingLookup;
   readonly sessions: SessionRepository;
   readonly credentials: PasswordCredentialRepository;
+  readonly emailConfirmations: EmailConfirmationRepository;
+  readonly blockedDomains: BlockedDomainRepository;
+  readonly aiUsage: AiUsageStats;
 }
 
 /** Every repository on one connection pool; wired in each app's composition root. */
@@ -223,5 +234,8 @@ export function createPostgresRepositories(db: Kysely<Database>): PostgresReposi
     subscriptions: new PostgresSubscriptionRepository(db),
     sessions: new PostgresSessionRepository(db),
     credentials: new PostgresPasswordCredentialRepository(db),
+    emailConfirmations: new PostgresEmailConfirmationRepository(db),
+    blockedDomains: new PostgresBlockedDomainRepository(db),
+    aiUsage: new PostgresAiUsageStats(db),
   };
 }

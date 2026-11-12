@@ -42,6 +42,7 @@ async function signUp(email = uniqueEmail()) {
     password,
     language: 'es',
     defaultSchoolName: 'Mi escuela',
+    adult: true,
   });
   if (!result.ok) throw new Error(JSON.stringify(result.error));
   return result.value;

@@ -40,6 +40,7 @@ export type * from './repositories/scoped-repository.ts';
 export type * from './repositories/repositories.ts';
 export type { SessionRepository } from './accounts/session-repository.ts';
 export type * from './accounts/password-credential-repository.ts';
+export type * from './accounts/account-protections.ts';
 export type * from './admin/admin-directories.ts';
 export type * from './marketing/marketing.ts';
 export type * from './ai/chatbot-writer.ts';

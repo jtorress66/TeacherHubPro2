@@ -62,6 +62,8 @@ export const en = {
     continueWithGoogle: 'Continue with Google',
     or: 'or',
     sessionExpired: 'Your session has ended. Please log in again.',
+    adultConfirm: 'I am 18 or older and a teacher, school staff member, tutor or parent.',
+    contactUs: 'Contact us',
   },
   dashboard: {
     ownerAccess: 'Owner: full access',
@@ -338,6 +340,23 @@ export const en = {
     sample: 'Download a sample file',
     importButton: 'Import',
     imported: 'Imported: {count}.',
+    aiDrafts: 'AI drafts (30 days): {count}',
+    heavyAiUse: 'Heavy AI use',
+    suspendedBadge: 'Suspended',
+    suspend: 'Suspend',
+    reinstate: 'Reinstate',
+    userSuspended: '{email} is suspended.',
+    userReinstated: '{email} can sign in again.',
+    accountActions: 'Account of {name}',
+    blockedDomains: 'Blocked domains',
+    blockedDomainsIntro:
+      'People with an email at these domains, or their subdomains, cannot sign up. Blocking a domain also suspends the accounts already there, except super admins.',
+    domain: 'Domain',
+    blockDomain: 'Block domain',
+    unblock: 'Unblock',
+    noBlockedDomains: 'No domains are blocked.',
+    domainBlocked: '{domain} is blocked. Accounts suspended: {count}.',
+    suspendedAccounts: 'Accounts suspended',
   },
   passwords: {
     forgot: 'Forgot password?',
@@ -1593,6 +1612,10 @@ export const en = {
     resetButton: 'Choose a new password',
     passwordLinkExpires: 'This link works once and expires in 3 days.',
     weeklySentBy: 'Sent by a teacher at {school} with TeacherHubPro.',
+    confirmSubject: 'Confirm your email for TeacherHubPro',
+    confirmBody:
+      'Thanks for creating your TeacherHubPro account. Confirm your email address to start using the AI tools.',
+    confirmButton: 'Confirm my email',
   },
   portalLinks: {
     open: 'Family portal',
@@ -1869,6 +1892,18 @@ export const en = {
     use: 'Use a rubric',
     useHint: 'Fills the rubric box with one of your saved rubrics.',
   },
+  confirmEmail: {
+    bannerTitle: 'Confirm your email to use the AI tools',
+    bannerText:
+      'We sent a link to {email}. Everything else already works; the AI tools unlock once you open the link.',
+    resend: 'Resend',
+    resent: 'A new link is on its way to {email}.',
+    title: 'Confirm your email',
+    confirmed: 'Your email is confirmed. The AI tools are ready.',
+    openApp: 'Open TeacherHubPro',
+    noLink:
+      'This page needs the link from your email. If it does not work, log in and use Resend to get a new one.',
+  },
   errors: {
     own_account: 'You cannot do this to your own account.',
     has_classes:
@@ -1943,5 +1978,15 @@ export const en = {
     csv_too_many_rows: 'The file has more than 500 students. Split it into smaller files.',
     csv_missing_columns: 'The file needs these columns: {columns}.',
     csvRow: 'Line {line}: {field}. {message}',
+    adult_required:
+      'Please confirm you are 18 or older and a teacher, school staff member, tutor or parent.',
+    throwaway_email:
+      "Please use your regular email address. Temporary email addresses can't be used.",
+    blocked_domain:
+      'TeacherHubPro accounts are for teachers, school staff, tutors and parents. If you are a student, ask your teacher for your assignment link.',
+    email_unconfirmed:
+      'Confirm your email to use the AI tools. Use Resend in the banner at the top of the page if you need a new link.',
+    resend_limit: 'You can resend the email up to 5 times a day. Please try again tomorrow.',
+    account_suspended: 'This account is suspended. If you think this is a mistake, contact us.',
   },
 } as const;

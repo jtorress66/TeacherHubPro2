@@ -11,6 +11,7 @@ export function SuperAdminNav({ locale }: { readonly locale: Locale }) {
       <Link href={`${base}/schools`}>{t('superAdmin.schools')}</Link>
       <Link href={`${base}/users`}>{t('superAdmin.users')}</Link>
       <Link href={`${base}/import`}>{t('superAdmin.import')}</Link>
+      <Link href={`${base}/blocked-domains`}>{t('superAdmin.blockedDomains')}</Link>
       <Link href={`${base}/leads`}>{t('marketing.leads.title')}</Link>
     </nav>
   );

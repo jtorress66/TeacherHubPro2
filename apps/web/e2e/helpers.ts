@@ -17,11 +17,43 @@ export async function skipTour(page: Page): Promise<void> {
     .addCookies([{ name: 'thp_tour_seen', value: '1', domain: 'localhost', path: '/' }]);
 }
 
+/** The newest link of a kind (such as `confirm-email`) emailed to an address, from the development mailbox. */
+export async function emailedLink(
+  page: Page,
+  locale: Locale,
+  email: string,
+  path: 'confirm-email' | 'set-password',
+): Promise<string> {
+  await page.goto(`/${locale}/dev/mail`);
+  const mails = page.getByRole('article').filter({ hasText: `To ${email} ` });
+  for (const mail of await mails.all()) {
+    const body = (await mail.locator('pre').textContent()) ?? '';
+    const link = new RegExp(`https?://\\S+/${path}#\\S+`, 'u').exec(body)?.[0];
+    if (link !== undefined) return link;
+  }
+  throw new Error(`no ${path} link for ${email}`);
+}
+
+/** Opens the emailed confirmation link and confirms, as the person would. */
+export async function confirmEmail(page: Page, locale: Locale, email: string): Promise<void> {
+  const t = createTranslator(locale);
+  await page.goto(await emailedLink(page, locale, email, 'confirm-email'));
+  await page
+    .getByRole('form', { name: t('confirmEmail.title') })
+    .getByRole('button', { name: t('emails.confirmButton') })
+    .click();
+  await expect(page.getByRole('status')).toHaveText(t('confirmEmail.confirmed'));
+}
+
+/**
+ * Signs up with the adult box ticked and, unless told not to, confirms the email from the
+ * development mailbox, ending on the app's home page.
+ */
 export async function signUp(
   page: Page,
   locale: Locale = 'en',
   email = uniqueEmail(),
-  { tour = false }: { readonly tour?: boolean } = {},
+  { tour = false, confirm = true }: { readonly tour?: boolean; readonly confirm?: boolean } = {},
 ): Promise<string> {
   const t = createTranslator(locale);
   if (!tour) await skipTour(page);
@@ -29,8 +61,14 @@ export async function signUp(
   await page.getByLabel(t('auth.name'), { exact: true }).fill('Ana López');
   await page.getByLabel(t('auth.email'), { exact: true }).fill(email);
   await page.getByLabel(t('auth.password'), { exact: true }).fill(password);
+  await page.getByLabel(t('auth.adultConfirm')).check();
   await page.getByRole('button', { name: t('auth.createAccount') }).click();
   await expect(page).toHaveURL(appPath(locale));
+  if (confirm) {
+    await confirmEmail(page, locale, email);
+    await page.goto(`/${locale}/app`);
+    await expect(page).toHaveURL(appPath(locale));
+  }
   return email;
 }
 

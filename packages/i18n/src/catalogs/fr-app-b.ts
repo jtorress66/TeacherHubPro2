@@ -679,6 +679,10 @@ export const frAppB = {
     resetButton: 'Choisir un nouveau mot de passe',
     passwordLinkExpires: "Ce lien ne fonctionne qu'une fois et expire dans 3 jours.",
     weeklySentBy: 'Envoyé par un(e) enseignant(e) de {school} avec TeacherHubPro.',
+    confirmSubject: 'Confirmez votre e-mail pour TeacherHubPro',
+    confirmBody:
+      "Merci d'avoir créé votre compte TeacherHubPro. Confirmez votre adresse e-mail pour commencer à utiliser les outils d'IA.",
+    confirmButton: 'Confirmer mon e-mail',
   },
   portalLinks: {
     open: 'Portail famille',
@@ -962,6 +966,18 @@ export const frAppB = {
     use: 'Utiliser une grille',
     useHint: "Remplit le champ de grille avec l'une de vos grilles enregistrées.",
   },
+  confirmEmail: {
+    bannerTitle: "Confirmez votre e-mail pour utiliser les outils d'IA",
+    bannerText:
+      "Nous avons envoyé un lien à {email}. Tout le reste fonctionne déjà ; les outils d'IA se débloquent dès que vous ouvrez le lien.",
+    resend: 'Renvoyer',
+    resent: 'Un nouveau lien est en route vers {email}.',
+    title: 'Confirmez votre e-mail',
+    confirmed: "Votre e-mail est confirmé. Les outils d'IA sont prêts.",
+    openApp: 'Ouvrir TeacherHubPro',
+    noLink:
+      "Cette page a besoin du lien de votre e-mail. S'il ne fonctionne pas, connectez-vous et utilisez Renvoyer pour en recevoir un nouveau.",
+  },
   errors: {
     own_account: 'Vous ne pouvez pas faire cela sur votre propre compte.',
     has_classes:
@@ -1040,5 +1056,17 @@ export const frAppB = {
       'Le fichier contient plus de 500 élèves. Divisez-le en fichiers plus petits.',
     csv_missing_columns: 'Le fichier doit contenir ces colonnes : {columns}.',
     csvRow: 'Ligne {line} : {field}. {message}',
+    adult_required:
+      'Veuillez confirmer que vous avez 18 ans ou plus et que vous êtes enseignant, membre du personnel scolaire, tuteur ou parent.',
+    throwaway_email:
+      'Veuillez utiliser votre adresse e-mail habituelle. Les adresses e-mail temporaires ne sont pas acceptées.',
+    blocked_domain:
+      'Les comptes TeacherHubPro sont destinés aux enseignants, au personnel scolaire, aux tuteurs et aux parents. Si vous êtes élève, demandez à votre enseignant le lien de votre devoir.',
+    email_unconfirmed:
+      "Confirmez votre e-mail pour utiliser les outils d'IA. Utilisez Renvoyer dans le bandeau en haut de la page si vous avez besoin d'un nouveau lien.",
+    resend_limit:
+      "Vous pouvez renvoyer l'e-mail jusqu'à 5 fois par jour. Veuillez réessayer demain.",
+    account_suspended:
+      "Ce compte est suspendu. Si vous pensez qu'il s'agit d'une erreur, contactez-nous.",
   },
 };

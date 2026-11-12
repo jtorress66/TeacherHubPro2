@@ -577,7 +577,7 @@ export const marketingPt: MarketingMessages = {
         'O TeacherHubPro é um aplicativo web para o ensino: planejamento, turmas, frequência, notas, tarefas, ferramentas de rascunho com IA e portais da família.',
       s2Title: 'Sua conta',
       s2Text:
-        'Mantenha sua senha em segurança, use o aplicativo para ensinar e aprender e siga as regras de uso aceitável. Você é responsável pelo conteúdo que cria e pelas informações de alunos que insere, e por ter o direito de inseri-las.',
+        'As contas são para adultos: professores, funcionários da escola, tutores e pais. Os alunos não têm contas; eles usam os links privados que o professor compartilha. Mantenha sua senha em segurança, use o aplicativo para ensinar e aprender e siga as regras de uso aceitável. Você é responsável pelo conteúdo que cria e pelas informações de alunos que insere, e por ter o direito de inseri-las.',
       s3Title: 'Rascunhos de IA',
       s3Text:
         'Os recursos de IA criam rascunhos que podem conter erros. Você os revisa e aprova antes de usá-los; notas e relatórios só contam depois que você os confirma.',
@@ -624,7 +624,7 @@ export const marketingPt: MarketingMessages = {
       s1Text: 'Use o TeacherHubPro para planejar, ensinar, avaliar e se comunicar com as famílias.',
       s2Title: 'Não faça',
       s2Text:
-        'Não insira informações de alunos que você não tem permissão para compartilhar, não tente acessar dados de outra escola, não compartilhe publicamente links privados de alunos ou famílias, não sobrecarregue nem ataque o serviço e não use as ferramentas de IA para criar conteúdo prejudicial, ilegal ou não relacionado.',
+        'Não insira informações de alunos que você não tem permissão para compartilhar, não tente acessar dados de outra escola, não compartilhe publicamente links privados de alunos ou famílias, não sobrecarregue nem ataque o serviço, não use as ferramentas de IA para criar conteúdo prejudicial, ilegal ou não relacionado e não o use como aluno para fazer suas próprias tarefas escolares.',
       s3Title: 'Se as regras forem descumpridas',
       s3Text: 'Podemos suspender o acesso que coloque em risco alunos, escolas ou o serviço.',
     },

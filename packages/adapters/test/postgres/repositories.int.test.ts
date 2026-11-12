@@ -43,6 +43,7 @@ import {
   student360RepositoryContract,
   prepBatchRepositoryContract,
   adminContract,
+  accountProtectionContract,
   marketingContract,
   rateLimiterContract,
   auditLogContract,
@@ -380,6 +381,13 @@ withParents(parentsFor.none, () => {
 
 withParents(parentsFor.none, () => {
   marketingContract('Postgres', () => repos);
+});
+
+withParents(parentsFor.none, () => {
+  accountProtectionContract('Postgres', () => ({
+    ...repos,
+    jobs: new PostgresJobQueue(db, new SequentialIdGenerator('prot-job')),
+  }));
 });
 
 withParents(parentsFor.none, () => {

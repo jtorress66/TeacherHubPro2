@@ -53,8 +53,12 @@ import {
   InMemoryUserRepository,
   SequentialIdGenerator,
   SequentialTokenGenerator,
+  InMemoryAiUsageStats,
+  InMemoryBlockedDomainRepository,
+  InMemoryEmailConfirmationRepository,
+  InMemoryRateLimiter,
 } from '@thp/testing';
-import { SignUp } from '../src/index.ts';
+import { ConfirmEmail, SignUp } from '../src/index.ts';
 
 export const googleProfile = {
   email: 'ana.google@gmail.com' as Email,
@@ -66,10 +70,16 @@ export const googleProfile = {
 /** Every port a use case may need, backed by in-memory fakes. */
 export const makeWorld = () => {
   const clock = new FixedClock(new Date('2026-09-01T08:00:00.000Z'));
+  const users = new InMemoryUserRepository();
+  const jobs = new InMemoryJobQueue(clock, new SequentialIdGenerator('job'));
   return {
     clock,
     ids: new SequentialIdGenerator(),
-    jobs: new InMemoryJobQueue(clock, new SequentialIdGenerator('job')),
+    jobs,
+    emailConfirmations: new InMemoryEmailConfirmationRepository(users),
+    blockedDomains: new InMemoryBlockedDomainRepository(),
+    aiUsage: new InMemoryAiUsageStats(jobs),
+    rateLimiter: new InMemoryRateLimiter(),
     lessonPlans: new InMemoryLessonPlanRepository(),
     planFolders: new InMemoryPlanFolderRepository(),
     planTemplates: new InMemoryPlanTemplateRepository(),
@@ -88,7 +98,7 @@ export const makeWorld = () => {
     tokens: new SequentialTokenGenerator(),
     tokenHasher: new FakeTokenHasher(),
     passwordHasher: new FakePasswordHasher(),
-    users: new InMemoryUserRepository(),
+    users,
     schools: new InMemorySchoolRepository(),
     subscriptions: new InMemorySubscriptionRepository(),
     credentials: new InMemoryPasswordCredentialRepository(),
@@ -142,13 +152,37 @@ export const signUpInput = (email = 'ana@school.edu') => ({
   password,
   language: 'es',
   defaultSchoolName: 'Mi escuela',
+  adult: true,
 });
 
-/** A teacher who has just signed up with email and password. */
-export async function signedUp(world: World, email?: string) {
+/** The secret of the newest emailed link to an address (it follows the link's #). */
+export function emailedToken(world: World, email: string): string {
+  const mail = [...world.mailer.outbox].reverse().find((m) => m.to === email);
+  const token = /#([^\s"]+)/u.exec(mail?.text ?? '')?.[1];
+  if (token === undefined) throw new Error(`no link for ${email}`);
+  return token;
+}
+
+/** A teacher who has just signed up with email and password, before confirming their email. */
+export async function signedUpUnconfirmed(world: World, email?: string) {
   const result = await new SignUp(world).execute(signUpInput(email));
   if (!result.ok) throw new Error(`sign-up failed: ${JSON.stringify(result.error)}`);
   return result.value;
+}
+
+/**
+ * A teacher who has signed up and confirmed their email from the emailed link. The confirmation
+ * email is read and taken out of the outbox, so tests see only the mail they cause.
+ */
+export async function signedUp(world: World, email?: string) {
+  const account = await signedUpUnconfirmed(world, email);
+  const confirmed = await new ConfirmEmail(world).execute({
+    token: emailedToken(world, account.user.email),
+  });
+  if (!confirmed.ok) throw new Error(`confirmation failed: ${JSON.stringify(confirmed.error)}`);
+  const read = world.mailer.outbox.findLastIndex((m) => m.to === account.user.email);
+  world.mailer.outbox.splice(read, 1);
+  return { ...account, user: confirmed.value };
 }
 
 const day = 24 * 60 * 60 * 1000;

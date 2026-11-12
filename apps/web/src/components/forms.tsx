@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { planFormats } from '@thp/domain';
@@ -12,7 +13,7 @@ import {
   upgradeAction,
   type FormState,
 } from '../app/_lib/actions.ts';
-import { Select } from './form-fields.tsx';
+import { ErrorText, Select } from './form-fields.tsx';
 
 interface FieldProps {
   readonly label: string;
@@ -120,6 +121,20 @@ export function SignUpForm({ locale }: { readonly locale: Locale }) {
         error={state.errors?.password}
         required
       />
+      <div className="field">
+        <label className="checkbox">
+          <input
+            type="checkbox"
+            id="adult"
+            name="adult"
+            required
+            aria-invalid={state.errors?.adult ? true : undefined}
+            aria-describedby={state.errors?.adult ? 'adult-error' : undefined}
+          />{' '}
+          {t('auth.adultConfirm')}
+        </label>
+        <ErrorText id="adult" message={state.errors?.adult} />
+      </div>
       <Submit label={t('auth.createAccount')} />
     </form>
   );
@@ -131,7 +146,13 @@ export function LogInForm({ locale }: { readonly locale: Locale }) {
   return (
     <form action={action} className="stack" noValidate>
       <input type="hidden" name="locale" value={locale} />
-      <FormAlert message={state.errors?.form} />
+      {state.suspended === true ? (
+        <p role="alert" className="alert">
+          {state.errors?.form} <Link href={`/${locale}/contact`}>{t('auth.contactUs')}</Link>
+        </p>
+      ) : (
+        <FormAlert message={state.errors?.form} />
+      )}
       <Field
         label={t('auth.email')}
         name="email"

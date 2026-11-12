@@ -22,6 +22,12 @@ const applicationCodes: ApplicationErrorCode[] = [
   'class_archived',
   'duplicate_student_number',
   'semester_in_use',
+  'adult_required',
+  'throwaway_email',
+  'blocked_domain',
+  'email_unconfirmed',
+  'resend_limit',
+  'account_suspended',
 ];
 
 const validationCodes: ValidationCode[] = [
@@ -75,6 +81,15 @@ describe('error messages', () => {
     expect(formErrors({ code: 'email_taken' }, 'en')).toEqual({ email: t('errors.email_taken') });
     expect(formErrors({ code: 'below_minimum_seats' }, 'en')).toEqual({
       quantity: t('errors.below_minimum_seats'),
+    });
+    expect(formErrors({ code: 'adult_required' }, 'en')).toEqual({
+      adult: t('errors.adult_required'),
+    });
+    for (const code of ['throwaway_email', 'blocked_domain'] as const) {
+      expect(formErrors({ code }, 'en')).toEqual({ email: t(`errors.${code}`) });
+    }
+    expect(formErrors({ field: 'domain', code: 'invalid_format' }, 'en')).toEqual({
+      domain: t('errors.invalid_format'),
     });
   });
 });

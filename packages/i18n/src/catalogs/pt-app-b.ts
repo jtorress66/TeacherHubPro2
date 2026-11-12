@@ -675,6 +675,10 @@ export const ptAppB = {
     resetButton: 'Escolher uma nova senha',
     passwordLinkExpires: 'Este link funciona uma única vez e expira em 3 dias.',
     weeklySentBy: 'Enviado por um professor da escola {school} com o TeacherHubPro.',
+    confirmSubject: 'Confirme seu e-mail para o TeacherHubPro',
+    confirmBody:
+      'Obrigado por criar sua conta no TeacherHubPro. Confirme seu endereço de e-mail para começar a usar as ferramentas de IA.',
+    confirmButton: 'Confirmar meu e-mail',
   },
   portalLinks: {
     open: 'Portal da família',
@@ -950,6 +954,18 @@ export const ptAppB = {
     use: 'Usar uma rubrica',
     useHint: 'Preenche o campo de rubrica com uma das suas rubricas salvas.',
   },
+  confirmEmail: {
+    bannerTitle: 'Confirme seu e-mail para usar as ferramentas de IA',
+    bannerText:
+      'Enviamos um link para {email}. Todo o resto já funciona; as ferramentas de IA são liberadas quando você abrir o link.',
+    resend: 'Reenviar',
+    resent: 'Um novo link está a caminho de {email}.',
+    title: 'Confirme seu e-mail',
+    confirmed: 'Seu e-mail está confirmado. As ferramentas de IA estão prontas.',
+    openApp: 'Abrir o TeacherHubPro',
+    noLink:
+      'Esta página precisa do link do seu e-mail. Se não funcionar, entre na sua conta e use Reenviar para receber um novo.',
+  },
   errors: {
     own_account: 'Você não pode fazer isso com a sua própria conta.',
     has_classes:
@@ -1024,5 +1040,15 @@ export const ptAppB = {
     csv_too_many_rows: 'O arquivo tem mais de 500 alunos. Divida-o em arquivos menores.',
     csv_missing_columns: 'O arquivo precisa destas colunas: {columns}.',
     csvRow: 'Linha {line}: {field}. {message}',
+    adult_required:
+      'Confirme que você tem 18 anos ou mais e é professor, funcionário da escola, tutor ou pai ou mãe.',
+    throwaway_email:
+      'Use seu endereço de e-mail habitual. Endereços de e-mail temporários não podem ser usados.',
+    blocked_domain:
+      'As contas do TeacherHubPro são para professores, funcionários da escola, tutores e pais. Se você é aluno, peça ao seu professor o link da sua tarefa.',
+    email_unconfirmed:
+      'Confirme seu e-mail para usar as ferramentas de IA. Use Reenviar no aviso no topo da página se precisar de um novo link.',
+    resend_limit: 'Você pode reenviar o e-mail até 5 vezes por dia. Tente novamente amanhã.',
+    account_suspended: 'Esta conta está suspensa. Se você acha que é um engano, fale conosco.',
   },
 };

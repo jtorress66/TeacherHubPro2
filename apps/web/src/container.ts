@@ -151,6 +151,13 @@ import {
   SetUpFirstSuperAdmin,
   RequestPasswordReset,
   SetPassword,
+  ConfirmEmail,
+  ResendEmailConfirmation,
+  SuspendUser,
+  ReinstateUser,
+  BlockDomain,
+  UnblockDomain,
+  ListBlockedDomains,
   SendPasswordLink,
   ListSchoolUsers,
   ChangeUserRole,
@@ -427,6 +434,13 @@ export interface AppContainer {
   readonly setUpFirstSuperAdmin: SetUpFirstSuperAdmin;
   readonly requestPasswordReset: RequestPasswordReset;
   readonly setPassword: SetPassword;
+  readonly confirmEmail: ConfirmEmail;
+  readonly resendEmailConfirmation: ResendEmailConfirmation;
+  readonly suspendUser: SuspendUser;
+  readonly reinstateUser: ReinstateUser;
+  readonly blockDomain: BlockDomain;
+  readonly unblockDomain: UnblockDomain;
+  readonly listBlockedDomains: ListBlockedDomains;
   readonly sendPasswordLink: SendPasswordLink;
   readonly listSchoolUsers: ListSchoolUsers;
   readonly changeUserRole: ChangeUserRole;
@@ -860,6 +874,13 @@ export function createAppContainer(
     setUpFirstSuperAdmin: new SetUpFirstSuperAdmin(deps),
     requestPasswordReset: new RequestPasswordReset(deps),
     setPassword: new SetPassword(deps),
+    confirmEmail: new ConfirmEmail(deps),
+    resendEmailConfirmation: new ResendEmailConfirmation(deps),
+    suspendUser: new SuspendUser(deps),
+    reinstateUser: new ReinstateUser(deps),
+    blockDomain: new BlockDomain(deps),
+    unblockDomain: new UnblockDomain(deps),
+    listBlockedDomains: new ListBlockedDomains(deps),
     sendPasswordLink: new SendPasswordLink(deps),
     listSchoolUsers: new ListSchoolUsers(deps),
     changeUserRole: new ChangeUserRole(deps),

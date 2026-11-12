@@ -131,7 +131,7 @@ test('a teacher signs up and buys the Individual monthly plan on Stripe Checkout
   page,
 }) => {
   const t = createTranslator('en');
-  await signUp(page, 'en');
+  await signUp(page, 'en', undefined, { confirm: false });
   await expect(page.getByTestId('school-name')).toHaveText(t('defaults.schoolName'));
 
   await page.getByRole('link', { name: t('nav.billing') }).click();

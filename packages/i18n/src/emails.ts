@@ -197,6 +197,27 @@ export function setPasswordEmail(input: SetPasswordEmailInput, site = ''): Email
   });
 }
 
+export interface ConfirmEmailInput {
+  readonly language: Locale;
+  readonly name: string;
+  /** The one-time link, with its secret in the #hash. */
+  readonly url: string;
+}
+
+/** A one-time link to confirm a new account's email address; the AI tools wait for it. */
+export function confirmEmailEmail(input: ConfirmEmailInput, site = ''): EmailContent {
+  const t = createTranslator(input.language);
+  return render({
+    locale: input.language,
+    subject: t('emails.confirmSubject'),
+    paragraphs: [t('emails.trialHello', { name: input.name }), t('emails.confirmBody')],
+    button: { label: t('emails.confirmButton'), url: input.url },
+    footer: [t('emails.passwordLinkExpires')],
+    signed: true,
+    site,
+  });
+}
+
 export interface LeadNoticeInput {
   readonly lead: {
     readonly name: string;
@@ -242,6 +263,7 @@ export function emailTemplates(site: string) {
     trialReminder: (input: TrialReminderEmailInput) => trialReminderEmail(input, site),
     weeklyUpdate: (input: WeeklyUpdateEmailInput) => weeklyUpdateEmail(input, site),
     setPassword: (input: SetPasswordEmailInput) => setPasswordEmail(input, site),
+    confirmEmail: (input: ConfirmEmailInput) => confirmEmailEmail(input, site),
     leadNotice: (input: LeadNoticeInput) => leadNoticeEmail(input, site),
   };
 }

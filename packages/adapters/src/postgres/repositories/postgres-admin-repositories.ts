@@ -1,5 +1,7 @@
 import type { Kysely } from 'kysely';
 import {
+  emailDomain,
+  isWithinDomain,
   roles,
   type PasswordToken,
   type PasswordTokenId,
@@ -76,6 +78,22 @@ export class PostgresUserDirectory implements UserDirectory {
       .limit(query.limit)
       .execute();
     return rows.map(userMapper.fromRow);
+  }
+
+  async listByEmailDomain(domain: string): Promise<readonly User[]> {
+    const parent = domain.toLowerCase();
+    const rows = await this.db
+      .selectFrom('users')
+      .selectAll()
+      .where((eb) =>
+        eb.or([eb('email', 'like', `%@${parent}`), eb('email', 'like', `%.${parent}`)]),
+      )
+      .orderBy('created_at')
+      .orderBy('id')
+      .execute();
+    return rows
+      .map(userMapper.fromRow)
+      .filter((user) => isWithinDomain(emailDomain(user.email), parent));
   }
 
   async countByRole(role: Role): Promise<number> {
