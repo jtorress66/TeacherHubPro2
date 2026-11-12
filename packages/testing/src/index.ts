@@ -31,6 +31,7 @@ export * from './contracts/files.contract.ts';
 export * from './contracts/services.contract.ts';
 export * from './contracts/google.contract.ts';
 export * from './contracts/canva.contract.ts';
+export * from './contracts/calendar.contract.ts';
 export * from './contracts/microsoft.contract.ts';
 export * from './contracts/job-queue.contract.ts';
 export * from './contracts/gradebook.contract.ts';

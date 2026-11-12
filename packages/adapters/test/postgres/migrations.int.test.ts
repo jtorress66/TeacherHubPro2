@@ -39,6 +39,7 @@ describe('migrations', () => {
       'attendance_sessions',
       'audit_events',
       'blocked_domains',
+      'calendar_feeds',
       'canva_connections',
       'chat_sessions',
       'chat_turns',
@@ -91,6 +92,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0028_calendar_feeds',
           '0027_reconfirm_password_accounts',
           '0026_account_protections',
           '0025_microsoft_teams',
@@ -154,10 +156,11 @@ describe('migrations', () => {
           '0025_microsoft_teams',
           '0026_account_protections',
           '0027_reconfirm_password_accounts',
+          '0028_calendar_feeds',
         ],
       },
     });
-    expect(await tableNames()).toHaveLength(51);
+    expect(await tableNames()).toHaveLength(52);
   });
 
   it('turns plans saved before step 8 into valid plans of their kind', async () => {

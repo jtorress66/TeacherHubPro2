@@ -1391,6 +1391,32 @@ export const en = {
     connectFirst: 'Connect Microsoft in Settings to save this to OneDrive.',
     settingsLink: 'Go to Settings',
   },
+  calendarFeed: {
+    title: 'Calendar',
+    intro:
+      'See your lesson plans and assignment due dates in Google Calendar, Outlook or Apple Calendar. Make a private link once and add it to your calendar; it then stays up to date on its own.',
+    make: 'Make calendar link',
+    active:
+      'Your calendar link is on. For privacy, it can’t be shown again: make a new link if you need to add it somewhere else.',
+    newLink: 'New link',
+    newLinkNote: 'A new link replaces the old one, which stops working.',
+    turnOff: 'Turn off',
+    madeTitle: 'Your calendar link',
+    madeNote: 'Copy this link now: for privacy, it can’t be shown again.',
+    linkLabel: 'Calendar link',
+    stepsTitle: 'Add it to your calendar',
+    google:
+      'Google Calendar (on a computer): next to “Other calendars”, choose + → From URL, paste the link and choose Add calendar.',
+    outlook: 'Outlook: choose Add calendar → Subscribe from web, paste the link and choose Import.',
+    apple:
+      'Apple Calendar (Mac): choose File → New Calendar Subscription, paste the link and choose Subscribe.',
+    delay: 'Changes can take a few hours to appear in your calendar.',
+    privacy:
+      'Anyone with this link can see your plan titles and assignment titles with their dates. It never includes student information.',
+    calendarName: 'TeacherHubPro: plans and due dates',
+    untitledPlan: 'Lesson plan',
+    due: 'Due: {title} ({className})',
+  },
   teams: {
     title: 'Microsoft Teams',
     allowed:

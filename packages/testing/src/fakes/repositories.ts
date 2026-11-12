@@ -1,5 +1,6 @@
 import type {
   Attachment,
+  CalendarFeed,
   CanvaConnection,
   MicrosoftConnection,
   ClassroomConnection,
@@ -98,6 +99,7 @@ import type {
   SubscriptionRepository,
   UserRepository,
   CanvaConnectionRepository,
+  CalendarFeedRepository,
   MicrosoftConnectionRepository,
 } from '@thp/ports';
 
@@ -605,6 +607,30 @@ export class InMemoryClassroomConnectionRepository implements ClassroomConnectio
 
   save(connection: ClassroomConnection): Promise<void> {
     this.rows.set(connection.teacherId, connection);
+    return Promise.resolve();
+  }
+
+  delete(schoolId: SchoolId, teacherId: UserId): Promise<void> {
+    if (this.rows.get(teacherId)?.schoolId === schoolId) this.rows.delete(teacherId);
+    return Promise.resolve();
+  }
+}
+
+export class InMemoryCalendarFeedRepository implements CalendarFeedRepository {
+  private readonly rows = new Map<UserId, CalendarFeed>();
+
+  findByTokenHash(tokenHash: string): Promise<CalendarFeed | null> {
+    const row = [...this.rows.values()].find((feed) => feed.tokenHash === tokenHash);
+    return Promise.resolve(row ?? null);
+  }
+
+  find(schoolId: SchoolId, teacherId: UserId): Promise<CalendarFeed | null> {
+    const row = this.rows.get(teacherId);
+    return Promise.resolve(row?.schoolId === schoolId ? row : null);
+  }
+
+  save(feed: CalendarFeed): Promise<void> {
+    this.rows.set(feed.teacherId, feed);
     return Promise.resolve();
   }
 

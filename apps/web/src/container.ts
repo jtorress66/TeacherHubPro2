@@ -119,6 +119,10 @@ import {
   ShareAssignment,
   PostWordToClassroom,
   SendPresentationToClassroom,
+  MakeCalendarLink,
+  TurnOffCalendarLink,
+  GetCalendarLinkStatus,
+  ReadCalendarFeed,
   StartCanvaConnect,
   FinishCanvaConnect,
   DisconnectCanva,
@@ -562,6 +566,10 @@ export interface AppContainer {
   readonly uploadSchoolLogo: UploadSchoolLogo;
   readonly removeSchoolLogo: RemoveSchoolLogo;
   readonly getSchoolLogo: GetSchoolLogo;
+  readonly makeCalendarLink: MakeCalendarLink;
+  readonly turnOffCalendarLink: TurnOffCalendarLink;
+  readonly getCalendarLinkStatus: GetCalendarLinkStatus;
+  readonly readCalendarFeed: ReadCalendarFeed;
   /** Today's date where the teacher is. */
   readonly today: (timeZone: string) => LocalDate;
   readonly google: GoogleIdentity;
@@ -1008,6 +1016,10 @@ export function createAppContainer(
     uploadSchoolLogo: new UploadSchoolLogo(deps),
     removeSchoolLogo: new RemoveSchoolLogo(deps),
     getSchoolLogo: new GetSchoolLogo(deps),
+    makeCalendarLink: new MakeCalendarLink(deps),
+    turnOffCalendarLink: new TurnOffCalendarLink(deps),
+    getCalendarLinkStatus: new GetCalendarLinkStatus(deps),
+    readCalendarFeed: new ReadCalendarFeed(deps),
     today: (timeZone) => localDateIn(deps.clock.now(), timeZone),
     google: identity.google,
     tokens: deps.tokens,

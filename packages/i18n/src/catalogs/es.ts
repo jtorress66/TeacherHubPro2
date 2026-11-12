@@ -1410,6 +1410,33 @@ export const es: Messages = {
     connectFirst: 'Conecta Microsoft en Configuración para guardar esto en OneDrive.',
     settingsLink: 'Ir a Configuración',
   },
+  calendarFeed: {
+    title: 'Calendario',
+    intro:
+      'Ve tus planes de clase y las fechas de entrega de las tareas en Google Calendar, Outlook o Calendario de Apple. Crea un enlace privado una vez y agrégalo a tu calendario; después se mantiene al día solo.',
+    make: 'Crear enlace de calendario',
+    active:
+      'Tu enlace de calendario está activo. Por privacidad, no se puede volver a mostrar: crea un enlace nuevo si necesitas agregarlo en otro lugar.',
+    newLink: 'Enlace nuevo',
+    newLinkNote: 'Un enlace nuevo reemplaza al anterior, que deja de funcionar.',
+    turnOff: 'Desactivar',
+    madeTitle: 'Tu enlace de calendario',
+    madeNote: 'Copia este enlace ahora: por privacidad, no se puede volver a mostrar.',
+    linkLabel: 'Enlace de calendario',
+    stepsTitle: 'Agrégalo a tu calendario',
+    google:
+      'Google Calendar (en una computadora): junto a “Otros calendarios”, elige + → Desde URL, pega el enlace y elige Añadir calendario.',
+    outlook:
+      'Outlook: elige Agregar calendario → Suscribirse desde la web, pega el enlace y elige Importar.',
+    apple:
+      'Calendario de Apple (Mac): elige Archivo → Nueva suscripción a calendario, pega el enlace y elige Suscribirse.',
+    delay: 'Los cambios pueden tardar unas horas en aparecer en tu calendario.',
+    privacy:
+      'Cualquier persona con este enlace puede ver los títulos de tus planes y de tus tareas con sus fechas. Nunca incluye información de los estudiantes.',
+    calendarName: 'TeacherHubPro: planes y fechas de entrega',
+    untitledPlan: 'Plan de clase',
+    due: 'Entrega: {title} ({className})',
+  },
   teams: {
     title: 'Microsoft Teams',
     allowed:

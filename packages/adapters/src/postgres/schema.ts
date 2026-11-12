@@ -289,6 +289,14 @@ export interface ClassroomConnectionsTable {
   connected_at: Date;
 }
 
+/** One calendar subscription link per teacher; only the hash of its secret. */
+export interface CalendarFeedsTable {
+  teacher_id: string;
+  school_id: string;
+  token_hash: string;
+  created_at: Date;
+}
+
 export interface CanvaConnectionsTable {
   teacher_id: string;
   school_id: string;
@@ -612,6 +620,7 @@ export interface Database {
   student_links: StudentLinksTable;
   classroom_connections: ClassroomConnectionsTable;
   canva_connections: CanvaConnectionsTable;
+  calendar_feeds: CalendarFeedsTable;
   microsoft_connections: MicrosoftConnectionsTable;
   forms_exports: FormsExportsTable;
   student_notes: StudentNotesTable;

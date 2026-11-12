@@ -455,6 +455,34 @@ export const frAppB = {
     connectFirst: 'Connectez Microsoft dans les Paramètres pour enregistrer ceci dans OneDrive.',
     settingsLink: 'Aller aux Paramètres',
   },
+  calendarFeed: {
+    title: 'Calendrier',
+    intro:
+      'Retrouvez vos plans de cours et les dates de remise des devoirs dans Google Agenda, Outlook ou Calendrier d’Apple. Créez une seule fois un lien privé et ajoutez-le à votre calendrier : il se met ensuite à jour tout seul.',
+    make: 'Créer le lien de calendrier',
+    active:
+      'Votre lien de calendrier est actif. Pour des raisons de confidentialité, il ne peut plus être affiché : créez un nouveau lien si vous devez l’ajouter ailleurs.',
+    newLink: 'Nouveau lien',
+    newLinkNote: 'Un nouveau lien remplace l’ancien, qui cesse de fonctionner.',
+    turnOff: 'Désactiver',
+    madeTitle: 'Votre lien de calendrier',
+    madeNote:
+      'Copiez ce lien maintenant : pour des raisons de confidentialité, il ne pourra plus être affiché.',
+    linkLabel: 'Lien de calendrier',
+    stepsTitle: 'Ajoutez-le à votre calendrier',
+    google:
+      'Google Agenda (sur ordinateur) : à côté de « Autres agendas », choisissez + → À partir de l’URL, collez le lien et choisissez Ajouter l’agenda.',
+    outlook:
+      'Outlook : choisissez Ajouter un calendrier → S’abonner à partir du web, collez le lien et choisissez Importer.',
+    apple:
+      'Calendrier d’Apple (Mac) : choisissez Fichier → Nouvel abonnement à un calendrier, collez le lien et choisissez S’abonner.',
+    delay: 'Les modifications peuvent mettre quelques heures à apparaître dans votre calendrier.',
+    privacy:
+      'Toute personne disposant de ce lien peut voir les titres de vos plans et de vos devoirs avec leurs dates. Il ne contient jamais d’informations sur les élèves.',
+    calendarName: 'TeacherHubPro : plans et dates de remise',
+    untitledPlan: 'Plan de cours',
+    due: 'À rendre : {title} ({className})',
+  },
   teams: {
     title: 'Microsoft Teams',
     allowed:

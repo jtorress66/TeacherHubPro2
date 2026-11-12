@@ -452,6 +452,33 @@ export const itAppB = {
     connectFirst: 'Colleghi Microsoft nelle Impostazioni per salvarlo su OneDrive.',
     settingsLink: 'Vai alle Impostazioni',
   },
+  calendarFeed: {
+    title: 'Calendario',
+    intro:
+      'Veda i Suoi piani delle lezioni e le scadenze dei compiti in Google Calendar, Outlook o Calendario di Apple. Crei una volta un link privato e lo aggiunga al Suo calendario; poi si aggiorna da solo.',
+    make: 'Crea link del calendario',
+    active:
+      'Il Suo link del calendario è attivo. Per la privacy non può essere mostrato di nuovo: crei un nuovo link se deve aggiungerlo altrove.',
+    newLink: 'Nuovo link',
+    newLinkNote: 'Un nuovo link sostituisce quello vecchio, che smette di funzionare.',
+    turnOff: 'Disattiva',
+    madeTitle: 'Il Suo link del calendario',
+    madeNote: 'Copi ora questo link: per la privacy non potrà essere mostrato di nuovo.',
+    linkLabel: 'Link del calendario',
+    stepsTitle: 'Lo aggiunga al Suo calendario',
+    google:
+      'Google Calendar (da computer): accanto ad “Altri calendari” scelga + → Da URL, incolli il link e scelga Aggiungi calendario.',
+    outlook:
+      'Outlook: scelga Aggiungi calendario → Sottoscrivi dal Web, incolli il link e scelga Importa.',
+    apple:
+      'Calendario di Apple (Mac): scelga Archivio → Nuova sottoscrizione calendario, incolli il link e scelga Iscriviti.',
+    delay: 'Le modifiche possono impiegare alcune ore per comparire nel Suo calendario.',
+    privacy:
+      'Chiunque abbia questo link può vedere i titoli dei Suoi piani e dei Suoi compiti con le relative date. Non contiene mai informazioni sugli studenti.',
+    calendarName: 'TeacherHubPro: piani e scadenze',
+    untitledPlan: 'Piano della lezione',
+    due: 'Scadenza: {title} ({className})',
+  },
   teams: {
     title: 'Microsoft Teams',
     allowed:

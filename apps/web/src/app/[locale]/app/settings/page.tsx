@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { createTranslator } from '@thp/i18n';
 import { ProfileForm, SchoolForm } from '../../../../components/forms.tsx';
 import { LogoForm } from '../../../../components/gradebook-forms.tsx';
+import { CalendarLinkCard } from '../../../../components/calendar-link-card.tsx';
 import { removeLogoAction } from '../../../_lib/gradebook-actions.ts';
 import { disconnectClassroomAction } from '../../../_lib/assignment-actions.ts';
 import { disconnectCanvaAction } from '../../../_lib/canva-actions.ts';
@@ -31,6 +32,7 @@ export default async function SettingsPage(
   const microsoftConnected = (await app.microsoft?.connected.execute({ actor: user })) ?? null;
   const teamsAllowed = (await app.teams?.allowed.execute({ actor: user })) ?? null;
   const microsoftOutcome = microsoftNotice(search.microsoft);
+  const calendarLink = await app.getCalendarLinkStatus.execute({ actor: user });
 
   return (
     <section className="stack">
@@ -75,6 +77,7 @@ export default async function SettingsPage(
           )}
           <LogoForm locale={locale} />
         </section>
+        <CalendarLinkCard locale={locale} active={calendarLink.ok && calendarLink.value.active} />
         <section className="card stack" aria-labelledby="classroom-heading">
           <h2 id="classroom-heading">{t('classroom.title')}</h2>
           {notice === 'connected' ? (
