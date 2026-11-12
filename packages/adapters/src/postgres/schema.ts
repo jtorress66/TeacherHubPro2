@@ -28,6 +28,8 @@ export interface UsersTable {
   language: string;
   picture: string | null;
   onboarding_status: string;
+  email_confirmed_at: Date | null;
+  suspended_at: Date | null;
   created_at: CreatedAt;
 }
 
@@ -407,6 +409,20 @@ export interface PasswordTokensTable {
   used_at: Date | null;
 }
 
+export interface EmailConfirmationsTable {
+  token_hash: string;
+  user_id: string;
+  expires_at: Date;
+  used_at: Date | null;
+  created_at: Date;
+}
+
+export interface BlockedDomainsTable {
+  domain: string;
+  created_at: Date;
+  created_by: string | null;
+}
+
 export interface PrepBatchesTable {
   id: string;
   school_id: string;
@@ -602,6 +618,8 @@ export interface Database {
   student_insights: StudentInsightsTable;
   prep_batches: PrepBatchesTable;
   password_tokens: PasswordTokensTable;
+  email_confirmations: EmailConfirmationsTable;
+  blocked_domains: BlockedDomainsTable;
   leads: LeadsTable;
   rate_limits: RateLimitsTable;
   audit_events: AuditEventsTable;

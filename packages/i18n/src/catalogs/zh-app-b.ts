@@ -649,6 +649,9 @@ export const zhAppB = {
     resetButton: '设置新密码',
     passwordLinkExpires: '此链接只能使用一次，3 天后失效。',
     weeklySentBy: '由 {school} 的一位老师通过 TeacherHubPro 发送。',
+    confirmSubject: '确认您的 TeacherHubPro 邮箱',
+    confirmBody: '感谢您创建 TeacherHubPro 账户。请确认您的邮箱地址，即可开始使用 AI 工具。',
+    confirmButton: '确认我的邮箱',
   },
   portalLinks: {
     open: '家长门户',
@@ -921,6 +924,16 @@ export const zhAppB = {
     use: '使用评分量规',
     useHint: '用您保存的某个评分量规填写评分量规框。',
   },
+  confirmEmail: {
+    bannerTitle: '确认您的邮箱后即可使用 AI 工具',
+    bannerText: '我们已向 {email} 发送了一个链接。其他功能都已可用；打开链接后即可解锁 AI 工具。',
+    resend: '重新发送',
+    resent: '新链接正在发送至 {email}。',
+    title: '确认您的邮箱',
+    confirmed: '您的邮箱已确认。AI 工具已可使用。',
+    openApp: '打开 TeacherHubPro',
+    noLink: '此页面需要您邮件中的链接。如果链接无效，请登录并使用“重新发送”获取新链接。',
+  },
   errors: {
     own_account: '您不能对自己的账户执行此操作。',
     has_classes: '此人仍在教授班级。请先将其班级交给本校的另一位老师。',
@@ -992,5 +1005,13 @@ export const zhAppB = {
     csv_too_many_rows: '文件中的学生超过 500 名。请拆分成较小的文件。',
     csv_missing_columns: '文件需要以下列：{columns}。',
     csvRow: '第 {line} 行：{field}。{message}',
+    adult_required: '请确认您已年满 18 岁，并且是教师、学校教职员工、辅导老师或家长。',
+    throwaway_email: '请使用您常用的邮箱地址。不能使用临时邮箱地址。',
+    blocked_domain:
+      'TeacherHubPro 账户供教师、学校教职员工、辅导老师和家长使用。如果您是学生，请向老师索取作业链接。',
+    email_unconfirmed:
+      '请确认您的邮箱后再使用 AI 工具。如需新链接，请使用页面顶部提示中的“重新发送”。',
+    resend_limit: '每天最多可重新发送 5 次邮件。请明天再试。',
+    account_suspended: '此账户已被停用。如果您认为这是错误，请联系我们。',
   },
 };

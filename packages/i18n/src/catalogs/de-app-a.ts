@@ -61,6 +61,9 @@ export const deAppA = {
     continueWithGoogle: 'Weiter mit Google',
     or: 'oder',
     sessionExpired: 'Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.',
+    adultConfirm:
+      'Ich bin mindestens 18 Jahre alt und Lehrkraft, Mitarbeiter einer Schule, Nachhilfelehrkraft oder Elternteil.',
+    contactUs: 'Kontakt aufnehmen',
   },
   dashboard: {
     ownerAccess: 'Inhaber: voller Zugriff',
@@ -341,6 +344,23 @@ export const deAppA = {
     sample: 'Beispieldatei herunterladen',
     importButton: 'Importieren',
     imported: 'Importiert: {count}.',
+    aiDrafts: 'KI-Entwürfe (30 Tage): {count}',
+    heavyAiUse: 'Starke KI-Nutzung',
+    suspendedBadge: 'Gesperrt',
+    suspend: 'Sperren',
+    reinstate: 'Entsperren',
+    userSuspended: '{email} ist gesperrt.',
+    userReinstated: '{email} kann sich wieder anmelden.',
+    accountActions: 'Konto von {name}',
+    blockedDomains: 'Gesperrte Domains',
+    blockedDomainsIntro:
+      'Personen mit einer E-Mail-Adresse bei diesen Domains oder deren Subdomains können sich nicht registrieren. Das Sperren einer Domain sperrt auch die dort bereits vorhandenen Konten, außer denen von Super-Admins.',
+    domain: 'Domain',
+    blockDomain: 'Domain sperren',
+    unblock: 'Freigeben',
+    noBlockedDomains: 'Keine Domains gesperrt.',
+    domainBlocked: '{domain} ist gesperrt. Gesperrte Konten: {count}.',
+    suspendedAccounts: 'Gesperrte Konten',
   },
   passwords: {
     forgot: 'Passwort vergessen?',
@@ -645,7 +665,8 @@ export const deAppA = {
     noAssignments: 'Noch keine Aufgaben.',
     created: 'Aufgabe erstellt.',
     openCreated: '„{title}“ öffnen, um Fragen hinzuzufügen →',
-    openHint: 'Klicken Sie auf den Namen einer Aufgabe, um sie zu öffnen, Fragen hinzuzufügen und Antworten zu sehen.',
+    openHint:
+      'Klicken Sie auf den Namen einer Aufgabe, um sie zu öffnen, Fragen hinzuzufügen und Antworten zu sehen.',
     needCategory: 'Fügen Sie eine Notenkategorie hinzu, bevor Sie Aufgaben anlegen.',
     editAssignment: 'Aufgabe bearbeiten',
     saveAssignment: 'Änderungen speichern',

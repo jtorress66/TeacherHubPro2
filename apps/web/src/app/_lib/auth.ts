@@ -8,11 +8,12 @@ import type { Locale } from '@thp/i18n';
 import { getAppContainer } from '../../container.ts';
 import { SESSION_COOKIE, sessionCookieOptions } from '../../server/cookies.ts';
 
-const authenticate = cache(async (): Promise<Authenticated | 'expired' | null> => {
+const authenticate = cache(async (): Promise<Authenticated | 'expired' | 'suspended' | null> => {
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
   if (token === undefined) return null;
   const result = await getAppContainer().authenticate.execute(token);
   if (result.ok) return result.value;
+  if (result.error.code === 'account_suspended') return 'suspended';
   return result.error.code === 'session_expired' ? 'expired' : null;
 });
 
@@ -27,6 +28,7 @@ export async function requireUser(
   const auth = await authenticate();
   if (auth === null) redirect(`/${locale}/login`);
   if (auth === 'expired') redirect(`/${locale}/login?expired=1`);
+  if (auth === 'suspended') redirect(`/${locale}/login?error=account_suspended`);
   if (needsAccess && !auth.access.hasAccess) redirect(`/${locale}/app/billing`);
   return auth;
 }

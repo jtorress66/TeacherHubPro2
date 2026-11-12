@@ -175,6 +175,20 @@ export {
 } from './lesson-plans/drafts.ts';
 export { checkAiAccess } from './accounts/ai-access.ts';
 export {
+  ConfirmEmail,
+  ConfirmationLinks,
+  ResendEmailConfirmation,
+  type ConfirmationLinkDeps,
+} from './accounts/email-confirmation.ts';
+export {
+  BlockDomain,
+  ListBlockedDomains,
+  ReinstateUser,
+  SuspendUser,
+  UnblockDomain,
+  type DomainBlocked,
+} from './admin/account-protections.ts';
+export {
   RequestGeneration,
   GenerationHandler,
   ListGenerations,

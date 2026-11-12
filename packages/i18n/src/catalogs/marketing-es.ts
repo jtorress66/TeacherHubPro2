@@ -580,7 +580,7 @@ export const marketingEs: MarketingMessages = {
         'TeacherHubPro es una aplicación web para la enseñanza: planificación, clases, asistencia, notas, tareas, herramientas de IA y portales familiares.',
       s2Title: 'Su cuenta',
       s2Text:
-        'Proteja su contraseña, use la app para enseñar y aprender, y siga las reglas de uso aceptable. Usted es responsable del contenido que crea y de la información de estudiantes que ingresa, y de tener derecho a ingresarla.',
+        'Las cuentas son para adultos: maestros, personal escolar, tutores y padres. Los estudiantes no tienen cuentas; usan los enlaces privados que les comparte su maestro. Proteja su contraseña, use la app para enseñar y aprender, y siga las reglas de uso aceptable. Usted es responsable del contenido que crea y de la información de estudiantes que ingresa, y de tener derecho a ingresarla.',
       s3Title: 'Borradores de IA',
       s3Text:
         'Las funciones de IA preparan borradores que pueden tener errores. Usted los revisa y aprueba antes de usarlos; las notas y los informes cuentan solo cuando usted los confirma.',
@@ -627,7 +627,7 @@ export const marketingEs: MarketingMessages = {
       s1Text: 'Use TeacherHubPro para planificar, enseñar, evaluar y comunicarse con las familias.',
       s2Title: 'No haga esto',
       s2Text:
-        'No ingrese información de estudiantes que no esté autorizado a compartir, no intente ver datos de otra escuela, no publique enlaces privados de estudiantes o familias, no sobrecargue ni ataque el servicio, y no use las herramientas de IA para crear contenido dañino, ilegal o ajeno a la enseñanza.',
+        'No ingrese información de estudiantes que no esté autorizado a compartir, no intente ver datos de otra escuela, no publique enlaces privados de estudiantes o familias, no sobrecargue ni ataque el servicio, no use las herramientas de IA para crear contenido dañino, ilegal o ajeno a la enseñanza, y no la use como estudiante para hacer sus propias tareas escolares.',
       s3Title: 'Si se rompen las reglas',
       s3Text:
         'Podemos suspender un acceso que ponga en riesgo a estudiantes, escuelas o el servicio.',

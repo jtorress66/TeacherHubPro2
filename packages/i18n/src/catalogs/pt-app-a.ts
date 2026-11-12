@@ -61,6 +61,9 @@ export const ptAppA = {
     continueWithGoogle: 'Continuar com o Google',
     or: 'ou',
     sessionExpired: 'Sua sessão terminou. Entre novamente.',
+    adultConfirm:
+      'Tenho 18 anos ou mais e sou professor, funcionário da escola, tutor ou pai ou mãe.',
+    contactUs: 'Fale conosco',
   },
   dashboard: {
     ownerAccess: 'Proprietário: acesso total',
@@ -340,6 +343,23 @@ export const ptAppA = {
     sample: 'Baixar um arquivo de exemplo',
     importButton: 'Importar',
     imported: 'Importados: {count}.',
+    aiDrafts: 'Rascunhos de IA (30 dias): {count}',
+    heavyAiUse: 'Uso intenso de IA',
+    suspendedBadge: 'Suspensa',
+    suspend: 'Suspender',
+    reinstate: 'Reativar',
+    userSuspended: '{email} está suspensa.',
+    userReinstated: '{email} pode entrar novamente.',
+    accountActions: 'Conta de {name}',
+    blockedDomains: 'Domínios bloqueados',
+    blockedDomainsIntro:
+      'Pessoas com e-mail nesses domínios, ou em seus subdomínios, não podem se cadastrar. Bloquear um domínio também suspende as contas que já existem nele, exceto as de superadministradores.',
+    domain: 'Domínio',
+    blockDomain: 'Bloquear domínio',
+    unblock: 'Desbloquear',
+    noBlockedDomains: 'Nenhum domínio bloqueado.',
+    domainBlocked: '{domain} está bloqueado. Contas suspensas: {count}.',
+    suspendedAccounts: 'Contas suspensas',
   },
   passwords: {
     forgot: 'Esqueceu a senha?',

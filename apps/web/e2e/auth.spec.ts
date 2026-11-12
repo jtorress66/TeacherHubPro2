@@ -47,6 +47,7 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
       await page.getByLabel(t('auth.name'), { exact: true }).fill('Someone Else');
       await page.getByLabel(t('auth.email'), { exact: true }).fill(email.toUpperCase());
       await page.getByLabel(t('auth.password'), { exact: true }).fill(password);
+      await page.getByLabel(t('auth.adultConfirm')).check();
       await page.getByRole('button', { name: t('auth.createAccount') }).click();
       await expect(page.getByText(t('errors.email_taken'))).toBeVisible();
     });
@@ -56,6 +57,7 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
       await page.getByLabel(t('auth.name'), { exact: true }).fill('Ana');
       await page.getByLabel(t('auth.email'), { exact: true }).fill('short@school.edu');
       await page.getByLabel(t('auth.password'), { exact: true }).fill('short');
+      await page.getByLabel(t('auth.adultConfirm')).check();
       await page.getByRole('button', { name: t('auth.createAccount') }).click();
       await expect(page.getByText(t('errors.passwordTooShort'))).toBeVisible();
     });

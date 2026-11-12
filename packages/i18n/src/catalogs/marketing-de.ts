@@ -592,7 +592,7 @@ export const marketingDe: MarketingMessages = {
         'TeacherHubPro ist eine Web-App für den Unterricht: Planung, Klassen, Anwesenheit, Noten, Aufgaben, KI-Werkzeuge für Entwürfe und Familienportale.',
       s2Title: 'Ihr Konto',
       s2Text:
-        'Halten Sie Ihr Passwort sicher, nutzen Sie die App für Lehren und Lernen und befolgen Sie die Regeln zur zulässigen Nutzung. Sie sind verantwortlich für die Inhalte, die Sie erstellen, und die Schülerdaten, die Sie eingeben, sowie dafür, dass Sie berechtigt sind, sie einzugeben.',
+        'Konten sind für Erwachsene: Lehrkräfte, Schulpersonal, Nachhilfelehrkräfte und Eltern. Schülerinnen und Schüler haben keine Konten; sie nutzen die privaten Links, die ihre Lehrkraft teilt. Halten Sie Ihr Passwort sicher, nutzen Sie die App für Lehren und Lernen und befolgen Sie die Regeln zur zulässigen Nutzung. Sie sind verantwortlich für die Inhalte, die Sie erstellen, und die Schülerdaten, die Sie eingeben, sowie dafür, dass Sie berechtigt sind, sie einzugeben.',
       s3Title: 'KI-Entwürfe',
       s3Text:
         'KI-Funktionen erstellen Entwürfe, die Fehler enthalten können. Sie prüfen und genehmigen sie vor der Verwendung; Noten und Berichte zählen erst, wenn Sie sie bestätigen.',
@@ -640,7 +640,7 @@ export const marketingDe: MarketingMessages = {
         'Nutzen Sie TeacherHubPro, um zu planen, zu unterrichten, zu bewerten und mit Familien zu kommunizieren.',
       s2Title: 'Nicht erlaubt',
       s2Text:
-        'Geben Sie keine Schülerdaten ein, die Sie nicht weitergeben dürfen, versuchen Sie nicht, auf die Daten einer anderen Schule zuzugreifen, teilen Sie private Schüler- oder Familienlinks nicht öffentlich, überlasten oder greifen Sie den Dienst nicht an, und verwenden Sie die KI-Werkzeuge nicht, um schädliche, rechtswidrige oder sachfremde Inhalte zu erstellen.',
+        'Geben Sie keine Schülerdaten ein, die Sie nicht weitergeben dürfen, versuchen Sie nicht, auf die Daten einer anderen Schule zuzugreifen, teilen Sie private Schüler- oder Familienlinks nicht öffentlich, überlasten oder greifen Sie den Dienst nicht an, verwenden Sie die KI-Werkzeuge nicht, um schädliche, rechtswidrige oder sachfremde Inhalte zu erstellen, und nutzen Sie den Dienst nicht als Schülerin oder Schüler, um Ihre eigenen Schulaufgaben zu erledigen.',
       s3Title: 'Bei Regelverstößen',
       s3Text:
         'Wir können den Zugang sperren, wenn er Schülerinnen und Schüler, Schulen oder den Dienst gefährdet.',

@@ -28,6 +28,12 @@ export interface MailTemplates {
     readonly url: string;
     readonly purpose: 'welcome' | 'reset';
   }): MailContent;
+  /** A one-time link to confirm the email address of a new account. */
+  confirmEmail(input: {
+    readonly language: Language;
+    readonly name: string;
+    readonly url: string;
+  }): MailContent;
   /** Tells the team about a high-priority lead from the website. */
   leadNotice(input: { readonly lead: Lead }): MailContent;
   /** The teacher's approved weekly update, as they wrote it. */

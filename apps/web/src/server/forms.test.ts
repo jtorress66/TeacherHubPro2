@@ -8,11 +8,17 @@ const form = (fields: Record<string, string>): FormData => {
 };
 
 describe('parseForm', () => {
-  it('reads the sign-up form, defaulting the locale to English', () => {
+  it('reads the sign-up form, defaulting the locale to English and the adult box to unticked', () => {
     expect(parseForm(signUpForm, form({ name: 'Ana', email: 'a@b.co', password: 'pw' }))).toEqual({
       ok: true,
-      value: { name: 'Ana', email: 'a@b.co', password: 'pw', locale: 'en' },
+      value: { name: 'Ana', email: 'a@b.co', password: 'pw', locale: 'en', adult: false },
     });
+  });
+
+  it('reads a ticked adult box', () => {
+    expect(
+      parseForm(signUpForm, form({ name: 'Ana', email: 'a@b.co', password: 'pw', adult: 'on' })),
+    ).toMatchObject({ ok: true, value: { adult: true } });
   });
 
   it('keeps a supported locale and ignores an unsupported one', () => {

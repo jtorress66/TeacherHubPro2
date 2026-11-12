@@ -676,6 +676,10 @@ export const itAppB = {
     resetButton: 'Scegli una nuova password',
     passwordLinkExpires: 'Questo link funziona una sola volta e scade tra 3 giorni.',
     weeklySentBy: 'Inviato da un insegnante di {school} con TeacherHubPro.',
+    confirmSubject: 'Confermi la Sua email per TeacherHubPro',
+    confirmBody:
+      'Grazie per aver creato il Suo account TeacherHubPro. Confermi il Suo indirizzo email per iniziare a usare gli strumenti di IA.',
+    confirmButton: 'Conferma la mia email',
   },
   portalLinks: {
     open: 'Portale per le famiglie',
@@ -954,6 +958,18 @@ export const itAppB = {
     use: 'Usa una rubrica',
     useHint: 'Compila il campo della rubrica con una delle Sue rubriche salvate.',
   },
+  confirmEmail: {
+    bannerTitle: 'Confermi la Sua email per usare gli strumenti di IA',
+    bannerText:
+      'Abbiamo inviato un link a {email}. Tutto il resto funziona già; gli strumenti di IA si sbloccano quando apre il link.',
+    resend: 'Invia di nuovo',
+    resent: 'Un nuovo link è in arrivo a {email}.',
+    title: 'Confermi la Sua email',
+    confirmed: 'La Sua email è confermata. Gli strumenti di IA sono pronti.',
+    openApp: 'Apri TeacherHubPro',
+    noLink:
+      'Questa pagina richiede il link della Sua email. Se non funziona, acceda e usi Invia di nuovo per riceverne uno nuovo.',
+  },
   errors: {
     own_account: 'Non può farlo sul Suo account.',
     has_classes:
@@ -1028,5 +1044,15 @@ export const itAppB = {
     csv_too_many_rows: 'Il file contiene più di 500 studenti. Lo divida in file più piccoli.',
     csv_missing_columns: 'Il file deve contenere queste colonne: {columns}.',
     csvRow: 'Riga {line}: {field}. {message}',
+    adult_required:
+      'Confermi di avere almeno 18 anni e di essere un insegnante, un membro del personale scolastico, un tutor o un genitore.',
+    throwaway_email:
+      'Usi il Suo indirizzo email abituale. Gli indirizzi email temporanei non possono essere usati.',
+    blocked_domain:
+      'Gli account TeacherHubPro sono per insegnanti, personale scolastico, tutor e genitori. Se è uno studente, chieda al Suo insegnante il link del compito.',
+    email_unconfirmed:
+      'Confermi la Sua email per usare gli strumenti di IA. Usi Invia di nuovo nel banner in cima alla pagina se le serve un nuovo link.',
+    resend_limit: "Può inviare di nuovo l'email fino a 5 volte al giorno. Riprovi domani.",
+    account_suspended: 'Questo account è sospeso. Se pensa che sia un errore, ci contatti.',
   },
 };

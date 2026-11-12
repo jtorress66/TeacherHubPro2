@@ -604,7 +604,7 @@ export const marketingFr: MarketingMessages = {
         "TeacherHubPro est une application web pour l'enseignement : planification, classes, présences, notes, devoirs, outils de rédaction par IA et portails des familles.",
       s2Title: 'Votre compte',
       s2Text:
-        "Protégez votre mot de passe, utilisez l'application pour enseigner et apprendre, et respectez les règles d'utilisation acceptable. Vous êtes responsable du contenu que vous créez et des informations sur les élèves que vous saisissez, ainsi que de disposer du droit de les saisir.",
+        "Les comptes sont réservés aux adultes : enseignants, personnel scolaire, tuteurs et parents. Les élèves n'ont pas de compte ; ils utilisent les liens privés que leur enseignant leur transmet. Protégez votre mot de passe, utilisez l'application pour enseigner et apprendre, et respectez les règles d'utilisation acceptable. Vous êtes responsable du contenu que vous créez et des informations sur les élèves que vous saisissez, ainsi que de disposer du droit de les saisir.",
       s3Title: "Brouillons de l'IA",
       s3Text:
         "Les fonctionnalités d'IA produisent des brouillons qui peuvent contenir des erreurs. Vous les relisez et les approuvez avant de les utiliser ; les notes et les rapports ne comptent qu'une fois que vous les avez confirmés.",
@@ -652,7 +652,7 @@ export const marketingFr: MarketingMessages = {
         'Utilisez TeacherHubPro pour planifier, enseigner, évaluer et communiquer avec les familles.',
       s2Title: 'À ne pas faire',
       s2Text:
-        "Ne saisissez pas d'informations sur des élèves que vous n'êtes pas autorisé à partager, ne tentez pas d'accéder aux données d'une autre école, ne partagez pas publiquement les liens privés des élèves ou des familles, ne surchargez pas et n'attaquez pas le service, et n'utilisez pas les outils d'IA pour créer des contenus nuisibles, illégaux ou sans rapport.",
+        "Ne saisissez pas d'informations sur des élèves que vous n'êtes pas autorisé à partager, ne tentez pas d'accéder aux données d'une autre école, ne partagez pas publiquement les liens privés des élèves ou des familles, ne surchargez pas et n'attaquez pas le service, n'utilisez pas les outils d'IA pour créer des contenus nuisibles, illégaux ou sans rapport, et ne l'utilisez pas en tant qu'élève pour faire vos propres devoirs.",
       s3Title: 'En cas de non-respect des règles',
       s3Text:
         'Nous pouvons suspendre un accès qui met en danger des élèves, des écoles ou le service.',

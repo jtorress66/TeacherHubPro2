@@ -14,6 +14,8 @@ export const rateRules = {
   logInAddress: { limit: 50, windowMs: 15 * minute },
   signUp: { limit: 20, windowMs: hour },
   passwordReset: { limit: 5, windowMs: hour },
+  /** "Confirm your email" resends, per account. */
+  confirmEmailResend: { limit: 5, windowMs: 24 * hour },
   contact: { limit: 5, windowMs: hour },
   linkSubmit: { limit: 30, windowMs: hour },
   /** A whole class joins from one school network, so this is generous. */

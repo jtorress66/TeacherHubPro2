@@ -39,6 +39,8 @@ export interface NewAccount {
   readonly picture: string | null;
   /** "My School" in the teacher's language. */
   readonly defaultSchoolName: string;
+  /** Set when the address is already known to work (Google verified it); null otherwise. */
+  readonly emailConfirmedAt: Date | null;
 }
 
 export interface Account {
@@ -65,6 +67,7 @@ export class AccountCreator {
       role: 'teacher',
       language: isLanguage(input.language) ? input.language : defaultLanguage,
       picture: input.picture,
+      emailConfirmedAt: input.emailConfirmedAt,
     });
     if (!user.ok) return user;
     const subscription = startTrial({

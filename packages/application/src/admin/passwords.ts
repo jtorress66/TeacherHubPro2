@@ -1,5 +1,6 @@
 import {
   checkPassword,
+  confirmEmail,
   issuePasswordToken,
   ok,
   parseEmail,
@@ -113,7 +114,10 @@ export class SendPasswordLink {
   }
 }
 
-/** Chooses a password from a link: valid once, before it expires; then the user logs in. */
+/**
+ * Chooses a password from a link: valid once, before it expires; then the user logs in. The link
+ * came by email, so the address is confirmed too.
+ */
 export class SetPassword {
   constructor(
     private readonly deps: {
@@ -141,9 +145,11 @@ export class SetPassword {
       userId: user.id,
       passwordHash: await this.deps.passwordHasher.hash(password.value),
     });
+    const confirmed = confirmEmail(user, now);
+    if (confirmed !== user) await this.deps.users.save(confirmed);
     await this.deps.passwordTokens.save(usePasswordToken(token, now));
     await this.deps.passwordTokens.revokeFor(user.id, now);
-    return ok(user);
+    return ok(confirmed);
   }
 }
 

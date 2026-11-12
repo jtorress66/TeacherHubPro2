@@ -36,6 +36,11 @@ export const fakeMailTemplates: MailTemplates = {
     html: `<a href="${input.url}">${input.name}</a>`,
     text: `${input.purpose}: ${input.url}`,
   }),
+  confirmEmail: (input): MailContent => ({
+    subject: `[${input.language}] confirm ${input.name}`,
+    html: `<a href="${input.url}">${input.name}</a>`,
+    text: `confirm: ${input.url}`,
+  }),
   weeklyUpdate: (input): MailContent => ({
     subject: `[${input.language}] ${input.subject}`,
     html: `<p>${input.body}</p>`,

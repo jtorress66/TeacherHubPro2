@@ -20,6 +20,8 @@ export interface UserDirectory {
   /** Newest first. */
   search(query: UserSearch): Promise<readonly User[]>;
   countByRole(role: Role): Promise<number>;
+  /** Everyone whose email is at the domain or one of its subdomains. */
+  listByEmailDomain(domain: string): Promise<readonly User[]>;
   /**
    * Removes the user with their own work (sessions, plans, folders, templates, presentations,
    * AI writing, jobs). `in_use` when school records still name them (grades they gave, a

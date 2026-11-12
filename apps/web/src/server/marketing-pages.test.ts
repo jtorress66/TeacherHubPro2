@@ -62,7 +62,16 @@ describe('robotsRules', () => {
     const rules = robotsRules(site);
     expect(rules.sitemap).toBe(`${site}/sitemap.xml`);
     expect(rules.disallow).toEqual(
-      expect.arrayContaining(['/*/app', '/*/p/', '/*/s/', '/*/play', '/*/dev', '/api/']),
+      expect.arrayContaining([
+        '/*/app',
+        '/*/p/',
+        '/*/s/',
+        '/*/play',
+        '/*/dev',
+        '/*/set-password',
+        '/*/confirm-email',
+        '/api/',
+      ]),
     );
   });
 });

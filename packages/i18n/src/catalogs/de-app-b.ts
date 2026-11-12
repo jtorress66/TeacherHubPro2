@@ -684,6 +684,10 @@ export const deAppB = {
     resetButton: 'Neues Passwort wählen',
     passwordLinkExpires: 'Dieser Link funktioniert einmal und läuft in 3 Tagen ab.',
     weeklySentBy: 'Gesendet von einer Lehrkraft der {school} mit TeacherHubPro.',
+    confirmSubject: 'Bestätigen Sie Ihre E-Mail für TeacherHubPro',
+    confirmBody:
+      'Danke, dass Sie ein TeacherHubPro-Konto erstellt haben. Bestätigen Sie Ihre E-Mail-Adresse, um die KI-Werkzeuge zu nutzen.',
+    confirmButton: 'Meine E-Mail bestätigen',
   },
   portalLinks: {
     open: 'Familienportal',
@@ -962,6 +966,18 @@ export const deAppB = {
     use: 'Bewertungsraster verwenden',
     useHint: 'Füllt das Feld für das Bewertungsraster mit einem Ihrer gespeicherten Raster.',
   },
+  confirmEmail: {
+    bannerTitle: 'Bestätigen Sie Ihre E-Mail, um die KI-Werkzeuge zu nutzen',
+    bannerText:
+      'Wir haben einen Link an {email} gesendet. Alles andere funktioniert bereits; die KI-Werkzeuge werden freigeschaltet, sobald Sie den Link öffnen.',
+    resend: 'Erneut senden',
+    resent: 'Ein neuer Link ist unterwegs an {email}.',
+    title: 'Bestätigen Sie Ihre E-Mail',
+    confirmed: 'Ihre E-Mail ist bestätigt. Die KI-Werkzeuge sind bereit.',
+    openApp: 'TeacherHubPro öffnen',
+    noLink:
+      'Diese Seite braucht den Link aus Ihrer E-Mail. Falls er nicht funktioniert, melden Sie sich an und fordern Sie mit „Erneut senden“ einen neuen an.',
+  },
   errors: {
     own_account: 'Das können Sie nicht mit Ihrem eigenen Konto tun.',
     has_classes:
@@ -1043,5 +1059,17 @@ export const deAppB = {
       'Die Datei enthält mehr als 500 Schülerinnen und Schüler. Teilen Sie sie in kleinere Dateien auf.',
     csv_missing_columns: 'Die Datei benötigt diese Spalten: {columns}.',
     csvRow: 'Zeile {line}: {field}. {message}',
+    adult_required:
+      'Bitte bestätigen Sie, dass Sie mindestens 18 Jahre alt und Lehrkraft, Mitarbeiter einer Schule, Nachhilfelehrkraft oder Elternteil sind.',
+    throwaway_email:
+      'Bitte verwenden Sie Ihre normale E-Mail-Adresse. Wegwerf-E-Mail-Adressen können nicht verwendet werden.',
+    blocked_domain:
+      'TeacherHubPro-Konten sind für Lehrkräfte, Schulpersonal, Nachhilfelehrkräfte und Eltern. Wenn Sie Schülerin oder Schüler sind, bitten Sie Ihre Lehrkraft um den Link zu Ihrer Aufgabe.',
+    email_unconfirmed:
+      'Bestätigen Sie Ihre E-Mail, um die KI-Werkzeuge zu nutzen. Mit „Erneut senden“ im Hinweis oben auf der Seite erhalten Sie bei Bedarf einen neuen Link.',
+    resend_limit:
+      'Sie können die E-Mail bis zu 5-mal am Tag erneut senden. Bitte versuchen Sie es morgen wieder.',
+    account_suspended:
+      'Dieses Konto ist gesperrt. Wenn Sie glauben, dass es sich um einen Fehler handelt, kontaktieren Sie uns.',
   },
 };

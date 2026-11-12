@@ -586,7 +586,7 @@ export const marketingIt: MarketingMessages = {
         "TeacherHubPro è un'app web per l'insegnamento: pianificazione, classi, presenze, voti, compiti, strumenti di IA per le bozze e portali per le famiglie.",
       s2Title: 'Il Suo account',
       s2Text:
-        "Custodisca la Sua password, usi l'app per insegnare e imparare e rispetti le regole di uso accettabile. Lei è responsabile dei contenuti che crea e delle informazioni sugli studenti che inserisce, nonché di avere il diritto di inserirle.",
+        "Gli account sono per adulti: insegnanti, personale scolastico, tutor e genitori. Gli studenti non hanno un account; usano i link privati che il loro insegnante condivide. Custodisca la Sua password, usi l'app per insegnare e imparare e rispetti le regole di uso accettabile. Lei è responsabile dei contenuti che crea e delle informazioni sugli studenti che inserisce, nonché di avere il diritto di inserirle.",
       s3Title: "Bozze dell'IA",
       s3Text:
         "Le funzionalità di IA producono bozze che possono contenere errori. Lei le rivede e le approva prima dell'uso; voti e report contano solo dopo che Lei li ha confermati.",
@@ -634,7 +634,7 @@ export const marketingIt: MarketingMessages = {
         'Usi TeacherHubPro per pianificare, insegnare, valutare e comunicare con le famiglie.',
       s2Title: 'Non è consentito',
       s2Text:
-        "Non inserisca informazioni sugli studenti che non è autorizzato a condividere, non tenti di accedere ai dati di un'altra scuola, non condivida pubblicamente link privati di studenti o famiglie, non sovraccarichi né attacchi il servizio e non usi gli strumenti di IA per creare contenuti dannosi, illegali o estranei allo scopo.",
+        "Non inserisca informazioni sugli studenti che non è autorizzato a condividere, non tenti di accedere ai dati di un'altra scuola, non condivida pubblicamente link privati di studenti o famiglie, non sovraccarichi né attacchi il servizio, non usi gli strumenti di IA per creare contenuti dannosi, illegali o estranei allo scopo e non lo usi come studente per svolgere i Suoi compiti scolastici.",
       s3Title: 'Se le regole vengono violate',
       s3Text: "Potremmo sospendere l'accesso che mette a rischio studenti, scuole o il servizio.",
     },

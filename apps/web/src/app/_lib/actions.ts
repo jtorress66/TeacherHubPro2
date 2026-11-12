@@ -21,6 +21,8 @@ import { callerAddress, throttle } from './limits.ts';
 export interface FormState {
   readonly errors?: Readonly<Record<string, string>>;
   readonly saved?: boolean;
+  /** The account is suspended: the form adds a link to the contact page. */
+  readonly suspended?: boolean;
 }
 
 const fieldMessages = (errors: FieldErrors, locale: Locale): FormState => {
@@ -63,7 +65,11 @@ export async function logInAction(_state: FormState, data: FormData): Promise<Fo
   ]);
   if (limited !== null) return { errors: formErrors(limited, locale) };
   const result = await getAppContainer().logIn.execute(credentials);
-  if (!result.ok) return { errors: formErrors(result.error, locale) };
+  if (!result.ok) {
+    const errors = formErrors(result.error, locale);
+    const suspended = 'code' in result.error && result.error.code === 'account_suspended';
+    return suspended ? { errors, suspended } : { errors };
+  }
   await setSessionCookie(result.value.sessionToken);
   redirect(`/${locale}/app`);
 }

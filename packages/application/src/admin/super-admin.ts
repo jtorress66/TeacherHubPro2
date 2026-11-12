@@ -1,10 +1,12 @@
 import {
+  aiUsageSince,
   checkMove,
   checkRemoval,
   checkRoleChange,
   createSchool,
   createUser,
   defaultLanguage,
+  isHeavyAiUse,
   isLanguage,
   ok,
   startTrial,
@@ -21,7 +23,9 @@ import {
   type ValidationError,
 } from '@thp/domain';
 import type {
+  AiUsageStats,
   ClassRepository,
+  Clock,
   IdGenerator,
   PlatformCounts,
   PlatformStats,
@@ -163,6 +167,10 @@ export class ListSchoolClasses {
 export interface UserRow {
   readonly user: User;
   readonly schoolName: string;
+  /** AI drafts the account started in the last 30 days. */
+  readonly aiDrafts: number;
+  /** True when that is far beyond normal use. */
+  readonly heavyAiUse: boolean;
 }
 
 export class ListAllUsers {
@@ -170,6 +178,8 @@ export class ListAllUsers {
     private readonly deps: {
       readonly userDirectory: UserDirectory;
       readonly schoolDirectory: SchoolDirectory;
+      readonly aiUsage: AiUsageStats;
+      readonly clock: Clock;
     },
   ) {}
 
@@ -180,16 +190,28 @@ export class ListAllUsers {
   }): Promise<Result<readonly UserRow[], UseCaseError>> {
     const allowed = requireSuperAdmin(input.actor);
     if (!allowed.ok) return allowed;
-    const [users, schools] = await Promise.all([
+    const [users, schools, usage] = await Promise.all([
       this.deps.userDirectory.search({
         ...(input.schoolId === undefined ? {} : { schoolId: input.schoolId }),
         ...(input.text === undefined ? {} : { text: input.text }),
         limit: maxListedUsers,
       }),
       this.deps.schoolDirectory.listAll(),
+      this.deps.aiUsage.draftsSince(aiUsageSince(this.deps.clock.now())),
     ]);
     const names = new Map(schools.map((school) => [school.id, school.name]));
-    return ok(users.map((user) => ({ user, schoolName: names.get(user.schoolId) ?? '' })));
+    const drafts = new Map(usage.map((row) => [row.userId, row.drafts]));
+    return ok(
+      users.map((user) => {
+        const aiDrafts = drafts.get(user.id) ?? 0;
+        return {
+          user,
+          schoolName: names.get(user.schoolId) ?? '',
+          aiDrafts,
+          heavyAiUse: isHeavyAiUse(aiDrafts),
+        };
+      }),
+    );
   }
 }
 

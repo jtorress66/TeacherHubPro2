@@ -1,13 +1,14 @@
-import { ok, type Result } from '@thp/domain';
-import type { GoogleIdentity, GoogleProfile } from '@thp/ports';
+import { confirmEmail, ok, type Result } from '@thp/domain';
+import type { BlockedDomainRepository, GoogleIdentity, GoogleProfile } from '@thp/ports';
 import { fail, type UseCaseError } from '../errors.ts';
 import { AccountCreator, type Account, type AccountCreatorDeps } from './account-creator.ts';
 import { findSchoolSubscription } from './school-subscription.ts';
 import { SessionIssuer, type SessionIssuerDeps } from './session-issuer.ts';
-import type { SignedIn } from './sign-up.ts';
+import { checkNewAccountEmail, type SignedIn } from './sign-up.ts';
 
 export interface SignInWithGoogleDeps extends AccountCreatorDeps, SessionIssuerDeps {
   readonly google: GoogleIdentity;
+  readonly blockedDomains: BlockedDomainRepository;
 }
 
 export interface GoogleSignInInput {
@@ -22,7 +23,11 @@ export interface GoogleSignedIn extends SignedIn {
   readonly created: boolean;
 }
 
-/** Signs in with Google: an existing account with the same verified email, or a new one. */
+/**
+ * Signs in with Google: an existing account with the same verified email, or a new one. Google
+ * has verified the address, so the account's email counts as confirmed. Suspended accounts and new
+ * accounts at a blocked domain are refused.
+ */
 export class SignInWithGoogle {
   private readonly accounts: AccountCreator;
   private readonly sessions: SessionIssuer;
@@ -38,6 +43,10 @@ export class SignInWithGoogle {
     if (!profile.value.emailVerified) return fail('google_email_unverified');
 
     const existing = await this.existingAccount(profile.value);
+    if (existing === null) {
+      const allowed = await checkNewAccountEmail(this.deps.blockedDomains, profile.value.email);
+      if (!allowed.ok) return allowed;
+    }
     const account = existing ?? (await this.newAccount(profile.value, input));
     if (!account.ok) return account;
     const sessionToken = await this.sessions.issue(account.value.user);
@@ -49,7 +58,9 @@ export class SignInWithGoogle {
   ): Promise<Result<Account, UseCaseError> | null> {
     const found = await this.deps.users.findByEmail(profile.email);
     if (!found) return null;
-    const user = found.picture === null ? { ...found, picture: profile.picture } : found;
+    if (found.suspendedAt !== null) return fail('account_suspended');
+    const pictured = found.picture === null ? { ...found, picture: profile.picture } : found;
+    const user = confirmEmail(pictured, this.deps.clock.now());
     if (user !== found) await this.deps.users.save(user);
     const school = await this.deps.schools.findById(user.schoolId);
     const subscription = await findSchoolSubscription(this.deps.subscriptions, user.schoolId);
@@ -64,6 +75,7 @@ export class SignInWithGoogle {
       language: input.language,
       picture: profile.picture,
       defaultSchoolName: input.defaultSchoolName,
+      emailConfirmedAt: this.deps.clock.now(),
     });
   }
 }

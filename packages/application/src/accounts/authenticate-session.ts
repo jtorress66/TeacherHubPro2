@@ -53,6 +53,10 @@ export class AuthenticateSession {
     const user = await this.deps.users.findById(session.schoolId, session.userId);
     const school = await this.deps.schools.findById(session.schoolId);
     if (!user || !school) return fail('unauthenticated');
+    if (user.suspendedAt !== null) {
+      await this.deps.sessions.deleteAllForUser(user.id);
+      return fail('account_suspended');
+    }
 
     const subscription = await findSchoolSubscription(this.deps.subscriptions, school.id);
     const access = accessFor(user, subscription, now);

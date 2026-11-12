@@ -61,6 +61,11 @@ export class InMemoryJobQueue implements JobQueue {
     return Promise.resolve(job ?? null);
   }
 
+  /** Test helper: every job, oldest first. */
+  all(): readonly Job[] {
+    return [...this.jobs];
+  }
+
   private update(id: JobId, changes: Partial<Job>): Job | null {
     const index = this.jobs.findIndex((job) => job.id === id);
     const current = this.jobs[index];

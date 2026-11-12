@@ -2,7 +2,16 @@ import { describe, expect, it } from 'vitest';
 import { type SchoolId, type UserId } from '../shared/ids.ts';
 import { errorOf, valueOf } from '../test-support.ts';
 import { isAdminOf, roles } from './roles.ts';
-import { createUser, markOnboardingStarted, updateProfile } from './user.ts';
+import {
+  checkSuspension,
+  confirmEmail,
+  createUser,
+  hasConfirmedEmail,
+  markOnboardingStarted,
+  reinstate,
+  suspend,
+  updateProfile,
+} from './user.ts';
 
 const schoolId = 'school-1' as SchoolId;
 const otherSchool = 'school-2' as SchoolId;
@@ -17,6 +26,8 @@ describe('createUser', () => {
       language: 'en',
       picture: null,
       onboardingStatus: 'not_started',
+      emailConfirmedAt: null,
+      suspendedAt: null,
     });
   });
 
@@ -115,5 +126,61 @@ describe('markOnboardingStarted', () => {
 
     const done = valueOf(createUser({ ...base, onboardingStatus: 'completed' }));
     expect(markOnboardingStarted(done).onboardingStatus).toBe('completed');
+  });
+});
+
+describe('email confirmation', () => {
+  const now = new Date('2026-11-11T12:00:00Z');
+
+  it('starts unconfirmed and keeps the first confirmation time', () => {
+    const user = valueOf(createUser(base));
+    expect(hasConfirmedEmail(user)).toBe(false);
+    const confirmed = confirmEmail(user, now);
+    expect(hasConfirmedEmail(confirmed)).toBe(true);
+    expect(confirmEmail(confirmed, new Date('2026-12-01T00:00:00Z')).emailConfirmedAt).toEqual(now);
+  });
+
+  it('counts a super admin as confirmed', () => {
+    expect(hasConfirmedEmail(valueOf(createUser({ ...base, role: 'super_admin' })))).toBe(true);
+  });
+
+  it('keeps confirmation and suspension through a profile change', () => {
+    const user = suspend(confirmEmail(valueOf(createUser(base)), now), now);
+    expect(valueOf(updateProfile(user, { name: 'Ana', language: 'es' }))).toMatchObject({
+      emailConfirmedAt: now,
+      suspendedAt: now,
+    });
+  });
+});
+
+describe('suspension', () => {
+  const now = new Date('2026-11-11T12:00:00Z');
+  const superAdmin = valueOf(
+    createUser({ ...base, id: 'root' as UserId, role: 'super_admin', email: 'root@mail.com' }),
+  );
+
+  it('suspends and reinstates', () => {
+    const user = suspend(valueOf(createUser(base)), now);
+    expect(user.suspendedAt).toEqual(now);
+    expect(reinstate(user).suspendedAt).toBeNull();
+  });
+
+  it('lets a super admin suspend a teacher or school admin', () => {
+    expect(checkSuspension(superAdmin, valueOf(createUser(base))).ok).toBe(true);
+    expect(
+      checkSuspension(superAdmin, valueOf(createUser({ ...base, role: 'school_admin' }))).ok,
+    ).toBe(true);
+  });
+
+  it('never suspends yourself or another super admin, and only a super admin suspends', () => {
+    expect(errorOf(checkSuspension(superAdmin, superAdmin))).toEqual({ code: 'own_account' });
+    const other = valueOf(
+      createUser({ ...base, id: 'root-2' as UserId, role: 'super_admin', email: 'r2@mail.com' }),
+    );
+    expect(errorOf(checkSuspension(superAdmin, other))).toEqual({ code: 'forbidden' });
+    const admin = valueOf(createUser({ ...base, id: 'adm' as UserId, role: 'school_admin' }));
+    expect(errorOf(checkSuspension(admin, valueOf(createUser(base))))).toEqual({
+      code: 'forbidden',
+    });
   });
 });

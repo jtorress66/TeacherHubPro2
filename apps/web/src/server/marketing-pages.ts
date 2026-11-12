@@ -96,7 +96,16 @@ export const sitemapEntries = (site: string): SitemapEntry[] =>
 /** Crawlers may read the public site, but not the app, private links, live games or the API. */
 export const robotsRules = (site: string) => ({
   allow: '/',
-  disallow: ['/*/app', '/*/p/', '/*/s/', '/*/play', '/*/dev', '/*/set-password', '/api/'],
+  disallow: [
+    '/*/app',
+    '/*/p/',
+    '/*/s/',
+    '/*/play',
+    '/*/dev',
+    '/*/set-password',
+    '/*/confirm-email',
+    '/api/',
+  ],
   sitemap: `${site}/sitemap.xml`,
 });
 

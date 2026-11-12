@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  confirmEmailEmail,
   emailTemplates,
   portalLinkEmail,
   leadNoticeEmail,
@@ -107,6 +108,30 @@ describe('setPasswordEmail', () => {
   });
 });
 
+describe('confirmEmailEmail', () => {
+  const url = 'https://teacherhubpro.com/en/confirm-email#secret';
+
+  it('asks the person to confirm their address, with a one-time link that expires', () => {
+    const mail = confirmEmailEmail({ language: 'en', name: 'Ana <A>', url });
+    expect(mail.subject).toBe('Confirm your email for TeacherHubPro');
+    expect(mail.text).toContain('Hi Ana <A>,');
+    expect(mail.text).toContain(url);
+    expect(mail.text).toMatch(/AI tools/u);
+    expect(mail.text).toMatch(/3 days/u);
+    expect(mail.html).toContain(`href="${url}"`);
+    expect(mail.html).toContain('Ana &lt;A&gt;');
+  });
+
+  it('is written in every language', () => {
+    for (const language of locales) {
+      expect(confirmEmailEmail({ language, name: 'Ana', url }).text).toContain(url);
+    }
+    expect(confirmEmailEmail({ language: 'es', name: 'Ana', url }).subject).toBe(
+      'Confirme su correo para TeacherHubPro',
+    );
+  });
+});
+
 describe('leadNoticeEmail', () => {
   it('lists the lead’s details for the team, escaping them in HTML', () => {
     const mail = leadNoticeEmail({
@@ -159,6 +184,7 @@ describe('emailTemplates', () => {
         url: site,
       }),
       templates.weeklyUpdate({ language: 'en', subject: 'Week', body: 'Hi', schoolName: 'Luna' }),
+      templates.confirmEmail({ language: 'pt', name: 'Ana', url: site }),
     ];
     for (const mail of mails) {
       expect(mail.html).toContain(`<img src="${site}/brand/logo-mark.png"`);

@@ -1983,3 +1983,20 @@ progress {
     grid-column: 1 / -1;
   }
 }
+
+/* Until the email is confirmed: above every app page. */
+.confirm-banner {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  font-weight: 400;
+}
+
+.confirm-banner h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.confirm-banner p {
+  margin: 0;
+}

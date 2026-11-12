@@ -63,6 +63,9 @@ export const es: Messages = {
     continueWithGoogle: 'Continuar con Google',
     or: 'o',
     sessionExpired: 'Tu sesión terminó. Vuelve a iniciar sesión.',
+    adultConfirm:
+      'Tengo 18 años o más y soy maestro, personal escolar, tutor o padre o madre de familia.',
+    contactUs: 'Contáctenos',
   },
   dashboard: {
     ownerAccess: 'Propietario: acceso completo',
@@ -342,6 +345,23 @@ export const es: Messages = {
     sample: 'Descargar un archivo de ejemplo',
     importButton: 'Importar',
     imported: 'Importados: {count}.',
+    aiDrafts: 'Borradores de IA (30 días): {count}',
+    heavyAiUse: 'Uso intenso de IA',
+    suspendedBadge: 'Suspendida',
+    suspend: 'Suspender',
+    reinstate: 'Reactivar',
+    userSuspended: '{email} está suspendida.',
+    userReinstated: '{email} puede volver a iniciar sesión.',
+    accountActions: 'Cuenta de {name}',
+    blockedDomains: 'Dominios bloqueados',
+    blockedDomainsIntro:
+      'Las personas con un correo en estos dominios, o en sus subdominios, no pueden registrarse. Bloquear un dominio también suspende las cuentas que ya existen en él, salvo las de superadministradores.',
+    domain: 'Dominio',
+    blockDomain: 'Bloquear dominio',
+    unblock: 'Desbloquear',
+    noBlockedDomains: 'No hay dominios bloqueados.',
+    domainBlocked: '{domain} está bloqueado. Cuentas suspendidas: {count}.',
+    suspendedAccounts: 'Cuentas suspendidas',
   },
   passwords: {
     forgot: '¿Olvidó su contraseña?',
@@ -1612,6 +1632,10 @@ export const es: Messages = {
     resetButton: 'Elegir una contraseña nueva',
     passwordLinkExpires: 'Este enlace funciona una sola vez y vence en 3 días.',
     weeklySentBy: 'Enviado por un maestro de {school} con TeacherHubPro.',
+    confirmSubject: 'Confirme su correo para TeacherHubPro',
+    confirmBody:
+      'Gracias por crear su cuenta de TeacherHubPro. Confirme su correo electrónico para empezar a usar las herramientas de IA.',
+    confirmButton: 'Confirmar mi correo',
   },
   portalLinks: {
     open: 'Portal familiar',
@@ -1890,6 +1914,18 @@ export const es: Messages = {
     use: 'Usar una rúbrica',
     useHint: 'Llena el cuadro de rúbrica con una de sus rúbricas guardadas.',
   },
+  confirmEmail: {
+    bannerTitle: 'Confirme su correo para usar las herramientas de IA',
+    bannerText:
+      'Enviamos un enlace a {email}. Todo lo demás ya funciona; las herramientas de IA se activan cuando abra el enlace.',
+    resend: 'Reenviar',
+    resent: 'Un nuevo enlace va camino a {email}.',
+    title: 'Confirme su correo',
+    confirmed: 'Su correo está confirmado. Las herramientas de IA están listas.',
+    openApp: 'Abrir TeacherHubPro',
+    noLink:
+      'Esta página necesita el enlace de su correo. Si no funciona, inicie sesión y use Reenviar para recibir uno nuevo.',
+  },
   errors: {
     own_account: 'No puede hacer esto con su propia cuenta.',
     has_classes:
@@ -1965,5 +2001,14 @@ export const es: Messages = {
       'El archivo tiene más de 500 estudiantes. Divídelo en archivos más pequeños.',
     csv_missing_columns: 'Al archivo le faltan estas columnas: {columns}.',
     csvRow: 'Línea {line}: {field}. {message}',
+    adult_required:
+      'Confirme que tiene 18 años o más y que es maestro, personal escolar, tutor o padre o madre de familia.',
+    throwaway_email: 'Use su correo electrónico habitual. No se pueden usar correos temporales.',
+    blocked_domain:
+      'Las cuentas de TeacherHubPro son para maestros, personal escolar, tutores y padres. Si es estudiante, pida a su maestro el enlace de su tarea.',
+    email_unconfirmed:
+      'Confirme su correo para usar las herramientas de IA. Use Reenviar en el aviso de la parte superior de la página si necesita un enlace nuevo.',
+    resend_limit: 'Puede reenviar el correo hasta 5 veces al día. Inténtelo de nuevo mañana.',
+    account_suspended: 'Esta cuenta está suspendida. Si cree que es un error, contáctenos.',
   },
 };
