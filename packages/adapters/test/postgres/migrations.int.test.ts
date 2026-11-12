@@ -91,6 +91,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0027_reconfirm_password_accounts',
           '0026_account_protections',
           '0025_microsoft_teams',
           '0024_microsoft_connections',
@@ -152,6 +153,7 @@ describe('migrations', () => {
           '0024_microsoft_connections',
           '0025_microsoft_teams',
           '0026_account_protections',
+          '0027_reconfirm_password_accounts',
         ],
       },
     });
@@ -227,6 +229,38 @@ describe('migrations', () => {
     expect((await read('google-only'))?.emailConfirmedAt).toBeInstanceOf(Date);
     expect((await read('root'))?.emailConfirmedAt).toBeInstanceOf(Date);
     expect((await read('with-password'))?.suspendedAt).toBeNull();
+    await truncateAll(db);
+  });
+
+  it('asks password accounts that 0026 confirmed by mistake to confirm again', async () => {
+    const migrator = new Migrator({ db, provider: migrationProvider });
+    await truncateAll(db);
+    expect((await migrator.migrateTo('0025_microsoft_teams')).error).toBeUndefined();
+    await sql`INSERT INTO schools (id, name) VALUES (${schoolA}, 'Lincoln')`.execute(db);
+    await oldUser('with-password', 'pw@school.edu', 'teacher');
+    await oldUser('google-only', 'g@school.edu', 'teacher');
+    await oldUser('root', 'root@school.edu', 'super_admin');
+    expect((await migrator.migrateTo('0026_account_protections')).error).toBeUndefined();
+    // 0026 confirmed all three; two of them have a password.
+    for (const id of ['with-password', 'root']) {
+      await sql`INSERT INTO password_credentials (user_id, password_hash) VALUES (${id}, 'hash')`.execute(
+        db,
+      );
+    }
+    // A teacher who confirmed by email after 0026 stays confirmed.
+    await oldUser('confirmed-later', 'later@school.edu', 'teacher');
+    await sql`UPDATE users SET email_confirmed_at = now() + interval '1 minute'
+              WHERE id = 'confirmed-later'`.execute(db);
+    await sql`INSERT INTO password_credentials (user_id, password_hash)
+              VALUES ('confirmed-later', 'hash')`.execute(db);
+
+    expect((await migrateToLatest(db)).ok).toBe(true);
+    const users = new PostgresUserRepository(db);
+    const read = (id: string) => users.findById(schoolA, id as UserId);
+    expect((await read('with-password'))?.emailConfirmedAt).toBeNull();
+    expect((await read('google-only'))?.emailConfirmedAt).toBeInstanceOf(Date);
+    expect((await read('root'))?.emailConfirmedAt).toBeInstanceOf(Date);
+    expect((await read('confirmed-later'))?.emailConfirmedAt).toBeInstanceOf(Date);
     await truncateAll(db);
   });
 });

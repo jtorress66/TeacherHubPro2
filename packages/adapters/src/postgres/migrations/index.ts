@@ -25,6 +25,7 @@ import * as canvaConnections from './0023_canva_connections.ts';
 import * as microsoftConnections from './0024_microsoft_connections.ts';
 import * as microsoftTeams from './0025_microsoft_teams.ts';
 import * as accountProtections from './0026_account_protections.ts';
+import * as reconfirmPasswordAccounts from './0027_reconfirm_password_accounts.ts';
 
 /** Ordered list of migrations, bundled with the code (no filesystem lookups at runtime). */
 const migrations: Readonly<Record<string, Migration>> = {
@@ -54,6 +55,7 @@ const migrations: Readonly<Record<string, Migration>> = {
   '0024_microsoft_connections': microsoftConnections,
   '0025_microsoft_teams': microsoftTeams,
   '0026_account_protections': accountProtections,
+  '0027_reconfirm_password_accounts': reconfirmPasswordAccounts,
 };
 
 export const migrationProvider: MigrationProvider = {
