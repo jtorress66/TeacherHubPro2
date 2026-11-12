@@ -2,11 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { formatInstant } from './instant-display.ts';
 
 describe('formatInstant', () => {
-  const moment = new Date('2026-11-12T00:41:00Z');
+  const moment = new Date('2026-11-12T00:41:05Z');
 
-  it('shows the date and time in the given time zone', () => {
-    expect(formatInstant(moment, 'en', 'America/Puerto_Rico')).toBe('Nov 11, 2026, 8:41 PM');
-    expect(formatInstant(moment, 'en', 'UTC')).toBe('Nov 12, 2026, 12:41 AM');
+  it('shows the date and time, to the second, in the given time zone', () => {
+    expect(formatInstant(moment, 'en', 'America/Puerto_Rico')).toBe('Nov 11, 2026, 8:41:05 PM');
+    expect(formatInstant(moment, 'en', 'UTC')).toBe('Nov 12, 2026, 12:41:05 AM');
   });
 
   it('writes it the way the language does', () => {
