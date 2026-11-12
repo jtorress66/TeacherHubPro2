@@ -23,6 +23,7 @@ describe('currentPathFor', () => {
     expect(currentPathFor('/terms-of-use')).toBe('/terms');
     expect(currentPathFor('/ai-grading')).toBe('/ai');
     expect(currentPathFor('/soc2')).toBe('/trust');
+    expect(currentPathFor('/play-to-learn')).toBe('/features');
   });
 
   it('sends old student and parent links home, and old game links to the game code page', () => {
