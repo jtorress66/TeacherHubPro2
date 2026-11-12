@@ -534,7 +534,7 @@ export const marketingEn = {
         'Service providers that run the app: our hosting and database provider, Stripe for payments, an email provider for messages, Anthropic (Claude) for AI drafts, OpenAI for read-aloud audio, Google when a teacher connects Google Classroom, Canva when a teacher connects Canva (only the presentation or worksheet the teacher opens there, never student data), and Microsoft when a teacher connects Microsoft (only the files the teacher saves to OneDrive, never student data). Each receives only what its task needs.',
       s5Title: 'How it is protected',
       s5Text:
-        'Passwords are stored as one-way hashes. Session, student, family and password links are random and stored only as hashes. Google Classroom, Canva and Microsoft tokens are encrypted. Every record belongs to one school and is reachable only by that school’s users.',
+        'Passwords are stored as one-way hashes. Session, student, family and password links are random and stored only as hashes. Google Classroom, Canva and Microsoft tokens are encrypted. Every record belongs to one school and is reachable only by that school’s users. A teacher’s calendar link is also random and stored only as a hash: it shows only plan titles and assignment titles with their dates, never student information, and the teacher can replace it or turn it off in Settings.',
       s6Title: 'Keeping and deleting data',
       s6Text:
         'Data stays while the account is active. Uploaded PDFs are deleted once they are read. Website chats are deleted after 30 days. To ask for a copy or deletion of your data, write to us from the contact page.',

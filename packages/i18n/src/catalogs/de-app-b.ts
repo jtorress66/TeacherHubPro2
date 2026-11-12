@@ -459,6 +459,34 @@ export const deAppB = {
     connectFirst: 'Verbinden Sie Microsoft in den Einstellungen, um dies in OneDrive zu speichern.',
     settingsLink: 'Zu den Einstellungen',
   },
+  calendarFeed: {
+    title: 'Kalender',
+    intro:
+      'Sehen Sie Ihre Unterrichtspläne und die Abgabetermine der Aufgaben in Google Kalender, Outlook oder Apple Kalender. Erstellen Sie einmal einen privaten Link und fügen Sie ihn Ihrem Kalender hinzu; danach bleibt er von selbst aktuell.',
+    make: 'Kalenderlink erstellen',
+    active:
+      'Ihr Kalenderlink ist aktiv. Aus Datenschutzgründen kann er nicht noch einmal angezeigt werden: Erstellen Sie einen neuen Link, wenn Sie ihn an anderer Stelle hinzufügen möchten.',
+    newLink: 'Neuer Link',
+    newLinkNote: 'Ein neuer Link ersetzt den alten, der dann nicht mehr funktioniert.',
+    turnOff: 'Ausschalten',
+    madeTitle: 'Ihr Kalenderlink',
+    madeNote:
+      'Kopieren Sie diesen Link jetzt: Aus Datenschutzgründen kann er nicht noch einmal angezeigt werden.',
+    linkLabel: 'Kalenderlink',
+    stepsTitle: 'So fügen Sie ihn Ihrem Kalender hinzu',
+    google:
+      'Google Kalender (am Computer): Wählen Sie neben „Weitere Kalender“ + → Per URL, fügen Sie den Link ein und wählen Sie Kalender hinzufügen.',
+    outlook:
+      'Outlook: Wählen Sie Kalender hinzufügen → Aus dem Internet abonnieren, fügen Sie den Link ein und wählen Sie Importieren.',
+    apple:
+      'Apple Kalender (Mac): Wählen Sie Ablage → Neues Kalenderabonnement, fügen Sie den Link ein und wählen Sie Abonnieren.',
+    delay: 'Es kann einige Stunden dauern, bis Änderungen in Ihrem Kalender erscheinen.',
+    privacy:
+      'Wer diesen Link hat, kann die Titel Ihrer Pläne und Aufgaben mit ihren Daten sehen. Er enthält nie Informationen über Schülerinnen und Schüler.',
+    calendarName: 'TeacherHubPro: Pläne und Abgabetermine',
+    untitledPlan: 'Unterrichtsplan',
+    due: 'Abgabe: {title} ({className})',
+  },
   teams: {
     title: 'Microsoft Teams',
     allowed:

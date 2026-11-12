@@ -62,6 +62,7 @@ import {
   type UserInput,
 } from '@thp/domain';
 import type {
+  CalendarFeed,
   CanvaConnection,
   MicrosoftConnection,
   GamePlay,
@@ -469,6 +470,14 @@ export const aClassroomConnection = (
     encryptedRefreshToken: 'sealed-1',
     connectedAt: new Date('2026-09-01T12:00:00Z'),
   }),
+  ...overrides,
+});
+
+export const aCalendarFeed = (overrides: Partial<CalendarFeed> = {}): CalendarFeed => ({
+  schoolId,
+  teacherId,
+  tokenHash: 'hash-1',
+  createdAt: new Date('2026-09-01T12:00:00Z'),
   ...overrides,
 });
 

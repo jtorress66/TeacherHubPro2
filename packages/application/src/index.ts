@@ -488,3 +488,14 @@ export {
 } from './marketing/leads.ts';
 export { ListActivity, RecordActivity, Throttle, maxListedActivity } from './security/hardening.ts';
 export { CopyStudents, type CopyStudentsDeps } from './students/copy-students.ts';
+export {
+  calendarDaysAhead,
+  calendarDaysBack,
+  GetCalendarLinkStatus,
+  MakeCalendarLink,
+  ReadCalendarFeed,
+  TurnOffCalendarLink,
+  type CalendarFeedContent,
+  type CalendarFeedLabels,
+  type IssuedCalendarLink,
+} from './calendar/calendar-link.ts';

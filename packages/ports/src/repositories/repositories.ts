@@ -1,5 +1,6 @@
 import type {
   Attachment,
+  CalendarFeed,
   CanvaConnection,
   MicrosoftConnection,
   ClassroomConnection,
@@ -196,6 +197,15 @@ export interface CanvaConnectionRepository {
 export interface MicrosoftConnectionRepository {
   find(schoolId: SchoolId, teacherId: UserId): Promise<MicrosoftConnection | null>;
   save(connection: MicrosoftConnection): Promise<void>;
+  delete(schoolId: SchoolId, teacherId: UserId): Promise<void>;
+}
+
+/** One calendar link per teacher: saving another replaces it. */
+export interface CalendarFeedRepository {
+  /** The link behind a presented token (hashed); the school is not known until it is found. */
+  findByTokenHash(tokenHash: string): Promise<CalendarFeed | null>;
+  find(schoolId: SchoolId, teacherId: UserId): Promise<CalendarFeed | null>;
+  save(feed: CalendarFeed): Promise<void>;
   delete(schoolId: SchoolId, teacherId: UserId): Promise<void>;
 }
 

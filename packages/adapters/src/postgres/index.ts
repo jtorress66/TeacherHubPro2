@@ -7,6 +7,7 @@ import type {
   RateLimiter,
   AttachmentRepository,
   CanvaConnectionRepository,
+  CalendarFeedRepository,
   MicrosoftConnectionRepository,
   ClassroomConnectionRepository,
   FormsExportRepository,
@@ -57,6 +58,7 @@ import { PostgresAuditLog, PostgresRateLimiter } from './repositories/postgres-h
 import { PostgresAssignmentRepository } from './repositories/postgres-assignment-repository.ts';
 import { PostgresAttendanceSessionRepository } from './repositories/postgres-attendance-session-repository.ts';
 import { PostgresClassRepository } from './repositories/postgres-class-repository.ts';
+import { PostgresCalendarFeedRepository } from './repositories/postgres-calendar-feed-repository.ts';
 import { PostgresGameRepository } from './repositories/postgres-game-repository.ts';
 import { PostgresGamePlayRepository } from './repositories/postgres-game-play-repository.ts';
 import {
@@ -147,6 +149,7 @@ export interface PostgresRepositories {
   readonly studentLinks: StudentLinkRepository;
   readonly classroomConnections: ClassroomConnectionRepository;
   readonly canvaConnections: CanvaConnectionRepository;
+  readonly calendarFeeds: CalendarFeedRepository;
   readonly microsoftConnections: MicrosoftConnectionRepository;
   readonly formsExports: FormsExportRepository;
   readonly studentNotes: StudentNoteRepository;
@@ -204,6 +207,7 @@ export function createPostgresRepositories(db: Kysely<Database>): PostgresReposi
     studentLinks: new PostgresStudentLinkRepository(db),
     classroomConnections: new PostgresClassroomConnectionRepository(db),
     canvaConnections: new PostgresCanvaConnectionRepository(db),
+    calendarFeeds: new PostgresCalendarFeedRepository(db),
     microsoftConnections: new PostgresMicrosoftConnectionRepository(db),
     formsExports: new PostgresFormsExportRepository(db),
     studentNotes: new PostgresStudentNoteRepository(db),

@@ -452,6 +452,33 @@ export const ptAppB = {
     connectFirst: 'Conecte a Microsoft em Configurações para salvar isto no OneDrive.',
     settingsLink: 'Ir para Configurações',
   },
+  calendarFeed: {
+    title: 'Calendário',
+    intro:
+      'Veja seus planos de aula e as datas de entrega das atividades no Google Agenda, no Outlook ou no Calendário da Apple. Crie um link privado uma vez e adicione-o ao seu calendário; depois ele se atualiza sozinho.',
+    make: 'Criar link do calendário',
+    active:
+      'Seu link do calendário está ativo. Por privacidade, ele não pode ser mostrado de novo: crie um novo link se precisar adicioná-lo em outro lugar.',
+    newLink: 'Novo link',
+    newLinkNote: 'Um novo link substitui o anterior, que deixa de funcionar.',
+    turnOff: 'Desativar',
+    madeTitle: 'Seu link do calendário',
+    madeNote: 'Copie este link agora: por privacidade, ele não pode ser mostrado de novo.',
+    linkLabel: 'Link do calendário',
+    stepsTitle: 'Adicione-o ao seu calendário',
+    google:
+      'Google Agenda (no computador): ao lado de “Outras agendas”, escolha + → Do URL, cole o link e escolha Adicionar agenda.',
+    outlook:
+      'Outlook: escolha Adicionar calendário → Assinar da Web, cole o link e escolha Importar.',
+    apple:
+      'Calendário da Apple (Mac): escolha Arquivo → Nova Assinatura de Calendário, cole o link e escolha Assinar.',
+    delay: 'As alterações podem levar algumas horas para aparecer no seu calendário.',
+    privacy:
+      'Qualquer pessoa com este link pode ver os títulos dos seus planos e das suas atividades com as datas. Ele nunca inclui informações dos alunos.',
+    calendarName: 'TeacherHubPro: planos e datas de entrega',
+    untitledPlan: 'Plano de aula',
+    due: 'Entrega: {title} ({className})',
+  },
   teams: {
     title: 'Microsoft Teams',
     allowed:
