@@ -347,6 +347,8 @@ export const itAppA = {
     importButton: 'Importa',
     imported: 'Importati: {count}.',
     aiDrafts: 'Bozze IA (30 giorni): {count}',
+    emailConfirmed: 'E-mail confermata: {date}',
+    emailNotConfirmed: 'E-mail non confermata',
     heavyAiUse: 'Uso intenso di IA',
     suspendedBadge: 'Sospeso',
     suspend: 'Sospendi',

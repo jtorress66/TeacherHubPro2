@@ -346,6 +346,8 @@ export const es: Messages = {
     importButton: 'Importar',
     imported: 'Importados: {count}.',
     aiDrafts: 'Borradores de IA (30 días): {count}',
+    emailConfirmed: 'Correo confirmado: {date}',
+    emailNotConfirmed: 'Correo sin confirmar',
     heavyAiUse: 'Uso intenso de IA',
     suspendedBadge: 'Suspendida',
     suspend: 'Suspender',

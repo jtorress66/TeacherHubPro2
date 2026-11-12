@@ -335,6 +335,8 @@ export const zhAppA = {
     importButton: '导入',
     imported: '已导入：{count}。',
     aiDrafts: 'AI 草稿（30 天）：{count}',
+    emailConfirmed: '邮箱已确认：{date}',
+    emailNotConfirmed: '邮箱未确认',
     heavyAiUse: 'AI 使用量很高',
     suspendedBadge: '已停用',
     suspend: '停用',

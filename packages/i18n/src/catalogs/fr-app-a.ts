@@ -346,6 +346,8 @@ export const frAppA = {
     importButton: 'Importer',
     imported: 'Importés : {count}.',
     aiDrafts: 'Brouillons IA (30 jours) : {count}',
+    emailConfirmed: 'E-mail confirmé : {date}',
+    emailNotConfirmed: 'E-mail non confirmé',
     heavyAiUse: "Usage intensif de l'IA",
     suspendedBadge: 'Suspendu',
     suspend: 'Suspendre',
