@@ -81,6 +81,7 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
       await page.goto(`/${locale}/app/super-admin/users?q=${encodeURIComponent(teacher)}`);
       const row = page.getByRole('listitem').filter({ hasText: teacher });
       await expect(row).toContainText(t('superAdmin.aiDrafts', { count: 0 }));
+      await expect(row).toContainText(t('superAdmin.emailConfirmed', { date: '' }).trim());
       const account = row.getByRole('form', {
         name: t('superAdmin.accountActions', { name: 'Ana López' }),
       });

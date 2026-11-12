@@ -345,6 +345,8 @@ export const deAppA = {
     importButton: 'Importieren',
     imported: 'Importiert: {count}.',
     aiDrafts: 'KI-Entwürfe (30 Tage): {count}',
+    emailConfirmed: 'E-Mail bestätigt: {date}',
+    emailNotConfirmed: 'E-Mail nicht bestätigt',
     heavyAiUse: 'Starke KI-Nutzung',
     suspendedBadge: 'Gesperrt',
     suspend: 'Sperren',

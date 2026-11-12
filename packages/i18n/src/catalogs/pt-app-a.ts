@@ -344,6 +344,8 @@ export const ptAppA = {
     importButton: 'Importar',
     imported: 'Importados: {count}.',
     aiDrafts: 'Rascunhos de IA (30 dias): {count}',
+    emailConfirmed: 'E-mail confirmado: {date}',
+    emailNotConfirmed: 'E-mail não confirmado',
     heavyAiUse: 'Uso intenso de IA',
     suspendedBadge: 'Suspensa',
     suspend: 'Suspender',

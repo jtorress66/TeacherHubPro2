@@ -7,6 +7,8 @@ import { AccountStatusForm } from '../../../../../components/protection-forms.ts
 import { SuperAdminNav } from '../../../../../components/super-admin-nav.tsx';
 import { getAppContainer } from '../../../../../container.ts';
 import { requireUser } from '../../../../_lib/auth.ts';
+import { teacherTimeZone } from '../../../../_lib/time-zone.ts';
+import { formatInstant } from '../../../../../server/instant-display.ts';
 import { localeFrom, type LocaleParams } from '../../../locale-param.ts';
 
 type Props = LocaleParams & { readonly searchParams: Promise<{ q?: string; school?: string }> };
@@ -30,6 +32,7 @@ export default async function UsersPage(props: Props) {
   ]);
   if (!users.ok || !schools.ok) notFound();
   const base = `/${locale}/app/super-admin`;
+  const timeZone = await teacherTimeZone();
 
   return (
     <section className="stack">
@@ -68,7 +71,12 @@ export default async function UsersPage(props: Props) {
               </Link>{' '}
               <span className="hint">
                 {person.email} · {t(`admin.role_${person.role}`)} · {schoolName} ·{' '}
-                {t('superAdmin.aiDrafts', { count: aiDrafts })}
+                {t('superAdmin.aiDrafts', { count: aiDrafts })} ·{' '}
+                {person.emailConfirmedAt === null
+                  ? t('superAdmin.emailNotConfirmed')
+                  : t('superAdmin.emailConfirmed', {
+                      date: formatInstant(person.emailConfirmedAt, locale, timeZone),
+                    })}
               </span>{' '}
               {heavyAiUse ? <span className="chip">{t('superAdmin.heavyAiUse')}</span> : null}
               {person.role === 'super_admin' || person.id === user.id ? null : (

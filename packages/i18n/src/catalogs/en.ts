@@ -341,6 +341,8 @@ export const en = {
     importButton: 'Import',
     imported: 'Imported: {count}.',
     aiDrafts: 'AI drafts (30 days): {count}',
+    emailConfirmed: 'Email confirmed: {date}',
+    emailNotConfirmed: 'Email not confirmed',
     heavyAiUse: 'Heavy AI use',
     suspendedBadge: 'Suspended',
     suspend: 'Suspend',
