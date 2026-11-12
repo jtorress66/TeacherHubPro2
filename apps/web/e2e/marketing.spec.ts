@@ -29,6 +29,18 @@ test.describe('search engines', () => {
     expect(sitemap).toContain('/es/pricing');
     expect(sitemap).toContain('/en/features/gradebook');
   });
+
+  test('sign-in pages stay out of search results; the public site does not', async ({ page }) => {
+    for (const path of ['/en/login', '/es/signup', '/es/forgot-password']) {
+      await page.goto(path);
+      await expect(page.locator('meta[name="robots"]'), path).toHaveAttribute(
+        'content',
+        /noindex/u,
+      );
+    }
+    await page.goto('/en/pricing');
+    await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
+  });
 });
 
 for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {

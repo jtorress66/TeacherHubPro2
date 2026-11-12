@@ -3,10 +3,11 @@ import Link from 'next/link';
 import { createTranslator, type MessageKey } from '@thp/i18n';
 import { AuthShell } from '../../../components/auth-shell.tsx';
 import { LogInForm } from '../../../components/forms.tsx';
+import { notListed } from '../../../server/marketing-pages.ts';
 import { localeFrom, type LocaleParams } from '../locale-param.ts';
 
 export async function generateMetadata(props: LocaleParams): Promise<Metadata> {
-  return { title: createTranslator(await localeFrom(props))('auth.logInTitle') };
+  return { title: createTranslator(await localeFrom(props))('auth.logInTitle'), robots: notListed };
 }
 
 /** Messages a redirect can ask the login page to show. */

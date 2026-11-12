@@ -109,6 +109,9 @@ export const robotsRules = (site: string) => ({
   sitemap: `${site}/sitemap.xml`,
 });
 
+/** For sign-in pages: search engines may follow their links but should not list them. */
+export const notListed = { index: false, follow: true } as const;
+
 /** A page's title, description, canonical address, language alternates and sharing card. */
 export const pageMetadata = (
   site: string,

@@ -18,7 +18,7 @@ const legacyPaths: readonly (readonly [string, string])[] = [
   ['/games', '/app/games'],
   ['/play-to-learn/game/*', '/play'],
   ['/play-game/*', '/play'],
-  ['/play-to-learn', '/app/live'],
+  ['/play-to-learn', '/features'],
   ['/teacher/play-to-learn/*', '/app/live'],
   ['/presentations', '/app/presentations'],
   ['/prep-agent', '/app/prep'],

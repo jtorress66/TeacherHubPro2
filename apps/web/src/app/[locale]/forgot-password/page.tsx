@@ -3,10 +3,14 @@ import Link from 'next/link';
 import { createTranslator } from '@thp/i18n';
 import { AuthShell } from '../../../components/auth-shell.tsx';
 import { ForgotPasswordForm } from '../../../components/password-forms.tsx';
+import { notListed } from '../../../server/marketing-pages.ts';
 import { localeFrom, type LocaleParams } from '../locale-param.ts';
 
 export async function generateMetadata(props: LocaleParams): Promise<Metadata> {
-  return { title: createTranslator(await localeFrom(props))('passwords.forgotTitle') };
+  return {
+    title: createTranslator(await localeFrom(props))('passwords.forgotTitle'),
+    robots: notListed,
+  };
 }
 
 /** Asks for a reset link; the answer never says whether the email has an account. */
