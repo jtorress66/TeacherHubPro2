@@ -1,19 +1,26 @@
 import { describe, expect, it } from 'vitest';
 import type { LtiErrorCode } from '@thp/application';
-import type { LtiPlatformId, SchoolId } from '@thp/domain';
+import type { AssignmentId, ClassId, GameId, LtiPlatformId, SchoolId } from '@thp/domain';
 import {
+  afterLinkPath,
   afterLogInPath,
   decodeLtiLogin,
   encodeLtiLogin,
   ltiCourseOption,
   readLtiCourseOption,
   localeFromLti,
+  ltiItemPath,
   ltiLinkCookieOptions,
   ltiLoginCookieOptions,
+  ltiPlaceCookieOptions,
+  ltiPlaceErrorKey,
+  ltiPlaceProblemFor,
   ltiProblemFor,
   ltiProblemFrom,
   ltiToolValues,
   parseLtiLogin,
+  placedItemValue,
+  readPlacedItems,
 } from './lti.ts';
 
 describe('parseLtiLogin', () => {
@@ -97,6 +104,56 @@ describe('the login cookie', () => {
       path: '/',
       maxAge: 900,
     });
+  });
+});
+
+describe('content placed in a course', () => {
+  it('keeps the choice ticket for thirty minutes, for the whole site', () => {
+    expect(ltiPlaceCookieOptions('https://teacherhubpro.com')).toEqual({
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 1800,
+    });
+    expect(ltiPlaceCookieOptions('http://localhost:3100').secure).toBe(false);
+  });
+
+  it('opens a placed assignment or game on its own page', () => {
+    expect(
+      ltiItemPath('es', {
+        kind: 'assignment',
+        classId: 'class-1' as ClassId,
+        assignmentId: 'a-1' as AssignmentId,
+      }),
+    ).toBe('/es/app/classes/class-1/assignments/a-1');
+    expect(ltiItemPath('fr', { kind: 'game', gameId: 'g-1' as GameId })).toBe('/fr/app/games/g-1');
+  });
+
+  it('names each item in one form value and reads the chosen ones back', () => {
+    const quiz = { kind: 'assignment', id: 'a-1' as AssignmentId } as const;
+    const planets = { kind: 'game', id: 'g-1' as GameId } as const;
+    expect(readPlacedItems([placedItemValue(quiz), placedItemValue(planets)])).toEqual([
+      quiz,
+      planets,
+    ]);
+    expect(readPlacedItems(['lesson:x', 'game:', 'game:../x', 'nonsense', 7, null])).toEqual([]);
+  });
+
+  it('goes on to the picker after linking while a choice is waiting', () => {
+    expect(afterLinkPath('de', true)).toBe('/de/app/lti/place');
+    expect(afterLinkPath('de', false)).toBe('/de/app');
+  });
+
+  it('explains why content could not be listed or placed', () => {
+    expect(ltiPlaceProblemFor('forbidden')).toBe('other_account');
+    expect(ltiPlaceProblemFor('link_expired')).toBe('expired');
+    expect(ltiPlaceProblemFor('unknown_platform')).toBe('not_set_up');
+    expect(ltiPlaceErrorKey('nothing_chosen')).toBe('lti.placeNothingChosen');
+    expect(ltiPlaceErrorKey('too_many_items')).toBe('lti.placeTooMany');
+    expect(ltiPlaceErrorKey('not_placeable')).toBe('lti.placeNotPlaceable');
+    expect(ltiPlaceErrorKey('forbidden')).toBe('lti.problem_other_account');
+    expect(ltiPlaceErrorKey('link_expired')).toBe('lti.problem_expired');
   });
 });
 

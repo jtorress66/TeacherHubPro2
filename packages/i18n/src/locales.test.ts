@@ -10,8 +10,8 @@ describe('locales', () => {
     expect(defaultLocale).toBe('en');
   });
 
-  it('marks English and Spanish as fully translated', () => {
-    expect([...fullyTranslatedLocales]).toEqual(['en', 'es']);
+  it('marks every language as fully translated', () => {
+    expect([...fullyTranslatedLocales]).toEqual([...locales]);
   });
 
   it('recognises supported codes only', () => {

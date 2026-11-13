@@ -521,6 +521,17 @@ export {
   type StartedLtiLogin,
 } from './lti/lti-launch.ts';
 export {
+  ListPlaceableContent,
+  ltiPlaceTicketLifetimeMs,
+  PlaceLtiContent,
+  type ListPlaceableContentDeps,
+  type LtiItemTarget,
+  type LtiPlacement,
+  type PlaceableContent,
+  type PlaceableItem,
+  type PlaceLtiContentDeps,
+} from './lti/lti-placement.ts';
+export {
   ImportLtiRoster,
   ListLtiCourses,
   type ImportLtiRosterDeps,

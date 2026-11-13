@@ -638,6 +638,28 @@ export const deAppB = {
       'Übernommen werden nur aktive Schülerinnen und Schüler, mit Vor- und Nachnamen. Wer den Kurs verlässt, bleibt auf Ihrer Liste.',
     imported:
       '{added} hinzugefügt, {alreadyThere} bereits auf der Liste, {noName} übersprungen, weil das Kurssystem keinen Namen übermittelt hat.',
+    toolValuesDeepLinking:
+      'Damit Lehrkräfte Aufgaben und Spiele zu ihren Kursen hinzufügen können, aktivieren Sie außerdem Deep Linking mit derselben Start-URL: die Platzierungen „Assignment Selection“ und „Link Selection“ in Canvas bzw. Deep Linking in Moodle, Schoology und Brightspace.',
+    placeTitle: 'Zu Ihrem Kurs hinzufügen',
+    placeIntro:
+      'Wählen Sie aus, was Sie Ihrem Kurs in {platform} hinzufügen möchten. Jedes Element erscheint dort als Link, der sich in einem neuen Tab öffnet.',
+    placeChoose: 'Was hinzufügen',
+    placeChooseOne: 'Ihr Kurssystem nimmt jeweils nur ein Element an.',
+    placeChooseSeveral: 'Sie können mehrere auswählen.',
+    placeAssignmentItem: 'Aufgabe: {title} ({className})',
+    placeGameItem: 'Spiel: {title}',
+    placeSubmit: 'Zum Kurs hinzufügen',
+    placeEmpty:
+      'Es gibt noch nichts hinzuzufügen. Fügen Sie einer Aufgabe Fragen oder Dateien hinzu oder erstellen Sie ein Spiel, und fügen Sie dann erneut Inhalte aus Ihrem Kurs hinzu.',
+    placeNothingChosen: 'Wählen Sie mindestens ein Element aus.',
+    placeTooMany:
+      'Ihr Kurssystem nimmt jeweils nur ein Element an. Wählen Sie bitte nur eines aus.',
+    placeNotPlaceable:
+      'Eines dieser Elemente kann nicht mehr hinzugefügt werden. Laden Sie die Seite neu und wählen Sie erneut.',
+    placeSending: 'Wird zu Ihrem Kurs hinzugefügt …',
+    placeContinue: 'Weiter zu Ihrem Kurs',
+    problem_other_account:
+      'Sie sind mit einem anderen Konto angemeldet als dem, das mit diesem Kurs verknüpft ist. Melden Sie sich ab und öffnen Sie TeacherHubPro dann erneut aus Ihrem Kurs.',
   },
   teams: {
     title: 'Microsoft Teams',

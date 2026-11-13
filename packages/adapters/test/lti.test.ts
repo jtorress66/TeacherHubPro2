@@ -2,7 +2,16 @@ import { createLocalJWKSet, decodeJwt, decodeProtectedHeader, type JWTVerifyGetK
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
-import { checkLaunch, ltiClaim, ltiRoles, type LtiPlatformId, type SchoolId } from '@thp/domain';
+import {
+  checkLaunch,
+  deepLinkingResponse,
+  ltiClaim,
+  ltiRoles,
+  type GameId,
+  type LtiPlatform,
+  type LtiPlatformId,
+  type SchoolId,
+} from '@thp/domain';
 import { FixedClock, ltiTokenVerifierContract } from '@thp/testing';
 import { JoseLtiTokenVerifier } from '../src/lti/jose-lti-token-verifier.ts';
 import { LocalLtiPlatform } from '../src/lti/local-lti-platform.ts';
@@ -99,6 +108,19 @@ describe('LocalLtiPlatform', () => {
     jwksUrl: 'http://localhost:3100/api/test-lms/jwks',
     clock,
   });
+  /** The pretend course system as a school registers it. */
+  const registered: LtiPlatform = {
+    id: 'p' as LtiPlatformId,
+    schoolId: 's' as SchoolId,
+    name: 'Test LMS',
+    issuer: 'http://localhost:3100/test-lms',
+    clientId: 'client-1',
+    deploymentIds: [LocalLtiPlatform.deploymentId],
+    authLoginUrl: 'http://localhost:3100/api/test-lms/authorize',
+    authTokenUrl: 'http://localhost:3100/api/test-lms/token',
+    jwksUrl: 'http://localhost:3100/api/test-lms/jwks',
+    createdAt: clock.now(),
+  };
 
   it('publishes one public RS256 key, without its private half', async () => {
     const set = await platform.publicKeySet();
@@ -118,18 +140,7 @@ describe('LocalLtiPlatform', () => {
 
     expect(decodeProtectedHeader(token)).toMatchObject({ alg: 'RS256', kid: 'test-lms' });
     const launch = checkLaunch(decodeJwt(token), {
-      platform: {
-        id: 'p' as LtiPlatformId,
-        schoolId: 's' as SchoolId,
-        name: 'Test LMS',
-        issuer: 'http://localhost:3100/test-lms',
-        clientId: 'client-1',
-        deploymentIds: [LocalLtiPlatform.deploymentId],
-        authLoginUrl: 'http://localhost:3100/api/test-lms/authorize',
-        authTokenUrl: 'http://localhost:3100/api/test-lms/token',
-        jwksUrl: 'http://localhost:3100/api/test-lms/jwks',
-        createdAt: clock.now(),
-      },
+      platform: registered,
       expectedNonce: 'nonce-1',
       now: clock.now(),
     });
@@ -169,5 +180,103 @@ describe('LocalLtiPlatform', () => {
       'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner',
     ]);
     expect(claims[ltiClaim.roles]).not.toContain(ltiRoles.instructor);
+  });
+
+  it('signs a teacher’s deep linking request that the domain accepts', async () => {
+    const token = await platform.launchToken({
+      clientId: 'client-1',
+      subject: 'teacher-1',
+      role: 'teacher',
+      nonce: 'nonce-1',
+      deepLinking: {
+        returnUrl: 'http://localhost:3100/api/test-lms/deep-link-return?client=client-1',
+        data: 'test-lms-data',
+      },
+    });
+
+    const launch = checkLaunch(decodeJwt(token), {
+      platform: registered,
+      expectedNonce: 'nonce-1',
+      now: clock.now(),
+    });
+    expect(launch.ok && launch.value).toMatchObject({
+      kind: 'deepLinking',
+      resourceLinkId: null,
+      deepLinking: {
+        returnUrl: 'http://localhost:3100/api/test-lms/deep-link-return?client=client-1',
+        acceptMultiple: true,
+        data: 'test-lms-data',
+      },
+    });
+  });
+
+  it('launches a placed item with the custom parameters it was placed with', async () => {
+    const token = await platform.launchToken({
+      clientId: 'client-1',
+      subject: 'teacher-1',
+      role: 'teacher',
+      nonce: 'nonce-1',
+      custom: { thp_kind: 'game', thp_id: 'game-1' },
+    });
+
+    expect(decodeJwt(token)[ltiClaim.custom]).toEqual({ thp_kind: 'game', thp_id: 'game-1' });
+  });
+
+  describe('reading the tool’s deep linking response', () => {
+    const tool = new LocalLtiPlatform({ issuer: 'tool', jwksUrl: 'tool-jwks', clock });
+    const other = new LocalLtiPlatform({ issuer: 'other', jwksUrl: 'other-jwks', clock });
+    const response = (overrides: Record<string, unknown> = {}) => ({
+      ...deepLinkingResponse({
+        platform: registered,
+        deploymentId: LocalLtiPlatform.deploymentId,
+        data: 'test-lms-data',
+        items: [{ title: 'Planets', item: { kind: 'game', id: 'game-1' as GameId } }],
+        launchUrl: 'http://localhost:3100/api/lti/launch',
+        nonce: 'nonce-9',
+        now: clock.now(),
+      }),
+      ...overrides,
+    });
+    const read = async (claims: Record<string, unknown>, signer = tool) =>
+      platform.readDeepLinkingResponse(await signer.sign(claims), await tool.publicKeySet(), {
+        clientId: 'client-1',
+        data: 'test-lms-data',
+      });
+
+    it('keeps the placed links of a response the tool signed for it', async () => {
+      expect(await read(response())).toEqual([
+        { title: 'Planets', custom: { thp_kind: 'game', thp_id: 'game-1' } },
+      ]);
+    });
+
+    it('refuses a response signed by another key, for another course system or client, or stale', async () => {
+      expect(await read(response(), other)).toBeNull();
+      expect(await read(response({ aud: 'https://lms.example.edu' }))).toBeNull();
+      expect(await read(response({ iss: 'client-2' }))).toBeNull();
+      expect(await read(response({ [ltiClaim.messageType]: 'LtiResourceLinkRequest' }))).toBeNull();
+      expect(await read(response({ [ltiClaim.deepLinkingData]: 'forged' }))).toBeNull();
+      expect(await read(response({ exp: clock.now().getTime() / 1000 - 1 }))).toBeNull();
+      expect(
+        await platform.readDeepLinkingResponse('not a token', await tool.publicKeySet(), {
+          clientId: 'client-1',
+          data: 'test-lms-data',
+        }),
+      ).toBeNull();
+    });
+
+    it('leaves out items that are not links with a title', async () => {
+      const items = [
+        { type: 'ltiResourceLink', title: 'Planets', custom: { thp_kind: 'game', thp_id: 'g' } },
+        { type: 'file', title: 'Notes' },
+        { type: 'ltiResourceLink', custom: {} },
+        { type: 'ltiResourceLink', title: 'No custom' },
+        'junk',
+      ];
+      expect(await read(response({ [ltiClaim.contentItems]: items }))).toEqual([
+        { title: 'Planets', custom: { thp_kind: 'game', thp_id: 'g' } },
+        { title: 'No custom', custom: {} },
+      ]);
+      expect(await read(response({ [ltiClaim.contentItems]: 'none' }))).toEqual([]);
+    });
   });
 });

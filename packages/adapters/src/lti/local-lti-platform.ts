@@ -7,7 +7,7 @@ import {
   type CryptoKey,
   type JWTVerifyGetKey,
 } from 'jose';
-import { ltiClaim, ltiRoles } from '@thp/domain';
+import { ltiClaim, ltiMessageType, ltiRoles } from '@thp/domain';
 import type { Clock, PublicJwk } from '@thp/ports';
 import type { KeySetResolver } from './jose-lti-token-verifier.ts';
 
@@ -83,6 +83,34 @@ export interface LocalLaunch {
   readonly role: 'teacher' | 'learner';
   readonly nonce: string;
   readonly locale?: string;
+  /** A deep linking request ("Add content") in place of a resource link launch. */
+  readonly deepLinking?: { readonly returnUrl: string; readonly data: string };
+  /** The custom parameters of the link launched (a placed item's). */
+  readonly custom?: Readonly<Record<string, string>>;
+}
+
+/** A link the tool placed in the test course: its title and custom parameters. */
+export interface LocalPlacedLink {
+  readonly title: string;
+  readonly custom: Readonly<Record<string, string>>;
+}
+
+const isRecord = (value: unknown): value is Readonly<Record<string, unknown>> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+/** The tool's placed links, leaving out any item that is not a titled link. */
+function placedLinks(items: unknown): LocalPlacedLink[] {
+  if (!Array.isArray(items)) return [];
+  return items.flatMap((item: unknown) => {
+    if (!isRecord(item) || item.type !== 'ltiResourceLink' || typeof item.title !== 'string') {
+      return [];
+    }
+    const custom = isRecord(item.custom) ? item.custom : {};
+    const strings = Object.entries(custom).filter(
+      (entry): entry is [string, string] => typeof entry[1] === 'string',
+    );
+    return [{ title: item.title, custom: Object.fromEntries(strings) }];
+  });
 }
 
 /**
@@ -135,7 +163,10 @@ export class LocalLtiPlatform {
     return (jwksUrl) => (jwksUrl === this.jwksUrl ? own : others(jwksUrl));
   }
 
-  /** A resource link launch from the test course, as Canvas or Moodle would send it. */
+  /**
+   * A resource link launch from the test course, as Canvas or Moodle would send it, or a deep
+   * linking request when its teacher adds content (several items accepted).
+   */
   launchToken(launch: LocalLaunch): Promise<string> {
     const seconds = Math.floor(this.clock.now().getTime() / 1000);
     return this.sign({
@@ -146,11 +177,25 @@ export class LocalLtiPlatform {
       exp: seconds + 300,
       nonce: launch.nonce,
       [ltiClaim.version]: '1.3.0',
-      [ltiClaim.messageType]: 'LtiResourceLinkRequest',
       [ltiClaim.deploymentId]: LocalLtiPlatform.deploymentId,
       [ltiClaim.roles]: [launch.role === 'teacher' ? ltiRoles.instructor : learnerRole],
       [ltiClaim.context]: course,
-      [ltiClaim.resourceLink]: { id: 'test-link' },
+      ...(launch.deepLinking === undefined
+        ? {
+            [ltiClaim.messageType]: ltiMessageType.resourceLink,
+            [ltiClaim.resourceLink]: { id: 'test-link' },
+          }
+        : {
+            [ltiClaim.messageType]: ltiMessageType.deepLinking,
+            [ltiClaim.deepLinkingSettings]: {
+              deep_link_return_url: launch.deepLinking.returnUrl,
+              accept_types: ['ltiResourceLink'],
+              accept_presentation_document_targets: ['window', 'iframe'],
+              accept_multiple: true,
+              data: launch.deepLinking.data,
+            },
+          }),
+      ...(launch.custom === undefined ? {} : { [ltiClaim.custom]: launch.custom }),
       ...(this.membershipsUrl === null
         ? {}
         : {
@@ -220,6 +265,36 @@ export class LocalLtiPlatform {
       return null;
     }
     return { id: this.membershipsUrl, context: course, members: classList };
+  }
+
+  /**
+   * The links in the tool's answer to a deep linking request: it must be signed by one of the
+   * tool's published keys, from its client ID to this course system, current, and hand back the
+   * request's data. Null when refused.
+   */
+  async readDeepLinkingResponse(
+    jwt: string,
+    toolKeys: { readonly keys: readonly PublicJwk[] },
+    expected: { readonly clientId: string; readonly data: string },
+  ): Promise<readonly LocalPlacedLink[] | null> {
+    try {
+      const { payload } = await jwtVerify(jwt, createLocalJWKSet({ keys: [...toolKeys.keys] }), {
+        algorithms: ['RS256'],
+        issuer: expected.clientId,
+        audience: this.issuer,
+        currentDate: this.clock.now(),
+      });
+      if (
+        payload[ltiClaim.messageType] !== ltiMessageType.deepLinkingResponse ||
+        payload[ltiClaim.deploymentId] !== this.deploymentId ||
+        payload[ltiClaim.deepLinkingData] !== expected.data
+      ) {
+        return null;
+      }
+      return placedLinks(payload[ltiClaim.contentItems]);
+    } catch {
+      return null;
+    }
   }
 
   private async ownKeys(): Promise<JWTVerifyGetKey> {

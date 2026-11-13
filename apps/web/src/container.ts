@@ -138,6 +138,8 @@ import {
   LinkLtiAccount,
   ListLtiCourses,
   ImportLtiRoster,
+  ListPlaceableContent,
+  PlaceLtiContent,
   StartCanvaConnect,
   FinishCanvaConnect,
   DisconnectCanva,
@@ -358,6 +360,9 @@ export interface LtiFeature {
   /** The courses a teacher opened TeacherHubPro from, and importing their class lists. */
   readonly listCourses: ListLtiCourses;
   readonly importRoster: ImportLtiRoster;
+  /** Deep Linking: what a teacher may add to a course, and adding it. */
+  readonly listPlaceable: ListPlaceableContent;
+  readonly place: PlaceLtiContent;
   /** TeacherHubPro's public signing keys, for course systems. */
   readonly toolKeys: ToolKeyStore;
   /** The pretend course system (LTI_PROVIDER=local only); null otherwise. */
@@ -825,7 +830,8 @@ export function createAppContainer(
   const microsoftDeps = microsoft === null ? null : { ...deps, ...microsoft };
   const lti = ltiFor(config.lti, config.appUrl);
   const ltiBase = lti === null ? null : { ...deps, ...lti };
-  // The tool's keys also sign its requests to course systems (reading a course's class list).
+  // The tool's keys also sign its requests to course systems (reading a course's class list) and
+  // its answers to "Add content" (deep linking).
   const toolKeys = ltiBase === null ? null : new PostgresToolKeyStore(db, ltiBase);
   const ltiDeps =
     ltiBase === null || toolKeys === null
@@ -833,6 +839,7 @@ export function createAppContainer(
       : {
           ...ltiBase,
           toolKeys,
+          toolSigner: toolKeys,
           ltiMemberships: new HttpLtiMembershipsClient({
             signer: toolKeys,
             clock: ltiBase.clock,
@@ -965,6 +972,8 @@ export function createAppContainer(
             link: new LinkLtiAccount(ltiDeps),
             listCourses: new ListLtiCourses(ltiDeps),
             importRoster: new ImportLtiRoster(ltiDeps),
+            listPlaceable: new ListPlaceableContent(ltiDeps),
+            place: new PlaceLtiContent(ltiDeps),
             toolKeys: ltiDeps.toolKeys,
             testLms: ltiDeps.testLms,
           },

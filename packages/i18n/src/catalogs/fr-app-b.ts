@@ -636,6 +636,28 @@ export const frAppB = {
       'Seuls les élèves actifs sont importés, avec leur prénom et leur nom. Les élèves qui quittent le cours restent dans votre liste.',
     imported:
       '{added} ajoutés, {alreadyThere} déjà dans la liste, {noName} ignorés car la plateforme n’a pas communiqué leur nom.',
+    toolValuesDeepLinking:
+      'Pour que les enseignants puissent ajouter des devoirs et des jeux à leurs cours, activez aussi le Deep Linking avec la même URL de lancement : les emplacements « Assignment Selection » et « Link Selection » dans Canvas, ou le Deep Linking dans Moodle, Schoology et Brightspace.',
+    placeTitle: 'Ajouter à votre cours',
+    placeIntro:
+      'Choisissez ce que vous voulez ajouter à votre cours dans {platform}. Chaque élément y apparaît sous forme de lien qui s’ouvre dans un nouvel onglet.',
+    placeChoose: 'Éléments à ajouter',
+    placeChooseOne: 'Votre plateforme de cours accepte un seul élément à la fois.',
+    placeChooseSeveral: 'Vous pouvez en choisir plusieurs.',
+    placeAssignmentItem: 'Devoir : {title} ({className})',
+    placeGameItem: 'Jeu : {title}',
+    placeSubmit: 'Ajouter au cours',
+    placeEmpty:
+      'Il n’y a encore rien à ajouter. Ajoutez des questions ou des fichiers à un devoir, ou créez un jeu, puis ajoutez de nouveau du contenu depuis votre cours.',
+    placeNothingChosen: 'Choisissez au moins un élément à ajouter.',
+    placeTooMany:
+      'Votre plateforme de cours accepte un seul élément à la fois. Choisissez-en un seul.',
+    placeNotPlaceable:
+      'L’un de ces éléments ne peut plus être ajouté. Rechargez la page et choisissez à nouveau.',
+    placeSending: 'Ajout à votre cours…',
+    placeContinue: 'Continuer vers votre cours',
+    problem_other_account:
+      'Vous êtes connecté avec un autre compte que celui lié à ce cours. Déconnectez-vous, puis rouvrez TeacherHubPro depuis votre cours.',
   },
   teams: {
     title: 'Microsoft Teams',

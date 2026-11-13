@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { LtiPlatformId, SchoolId } from '../shared/ids.ts';
-import { checkLaunch, ltiClaim, ltiRoles } from './lti-launch.ts';
+import { ltiClaim } from './lti-claims.ts';
+import { checkLaunch, ltiRoles } from './lti-launch.ts';
 import type { LtiPlatform } from './lti-platform.ts';
 
 const platform: LtiPlatform = {
@@ -38,6 +39,17 @@ const claims = (overrides: Record<string, unknown> = {}): Record<string, unknown
   ...overrides,
 });
 
+/** A deep linking request's claims, in place of a resource link's. */
+const deepLinking = (settings: Record<string, unknown> = {}): Record<string, unknown> => ({
+  [ltiClaim.messageType]: 'LtiDeepLinkingRequest',
+  [ltiClaim.resourceLink]: undefined,
+  [ltiClaim.deepLinkingSettings]: {
+    deep_link_return_url: 'https://lms.lincoln.edu/courses/9/deep_linking_response',
+    accept_types: ['ltiResourceLink'],
+    ...settings,
+  },
+});
+
 const failsWith = (code: string, overrides: Record<string, unknown>) => {
   expect(checkLaunch(claims(overrides), ctx)).toEqual({ ok: false, error: { code } });
 };
@@ -48,6 +60,8 @@ describe('checkLaunch', () => {
       ok: true,
       value: {
         platformId: 'platform-1',
+        kind: 'resourceLink',
+        deploymentId: 'dep-2',
         subject: 'lms-user-7',
         role: 'teacher',
         contextId: 'course-9',
@@ -56,9 +70,43 @@ describe('checkLaunch', () => {
         givenName: 'Ana',
         locale: 'es-PR',
         membershipsUrl: null,
+        placedItem: null,
+        deepLinking: null,
         expiresAt: new Date((seconds + 600) * 1000),
       },
     });
+  });
+
+  it('reads the item a placed link opens from its custom parameters', () => {
+    const checked = checkLaunch(
+      claims({ [ltiClaim.custom]: { thp_kind: 'game', thp_id: 'game-4' } }),
+      ctx,
+    );
+    expect(checked.ok && checked.value.placedItem).toEqual({ kind: 'game', id: 'game-4' });
+  });
+
+  it('accepts a teacher’s deep linking request, with where to send the chosen items', () => {
+    const checked = checkLaunch(claims(deepLinking()), ctx);
+    expect(checked.ok && checked.value).toMatchObject({
+      kind: 'deepLinking',
+      role: 'teacher',
+      placedItem: null,
+      deepLinking: {
+        returnUrl: 'https://lms.lincoln.edu/courses/9/deep_linking_response',
+        acceptMultiple: false,
+        data: null,
+      },
+    });
+  });
+
+  it('refuses a deep linking request from a learner, or with settings it cannot answer', () => {
+    failsWith('learner_deep_linking', {
+      ...deepLinking(),
+      [ltiClaim.roles]: ['http://purl.imsglobal.org/vocab/lis/v2/membership#Learner'],
+    });
+    failsWith('invalid_return_url', deepLinking({ deep_link_return_url: 'ftp://lms' }));
+    failsWith('invalid_return_url', { [ltiClaim.messageType]: 'LtiDeepLinkingRequest' });
+    failsWith('links_not_accepted', deepLinking({ accept_types: ['file'] }));
   });
 
   it('keeps the course’s class list address when the course system offers one', () => {
@@ -145,9 +193,10 @@ describe('checkLaunch', () => {
     failsWith('wrong_nonce', { nonce: undefined });
   });
 
-  it('refuses anything but an LTI 1.3 resource link launch', () => {
+  it('refuses anything but an LTI 1.3 resource link launch or deep linking request', () => {
     failsWith('wrong_version', { [ltiClaim.version]: '1.1' });
-    failsWith('wrong_message_type', { [ltiClaim.messageType]: 'LtiDeepLinkingRequest' });
+    failsWith('wrong_message_type', { [ltiClaim.messageType]: 'LtiDeepLinkingResponse' });
+    failsWith('wrong_message_type', { [ltiClaim.messageType]: 'LtiSubmissionReviewRequest' });
   });
 
   it('refuses a deployment the school did not register', () => {

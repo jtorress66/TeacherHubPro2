@@ -628,6 +628,27 @@ export const ptAppB = {
       'Só entram os alunos ativos, com nome e sobrenome. Os alunos que saem do curso continuam na sua lista.',
     imported:
       '{added} adicionados, {alreadyThere} já estavam na lista, {noName} ignorados porque o sistema de cursos não informou o nome.',
+    toolValuesDeepLinking:
+      'Para que os professores possam adicionar tarefas e jogos aos seus cursos, ative também o Deep Linking com a mesma URL de lançamento: as posições “Assignment Selection” e “Link Selection” no Canvas, ou o Deep Linking no Moodle, Schoology e Brightspace.',
+    placeTitle: 'Adicionar ao seu curso',
+    placeIntro:
+      'Escolha o que adicionar ao seu curso em {platform}. Cada item aparece lá como um link que abre em uma nova aba.',
+    placeChoose: 'O que adicionar',
+    placeChooseOne: 'O seu sistema de cursos aceita um item de cada vez.',
+    placeChooseSeveral: 'Você pode escolher vários.',
+    placeAssignmentItem: 'Tarefa: {title} ({className})',
+    placeGameItem: 'Jogo: {title}',
+    placeSubmit: 'Adicionar ao curso',
+    placeEmpty:
+      'Ainda não há nada para adicionar. Adicione perguntas ou arquivos a uma tarefa, ou crie um jogo, e depois adicione conteúdo novamente a partir do seu curso.',
+    placeNothingChosen: 'Escolha pelo menos um item para adicionar.',
+    placeTooMany: 'O seu sistema de cursos aceita um item de cada vez. Escolha apenas um.',
+    placeNotPlaceable:
+      'Um destes itens não pode mais ser adicionado. Recarregue a página e escolha novamente.',
+    placeSending: 'Adicionando ao seu curso…',
+    placeContinue: 'Continuar para o seu curso',
+    problem_other_account:
+      'Você entrou com uma conta diferente da que está vinculada a este curso. Saia e abra o TeacherHubPro novamente a partir do seu curso.',
   },
   teams: {
     title: 'Microsoft Teams',

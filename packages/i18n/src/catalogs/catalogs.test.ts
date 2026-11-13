@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { locales } from '../locales.ts';
+import { locales, type Locale } from '../locales.ts';
 import { catalogs } from './index.ts';
 
 /** Every language but English, which defines the keys. */
@@ -56,4 +56,32 @@ describe('catalogs', () => {
       }
     }
   });
+});
+
+/** How each language would say that a language is only partly translated. */
+const partlyTranslated: Readonly<Record<Locale, RegExp>> = {
+  en: /(partly|partially) translated|translated in part/iu,
+  es: /traducid[oa]s? (en parte|parcialmente)|parcialmente traducid/iu,
+  fr: /partiellement tradui|tradui\w* en partie/iu,
+  pt: /parcialmente traduzid|traduzid[oa]s? (em parte|parcialmente)/iu,
+  de: /teilweise übersetzt/iu,
+  it: /tradott[oaie] in parte|parzialmente tradott/iu,
+  zh: /部分翻译|部分翻譯/u,
+};
+
+describe('what the site says about its languages', () => {
+  it.each(locales)('never says a language is only partly translated (%s)', (locale) => {
+    const claims = leafEntries(catalogs[locale]).filter(([, value]) =>
+      partlyTranslated[locale].test(String(value)),
+    );
+    expect(claims).toEqual([]);
+  });
+
+  it.each(locales)(
+    'sends teachers to Connected tools to connect Google Classroom (%s)',
+    (locale) => {
+      const catalog = catalogs[locale];
+      expect(catalog.marketing.helpPage.faq4A).toContain(catalog.nav.connectedTools);
+    },
+  );
 });

@@ -3,7 +3,11 @@ import {
   autoPostPage,
   readServiceTokenRequest,
   readTestLmsLoginHint,
+  readTestLmsMessageHint,
+  readTestLmsPlaced,
   testLmsLoginHint,
+  testLmsMessageHint,
+  testLmsPlaced,
 } from './test-lms.ts';
 
 describe('the pretend course system', () => {
@@ -52,5 +56,33 @@ describe('the pretend course system', () => {
       clientAssertion: null,
       scope: null,
     });
+  });
+
+  it('passes the page language, and what to launch, in its message hint', () => {
+    const addContent = { locale: 'es', deepLinking: true, custom: null };
+    const openItem = {
+      locale: 'en',
+      deepLinking: false,
+      custom: { thp_kind: 'game', thp_id: 'g-1' },
+    };
+    expect(readTestLmsMessageHint(testLmsMessageHint(addContent))).toEqual(addContent);
+    expect(readTestLmsMessageHint(testLmsMessageHint(openItem))).toEqual(openItem);
+    const plain = { locale: null, deepLinking: false, custom: null };
+    expect(readTestLmsMessageHint(null)).toEqual(plain);
+    expect(readTestLmsMessageHint('es')).toEqual(plain);
+    expect(readTestLmsMessageHint(Buffer.from('{"custom":7}').toString('base64url'))).toEqual(
+      plain,
+    );
+  });
+
+  it('keeps the links placed in the test course in one address value', () => {
+    const placed = [
+      { title: 'Space quiz', custom: { thp_kind: 'assignment', thp_id: 'a-1' } },
+      { title: 'Planets', custom: {} },
+    ];
+    expect(readTestLmsPlaced(testLmsPlaced(placed))).toEqual(placed);
+    expect(readTestLmsPlaced(undefined)).toEqual([]);
+    expect(readTestLmsPlaced('not json')).toEqual([]);
+    expect(readTestLmsPlaced(Buffer.from('[{"title":7}]').toString('base64url'))).toEqual([]);
   });
 });

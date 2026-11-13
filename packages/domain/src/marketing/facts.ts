@@ -46,7 +46,7 @@ export interface ChatFacts {
   readonly trialNeedsCard: false;
   readonly plans: readonly PlanFact[];
   readonly features: readonly ProductFeature[];
-  /** Interface languages; English and Spanish are complete. */
+  /** Interface languages, every one fully translated. */
   readonly languages: readonly string[];
 }
 

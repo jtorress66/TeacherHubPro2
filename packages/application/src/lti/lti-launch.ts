@@ -25,6 +25,12 @@ import type {
   Clock,
 } from '@thp/ports';
 import { SessionIssuer, type SessionIssuerDeps } from '../accounts/session-issuer.ts';
+import {
+  issuePlaceTicket,
+  ltiItemTarget,
+  type LtiItemDeps,
+  type LtiItemTarget,
+} from './lti-placement.ts';
 
 /** Why a launch or a link could not go ahead; the web app shows a friendly page for each. */
 export type LtiErrorCode =
@@ -37,7 +43,10 @@ export type LtiErrorCode =
   | 'replayed'
   | 'account_suspended'
   | 'link_expired'
-  | 'forbidden';
+  | 'forbidden'
+  | 'nothing_chosen'
+  | 'too_many_items'
+  | 'not_placeable';
 
 export interface LtiError {
   readonly code: LtiErrorCode;
@@ -138,17 +147,34 @@ export class StartLtiLogin {
   }
 }
 
+interface SignedIn {
+  readonly sessionToken: string;
+  readonly language: Language;
+}
+
 export type LtiLaunchOutcome =
-  | { readonly kind: 'signedIn'; readonly sessionToken: string; readonly language: Language }
+  | ({ readonly kind: 'signedIn' } & SignedIn)
+  | ({
+      readonly kind: 'pickContent';
+      /** Signed and short-lived: the course's request, until the teacher chooses what to place. */
+      readonly ticket: string;
+    } & SignedIn)
+  | ({
+      readonly kind: 'openItem';
+      /** The placed assignment or game the teacher opened, which they may see. */
+      readonly target: LtiItemTarget;
+    } & SignedIn)
   | {
       readonly kind: 'needsLink';
       /** Signed and short-lived: which course system user is waiting to be linked. */
       readonly ticket: string;
+      /** The course's request to add content, to go on with once linked; null for other launches. */
+      readonly placeTicket: string | null;
       readonly locale: string | null;
     }
   | { readonly kind: 'learnerNotYet'; readonly locale: string | null };
 
-export interface CompleteLtiLaunchDeps extends SessionIssuerDeps {
+export interface CompleteLtiLaunchDeps extends SessionIssuerDeps, LtiItemDeps {
   readonly ltiPlatforms: LtiPlatformRepository;
   readonly ltiTokenVerifier: LtiTokenVerifier;
   readonly ltiNonces: LtiNonceRepository;
@@ -181,8 +207,10 @@ async function rememberCourse(
 /**
  * Finishes a launch: the state must match the login, the token must be signed by the course
  * system and pass every launch check, and its nonce works once. A linked teacher is signed in
- * (unless suspended) and their course remembered; a teacher not linked yet gets a ticket to link
- * their account after signing in; students are not served yet, and nothing about them is kept.
+ * (unless suspended) and their course remembered, then goes on to choose content to add (deep
+ * linking) or to the placed item they opened, when they may see it; a teacher not linked yet gets a
+ * ticket to link their account after signing in; students are not served yet, and nothing about
+ * them is kept.
  */
 export class CompleteLtiLaunch {
   private readonly sessions: SessionIssuer;
@@ -217,6 +245,7 @@ export class CompleteLtiLaunch {
 
     const userId = await this.deps.ltiUserLinks.findUserId(platform.id, subject);
     const user = userId === null ? null : await this.deps.users.findById(platform.schoolId, userId);
+    const placeTicket = issuePlaceTicket(this.deps, launch.value, platform.schoolId, now);
     if (user === null) {
       const ticket = this.deps.ticketSigner.sign(
         {
@@ -228,15 +257,19 @@ export class CompleteLtiLaunch {
         },
         new Date(now.getTime() + ltiLinkTicketLifetimeMs),
       );
-      return ok({ kind: 'needsLink', ticket, locale });
+      return ok({ kind: 'needsLink', ticket, placeTicket, locale });
     }
     if (user.suspendedAt !== null) return refuse('account_suspended');
     await rememberCourse(this.deps.ltiCourses, launch.value, user, now);
-    return ok({
-      kind: 'signedIn',
-      sessionToken: await this.sessions.issue(user),
-      language: user.language,
-    });
+    const signedIn = { sessionToken: await this.sessions.issue(user), language: user.language };
+    if (placeTicket !== null) return ok({ kind: 'pickContent', ticket: placeTicket, ...signedIn });
+    const { placedItem } = launch.value;
+    const target = placedItem === null ? null : await ltiItemTarget(this.deps, user, placedItem);
+    return ok(
+      target === null
+        ? { kind: 'signedIn', ...signedIn }
+        : { kind: 'openItem', target, ...signedIn },
+    );
   }
 }
 

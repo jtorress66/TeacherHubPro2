@@ -59,7 +59,7 @@ export const marketingZh: MarketingMessages = {
       faq2A: 'AI 会为开放式答案建议分数和反馈。每个分数都需要您确认后才会计入。',
       faq3Q: '支持哪些语言？',
       faq3A:
-        '应用已完整支持英语和西班牙语，AI 会用您选择的语言写作。法语、葡萄牙语、德语、意大利语和中文已部分翻译。',
+        'TeacherHubPro 完整支持七种语言：英语、西班牙语、法语、葡萄牙语、德语、意大利语和中文，AI 会用您选择的语言写作。',
       faq4Q: '可以与 Google Classroom 配合使用吗？',
       faq4A:
         '可以。您可以导入学生名单、发布作业和 Word 文档、将演示文稿以 Google Slides 形式发送，并制作 Google Forms 测验。',
@@ -404,7 +404,7 @@ export const marketingZh: MarketingMessages = {
       faq3Q: '我忘记了密码。',
       faq3A: '在登录页面使用“忘记密码？”；我们会通过电子邮件向您发送一个一次性链接。',
       faq4Q: '如何连接 Google Classroom？',
-      faq4A: '打开“设置”，选择“连接 Google Classroom”，然后选择您的教师账户。',
+      faq4A: '打开“已连接的工具”，选择“连接 Google Classroom”，然后选择您的教师账户。',
     },
     chat: {
       open: '与 Ed 聊天',

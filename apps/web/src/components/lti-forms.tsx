@@ -1,11 +1,13 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { useActionState, useEffect, useRef, useState } from 'react';
 import { createTranslator, type Locale } from '@thp/i18n';
 import {
   linkLtiAccountAction,
+  placeLtiContentAction,
   registerLtiPlatformAction,
   type LtiFormState,
+  type LtiPlaceState,
 } from '../app/_lib/lti-actions.ts';
 import { Hidden } from './form-fields.tsx';
 import { Field, FormAlert, Submit } from './forms.tsx';
@@ -117,6 +119,65 @@ export function LinkLtiAccountForm({ locale }: { readonly locale: Locale }) {
       <Hidden values={{ locale }} />
       <FormAlert message={state.errors?.form} />
       <Submit label={t('lti.linkConfirm')} />
+    </form>
+  );
+}
+
+/**
+ * Posts the signed answer back to the course system at once, as course systems expect; the button
+ * does it without JavaScript.
+ */
+function ReturnToCourse(props: {
+  readonly locale: Locale;
+  readonly returnUrl: string;
+  readonly jwt: string;
+}) {
+  const t = createTranslator(props.locale);
+  const form = useRef<HTMLFormElement>(null);
+  useEffect(() => {
+    form.current?.submit();
+  }, []);
+  return (
+    <form ref={form} method="post" action={props.returnUrl} className="stack">
+      <input type="hidden" name="JWT" value={props.jwt} />
+      <p role="status">{t('lti.placeSending')}</p>
+      <button type="submit" className="button">
+        {t('lti.placeContinue')}
+      </button>
+    </form>
+  );
+}
+
+const initialPlace: LtiPlaceState = {};
+
+/** The teacher ticks what to add to the course (one only, when the course system takes one). */
+export function PlaceLtiContentForm(props: {
+  readonly locale: Locale;
+  readonly multiple: boolean;
+  readonly items: readonly { readonly value: string; readonly label: string }[];
+}) {
+  const t = createTranslator(props.locale);
+  const [state, action] = useActionState(placeLtiContentAction, initialPlace);
+  if (state.placement !== undefined) {
+    return <ReturnToCourse locale={props.locale} {...state.placement} />;
+  }
+  return (
+    <form action={action} className="stack" aria-label={t('lti.placeTitle')}>
+      <Hidden values={{ locale: props.locale }} />
+      <FormAlert message={state.error} />
+      <fieldset className="checks" aria-describedby="lti-place-hint">
+        <legend>{t('lti.placeChoose')}</legend>
+        <p id="lti-place-hint" className="hint">
+          {t(props.multiple ? 'lti.placeChooseSeveral' : 'lti.placeChooseOne')}
+        </p>
+        {props.items.map((item) => (
+          <label key={item.value} className="checkbox">
+            <input type={props.multiple ? 'checkbox' : 'radio'} name="item" value={item.value} />{' '}
+            {item.label}
+          </label>
+        ))}
+      </fieldset>
+      <Submit label={t('lti.placeSubmit')} />
     </form>
   );
 }
