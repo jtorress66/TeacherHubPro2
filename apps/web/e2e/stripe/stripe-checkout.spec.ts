@@ -85,6 +85,25 @@ const payButton = [
   '[data-testid="payment-form-submit-button"]',
 ] as const;
 
+/**
+ * Opens the Card option when Checkout lists payment methods first: an accordion item in the older
+ * layout, a "Card" choice under "Payment method" (next to Cash App Pay, Klarna…) in the newer one.
+ */
+async function chooseCard(page: Page): Promise<void> {
+  const older = await findInFrames(page, ['[data-testid="card-accordion-item-button"]']);
+  if (older) {
+    await older.dispatchEvent('click');
+    return;
+  }
+  for (const frame of page.frames()) {
+    const card = frame.getByRole('button', { name: /^Card(\s|$)/ }).first();
+    if (await card.isVisible().catch(() => false)) {
+      await card.click();
+      return;
+    }
+  }
+}
+
 /** Pays on Stripe's hosted Checkout with its documented test card. */
 async function payWithTestCard(page: Page): Promise<void> {
   const [cardNumber] = cardFields;
@@ -95,8 +114,7 @@ async function payWithTestCard(page: Page): Promise<void> {
   }
   // Checkout may list payment methods as an accordion whose Card entry starts collapsed.
   if (!(await waitForField(page, cardNumber.selectors, 5_000))) {
-    const accordion = await findInFrames(page, ['[data-testid="card-accordion-item-button"]']);
-    await accordion?.dispatchEvent('click');
+    await chooseCard(page);
   }
   for (const field of cardFields) {
     const input = await waitForField(page, field.selectors, field.required ? 30_000 : 1_000);
