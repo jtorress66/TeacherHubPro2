@@ -131,3 +131,5 @@ export * from './security/audit-event.ts';
 export * from './security/rate-rules.ts';
 export * from './calendar/calendar-feed.ts';
 export * from './calendar/calendar-link.ts';
+export * from './lti/lti-platform.ts';
+export * from './lti/lti-launch.ts';

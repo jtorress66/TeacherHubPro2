@@ -18,11 +18,18 @@ export default async function SchoolUsersPage(props: LocaleParams) {
   const rows = await getAppContainer().listSchoolUsers.execute({ actor: user });
   if (!rows.ok) notFound();
   const allowed = assignableRoles(user);
+  const ltiOn = getAppContainer().lti !== null;
 
   return (
     <section className="stack">
       <h1>{t('admin.title')}</h1>
       <p>{t('admin.intro', { school: school.name })}</p>
+      {ltiOn ? (
+        <p>
+          <a href={`/${locale}/app/admin/school-systems`}>{t('lti.adminLink')}</a>
+          <span className="muted"> · {t('lti.adminLinkText')}</span>
+        </p>
+      ) : null}
       <div className="table-scroll">
         <table className="roster" aria-label={t('admin.title')}>
           <thead>

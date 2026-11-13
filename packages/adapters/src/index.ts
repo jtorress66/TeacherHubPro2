@@ -68,3 +68,9 @@ export { DocxDocumentWriter } from './documents/docx-document-writer.ts';
 export { ResendMailer, type ResendConfig } from './mail/resend-mailer.ts';
 export { LocalMailer } from './mail/local-mailer.ts';
 export { loggedMailer } from './mail/logged-mailer.ts';
+export {
+  JoseLtiTokenVerifier,
+  remoteKeySet,
+  type KeySetResolver,
+} from './lti/jose-lti-token-verifier.ts';
+export { LocalLtiPlatform, type LocalLaunch } from './lti/local-lti-platform.ts';

@@ -470,6 +470,9 @@ export const deAppB = {
     comingSoonText:
       'Nutzt Ihre Schule es? Sagen Sie es uns, damit wir wissen, dass es gebraucht wird.',
     onRequestText: 'Wir schalten es für Schulen frei, die danach fragen.',
+    ltiSetUp: 'Ihre Schule hat es eingerichtet: Öffnen Sie TeacherHubPro aus Ihrem Kurs.',
+    ltiSetUpBadge: 'Eingerichtet',
+    ltiAdminLink: 'In Schulsysteme einrichten',
     askAbout: 'Nach {tool} fragen',
     requestMessage: 'Unsere Schule möchte {tool} mit TeacherHubPro nutzen.',
     signInNote: 'Melden Sie sich auf der Anmeldeseite mit Ihrem Google-Konto an.',
@@ -567,6 +570,65 @@ export const deAppB = {
     calendarName: 'TeacherHubPro: Pläne und Abgabetermine',
     untitledPlan: 'Unterrichtsplan',
     due: 'Abgabe: {title} ({className})',
+  },
+  lti: {
+    adminLink: 'Schulsysteme (LTI)',
+    adminLinkText: 'Lehrkräfte können TeacherHubPro aus dem Kurssystem Ihrer Schule öffnen.',
+    title: 'Schulsysteme',
+    intro:
+      'Lehrkräfte können TeacherHubPro mit LTI 1.3 aus dem Kurssystem Ihrer Schule (Canvas, Schoology, Moodle oder Brightspace) öffnen. Geben Sie Ihrem IT-Team die Werte unten und tragen Sie dann die Angaben ein, die Ihr Kurssystem beim Hinzufügen von TeacherHubPro anzeigt.',
+    toolValues: 'Werte für Ihr Kurssystem',
+    toolValuesHint:
+      'Fügen Sie diese dort ein, wo Ihr Kurssystem nach einem LTI-1.3-Tool fragt, und lassen Sie TeacherHubPro in einem neuen Tab öffnen.',
+    loginUrl: 'Anmelde-URL (OpenID-Connect-Start)',
+    launchUrl: 'Start- und Weiterleitungs-URL',
+    jwksUrl: 'URL des öffentlichen Schlüsselsatzes',
+    domain: 'Domain',
+    copy: '{label} kopieren',
+    copyButton: 'Kopieren',
+    copied: 'Kopiert',
+    addTitle: 'Ihr Kurssystem hinzufügen',
+    name: 'Name',
+    nameHint: 'Ein Name, den Ihre Schule wiedererkennt, etwa „Canvas des Bezirks“.',
+    issuer: 'Aussteller (Plattform-ID)',
+    clientId: 'Client-ID',
+    deploymentIds: 'Deployment-ID(s)',
+    deploymentIdsHint: 'Trennen Sie mehrere IDs mit Kommas.',
+    authLoginUrl: 'Autorisierungs-URL',
+    authTokenUrl: 'URL für Zugriffstoken',
+    platformJwksUrl: 'Schlüsselsatz-URL',
+    add: 'Kurssystem hinzufügen',
+    added: 'Kurssystem hinzugefügt.',
+    registered: 'Ihre Kurssysteme',
+    none: 'Noch ist kein Kurssystem eingerichtet.',
+    deployments: 'Deployments: {ids}',
+    remove: 'Entfernen',
+    removeNamed: '{name} entfernen',
+    removeHint:
+      'Wenn Sie ein Kurssystem entfernen, funktionieren seine Starts nicht mehr und es wird vergessen, welche Lehrkräfte ihr Konto verknüpft haben.',
+    linkTitle: 'Kurskonto verknüpfen',
+    linkIntro:
+      'Sie haben TeacherHubPro aus {platform} geöffnet. Verknüpfen Sie es einmal mit Ihrem TeacherHubPro-Konto, dann kommen Sie nächstes Mal direkt hinein.',
+    linkLogInFirst: 'Melden Sie sich mit Ihrem TeacherHubPro-Konto an, um fortzufahren.',
+    linkNoAccount: 'Noch kein Konto? Fragen Sie die TeacherHubPro-Verwaltung Ihrer Schule.',
+    linkSignedInAs: 'Sie sind als {name} ({email}) angemeldet.',
+    linkConfirm: 'Dieses Kurskonto mit TeacherHubPro verknüpfen',
+    linkCancel: 'Abbrechen',
+    linkNotYou: 'Nicht Sie? Melden Sie sich ab und mit Ihrem eigenen Konto wieder an.',
+    problemTitle: 'TeacherHubPro konnte nicht geöffnet werden',
+    problem_not_set_up:
+      'Ihre Schule hat TeacherHubPro in diesem Kurssystem noch nicht fertig eingerichtet. Bitte wenden Sie sich an das IT-Team Ihrer Schule.',
+    problem_expired:
+      'Diese Seite ist abgelaufen. Gehen Sie zurück zu Ihrem Kurs und öffnen Sie TeacherHubPro erneut.',
+    problem_suspended:
+      'Dieses Konto ist gesperrt. Wenn Sie das für einen Fehler halten, kontaktieren Sie uns.',
+    problem_wrong_school:
+      'Dieses Kurssystem gehört zu einer anderen Schule und kann daher nicht mit diesem Konto verknüpft werden. Melden Sie sich mit dem Konto an, das Ihre Schule nutzt.',
+    problem_failed:
+      'Beim Öffnen von TeacherHubPro aus Ihrem Kurs ist etwas schiefgelaufen. Gehen Sie zurück und versuchen Sie es erneut. Wenn es wieder passiert, bitten Sie das IT-Team Ihrer Schule, die Einrichtung von TeacherHubPro zu prüfen.',
+    studentTitle: 'Für Schülerinnen und Schüler noch nicht verfügbar',
+    studentText:
+      'Schülerinnen und Schüler können TeacherHubPro noch nicht aus dem Kurssystem öffnen. Deine Lehrkraft teilt deine Aufgaben mit dir.',
   },
   teams: {
     title: 'Microsoft Teams',

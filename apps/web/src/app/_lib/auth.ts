@@ -17,6 +17,12 @@ const authenticate = cache(async (): Promise<Authenticated | 'expired' | 'suspen
   return result.error.code === 'session_expired' ? 'expired' : null;
 });
 
+/** The signed-in person, or null (signed out, expired or suspended); never redirects. */
+export async function currentUser(): Promise<Authenticated | null> {
+  const auth = await authenticate();
+  return typeof auth === 'object' ? auth : null;
+}
+
 /**
  * The signed-in teacher, their school and access, or a redirect to login. By default it also
  * sends a teacher whose trial or plan has ended to the plans page.

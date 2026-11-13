@@ -18,6 +18,7 @@ const config: WebConfig = {
   canva: { provider: 'local' },
   microsoft: { provider: 'local' },
   microsoftTeams: true,
+  lti: { provider: 'local' },
   voice: 'nova',
   realtime: {
     url: 'http://localhost:3998',
@@ -49,6 +50,55 @@ async function signUp(email = uniqueEmail()) {
 }
 
 describe('web container against Postgres', () => {
+  it('launches from the pretend course system: link once, then straight in', async () => {
+    const lti = app.lti;
+    if (lti === null) throw new Error('LTI is off');
+    const testLms = lti.testLms;
+    if (testLms === null) throw new Error('no test LMS');
+    const { user } = await signUp();
+    const admin = { ...user, role: 'school_admin' as const };
+    const clientId = `client-${randomUUID()}`;
+    const registered = await lti.register.execute({
+      actor: admin,
+      details: {
+        name: 'Test LMS',
+        issuer: testLms.issuer,
+        clientId,
+        deploymentIds: testLms.deploymentId,
+        authLoginUrl: `${config.appUrl}/api/test-lms/authorize`,
+        authTokenUrl: `${config.appUrl}/api/test-lms/token`,
+        jwksUrl: testLms.jwksUrl,
+      },
+    });
+    expect(registered.ok).toBe(true);
+    const launch = async () => {
+      const started = await lti.startLogin.execute({
+        issuer: testLms.issuer,
+        loginHint: 'teacher:t-1',
+        targetLinkUri: `${config.appUrl}/api/lti/launch`,
+        ltiMessageHint: null,
+        clientId,
+        deploymentId: null,
+      });
+      if (!started.ok) throw new Error(started.error.code);
+      const { redirectUrl, ...saved } = started.value;
+      const idToken = await testLms.launchToken({
+        clientId,
+        subject: 't-1',
+        role: 'teacher',
+        nonce: new URL(redirectUrl).searchParams.get('nonce') ?? '',
+      });
+      return lti.completeLaunch.execute({ idToken, state: saved.state, saved });
+    };
+
+    const first = await launch();
+    if (!first.ok || first.value.kind !== 'needsLink') throw new Error(JSON.stringify(first));
+    expect((await lti.link.execute({ actor: user, ticket: first.value.ticket })).ok).toBe(true);
+    const second = await launch();
+    expect(second.ok && second.value.kind).toBe('signedIn');
+    expect((await lti.toolKeys.publicKeySet()).keys.length).toBeGreaterThan(0);
+  });
+
   it('signs a teacher up into their own school on a trial, and authenticates the session', async () => {
     const { sessionToken, school } = await signUp();
 

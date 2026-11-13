@@ -38,6 +38,8 @@ export default defineConfig({
         REALTIME_URL: `http://localhost:${String(realtimePort)}`,
         REALTIME_TICKET_SECRET: ticketSecret,
         SUPER_ADMIN_SETUP_KEY: 'e2e-super-admin-setup-key',
+        // School systems over LTI, with the pretend course system at /test-lms.
+        LTI_PROVIDER: 'local',
       },
     },
     {

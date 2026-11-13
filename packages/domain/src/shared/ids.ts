@@ -38,3 +38,4 @@ export type PasswordTokenId = Id<'PasswordToken'>;
 export type LeadId = Id<'Lead'>;
 export type ChatSessionId = Id<'ChatSession'>;
 export type ChatTurnId = Id<'ChatTurn'>;
+export type LtiPlatformId = Id<'LtiPlatform'>;

@@ -47,6 +47,10 @@ import {
   StripeCheckoutSessions,
   SystemClock,
   UuidIdGenerator,
+  JoseLtiTokenVerifier,
+  LocalLtiPlatform,
+  PostgresToolKeyStore,
+  remoteKeySet,
 } from '@thp/adapters';
 import {
   CreateGame,
@@ -123,6 +127,14 @@ import {
   TurnOffCalendarLink,
   GetCalendarLinkStatus,
   ReadCalendarFeed,
+  RegisterLtiPlatform,
+  ListLtiPlatforms,
+  RemoveLtiPlatform,
+  LtiSetUpForSchool,
+  StartLtiLogin,
+  CompleteLtiLaunch,
+  DescribeLtiLink,
+  LinkLtiAccount,
   StartCanvaConnect,
   FinishCanvaConnect,
   DisconnectCanva,
@@ -295,12 +307,14 @@ import type {
   ReportCardRenderer,
   TeamsAssignments,
   TeamsClasses,
+  ToolKeyStore,
 } from '@thp/ports';
 import {
   parseWebConfig,
   type BillingConfig,
   type CanvaConfig,
   type MicrosoftConfig,
+  type LtiConfig,
   type ClassroomConfig,
   type GoogleConfig,
   type WebConfig,
@@ -326,6 +340,22 @@ export interface MicrosoftFeature {
   readonly connected: MicrosoftConnected;
   readonly savePresentation: SavePresentationToOneDrive;
   readonly saveGeneration: SaveGenerationToOneDrive;
+}
+
+/** LTI 1.3: schools' course systems (Canvas, Schoology, Moodle, Brightspace) launch TeacherHubPro. */
+export interface LtiFeature {
+  readonly register: RegisterLtiPlatform;
+  readonly list: ListLtiPlatforms;
+  readonly remove: RemoveLtiPlatform;
+  readonly setUpForSchool: LtiSetUpForSchool;
+  readonly startLogin: StartLtiLogin;
+  readonly completeLaunch: CompleteLtiLaunch;
+  readonly describeLink: DescribeLtiLink;
+  readonly link: LinkLtiAccount;
+  /** TeacherHubPro's public signing keys, for course systems. */
+  readonly toolKeys: ToolKeyStore;
+  /** The pretend course system (LTI_PROVIDER=local only); null otherwise. */
+  readonly testLms: LocalLtiPlatform | null;
 }
 
 /** Microsoft Teams (school accounts): rosters and assignments, through the Microsoft connection. */
@@ -423,6 +453,8 @@ export interface AppContainer {
   readonly microsoft: MicrosoftFeature | null;
   /** Microsoft Teams, when Microsoft and the Teams switch are on; null hides every Teams button. */
   readonly teams: TeamsFeature | null;
+  /** LTI school systems, when LTI_PROVIDER turns them on; null keeps every LTI page away. */
+  readonly lti: LtiFeature | null;
   readonly downloadPresentationFile: DownloadPresentationFile;
   readonly startChat: StartChat;
   readonly sendChatMessage: SendChatMessage;
@@ -681,6 +713,33 @@ function microsoftFor(config: MicrosoftConfig) {
   };
 }
 
+/**
+ * LTI: the tool's signing keys are sealed with the token key (a fixed key for the pretend course
+ * system), and launch tokens are checked against each course system's published keys. In local
+ * mode the pretend course system's own keys are read directly; it is never offered in production.
+ */
+function ltiFor(config: LtiConfig, appUrl: string) {
+  if (config.provider === 'off') return null;
+  if (config.provider === 'local') {
+    const testLms = new LocalLtiPlatform({
+      issuer: `${appUrl}/test-lms`,
+      jwksUrl: `${appUrl}/api/test-lms/jwks`,
+    });
+    return {
+      cipher: new AesGcmCipher(
+        createHash('sha256').update('teacherhubpro-local-lti').digest('base64'),
+      ),
+      ltiTokenVerifier: new JoseLtiTokenVerifier(testLms.keyResolver(remoteKeySet)),
+      testLms,
+    };
+  }
+  return {
+    cipher: new AesGcmCipher(config.encryptionKey),
+    ltiTokenVerifier: new JoseLtiTokenVerifier(),
+    testLms: null,
+  };
+}
+
 function billingFor(config: BillingConfig, appUrl: string): Billing {
   if (config.provider === 'local') {
     return {
@@ -756,6 +815,8 @@ export function createAppContainer(
   const canvaDeps = canva === null ? null : { ...deps, ...canva };
   const microsoft = microsoftFor(config.microsoft);
   const microsoftDeps = microsoft === null ? null : { ...deps, ...microsoft };
+  const lti = ltiFor(config.lti, config.appUrl);
+  const ltiDeps = lti === null ? null : { ...deps, ...lti };
 
   return {
     appUrl: config.appUrl,
@@ -867,6 +928,21 @@ export function createAppContainer(
             importRoster: new ImportTeamsRoster(microsoftDeps),
             shareAssignment: new ShareAssignmentToTeams(microsoftDeps),
             postWord: new PostWordToTeams(microsoftDeps),
+          },
+    lti:
+      ltiDeps === null
+        ? null
+        : {
+            register: new RegisterLtiPlatform(ltiDeps),
+            list: new ListLtiPlatforms(ltiDeps),
+            remove: new RemoveLtiPlatform(ltiDeps),
+            setUpForSchool: new LtiSetUpForSchool(ltiDeps),
+            startLogin: new StartLtiLogin(ltiDeps),
+            completeLaunch: new CompleteLtiLaunch(ltiDeps),
+            describeLink: new DescribeLtiLink(ltiDeps),
+            link: new LinkLtiAccount(ltiDeps),
+            toolKeys: new PostgresToolKeyStore(db, ltiDeps),
+            testLms: ltiDeps.testLms,
           },
     downloadPresentationFile: new DownloadPresentationFile(deps),
     startChat: new StartChat(deps),

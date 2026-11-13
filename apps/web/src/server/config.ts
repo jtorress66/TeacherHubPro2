@@ -45,6 +45,16 @@ export type MicrosoftConfig =
       readonly encryptionKey: string;
     };
 
+/**
+ * LTI 1.3 (Canvas, Schoology, Moodle, Brightspace launch TeacherHubPro): off until a school asks,
+ * the pretend course system for development and tests, or on (its signing keys are sealed with
+ * TOKEN_ENCRYPTION_KEY).
+ */
+export type LtiConfig =
+  | { readonly provider: 'off' }
+  | { readonly provider: 'local' }
+  | { readonly provider: 'on'; readonly encryptionKey: string };
+
 export interface WebConfig {
   readonly databaseUrl: string;
   readonly appUrl: string;
@@ -59,6 +69,7 @@ export interface WebConfig {
    * MICROSOFT_TEAMS=on, and only when Microsoft is on. OneDrive works either way.
    */
   readonly microsoftTeams: boolean;
+  readonly lti: LtiConfig;
   /**
    * The voice that reads text aloud (the worker makes the audio with the same one); null when
    * the device's own voice reads instead.
@@ -288,6 +299,28 @@ function microsoftTeamsFrom(
     : err('MICROSOFT_TEAMS=on needs Microsoft turned on (MICROSOFT_PROVIDER)');
 }
 
+/**
+ * LTI: off by default everywhere (until a school asks), LTI_PROVIDER=local for the pretend course
+ * system (refused in production), or on, which needs TOKEN_ENCRYPTION_KEY.
+ */
+function ltiFrom(
+  env: Readonly<Record<string, string | undefined>>,
+  appEnv: AppEnv,
+): Result<LtiConfig, string> {
+  const chosen = env.LTI_PROVIDER?.trim() ?? '';
+  const provider = chosen === '' ? 'off' : chosen;
+  if (provider === 'off') return ok({ provider });
+  if (provider === 'local') {
+    return appEnv === 'production' ? err(localOnly('LTI_PROVIDER')) : ok({ provider });
+  }
+  if (provider !== 'on') return err('LTI_PROVIDER must be off, local or on');
+  const encryptionKey = env.TOKEN_ENCRYPTION_KEY?.trim() ?? '';
+  if (Buffer.from(encryptionKey, 'base64').length !== 32) {
+    return err('TOKEN_ENCRYPTION_KEY must be 32 random bytes, base64 encoded');
+  }
+  return ok({ provider, encryptionKey });
+}
+
 /** The team address for high-priority leads, when it is a valid email; otherwise none. */
 const leadsNotifyFrom = (env: Readonly<Record<string, string | undefined>>): string | null => {
   const address = env.LEADS_NOTIFY_EMAIL?.trim() ?? '';
@@ -340,6 +373,7 @@ export function parseWebConfig(
     provider: 'off',
   });
   const microsoftTeams = optional(microsoftTeamsFrom(trimmed, c.APP_ENV, microsoft), false);
+  const lti = optional<LtiConfig>(ltiFrom(trimmed, c.APP_ENV), { provider: 'off' });
 
   return ok({
     databaseUrl: c.DATABASE_URL,
@@ -365,6 +399,7 @@ export function parseWebConfig(
     canva,
     microsoft,
     microsoftTeams,
+    lti,
     voice: voiceFrom(trimmed, c.APP_ENV),
     realtime: {
       url: c.REALTIME_URL.replace(/\/$/, ''),

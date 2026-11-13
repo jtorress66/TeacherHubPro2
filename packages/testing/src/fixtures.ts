@@ -1,4 +1,6 @@
 import {
+  type LtiPlatform,
+  type LtiPlatformId,
   connectCanva,
   connectMicrosoft,
   connectClassroom,
@@ -573,5 +575,20 @@ export const aPortalLink = (overrides: Partial<PortalLink> = {}): PortalLink => 
     sentTo: null,
     expiresAt: new Date('2027-01-31T00:00:00Z'),
   }),
+  ...overrides,
+});
+
+/** A course system registered for LTI launches (the shape the domain checks). */
+export const anLtiPlatform = (overrides: Partial<LtiPlatform> = {}): LtiPlatform => ({
+  id: 'lti-platform-1' as LtiPlatformId,
+  schoolId,
+  name: 'Lincoln Canvas',
+  issuer: 'https://lms.example.edu',
+  clientId: 'client-1',
+  deploymentIds: ['deployment-1'],
+  authLoginUrl: 'https://lms.example.edu/authorize',
+  authTokenUrl: 'https://lms.example.edu/token',
+  jwksUrl: 'https://lms.example.edu/jwks',
+  createdAt: new Date('2026-11-01T12:00:00Z'),
   ...overrides,
 });
