@@ -2,6 +2,7 @@ import {
   createLocalJWKSet,
   exportJWK,
   generateKeyPair,
+  jwtVerify,
   SignJWT,
   type CryptoKey,
   type JWTVerifyGetKey,
@@ -11,8 +12,64 @@ import type { Clock, PublicJwk } from '@thp/ports';
 import type { KeySetResolver } from './jose-lti-token-verifier.ts';
 
 const kid = 'test-lms';
-const learnerRole = 'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner';
+const membership = 'http://purl.imsglobal.org/vocab/lis/v2/membership';
+const learnerRole = `${membership}#Learner`;
 const systemClock: Clock = { now: () => new Date() };
+const membershipsScope =
+  'https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly';
+/** The audience of the access tokens it grants: its own services. */
+const servicesAudience = 'test-lms-services';
+const course = { id: 'test-course', label: 'TEST', title: 'Test course' } as const;
+
+/**
+ * The test course's class list: two active learners, its teacher, a learner who left, and a
+ * learner whose name the course system keeps to itself.
+ */
+const classList = [
+  {
+    user_id: 'student-1',
+    status: 'Active',
+    name: 'Ana Rivera',
+    given_name: 'Ana',
+    family_name: 'Rivera',
+    email: 'ana.rivera@test-lms.example',
+    roles: [learnerRole],
+  },
+  {
+    user_id: 'student-2',
+    status: 'Active',
+    name: 'Ben Ortiz',
+    given_name: 'Ben',
+    family_name: 'Ortiz',
+    email: 'ben.ortiz@test-lms.example',
+    roles: [learnerRole],
+  },
+  { user_id: 'teacher-1', status: 'Active', name: 'Test Teacher', roles: [ltiRoles.instructor] },
+  {
+    user_id: 'student-3',
+    status: 'Inactive',
+    name: 'Cam Diaz',
+    given_name: 'Cam',
+    family_name: 'Diaz',
+    roles: [learnerRole],
+  },
+  { user_id: 'student-4', status: 'Active', roles: [learnerRole] },
+] as const;
+
+/** A client credentials request for the course system's services, as the form carries it. */
+export interface ServiceTokenRequest {
+  readonly grantType: string | null;
+  readonly clientAssertionType: string | null;
+  readonly clientAssertion: string | null;
+  readonly scope: string | null;
+}
+
+/** A Names and Role Provisioning class list (membership container). */
+export interface LocalClassList {
+  readonly id: string;
+  readonly context: typeof course;
+  readonly members: readonly unknown[];
+}
 
 interface Keys {
   readonly privateKey: CryptoKey;
@@ -38,16 +95,24 @@ export class LocalLtiPlatform {
   readonly deploymentId = LocalLtiPlatform.deploymentId;
   readonly issuer: string;
   readonly jwksUrl: string;
+  /** Its OAuth token address, for its services; none without one. */
+  readonly tokenUrl: string | null;
+  /** Its class list address, offered in launches; none without one. */
+  readonly membershipsUrl: string | null;
   private readonly clock: Clock;
   private keys: Promise<Keys> | undefined;
 
   constructor(config: {
     readonly issuer: string;
     readonly jwksUrl: string;
+    readonly tokenUrl?: string;
+    readonly membershipsUrl?: string;
     readonly clock?: Clock;
   }) {
     this.issuer = config.issuer;
     this.jwksUrl = config.jwksUrl;
+    this.tokenUrl = config.tokenUrl ?? null;
+    this.membershipsUrl = config.membershipsUrl ?? null;
     this.clock = config.clock ?? systemClock;
   }
 
@@ -84,12 +149,81 @@ export class LocalLtiPlatform {
       [ltiClaim.messageType]: 'LtiResourceLinkRequest',
       [ltiClaim.deploymentId]: LocalLtiPlatform.deploymentId,
       [ltiClaim.roles]: [launch.role === 'teacher' ? ltiRoles.instructor : learnerRole],
-      [ltiClaim.context]: { id: 'test-course', title: 'Test course' },
+      [ltiClaim.context]: course,
       [ltiClaim.resourceLink]: { id: 'test-link' },
+      ...(this.membershipsUrl === null
+        ? {}
+        : {
+            [ltiClaim.namesRoleService]: {
+              context_memberships_url: this.membershipsUrl,
+              service_versions: ['2.0'],
+            },
+          }),
       ...(launch.locale === undefined
         ? {}
         : { [ltiClaim.launchPresentation]: { locale: launch.locale } }),
     });
+  }
+
+  /**
+   * Answers a client credentials request for the class list: the tool's client assertion must be
+   * signed by one of the tool's published keys, addressed to this token address, and current.
+   * Returns an access token, or null when refused.
+   */
+  async grantServiceToken(
+    request: ServiceTokenRequest,
+    toolKeys: { readonly keys: readonly PublicJwk[] },
+  ): Promise<string | null> {
+    if (
+      this.tokenUrl === null ||
+      request.grantType !== 'client_credentials' ||
+      request.clientAssertionType !== 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer' ||
+      request.clientAssertion === null ||
+      !(request.scope ?? '').split(' ').includes(membershipsScope)
+    ) {
+      return null;
+    }
+    try {
+      const { payload } = await jwtVerify(
+        request.clientAssertion,
+        createLocalJWKSet({ keys: [...toolKeys.keys] }),
+        { algorithms: ['RS256'], audience: this.tokenUrl, currentDate: this.clock.now() },
+      );
+      if (typeof payload.iss !== 'string' || payload.iss !== payload.sub) return null;
+      const seconds = Math.floor(this.clock.now().getTime() / 1000);
+      return await this.sign({
+        iss: this.issuer,
+        aud: servicesAudience,
+        sub: payload.iss,
+        scope: membershipsScope,
+        iat: seconds,
+        exp: seconds + 300,
+      });
+    } catch {
+      return null;
+    }
+  }
+
+  /** The test course's class list, for a request carrying an access token it granted. */
+  async classList(authorization: string | null): Promise<LocalClassList | null> {
+    const token = /^Bearer (\S+)$/u.exec(authorization ?? '')?.[1];
+    if (token === undefined || this.membershipsUrl === null) return null;
+    try {
+      const { payload } = await jwtVerify(token, await this.ownKeys(), {
+        algorithms: ['RS256'],
+        issuer: this.issuer,
+        audience: servicesAudience,
+        currentDate: this.clock.now(),
+      });
+      if (payload.scope !== membershipsScope) return null;
+    } catch {
+      return null;
+    }
+    return { id: this.membershipsUrl, context: course, members: classList };
+  }
+
+  private async ownKeys(): Promise<JWTVerifyGetKey> {
+    return createLocalJWKSet({ keys: [...(await this.publicKeySet()).keys] });
   }
 
   private signingKeys(): Promise<Keys> {

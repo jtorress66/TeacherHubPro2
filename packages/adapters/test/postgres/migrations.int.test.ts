@@ -59,8 +59,10 @@ describe('migrations', () => {
       'live_answers',
       'live_players',
       'live_sessions',
+      'lti_courses',
       'lti_nonces',
       'lti_platforms',
+      'lti_student_links',
       'lti_user_links',
       'microsoft_connections',
       'password_credentials',
@@ -96,6 +98,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0030_lti_rosters',
           '0029_lti',
           '0028_calendar_feeds',
           '0027_reconfirm_password_accounts',
@@ -163,10 +166,11 @@ describe('migrations', () => {
           '0027_reconfirm_password_accounts',
           '0028_calendar_feeds',
           '0029_lti',
+          '0030_lti_rosters',
         ],
       },
     });
-    expect(await tableNames()).toHaveLength(56);
+    expect(await tableNames()).toHaveLength(58);
   });
 
   it('turns plans saved before step 8 into valid plans of their kind', async () => {

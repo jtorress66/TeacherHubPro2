@@ -14,6 +14,7 @@ import {
   uploadAttachmentAction,
   type AssignmentFormState,
 } from '../app/_lib/assignment-actions.ts';
+import { importLtiRosterAction } from '../app/_lib/lti-roster-actions.ts';
 import {
   importTeamsRosterAction,
   postWordToTeamsAction,
@@ -27,25 +28,31 @@ const initial: AssignmentFormState = {};
 
 type FormAction = (state: AssignmentFormState, data: FormData) => Promise<AssignmentFormState>;
 
+/** Where a class roster can be imported from. */
+interface RosterSource {
+  /** Distinguishes the fields when several sources are on one page. */
+  readonly idPrefix: string;
+  /** The form field that carries the chosen course or class. */
+  readonly field: string;
+  readonly importRoster: FormAction;
+  readonly keys: {
+    readonly target: MessageKey;
+    readonly importRoster: MessageKey;
+  };
+}
+
 /**
  * Where an assignment or a roster comes from or goes: Google Classroom or Microsoft Teams. A new
  * destination is a new entry here, not a branch in the forms.
  */
-interface Destination {
-  /** Distinguishes the fields when both destinations are on one page. */
-  readonly idPrefix: string;
-  /** The form field that carries the chosen course or class. */
-  readonly field: string;
+interface Destination extends RosterSource {
   readonly share: FormAction;
-  readonly importRoster: FormAction;
   readonly postWord: FormAction;
-  readonly keys: {
-    readonly target: MessageKey;
+  readonly keys: RosterSource['keys'] & {
     readonly share: MessageKey;
     readonly shared: MessageKey;
     readonly openLink: MessageKey;
     readonly shareNote: MessageKey;
-    readonly importRoster: MessageKey;
     readonly wordSubmit: MessageKey;
     readonly wordPosted: MessageKey;
     readonly wordOpen: MessageKey;
@@ -95,6 +102,22 @@ const destinations = {
 } as const satisfies Record<string, Destination>;
 
 export type DestinationName = keyof typeof destinations;
+
+/**
+ * Every roster source: the destinations, and course systems over LTI (rosters only). A new source
+ * is a new entry here.
+ */
+const rosterSources = {
+  ...destinations,
+  lti: {
+    idPrefix: 'lti-',
+    field: 'ltiCourse',
+    importRoster: importLtiRosterAction,
+    keys: { target: 'lti.course', importRoster: 'lti.importRoster' },
+  },
+} as const satisfies Record<string, RosterSource>;
+
+export type RosterSourceName = keyof typeof rosterSources;
 
 interface AssignmentProps {
   readonly locale: Locale;
@@ -206,10 +229,10 @@ export function ImportRosterForm(props: {
   readonly locale: Locale;
   readonly classId: string;
   readonly courses: readonly Option[];
-  readonly destination?: DestinationName;
+  readonly destination?: RosterSourceName;
 }) {
   const t = createTranslator(props.locale);
-  const to: Destination = destinations[props.destination ?? 'classroom'];
+  const to: RosterSource = rosterSources[props.destination ?? 'classroom'];
   const [state, action] = useActionState(to.importRoster, initial);
   return (
     <form action={action} className="stack" aria-label={t(to.keys.importRoster)}>

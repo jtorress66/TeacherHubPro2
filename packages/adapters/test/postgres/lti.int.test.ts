@@ -1,3 +1,4 @@
+import { createLocalJWKSet, jwtVerify } from 'jose';
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import type { LtiPlatformId } from '@thp/domain';
 import {
@@ -50,6 +51,20 @@ describe('LTI tables', () => {
     const opened = await cipher.decrypt(row.private_key_encrypted);
     expect(opened.ok && JSON.parse(opened.value)).toMatchObject({ kty: 'RSA', n: published?.n });
     expect(opened.ok && JSON.parse(opened.value)).toHaveProperty('d');
+  });
+
+  it('signs with its private key, so its published key set verifies the signature', async () => {
+    const store = new PostgresToolKeyStore(db, {
+      cipher: new FakeSecretCipher(),
+      tokens: new SequentialTokenGenerator(),
+      clock: new FixedClock(new Date('2026-11-12T12:00:00Z')),
+    });
+    const token = await store.sign({ iss: 'client-1', aud: 'https://lms.example.edu/token' });
+
+    const keys = createLocalJWKSet({ keys: [...(await store.publicKeySet()).keys] });
+    const { payload } = await jwtVerify(token, keys, { algorithms: ['RS256'] });
+    expect(payload).toEqual({ iss: 'client-1', aud: 'https://lms.example.edu/token' });
+    expect(await db.selectFrom('tool_keys').select('kid').execute()).toHaveLength(1);
   });
 
   it('clears used nonces once they have expired', async () => {

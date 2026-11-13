@@ -1,13 +1,20 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import { err, ok, type LtiPlatform, type LtiPlatformId, type Result } from '@thp/domain';
-import type { SchoolId, UserId } from '@thp/domain';
+import type { ClassId, LtiCourse, SchoolId, StudentId, UserId } from '@thp/domain';
 import type {
+  LtiCourseRepository,
+  LtiMembershipsClient,
+  LtiMembershipsError,
   LtiNonceRepository,
   LtiPlatformRepository,
+  LtiStudentLink,
+  LtiStudentLinkRepository,
   LtiTokenCheck,
   LtiTokenVerifier,
   LtiUserLinkRepository,
   PublicJwk,
+  StudentRepository,
+  ToolJwtSigner,
   ToolKeyStore,
 } from '@thp/ports';
 
@@ -144,8 +151,11 @@ export class FakeLtiTokenVerifier implements LtiTokenVerifier {
   }
 }
 
-/** A fixed, made-up public key: enough for pages that publish the tool's key set. */
-export class FakeToolKeyStore implements ToolKeyStore {
+/**
+ * A fixed, made-up public key: enough for pages that publish the tool's key set. Its tokens carry
+ * the key's id and the claims, under a made-up signature nothing can verify.
+ */
+export class FakeToolKeyStore implements ToolKeyStore, ToolJwtSigner {
   static readonly key: PublicJwk = {
     kty: 'RSA',
     kid: 'fake-tool-key-0001',
@@ -157,5 +167,117 @@ export class FakeToolKeyStore implements ToolKeyStore {
 
   publicKeySet(): Promise<{ readonly keys: readonly PublicJwk[] }> {
     return Promise.resolve({ keys: [FakeToolKeyStore.key] });
+  }
+
+  sign(claims: Readonly<Record<string, unknown>>): Promise<string> {
+    const header = encode({ alg: 'RS256', typ: 'JWT', kid: FakeToolKeyStore.key.kid });
+    return Promise.resolve(`${header}.${encode(claims)}.fake-signature`);
+  }
+}
+
+const courseKey = (platformId: LtiPlatformId, contextId: string, teacherId: UserId) =>
+  JSON.stringify([platformId, contextId, teacherId]);
+
+export class InMemoryLtiCourseRepository implements LtiCourseRepository {
+  private readonly rows = new Map<string, LtiCourse>();
+
+  constructor(private readonly platforms: InMemoryLtiPlatformRepository) {}
+
+  save(course: LtiCourse): Promise<void> {
+    const key = courseKey(course.platformId, course.contextId, course.teacherId);
+    const known = this.rows.get(key);
+    if (known === undefined || known.schoolId === course.schoolId) this.rows.set(key, course);
+    return Promise.resolve();
+  }
+
+  listForTeacher(schoolId: SchoolId, teacherId: UserId): Promise<readonly LtiCourse[]> {
+    return Promise.resolve(
+      [...this.rows.values()]
+        .filter(
+          (row) =>
+            row.schoolId === schoolId &&
+            row.teacherId === teacherId &&
+            this.platforms.has(row.platformId),
+        )
+        .sort((a, b) => b.lastLaunchedAt.getTime() - a.lastLaunchedAt.getTime()),
+    );
+  }
+
+  find(
+    schoolId: SchoolId,
+    teacherId: UserId,
+    platformId: LtiPlatformId,
+    contextId: string,
+  ): Promise<LtiCourse | null> {
+    const row = this.rows.get(courseKey(platformId, contextId, teacherId));
+    const found = row?.schoolId === schoolId && this.platforms.has(platformId);
+    return Promise.resolve(found ? row : null);
+  }
+}
+
+/** Student links, forgotten with their course system or their student. */
+export class InMemoryLtiStudentLinkRepository implements LtiStudentLinkRepository {
+  /** The subject each student is linked to, by course system and student. */
+  private readonly rows = new Map<
+    string,
+    LtiStudentLink & { readonly platformId: LtiPlatformId }
+  >();
+
+  constructor(
+    private readonly platforms: InMemoryLtiPlatformRepository,
+    private readonly students: StudentRepository,
+  ) {}
+
+  async listForClass(
+    schoolId: SchoolId,
+    classId: ClassId,
+    platformId: LtiPlatformId,
+  ): Promise<readonly LtiStudentLink[]> {
+    if (!this.platforms.has(platformId)) return [];
+    const links: LtiStudentLink[] = [];
+    for (const row of this.rows.values()) {
+      if (row.platformId !== platformId) continue;
+      const student = await this.students.findById(schoolId, row.studentId);
+      if (student?.classId === classId) {
+        links.push({ subject: row.subject, studentId: row.studentId });
+      }
+    }
+    return links;
+  }
+
+  async link(
+    schoolId: SchoolId,
+    platformId: LtiPlatformId,
+    subject: string,
+    studentId: StudentId,
+  ): Promise<void> {
+    if ((await this.students.findById(schoolId, studentId)) === null) return;
+    this.rows.set(JSON.stringify([platformId, studentId]), { platformId, subject, studentId });
+  }
+}
+
+/** A course system's class lists, by address, or a refusal for every list. */
+export class FakeLtiMemberships implements LtiMembershipsClient {
+  private readonly lists = new Map<string, readonly unknown[]>();
+  private failure: LtiMembershipsError | null = null;
+  /** The addresses read, in order. */
+  readonly calls: string[] = [];
+
+  setMembers(membershipsUrl: string, members: readonly unknown[]): void {
+    this.lists.set(membershipsUrl, members);
+  }
+
+  failWith(failure: LtiMembershipsError | null): void {
+    this.failure = failure;
+  }
+
+  listMembers(
+    _platform: LtiPlatform,
+    membershipsUrl: string,
+  ): Promise<Result<readonly unknown[], LtiMembershipsError>> {
+    this.calls.push(membershipsUrl);
+    if (this.failure !== null) return Promise.resolve(err(this.failure));
+    const members = this.lists.get(membershipsUrl);
+    return Promise.resolve(members === undefined ? err('unavailable') : ok(members));
   }
 }

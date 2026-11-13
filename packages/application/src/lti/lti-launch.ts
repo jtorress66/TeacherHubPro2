@@ -1,8 +1,11 @@
 import {
   checkLaunch,
   err,
+  ltiCourseOf,
   ok,
   type Language,
+  type LtiCourseSource,
+  type LtiLaunch,
   type LtiLaunchErrorCode,
   type LtiPlatform,
   type LtiPlatformId,
@@ -11,6 +14,7 @@ import {
   type User,
 } from '@thp/domain';
 import type {
+  LtiCourseRepository,
   LtiNonceRepository,
   LtiPlatformRepository,
   LtiTokenVerifier,
@@ -149,15 +153,36 @@ export interface CompleteLtiLaunchDeps extends SessionIssuerDeps {
   readonly ltiTokenVerifier: LtiTokenVerifier;
   readonly ltiNonces: LtiNonceRepository;
   readonly ltiUserLinks: LtiUserLinkRepository;
+  readonly ltiCourses: LtiCourseRepository;
   readonly users: UserRepository;
   readonly ticketSigner: TicketSigner;
+}
+
+/** The course of a launch, in a link ticket (only what the course system sent). */
+function courseFields(launch: LtiLaunch): Record<string, string> {
+  const fields: Record<string, string> = {};
+  if (launch.contextId !== null) fields.contextId = launch.contextId;
+  if (launch.contextTitle !== null) fields.contextTitle = launch.contextTitle;
+  if (launch.membershipsUrl !== null) fields.membershipsUrl = launch.membershipsUrl;
+  return fields;
+}
+
+/** Remembers the course a teacher opened TeacherHubPro from, so they can import its class list. */
+async function rememberCourse(
+  courses: LtiCourseRepository,
+  source: LtiCourseSource,
+  teacher: User,
+  now: Date,
+): Promise<void> {
+  const course = ltiCourseOf(source, teacher, now);
+  if (course !== null) await courses.save(course);
 }
 
 /**
  * Finishes a launch: the state must match the login, the token must be signed by the course
  * system and pass every launch check, and its nonce works once. A linked teacher is signed in
- * (unless suspended); a teacher not linked yet gets a ticket to link their account after signing
- * in; students are not served yet, and nothing about them is kept.
+ * (unless suspended) and their course remembered; a teacher not linked yet gets a ticket to link
+ * their account after signing in; students are not served yet, and nothing about them is kept.
  */
 export class CompleteLtiLaunch {
   private readonly sessions: SessionIssuer;
@@ -194,12 +219,19 @@ export class CompleteLtiLaunch {
     const user = userId === null ? null : await this.deps.users.findById(platform.schoolId, userId);
     if (user === null) {
       const ticket = this.deps.ticketSigner.sign(
-        { purpose: linkPurpose, platformId: platform.id, subject, schoolId: platform.schoolId },
+        {
+          purpose: linkPurpose,
+          platformId: platform.id,
+          subject,
+          schoolId: platform.schoolId,
+          ...courseFields(launch.value),
+        },
         new Date(now.getTime() + ltiLinkTicketLifetimeMs),
       );
       return ok({ kind: 'needsLink', ticket, locale });
     }
     if (user.suspendedAt !== null) return refuse('account_suspended');
+    await rememberCourse(this.deps.ltiCourses, launch.value, user, now);
     return ok({
       kind: 'signedIn',
       sessionToken: await this.sessions.issue(user),
@@ -215,7 +247,7 @@ interface LinkDeps {
   readonly clock: Clock;
 }
 
-interface LinkTicket {
+interface LinkTicket extends LtiCourseSource {
   readonly platformId: LtiPlatformId;
   readonly subject: string;
   readonly schoolId: SchoolId;
@@ -226,7 +258,14 @@ function readLinkTicket(deps: LinkDeps, ticket: string): LinkTicket | null {
   if (payload?.purpose !== linkPurpose) return null;
   const { platformId, subject, schoolId } = payload;
   if (platformId === undefined || subject === undefined || schoolId === undefined) return null;
-  return { platformId: platformId as LtiPlatformId, subject, schoolId: schoolId as SchoolId };
+  return {
+    platformId: platformId as LtiPlatformId,
+    subject,
+    schoolId: schoolId as SchoolId,
+    contextId: payload.contextId ?? null,
+    contextTitle: payload.contextTitle ?? null,
+    membershipsUrl: payload.membershipsUrl ?? null,
+  };
 }
 
 async function platformOf(
@@ -253,10 +292,11 @@ export class DescribeLtiLink {
 
 /**
  * Links the signed-in person's account to the course system user in the ticket, so later launches
- * sign them straight in. Only an account of the course system's own school can be linked.
+ * sign them straight in, and remembers the course they launched from. Only an account of the
+ * course system's own school can be linked.
  */
 export class LinkLtiAccount {
-  constructor(private readonly deps: LinkDeps) {}
+  constructor(private readonly deps: LinkDeps & { readonly ltiCourses: LtiCourseRepository }) {}
 
   async execute(input: {
     readonly actor: User;
@@ -266,12 +306,9 @@ export class LinkLtiAccount {
     if (!found.ok) return found;
     const { link, platform } = found.value;
     if (input.actor.schoolId !== platform.schoolId) return refuse('forbidden');
-    await this.deps.ltiUserLinks.link(
-      platform.id,
-      link.subject,
-      input.actor.id,
-      this.deps.clock.now(),
-    );
+    const now = this.deps.clock.now();
+    await this.deps.ltiUserLinks.link(platform.id, link.subject, input.actor.id, now);
+    await rememberCourse(this.deps.ltiCourses, link, input.actor, now);
     return ok({ platformName: platform.name });
   }
 }

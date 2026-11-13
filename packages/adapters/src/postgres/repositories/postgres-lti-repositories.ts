@@ -1,7 +1,22 @@
 import { sql, type Kysely, type Selectable } from 'kysely';
-import type { LtiPlatform, LtiPlatformId, SchoolId, UserId } from '@thp/domain';
-import type { LtiNonceRepository, LtiPlatformRepository, LtiUserLinkRepository } from '@thp/ports';
-import type { Database, LtiPlatformsTable } from '../schema.ts';
+import type {
+  ClassId,
+  LtiCourse,
+  LtiPlatform,
+  LtiPlatformId,
+  SchoolId,
+  StudentId,
+  UserId,
+} from '@thp/domain';
+import type {
+  LtiCourseRepository,
+  LtiNonceRepository,
+  LtiPlatformRepository,
+  LtiStudentLink,
+  LtiStudentLinkRepository,
+  LtiUserLinkRepository,
+} from '@thp/ports';
+import type { Database, LtiCoursesTable, LtiPlatformsTable } from '../schema.ts';
 
 const fromRow = (row: Selectable<LtiPlatformsTable>): LtiPlatform => ({
   id: row.id as LtiPlatformId,
@@ -124,5 +139,120 @@ export class PostgresLtiUserLinkRepository implements LtiUserLinkRepository {
       .where('subject', '=', subject)
       .executeTakeFirst();
     return row === undefined ? null : (row.user_id as UserId);
+  }
+}
+
+const courseFromRow = (row: Selectable<LtiCoursesTable>): LtiCourse => ({
+  platformId: row.platform_id as LtiPlatformId,
+  schoolId: row.school_id as SchoolId,
+  teacherId: row.teacher_id as UserId,
+  contextId: row.context_id,
+  title: row.title,
+  membershipsUrl: row.memberships_url,
+  lastLaunchedAt: row.last_launched_at,
+});
+
+export class PostgresLtiCourseRepository implements LtiCourseRepository {
+  constructor(private readonly db: Kysely<Database>) {}
+
+  async save(course: LtiCourse): Promise<void> {
+    const changes = {
+      title: course.title,
+      memberships_url: course.membershipsUrl,
+      last_launched_at: course.lastLaunchedAt,
+    };
+    await this.db
+      .insertInto('lti_courses')
+      .values({
+        platform_id: course.platformId,
+        context_id: course.contextId,
+        teacher_id: course.teacherId,
+        school_id: course.schoolId,
+        ...changes,
+      })
+      .onConflict((conflict) =>
+        conflict
+          .columns(['platform_id', 'context_id', 'teacher_id'])
+          .doUpdateSet(changes)
+          .where('lti_courses.school_id', '=', course.schoolId),
+      )
+      .execute();
+  }
+
+  async listForTeacher(schoolId: SchoolId, teacherId: UserId): Promise<readonly LtiCourse[]> {
+    const rows = await this.db
+      .selectFrom('lti_courses')
+      .selectAll()
+      .where('school_id', '=', schoolId)
+      .where('teacher_id', '=', teacherId)
+      .orderBy('last_launched_at', 'desc')
+      .orderBy('title')
+      .execute();
+    return rows.map(courseFromRow);
+  }
+
+  async find(
+    schoolId: SchoolId,
+    teacherId: UserId,
+    platformId: LtiPlatformId,
+    contextId: string,
+  ): Promise<LtiCourse | null> {
+    const row = await this.db
+      .selectFrom('lti_courses')
+      .selectAll()
+      .where('school_id', '=', schoolId)
+      .where('teacher_id', '=', teacherId)
+      .where('platform_id', '=', platformId)
+      .where('context_id', '=', contextId)
+      .executeTakeFirst();
+    return row === undefined ? null : courseFromRow(row);
+  }
+}
+
+/** Student links, reached only through students of the caller's school. */
+export class PostgresLtiStudentLinkRepository implements LtiStudentLinkRepository {
+  constructor(private readonly db: Kysely<Database>) {}
+
+  async listForClass(
+    schoolId: SchoolId,
+    classId: ClassId,
+    platformId: LtiPlatformId,
+  ): Promise<readonly LtiStudentLink[]> {
+    const rows = await this.db
+      .selectFrom('lti_student_links')
+      .innerJoin('students', 'students.id', 'lti_student_links.student_id')
+      .select(['lti_student_links.subject', 'lti_student_links.student_id'])
+      .where('students.school_id', '=', schoolId)
+      .where('students.class_id', '=', classId)
+      .where('lti_student_links.platform_id', '=', platformId)
+      .orderBy('lti_student_links.subject')
+      .execute();
+    return rows.map((row) => ({ subject: row.subject, studentId: row.student_id as StudentId }));
+  }
+
+  async link(
+    schoolId: SchoolId,
+    platformId: LtiPlatformId,
+    subject: string,
+    studentId: StudentId,
+  ): Promise<void> {
+    await this.db
+      .insertInto('lti_student_links')
+      .columns(['platform_id', 'student_id', 'subject'])
+      .expression((eb) =>
+        eb
+          .selectFrom('students')
+          .select([
+            eb.val(platformId).as('platform_id'),
+            'students.id',
+            eb.val(subject).as('subject'),
+          ])
+          .where('students.id', '=', studentId)
+          .where('students.school_id', '=', schoolId),
+      )
+      .onConflict((conflict) =>
+        conflict.columns(['platform_id', 'student_id']).doUpdateSet({ subject }),
+      )
+      .execute();
   }
 }

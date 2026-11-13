@@ -38,6 +38,8 @@ export type ApplicationErrorCode =
   | 'teams_school_account'
   | 'teams_declined'
   | 'teams_failed'
+  | 'course_system_refused'
+  | 'course_system_unavailable'
   | 'grading_off'
   | 'name_taken'
   | 'email_failed'

@@ -1578,6 +1578,15 @@ export const es: Messages = {
     studentTitle: 'Todavía no disponible para estudiantes',
     studentText:
       'Los estudiantes todavía no pueden abrir TeacherHubPro desde el sistema de cursos. Su maestro compartirá sus tareas con usted.',
+    toolValuesRosters:
+      'Para que los maestros puedan importar sus listas de clase, active también el servicio Names and Role Provisioning (NRPS) del sistema de cursos para TeacherHubPro.',
+    importRoster: 'Importar estudiantes de su sistema de cursos',
+    course: 'Curso',
+    importHint: 'Los cursos aparecen aquí después de abrir TeacherHubPro desde ellos una vez.',
+    importNote:
+      'Solo se importan los estudiantes activos, con su nombre y apellido. Los estudiantes que salen del curso se quedan en su lista.',
+    imported:
+      '{added} añadidos, {alreadyThere} ya estaban en la lista, {noName} omitidos porque el sistema de cursos no compartió su nombre.',
   },
   teams: {
     title: 'Microsoft Teams',
@@ -2127,6 +2136,9 @@ export const es: Messages = {
     teams_declined:
       'No se permitió Microsoft Teams. Si Microsoft indicó que un administrador debe aprobarlo, pide al administrador de TI de tu escuela que apruebe TeacherHubPro.',
     teams_failed: 'Microsoft Teams no respondió. Inténtalo de nuevo.',
+    course_system_refused:
+      'Tu sistema de cursos no compartió la lista de clase de este curso. Pide al equipo de informática de tu escuela que active Names and Role Provisioning para TeacherHubPro.',
+    course_system_unavailable: 'Tu sistema de cursos no respondió. Inténtalo de nuevo.',
     grading_off: 'Primero activa «Cuenta como nota» para este juego.',
     name_taken: 'Ese nombre ya está jugando. Elige tu propio nombre.',
     email_failed: 'No se pudo enviar el correo. Revise la dirección e inténtelo de nuevo.',

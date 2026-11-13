@@ -39,6 +39,7 @@ export default async function SchoolSystemsPage(props: LocaleParams) {
       <section className="card stack" aria-labelledby="lti-values-heading">
         <h2 id="lti-values-heading">{t('lti.toolValues')}</h2>
         <p className="hint">{t('lti.toolValuesHint')}</p>
+        <p className="hint">{t('lti.toolValuesRosters')}</p>
         {copyable.map((item) => (
           <CopyValue key={item.id} locale={locale} {...item} />
         ))}

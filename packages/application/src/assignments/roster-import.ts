@@ -7,7 +7,8 @@ export interface ImportedName {
   readonly lastName: string;
 }
 
-const sameName = (a: ImportedName, b: ImportedName) =>
+/** The same person by name: first and last name together, ignoring case. */
+export const sameName = (a: ImportedName, b: ImportedName) =>
   `${a.firstName} ${a.lastName}`.trim().toLowerCase() ===
   `${b.firstName} ${b.lastName}`.trim().toLowerCase();
 

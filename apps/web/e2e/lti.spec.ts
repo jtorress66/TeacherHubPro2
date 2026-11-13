@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Browser, type Page } from '@playwright/test';
 import { createTranslator, type Locale } from '@thp/i18n';
 import { joinSchoolOf, makeSchoolAdmin } from './database.ts';
-import { appPath, password, signUp, skipTour, uniqueEmail } from './helpers.ts';
+import { appPath, classWithStudents, password, signUp, skipTour, uniqueEmail } from './helpers.ts';
 
 const appUrl = 'http://localhost:3100';
 
@@ -152,5 +152,50 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     await expect(
       outsider.getByText(createTranslator('en')('lti.problem_not_set_up')),
     ).toBeVisible();
+  });
+
+  test(`a teacher imports the class list of a course they opened TeacherHubPro from (${locale})`, async ({
+    page,
+    browser,
+  }) => {
+    test.setTimeout(150_000);
+    const adminEmail = await signUp(page, locale, uniqueEmail('admin'));
+    await makeSchoolAdmin(adminEmail);
+    const clientId = await registerTestLms(page, browser, locale);
+    await expect(page.getByText(t('lti.toolValuesRosters'))).toBeVisible();
+
+    // The admin teaches too. Before they open TeacherHubPro from a course, there is nothing to import.
+    const classPath = await classWithStudents(page, locale);
+    await expect(page.getByRole('form', { name: t('lti.importRoster') })).toHaveCount(0);
+
+    // They open TeacherHubPro from the test course once and link their account.
+    await launch(page, locale, `client=${clientId}&teacher=roster-teacher`, 'Launch as teacher');
+    await expect(page).toHaveURL(new RegExp(`/${locale}/lti/link$`));
+    await page.getByRole('button', { name: t('lti.linkConfirm') }).click();
+    await expect(page).toHaveURL(appPath(locale));
+
+    // The course's two active learners come in; its teacher, a learner who left and a learner
+    // without a name do not.
+    await page.goto(classPath);
+    await expect(page.getByText(t('lti.importHint'))).toBeVisible();
+    const roster = page.getByRole('form', { name: t('lti.importRoster') });
+    await roster.getByLabel(t('lti.course')).selectOption({ label: 'Test course' });
+    await roster.getByRole('button', { name: t('lti.importRoster') }).click();
+    await expect(roster.getByRole('status')).toHaveText(
+      t('lti.imported', { added: 2, alreadyThere: 0, noName: 1 }),
+    );
+    const table = page.getByRole('table');
+    await expect(table.getByRole('link', { name: 'Rivera', exact: true })).toBeVisible();
+    await expect(table.getByRole('link', { name: 'Ortiz', exact: true })).toBeVisible();
+    await expect(table.getByRole('link', { name: 'Diaz', exact: true })).toHaveCount(0);
+    await expect(table.getByRole('row')).toHaveCount(6);
+    expect(await axe(page)).toEqual([]);
+
+    // Importing again adds no one and removes no one.
+    await roster.getByRole('button', { name: t('lti.importRoster') }).click();
+    await expect(roster.getByRole('status')).toHaveText(
+      t('lti.imported', { added: 0, alreadyThere: 2, noName: 1 }),
+    );
+    await expect(table.getByRole('row')).toHaveCount(6);
   });
 }

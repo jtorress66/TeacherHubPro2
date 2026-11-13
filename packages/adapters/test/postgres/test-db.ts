@@ -37,6 +37,8 @@ import {
 export const connect = (): Kysely<Database> => createDatabase(inject('databaseUrl'));
 
 const tables = [
+  'lti_student_links',
+  'lti_courses',
   'tool_keys',
   'lti_nonces',
   'lti_user_links',
@@ -202,6 +204,8 @@ export const parentsFor = {
   attendance: ['schools', 'teacher', 'class', 'secondClass', 'students'],
   grading: ['schools', 'teacher', 'class', 'category', 'students', 'assignments'],
   games: ['schools', 'teacher', 'class', 'students', 'game'],
+  /** Two teachers, two classes, and students in the first class. */
+  ltiRosters: ['schools', 'teacher', 'secondTeacher', 'class', 'secondClass', 'students'],
 } as const satisfies Record<string, readonly Parent[]>;
 
 /** A clean database with the given parents, for one test. */

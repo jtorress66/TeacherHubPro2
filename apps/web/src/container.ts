@@ -47,6 +47,7 @@ import {
   StripeCheckoutSessions,
   SystemClock,
   UuidIdGenerator,
+  HttpLtiMembershipsClient,
   JoseLtiTokenVerifier,
   LocalLtiPlatform,
   PostgresToolKeyStore,
@@ -135,6 +136,8 @@ import {
   CompleteLtiLaunch,
   DescribeLtiLink,
   LinkLtiAccount,
+  ListLtiCourses,
+  ImportLtiRoster,
   StartCanvaConnect,
   FinishCanvaConnect,
   DisconnectCanva,
@@ -352,6 +355,9 @@ export interface LtiFeature {
   readonly completeLaunch: CompleteLtiLaunch;
   readonly describeLink: DescribeLtiLink;
   readonly link: LinkLtiAccount;
+  /** The courses a teacher opened TeacherHubPro from, and importing their class lists. */
+  readonly listCourses: ListLtiCourses;
+  readonly importRoster: ImportLtiRoster;
   /** TeacherHubPro's public signing keys, for course systems. */
   readonly toolKeys: ToolKeyStore;
   /** The pretend course system (LTI_PROVIDER=local only); null otherwise. */
@@ -724,6 +730,8 @@ function ltiFor(config: LtiConfig, appUrl: string) {
     const testLms = new LocalLtiPlatform({
       issuer: `${appUrl}/test-lms`,
       jwksUrl: `${appUrl}/api/test-lms/jwks`,
+      tokenUrl: `${appUrl}/api/test-lms/token`,
+      membershipsUrl: `${appUrl}/api/test-lms/memberships`,
     });
     return {
       cipher: new AesGcmCipher(
@@ -816,7 +824,21 @@ export function createAppContainer(
   const microsoft = microsoftFor(config.microsoft);
   const microsoftDeps = microsoft === null ? null : { ...deps, ...microsoft };
   const lti = ltiFor(config.lti, config.appUrl);
-  const ltiDeps = lti === null ? null : { ...deps, ...lti };
+  const ltiBase = lti === null ? null : { ...deps, ...lti };
+  // The tool's keys also sign its requests to course systems (reading a course's class list).
+  const toolKeys = ltiBase === null ? null : new PostgresToolKeyStore(db, ltiBase);
+  const ltiDeps =
+    ltiBase === null || toolKeys === null
+      ? null
+      : {
+          ...ltiBase,
+          toolKeys,
+          ltiMemberships: new HttpLtiMembershipsClient({
+            signer: toolKeys,
+            clock: ltiBase.clock,
+            tokens: ltiBase.tokens,
+          }),
+        };
 
   return {
     appUrl: config.appUrl,
@@ -941,7 +963,9 @@ export function createAppContainer(
             completeLaunch: new CompleteLtiLaunch(ltiDeps),
             describeLink: new DescribeLtiLink(ltiDeps),
             link: new LinkLtiAccount(ltiDeps),
-            toolKeys: new PostgresToolKeyStore(db, ltiDeps),
+            listCourses: new ListLtiCourses(ltiDeps),
+            importRoster: new ImportLtiRoster(ltiDeps),
+            toolKeys: ltiDeps.toolKeys,
             testLms: ltiDeps.testLms,
           },
     downloadPresentationFile: new DownloadPresentationFile(deps),

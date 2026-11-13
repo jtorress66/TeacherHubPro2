@@ -5,6 +5,8 @@ import {
   afterLogInPath,
   decodeLtiLogin,
   encodeLtiLogin,
+  ltiCourseOption,
+  readLtiCourseOption,
   localeFromLti,
   ltiLinkCookieOptions,
   ltiLoginCookieOptions,
@@ -143,5 +145,25 @@ describe('LTI pages', () => {
       jwksUrl: 'https://teacherhubpro.com/api/lti/jwks',
       domain: 'teacherhubpro.com',
     });
+  });
+});
+
+describe('ltiCourseOption and readLtiCourseOption', () => {
+  it('names a teacher’s course in one form value and reads it back', () => {
+    const course = { platformId: 'p-1' as LtiPlatformId, contextId: 'course 9, "spring"/A' };
+
+    expect(readLtiCourseOption(ltiCourseOption(course))).toEqual(course);
+  });
+
+  it('reads nothing from a value it did not make', () => {
+    for (const value of [
+      '',
+      'garbage',
+      '%%%',
+      null,
+      Buffer.from('{"a":1}').toString('base64url'),
+    ]) {
+      expect(readLtiCourseOption(value)).toBeNull();
+    }
   });
 });

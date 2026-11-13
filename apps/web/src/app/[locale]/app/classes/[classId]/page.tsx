@@ -11,6 +11,7 @@ import {
 } from '../../../../../components/roster-forms.tsx';
 import { ImportRosterForm } from '../../../../../components/assignment-tools.tsx';
 import { getAppContainer } from '../../../../../container.ts';
+import { ltiCourseOption } from '../../../../../server/lti.ts';
 import { scheduleSummary } from '../../../../../server/schedule-summary.ts';
 import { requireUser } from '../../../../_lib/auth.ts';
 import {
@@ -48,6 +49,7 @@ export default async function ClassPage(props: Props) {
   const roster = students.ok ? students.value : [];
   const courses = await app.listClassroomCourses.execute({ actor: user });
   const teamsClasses = (await app.teams?.listClasses.execute({ actor: user })) ?? null;
+  const ltiCourses = (await app.lti?.listCourses.execute({ actor: user })) ?? null;
   const archived = cls.archivedAt !== null;
 
   return (
@@ -200,6 +202,22 @@ export default async function ClassPage(props: Props) {
             destination="teams"
           />
           <p className="hint">{t('teams.note')}</p>
+        </section>
+      ) : null}
+      {ltiCourses?.ok === true && ltiCourses.value.length > 0 && !archived ? (
+        <section className="card stack" aria-labelledby="lti-import-heading">
+          <h2 id="lti-import-heading">{t('lti.importRoster')}</h2>
+          <ImportRosterForm
+            locale={locale}
+            classId={cls.id}
+            courses={ltiCourses.value.map((course) => ({
+              id: ltiCourseOption(course),
+              name: course.title,
+            }))}
+            destination="lti"
+          />
+          <p className="hint">{t('lti.importHint')}</p>
+          <p className="hint">{t('lti.importNote')}</p>
         </section>
       ) : null}
     </section>
