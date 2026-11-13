@@ -8,6 +8,8 @@ const teacher = { id: 'teacher-1' as UserId, schoolId: 'school-1' as SchoolId };
 
 const launch = (overrides: Partial<LtiLaunch> = {}): LtiLaunch => ({
   platformId: 'platform-1' as LtiPlatformId,
+  kind: 'resourceLink',
+  deploymentId: 'dep-1',
   subject: 'lms-user-7',
   role: 'teacher',
   contextId: 'course-9',
@@ -16,6 +18,8 @@ const launch = (overrides: Partial<LtiLaunch> = {}): LtiLaunch => ({
   givenName: 'Ana',
   locale: null,
   membershipsUrl: 'https://lms.lincoln.edu/api/lti/courses/9/names_and_roles',
+  placedItem: null,
+  deepLinking: null,
   expiresAt: new Date('2026-11-13T12:05:00Z'),
   ...overrides,
 });

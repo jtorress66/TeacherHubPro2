@@ -1,12 +1,20 @@
 import { z } from 'zod';
-import type { LtiErrorCode, LtiLoginRequest, SavedLtiLogin } from '@thp/application';
-import type { LtiPlatformId, SchoolId } from '@thp/domain';
-import { defaultLocale, isLocale, type Locale } from '@thp/i18n';
+import type { LtiErrorCode, LtiItemTarget, LtiLoginRequest, SavedLtiLogin } from '@thp/application';
+import {
+  ltiItemParams,
+  placedItemOf,
+  type LtiPlacedItem,
+  type LtiPlatformId,
+  type SchoolId,
+} from '@thp/domain';
+import { defaultLocale, isLocale, type Locale, type MessageKey } from '@thp/i18n';
 
 /** The state, nonce and platform of a login, until its launch comes back (ten minutes). */
 export const LTI_LOGIN_COOKIE = 'thp_lti_login';
 /** The ticket of a launch waiting for its teacher to sign in and link (fifteen minutes). */
 export const LTI_LINK_COOKIE = 'thp_lti_link';
+/** The ticket of a course's "Add content" request, until the teacher chooses (thirty minutes). */
+export const LTI_PLACE_COOKIE = 'thp_lti_place';
 
 const secureFor = (appUrl: string) => appUrl.startsWith('https://');
 
@@ -103,11 +111,21 @@ export const ltiLinkCookieOptions = (appUrl: string) => ({
   maxAge: 900,
 });
 
+/** Read on the picker page after the launch (or after linking), so Lax is enough. */
+export const ltiPlaceCookieOptions = (appUrl: string) => ({
+  httpOnly: true,
+  secure: secureFor(appUrl),
+  sameSite: 'lax' as const,
+  path: '/',
+  maxAge: 1800,
+});
+
 export const ltiProblems = [
   'not_set_up',
   'expired',
   'suspended',
   'wrong_school',
+  'other_account',
   'failed',
 ] as const;
 
@@ -142,6 +160,49 @@ export function localeFromLti(value: string | null): Locale {
 /** Where logging in leads: back to the linking page while a launch waits to be linked. */
 export const afterLogInPath = (locale: Locale, pendingLink: boolean): string =>
   pendingLink ? `/${locale}/lti/link` : `/${locale}/app`;
+
+/** Where linking leads: on to the picker while a course's "Add content" request waits. */
+export const afterLinkPath = (locale: Locale, pendingPlace: boolean): string =>
+  pendingPlace ? `/${locale}/app/lti/place` : `/${locale}/app`;
+
+/** The app page a placed assignment or game opens on. */
+export const ltiItemPath = (locale: Locale, target: LtiItemTarget): string =>
+  target.kind === 'game'
+    ? `/${locale}/app/games/${target.gameId}`
+    : `/${locale}/app/classes/${target.classId}/assignments/${target.assignmentId}`;
+
+/** An item as one checkbox or radio value. */
+export const placedItemValue = (item: LtiPlacedItem): string => `${item.kind}:${item.id}`;
+
+/** The items the picker's values name; anything else is left out. */
+export function readPlacedItems(values: readonly unknown[]): LtiPlacedItem[] {
+  return values.flatMap((value) => {
+    if (typeof value !== 'string') return [];
+    const separator = value.indexOf(':');
+    const item = placedItemOf({
+      [ltiItemParams.kind]: value.slice(0, separator),
+      [ltiItemParams.id]: value.slice(separator + 1),
+    });
+    return separator < 0 || item === null ? [] : [item];
+  });
+}
+
+/**
+ * Why the picker cannot open: on it, a ticket for someone else means another account is logged in
+ * than the one linked to the course system.
+ */
+export const ltiPlaceProblemFor = (code: LtiErrorCode): LtiProblem =>
+  code === 'forbidden' ? 'other_account' : ltiProblemFor(code);
+
+const placeErrors: Partial<Record<LtiErrorCode, MessageKey>> = {
+  nothing_chosen: 'lti.placeNothingChosen',
+  too_many_items: 'lti.placeTooMany',
+  not_placeable: 'lti.placeNotPlaceable',
+};
+
+/** The message shown on the picker when adding to the course is refused. */
+export const ltiPlaceErrorKey = (code: LtiErrorCode): MessageKey =>
+  placeErrors[code] ?? `lti.problem_${ltiPlaceProblemFor(code)}`;
 
 /** What a school's IT team pastes into its course system to add TeacherHubPro. */
 export const ltiToolValues = (appUrl: string) => ({

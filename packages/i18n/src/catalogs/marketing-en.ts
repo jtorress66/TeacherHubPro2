@@ -61,7 +61,7 @@ export const marketingEn = {
         'It suggests scores and feedback for open answers. You confirm every grade before it counts.',
       faq3Q: 'Which languages does it support?',
       faq3A:
-        'The app is complete in English and Spanish, and the AI writes in the language you choose. French, Portuguese, German, Italian and Chinese are partly translated.',
+        'TeacherHubPro is fully available in seven languages: English, Spanish, French, Portuguese, German, Italian and Chinese, and the AI writes in the language you choose.',
       faq4Q: 'Does it work with Google Classroom?',
       faq4A:
         'Yes. You can import rosters, post assignments and Word documents, send presentations as Google Slides, and make Google Forms quizzes.',
@@ -446,7 +446,8 @@ export const marketingEn = {
       faq3Q: 'I forgot my password.',
       faq3A: 'Use “Forgot password?” on the log-in page; we email you a one-time link.',
       faq4Q: 'How do I connect Google Classroom?',
-      faq4A: 'Open Settings and choose Connect Google Classroom, then pick your teacher account.',
+      faq4A:
+        'Open Connected tools, choose Connect Google Classroom, then pick your teacher account.',
     },
     chat: {
       open: 'Chat with Ed',

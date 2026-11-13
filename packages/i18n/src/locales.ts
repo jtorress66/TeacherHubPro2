@@ -4,8 +4,8 @@ export type Locale = (typeof locales)[number];
 
 export const defaultLocale: Locale = 'en';
 
-/** Languages whose catalogs contain every key; the others fall back to English. */
-export const fullyTranslatedLocales = ['en', 'es'] as const satisfies readonly Locale[];
+/** Languages whose catalogs contain every key: all of them (a catalog test enforces it). */
+export const fullyTranslatedLocales = locales;
 
 export interface LocaleInfo {
   readonly name: string;

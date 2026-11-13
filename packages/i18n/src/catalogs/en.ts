@@ -1564,6 +1564,27 @@ export const en = {
       'Only active students come in, with their first and last names. Students who leave the course stay on your list.',
     imported:
       '{added} added, {alreadyThere} already on the list, {noName} skipped because the course system didn’t share their name.',
+    toolValuesDeepLinking:
+      'So teachers can add assignments and games to their courses, also turn on Deep Linking with the same launch URL: the “Assignment Selection” and “Link Selection” placements in Canvas, or Deep Linking in Moodle, Schoology and Brightspace.',
+    placeTitle: 'Add to your course',
+    placeIntro:
+      'Choose what to add to your course in {platform}. Each item appears there as a link that opens in a new tab.',
+    placeChoose: 'What to add',
+    placeChooseOne: 'Your course system takes one item at a time.',
+    placeChooseSeveral: 'You can choose several.',
+    placeAssignmentItem: 'Assignment: {title} ({className})',
+    placeGameItem: 'Game: {title}',
+    placeSubmit: 'Add to course',
+    placeEmpty:
+      'There’s nothing to add yet. Add questions or files to an assignment, or make a game, then add content from your course again.',
+    placeNothingChosen: 'Choose at least one item to add.',
+    placeTooMany: 'Your course system takes one item at a time. Choose just one.',
+    placeNotPlaceable:
+      'One of these items can’t be added anymore. Reload the page and choose again.',
+    placeSending: 'Adding to your course…',
+    placeContinue: 'Continue to your course',
+    problem_other_account:
+      'You’re logged in with a different account from the one linked to this course. Log out, then open TeacherHubPro from your course again.',
   },
   teams: {
     title: 'Microsoft Teams',

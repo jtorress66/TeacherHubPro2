@@ -71,7 +71,7 @@ export const marketingFr: MarketingMessages = {
         "Elle suggère des notes et des commentaires pour les réponses ouvertes. Vous confirmez chaque note avant qu'elle ne compte.",
       faq3Q: 'Quelles langues sont prises en charge ?',
       faq3A:
-        "L'application est entièrement disponible en anglais et en espagnol, et l'IA écrit dans la langue de votre choix. Le français, le portugais, l'allemand, l'italien et le chinois sont partiellement traduits.",
+        "TeacherHubPro est entièrement disponible en sept langues : anglais, espagnol, français, portugais, allemand, italien et chinois, et l'IA écrit dans la langue de votre choix.",
       faq4Q: 'Fonctionne-t-elle avec Google Classroom ?',
       faq4A:
         "Oui. Vous pouvez importer des listes d'élèves, publier des devoirs et des documents Word, envoyer des présentations sous forme de Google Slides et créer des quiz Google Forms.",
@@ -495,7 +495,7 @@ export const marketingFr: MarketingMessages = {
         'Utilisez « Mot de passe oublié ? » sur la page de connexion ; nous vous envoyons par e-mail un lien à usage unique.',
       faq4Q: 'Comment connecter Google Classroom ?',
       faq4A:
-        'Ouvrez les Paramètres et choisissez Connecter Google Classroom, puis sélectionnez votre compte enseignant.',
+        'Ouvrez Outils connectés, choisissez Connecter Google Classroom, puis sélectionnez votre compte enseignant.',
     },
     chat: {
       open: 'Discuter avec Ed',

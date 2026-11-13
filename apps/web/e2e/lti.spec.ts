@@ -58,6 +58,39 @@ async function registerTestLms(page: Page, browser: Browser, locale: Locale): Pr
   return clientId;
 }
 
+/**
+ * Adds an assignment with one question (so students can open it) to the class; returns its page.
+ */
+async function readyAssignment(
+  page: Page,
+  locale: Locale,
+  classPath: string,
+  title: string,
+): Promise<string> {
+  const t = createTranslator(locale);
+  await page.goto(`${classPath}/gradebook`);
+  await page.getByRole('button', { name: t('gradebook.useStandard') }).click();
+  await expect(page.getByRole('button', { name: t('gradebook.useStandard') })).toBeHidden();
+  const create = page.getByRole('form', { name: t('gradebook.newAssignment') });
+  await create.getByLabel(t('gradebook.assignmentTitle')).fill(title);
+  await create
+    .getByLabel(t('gradebook.category'), { exact: true })
+    .selectOption({ label: t('gradebook.standard_test') });
+  await create.getByRole('button', { name: t('gradebook.createAssignment') }).click();
+  await page.getByRole('link', { name: title, exact: true }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toContainText(title);
+  const assignmentPath = new URL(page.url()).pathname;
+
+  await page.goto(`${assignmentPath}/questions`);
+  const builder = page.getByRole('form', { name: t('questions.title') });
+  await page.getByLabel(t('questions.type')).selectOption('true_false');
+  await page.getByRole('button', { name: t('questions.add') }).click();
+  await builder.getByLabel(t('questions.prompt'), { exact: true }).fill('The Sun is a star.');
+  await builder.getByRole('button', { name: t('questions.save') }).click();
+  await expect(builder.getByRole('status')).toHaveText(t('questions.saved'));
+  return assignmentPath;
+}
+
 /** Clicks a launch button on the pretend course system's page for this client. */
 async function launch(page: Page, locale: Locale, query: string, button: string): Promise<void> {
   await page.goto(`/${locale}/test-lms?${query}`);
@@ -197,5 +230,62 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
       t('lti.imported', { added: 0, alreadyThere: 2, noName: 1 }),
     );
     await expect(table.getByRole('row')).toHaveCount(6);
+  });
+
+  test(`a teacher adds an assignment to their course and opens it from there (${locale})`, async ({
+    page,
+    browser,
+  }) => {
+    test.setTimeout(180_000);
+    const adminEmail = await signUp(page, locale, uniqueEmail('admin'));
+    await makeSchoolAdmin(adminEmail);
+    const clientId = await registerTestLms(page, browser, locale);
+    await expect(page.getByText(t('lti.toolValuesDeepLinking'))).toBeVisible();
+
+    // The admin teaches too: a class with an assignment students can open.
+    const classPath = await classWithStudents(page, locale);
+    const assignmentPath = await readyAssignment(page, locale, classPath, 'Space quiz');
+
+    // "Add content" in the course: they link their account once, then go on to choose.
+    const course = `client=${clientId}&teacher=placing-teacher`;
+    await launch(page, locale, course, 'Add TeacherHubPro content');
+    await expect(page).toHaveURL(new RegExp(`/${locale}/lti/link$`));
+    await page.getByRole('button', { name: t('lti.linkConfirm') }).click();
+    await expect(page).toHaveURL(new RegExp(`/${locale}/app/lti/place$`));
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(t('lti.placeTitle'));
+    expect(await axe(page)).toEqual([]);
+    const picker = page.getByRole('form', { name: t('lti.placeTitle') });
+    await picker.getByRole('button', { name: t('lti.placeSubmit') }).click();
+    await expect(picker.getByRole('alert')).toHaveText(t('lti.placeNothingChosen'));
+    await picker
+      .getByRole('checkbox', {
+        name: t('lti.placeAssignmentItem', { title: 'Space quiz', className: 'Historia 6' }),
+      })
+      .check();
+    await picker.getByRole('button', { name: t('lti.placeSubmit') }).click();
+
+    // Back in the course, the assignment is there as a link.
+    await expect(page).toHaveURL(new RegExp(`/${locale}/test-lms\\?client=`));
+    const placed = page.getByRole('region', { name: 'In this course' });
+    await expect(placed.getByText('Space quiz', { exact: true })).toBeVisible();
+    const coursePage = page.url();
+
+    // The teacher opening it lands on the assignment's page.
+    await placed.getByRole('button', { name: 'Open Space quiz as teacher' }).click();
+    await expect(page).toHaveURL(new RegExp(`${assignmentPath}$`));
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('Space quiz');
+
+    // The next "Add content" goes straight to the choice.
+    await launch(page, locale, course, 'Add TeacherHubPro content');
+    await expect(page).toHaveURL(new RegExp(`/${locale}/app/lti/place$`));
+
+    // Students opening it are not served yet.
+    const student = await freshPage(browser);
+    await student.goto(coursePage);
+    await student
+      .getByRole('region', { name: 'In this course' })
+      .getByRole('button', { name: 'Open Space quiz as student' })
+      .click();
+    await expect(student).toHaveURL(new RegExp(`/${locale}/lti/student$`));
   });
 }

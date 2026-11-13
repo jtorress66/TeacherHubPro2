@@ -593,6 +593,26 @@ export const zhAppB = {
     importNote: '只导入在读学生的名字和姓氏。离开课程的学生仍会保留在您的名单中。',
     imported:
       '已添加 {added} 名，{alreadyThere} 名已在名单中，{noName} 名因课程系统未提供姓名而跳过。',
+    toolValuesDeepLinking:
+      '为了让老师能够把作业和游戏添加到课程中，还请使用同一个启动 URL 开启 Deep Linking：在 Canvas 中为“Assignment Selection”和“Link Selection”位置开启，在 Moodle、Schoology 和 Brightspace 中开启 Deep Linking。',
+    placeTitle: '添加到您的课程',
+    placeIntro:
+      '选择要添加到 {platform} 中课程的内容。每一项都会以链接的形式出现在课程中，并在新标签页中打开。',
+    placeChoose: '要添加的内容',
+    placeChooseOne: '您的课程系统一次只接受一项。',
+    placeChooseSeveral: '您可以选择多项。',
+    placeAssignmentItem: '作业：{title}（{className}）',
+    placeGameItem: '游戏：{title}',
+    placeSubmit: '添加到课程',
+    placeEmpty:
+      '还没有可以添加的内容。请为作业添加题目或文件，或者创建一个游戏，然后再从课程中添加内容。',
+    placeNothingChosen: '请至少选择一项要添加的内容。',
+    placeTooMany: '您的课程系统一次只接受一项。请只选择一项。',
+    placeNotPlaceable: '其中有一项已无法添加。请刷新页面后重新选择。',
+    placeSending: '正在添加到您的课程…',
+    placeContinue: '继续前往您的课程',
+    problem_other_account:
+      '您当前登录的账户与此课程关联的账户不同。请退出登录，然后从课程中重新打开 TeacherHubPro。',
   },
   teams: {
     title: 'Microsoft Teams',

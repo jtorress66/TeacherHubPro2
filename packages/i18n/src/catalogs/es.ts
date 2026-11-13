@@ -1587,6 +1587,27 @@ export const es: Messages = {
       'Solo se importan los estudiantes activos, con su nombre y apellido. Los estudiantes que salen del curso se quedan en su lista.',
     imported:
       '{added} añadidos, {alreadyThere} ya estaban en la lista, {noName} omitidos porque el sistema de cursos no compartió su nombre.',
+    toolValuesDeepLinking:
+      'Para que los maestros puedan añadir asignaciones y juegos a sus cursos, active también Deep Linking con la misma URL de lanzamiento: las ubicaciones “Assignment Selection” y “Link Selection” en Canvas, o Deep Linking en Moodle, Schoology y Brightspace.',
+    placeTitle: 'Añadir a su curso',
+    placeIntro:
+      'Elija qué añadir a su curso en {platform}. Cada elemento aparecerá allí como un enlace que se abre en una pestaña nueva.',
+    placeChoose: 'Qué añadir',
+    placeChooseOne: 'Su sistema de cursos acepta un elemento a la vez.',
+    placeChooseSeveral: 'Puede elegir varios.',
+    placeAssignmentItem: 'Asignación: {title} ({className})',
+    placeGameItem: 'Juego: {title}',
+    placeSubmit: 'Añadir al curso',
+    placeEmpty:
+      'Todavía no hay nada que añadir. Agregue preguntas o archivos a una asignación, o cree un juego, y luego vuelva a añadir contenido desde su curso.',
+    placeNothingChosen: 'Elija al menos un elemento para añadir.',
+    placeTooMany: 'Su sistema de cursos acepta un elemento a la vez. Elija solo uno.',
+    placeNotPlaceable:
+      'Uno de estos elementos ya no se puede añadir. Recargue la página y vuelva a elegir.',
+    placeSending: 'Añadiendo a su curso…',
+    placeContinue: 'Continuar a su curso',
+    problem_other_account:
+      'Ha iniciado sesión con una cuenta distinta de la vinculada a este curso. Cierre la sesión y vuelva a abrir TeacherHubPro desde su curso.',
   },
   teams: {
     title: 'Microsoft Teams',

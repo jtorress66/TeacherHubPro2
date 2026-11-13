@@ -1,7 +1,13 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getAppContainer } from '../../../container.ts';
-import { testLmsLoginHint, type TestLmsRole } from '../../../server/test-lms.ts';
+import {
+  readTestLmsPlaced,
+  testLmsLoginHint,
+  testLmsMessageHint,
+  type TestLmsMessage,
+  type TestLmsRole,
+} from '../../../server/test-lms.ts';
 import { localeFrom, type LocaleParams } from '../locale-param.ts';
 
 export const dynamic = 'force-dynamic';
@@ -17,11 +23,18 @@ const safe = (value: string | undefined): string | null =>
 /**
  * A pretend course system (LTI_PROVIDER=local, development and tests only): the values a school
  * admin registers, and buttons that launch TeacherHubPro as a teacher or a student, the way
- * Canvas or Moodle would. Developer tooling, so it is not translated.
+ * Canvas or Moodle would. A teacher can also add TeacherHubPro content (deep linking); the links
+ * placed come back in the address, each with buttons to open it. Developer tooling, so it is not
+ * translated.
  */
 export default async function TestLmsPage(
   props: LocaleParams & {
-    readonly searchParams: Promise<{ client?: string; teacher?: string; student?: string }>;
+    readonly searchParams: Promise<{
+      client?: string;
+      teacher?: string;
+      student?: string;
+      placed?: string;
+    }>;
   },
 ) {
   const locale = await localeFrom(props);
@@ -42,12 +55,14 @@ export default async function TestLmsPage(
     ['Token URL', `${app.appUrl}/api/test-lms/token`],
     ['Keyset URL', testLms.jwksUrl],
   ] as const;
-  const launch = (role: TestLmsRole, label: string) => (
+  const placed = readTestLmsPlaced(search.placed);
+  const plain: TestLmsMessage = { locale, deepLinking: false, custom: null };
+  const launch = (role: TestLmsRole, label: string, message: TestLmsMessage = plain) => (
     <form method="post" action="/api/lti/login">
       <input type="hidden" name="iss" value={testLms.issuer} />
       <input type="hidden" name="login_hint" value={testLmsLoginHint(role, users[role])} />
       <input type="hidden" name="target_link_uri" value={`${app.appUrl}/api/lti/launch`} />
-      <input type="hidden" name="lti_message_hint" value={locale} />
+      <input type="hidden" name="lti_message_hint" value={testLmsMessageHint(message)} />
       <input type="hidden" name="client_id" value={clientId} />
       <input type="hidden" name="lti_deployment_id" value={testLms.deploymentId} />
       <button type="submit" className="button">
@@ -78,7 +93,29 @@ export default async function TestLmsPage(
         <div className="button-row">
           {launch('teacher', 'Launch as teacher')}
           {launch('learner', 'Launch as student')}
+          {launch('teacher', 'Add TeacherHubPro content', { ...plain, deepLinking: true })}
         </div>
+      </section>
+      <section className="card stack" aria-labelledby="test-lms-placed">
+        <h2 id="test-lms-placed">In this course</h2>
+        {placed.length === 0 ? <p>Nothing placed yet.</p> : null}
+        <ul className="stack">
+          {placed.map((link, index) => (
+            <li key={index} className="stack">
+              <strong>{link.title}</strong>
+              <div className="button-row">
+                {launch('teacher', `Open ${link.title} as teacher`, {
+                  ...plain,
+                  custom: link.custom,
+                })}
+                {launch('learner', `Open ${link.title} as student`, {
+                  ...plain,
+                  custom: link.custom,
+                })}
+              </div>
+            </li>
+          ))}
+        </ul>
       </section>
     </main>
   );
