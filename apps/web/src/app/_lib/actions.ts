@@ -1,6 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { createTranslator, isLocale, type Locale } from '@thp/i18n';
 import { getAppContainer } from '../../container.ts';
@@ -14,6 +15,7 @@ import {
   upgradeForm,
   type FieldErrors,
 } from '../../server/forms.ts';
+import { afterLogInPath, LTI_LINK_COOKIE } from '../../server/lti.ts';
 import { requireUser, setSessionCookie, takeSessionCookie } from './auth.ts';
 import { record } from './activity.ts';
 import { callerAddress, throttle } from './limits.ts';
@@ -71,7 +73,8 @@ export async function logInAction(_state: FormState, data: FormData): Promise<Fo
     return suspended ? { errors, suspended } : { errors };
   }
   await setSessionCookie(result.value.sessionToken);
-  redirect(`/${locale}/app`);
+  // A course system launch waiting to be linked comes back to its linking page.
+  redirect(afterLogInPath(locale, (await cookies()).has(LTI_LINK_COOKIE)));
 }
 
 export async function logOutAction(data: FormData): Promise<void> {

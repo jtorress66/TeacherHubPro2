@@ -46,3 +46,4 @@ export type * from './marketing/marketing.ts';
 export type * from './ai/chatbot-writer.ts';
 export type { RateLimiter } from './security/rate-limiter.ts';
 export type { AuditLog } from './audit/audit-log.ts';
+export type * from './lti/lti.ts';

@@ -10,8 +10,10 @@ import {
 } from '../../../../components/connection-cards.tsx';
 import { ToolCard, ToolFilter, ToolRequest, ToolText } from '../../../../components/tool-card.tsx';
 import { getAppContainer } from '../../../../container.ts';
+import { isAdminOf } from '@thp/domain';
 import {
-  comingSoon,
+  comingSoonWith,
+  ltiTools,
   toolGroupFrom,
   toolsIn,
   type Tool,
@@ -50,6 +52,8 @@ export default async function ConnectedToolsPage(
   const microsoftConnected = (await app.microsoft?.connected.execute({ actor: user })) ?? null;
   const teamsAllowed = (await app.teams?.allowed.execute({ actor: user })) ?? null;
   const calendarLink = await app.getCalendarLinkStatus.execute({ actor: user });
+  const ltiSetUp = (await app.lti?.setUpForSchool.execute({ actor: user })) ?? null;
+  const comingSoon = comingSoonWith(app.lti !== null);
 
   const plain = (tool: Tool, body: ReactNode) => (
     <ToolCard
@@ -74,6 +78,31 @@ export default async function ConnectedToolsPage(
         {t(classroomConnected ? 'connectedTools.viaClassroom' : 'connectedTools.needsClassroom')}
       </p>,
     );
+
+  // A school system the school has set up opens from the course; otherwise a school can ask,
+  // and its admin can set it up.
+  const schoolSystem = (tool: Tool) =>
+    plain(
+      tool,
+      ltiSetUp?.ok === true && ltiSetUp.value ? (
+        <>
+          <p>
+            <span className="badge tool-status">{t('connectedTools.ltiSetUpBadge')}</span>
+          </p>
+          <p>{t('connectedTools.ltiSetUp')}</p>
+        </>
+      ) : (
+        <>
+          <ToolRequest locale={locale} id={tool.id} status="onRequest" />
+          {isAdminOf(user, user.schoolId) ? (
+            <p>
+              <a href={`/${locale}/app/admin/school-systems`}>{t('connectedTools.ltiAdminLink')}</a>
+            </p>
+          ) : null}
+        </>
+      ),
+    );
+  const ltiCards = Object.fromEntries([...ltiTools].map((id) => [id, schoolSystem]));
 
   // The school systems that are not built yet have no entry: they fall back to "coming soon".
   const cards: Readonly<Partial<Record<ToolId, (tool: Tool) => ReactNode>>> = {
@@ -111,6 +140,7 @@ export default async function ConnectedToolsPage(
       ) : (
         <CanvaCard key="canva" locale={locale} connected={canvaConnected} notice={search.canva} />
       ),
+    ...ltiCards,
     calendar: () => (
       <CalendarLinkCard
         key="calendar"

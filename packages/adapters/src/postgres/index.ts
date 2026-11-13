@@ -8,6 +8,9 @@ import type {
   AttachmentRepository,
   CanvaConnectionRepository,
   CalendarFeedRepository,
+  LtiNonceRepository,
+  LtiPlatformRepository,
+  LtiUserLinkRepository,
   MicrosoftConnectionRepository,
   ClassroomConnectionRepository,
   FormsExportRepository,
@@ -59,6 +62,11 @@ import { PostgresAssignmentRepository } from './repositories/postgres-assignment
 import { PostgresAttendanceSessionRepository } from './repositories/postgres-attendance-session-repository.ts';
 import { PostgresClassRepository } from './repositories/postgres-class-repository.ts';
 import { PostgresCalendarFeedRepository } from './repositories/postgres-calendar-feed-repository.ts';
+import {
+  PostgresLtiNonceRepository,
+  PostgresLtiPlatformRepository,
+  PostgresLtiUserLinkRepository,
+} from './repositories/postgres-lti-repositories.ts';
 import { PostgresGameRepository } from './repositories/postgres-game-repository.ts';
 import { PostgresGamePlayRepository } from './repositories/postgres-game-play-repository.ts';
 import {
@@ -129,6 +137,7 @@ export { migrateDown, migrateToLatest, type MigrationOutcome } from './migrate.t
 export type { Database } from './schema.ts';
 export { PostgresFileStore } from './repositories/postgres-file-store.ts';
 export { PostgresJobQueue } from './repositories/postgres-job-queue.ts';
+export { PostgresToolKeyStore } from './repositories/postgres-tool-key-store.ts';
 
 export interface PostgresRepositories {
   readonly rateLimiter: RateLimiter;
@@ -150,6 +159,9 @@ export interface PostgresRepositories {
   readonly classroomConnections: ClassroomConnectionRepository;
   readonly canvaConnections: CanvaConnectionRepository;
   readonly calendarFeeds: CalendarFeedRepository;
+  readonly ltiPlatforms: LtiPlatformRepository;
+  readonly ltiNonces: LtiNonceRepository;
+  readonly ltiUserLinks: LtiUserLinkRepository;
   readonly microsoftConnections: MicrosoftConnectionRepository;
   readonly formsExports: FormsExportRepository;
   readonly studentNotes: StudentNoteRepository;
@@ -208,6 +220,9 @@ export function createPostgresRepositories(db: Kysely<Database>): PostgresReposi
     classroomConnections: new PostgresClassroomConnectionRepository(db),
     canvaConnections: new PostgresCanvaConnectionRepository(db),
     calendarFeeds: new PostgresCalendarFeedRepository(db),
+    ltiPlatforms: new PostgresLtiPlatformRepository(db),
+    ltiNonces: new PostgresLtiNonceRepository(db),
+    ltiUserLinks: new PostgresLtiUserLinkRepository(db),
     microsoftConnections: new PostgresMicrosoftConnectionRepository(db),
     formsExports: new PostgresFormsExportRepository(db),
     studentNotes: new PostgresStudentNoteRepository(db),

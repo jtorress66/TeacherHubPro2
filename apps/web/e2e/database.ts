@@ -47,3 +47,22 @@ export async function makeSuperAdmin(email: string): Promise<void> {
     await db.destroy();
   }
 }
+
+/** Test-only: moves the account with this email into the school of the account with the other. */
+export async function joinSchoolOf(email: string, colleagueEmail: string): Promise<void> {
+  const db = createDatabase(databaseUrl);
+  try {
+    const colleague = await db
+      .selectFrom('users')
+      .select('school_id')
+      .where('email', '=', colleagueEmail.toLowerCase())
+      .executeTakeFirstOrThrow();
+    await db
+      .updateTable('users')
+      .set({ school_id: colleague.school_id })
+      .where('email', '=', email.toLowerCase())
+      .execute();
+  } finally {
+    await db.destroy();
+  }
+}

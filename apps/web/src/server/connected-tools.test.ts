@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { createTranslator } from '@thp/i18n';
 import {
   comingSoon,
+  comingSoonWith,
+  ltiTools,
   toolFrom,
   toolGroupFrom,
   toolGroups,
@@ -36,6 +38,15 @@ describe('connected tools', () => {
   it('lists the school systems that are not built yet as coming soon, and nothing else', () => {
     expect([...comingSoon].sort()).toEqual(
       ['brightspace', 'canvas', 'clever', 'moodle', 'schoology'].sort(),
+    );
+  });
+
+  it('takes the LTI school systems off the coming-soon list only while LTI is on', () => {
+    expect(comingSoonWith(false)).toBe(comingSoon);
+    expect([...comingSoonWith(true)]).toEqual(['clever']);
+    expect([...ltiTools].sort()).toEqual(['brightspace', 'canvas', 'moodle', 'schoology']);
+    expect([...ltiTools].every((id) => toolsIn('schoolSystems').some((t) => t.id === id))).toBe(
+      true,
     );
   });
 

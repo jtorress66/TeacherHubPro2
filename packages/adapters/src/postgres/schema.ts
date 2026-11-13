@@ -297,6 +297,42 @@ export interface CalendarFeedsTable {
   created_at: Date;
 }
 
+/** A school's course system registered for LTI 1.3 launches. */
+export interface LtiPlatformsTable {
+  id: string;
+  school_id: string;
+  name: string;
+  issuer: string;
+  client_id: string;
+  deployment_ids: string[];
+  auth_login_url: string;
+  auth_token_url: string;
+  jwks_url: string;
+  created_at: Date;
+}
+
+/** Launch nonces already used, until they expire. */
+export interface LtiNoncesTable {
+  nonce: string;
+  expires_at: Date;
+}
+
+/** Which account a course system user linked. */
+export interface LtiUserLinksTable {
+  platform_id: string;
+  subject: string;
+  user_id: string;
+  created_at: Date;
+}
+
+/** TeacherHubPro's own signing keys: the private half encrypted, the public half as a JWK. */
+export interface ToolKeysTable {
+  kid: string;
+  private_key_encrypted: string;
+  public_jwk: Json;
+  created_at: Date;
+}
+
 export interface CanvaConnectionsTable {
   teacher_id: string;
   school_id: string;
@@ -621,6 +657,10 @@ export interface Database {
   classroom_connections: ClassroomConnectionsTable;
   canva_connections: CanvaConnectionsTable;
   calendar_feeds: CalendarFeedsTable;
+  lti_platforms: LtiPlatformsTable;
+  lti_nonces: LtiNoncesTable;
+  lti_user_links: LtiUserLinksTable;
+  tool_keys: ToolKeysTable;
   microsoft_connections: MicrosoftConnectionsTable;
   forms_exports: FormsExportsTable;
   student_notes: StudentNotesTable;

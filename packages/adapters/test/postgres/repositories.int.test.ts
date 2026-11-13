@@ -40,6 +40,11 @@ import {
   assignmentRepositoryContract,
   canvaConnectionRepositoryContract,
   calendarFeedRepositoryContract,
+  ltiRepositoryContract,
+  toolKeyStoreContract,
+  FakeSecretCipher,
+  FixedClock,
+  SequentialTokenGenerator,
   microsoftConnectionRepositoryContract,
   student360RepositoryContract,
   prepBatchRepositoryContract,
@@ -69,6 +74,7 @@ import {
   createPostgresRepositories,
   PostgresFileStore,
   PostgresJobQueue,
+  PostgresToolKeyStore,
 } from '../../src/postgres/index.ts';
 import { LocalMailer } from '../../src/mail/local-mailer.ts';
 import { connect, parentsFor, resetWith, type Parent } from './test-db.ts';
@@ -108,6 +114,26 @@ withParents(parentsFor.grading, () => {
 
 withParents(parentsFor.teacher, () => {
   calendarFeedRepositoryContract('Postgres', () => repos.calendarFeeds);
+});
+
+withParents(parentsFor.accounts, () => {
+  ltiRepositoryContract('Postgres', () => ({
+    platforms: repos.ltiPlatforms,
+    nonces: repos.ltiNonces,
+    userLinks: repos.ltiUserLinks,
+  }));
+});
+
+withParents(parentsFor.none, () => {
+  toolKeyStoreContract(
+    'PostgresToolKeyStore',
+    () =>
+      new PostgresToolKeyStore(db, {
+        cipher: new FakeSecretCipher(),
+        tokens: new SequentialTokenGenerator(),
+        clock: new FixedClock(new Date('2026-11-12T12:00:00Z')),
+      }),
+  );
 });
 
 withParents(parentsFor.none, () => {

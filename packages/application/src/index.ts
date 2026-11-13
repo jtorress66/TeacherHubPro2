@@ -499,3 +499,24 @@ export {
   type CalendarFeedLabels,
   type IssuedCalendarLink,
 } from './calendar/calendar-link.ts';
+export {
+  ListLtiPlatforms,
+  LtiSetUpForSchool,
+  RegisterLtiPlatform,
+  RemoveLtiPlatform,
+  type LtiPlatformDetails,
+} from './lti/lti-platforms.ts';
+export {
+  CompleteLtiLaunch,
+  DescribeLtiLink,
+  LinkLtiAccount,
+  ltiLinkTicketLifetimeMs,
+  StartLtiLogin,
+  type CompleteLtiLaunchDeps,
+  type LtiError,
+  type LtiErrorCode,
+  type LtiLaunchOutcome,
+  type LtiLoginRequest,
+  type SavedLtiLogin,
+  type StartedLtiLogin,
+} from './lti/lti-launch.ts';

@@ -8,6 +8,7 @@ import {
   SESSION_COOKIE,
   sessionCookieOptions,
 } from '../../../../../server/cookies.ts';
+import { afterLogInPath, LTI_LINK_COOKIE } from '../../../../../server/lti.ts';
 
 export const dynamic = 'force-dynamic';
 
@@ -33,7 +34,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   });
   if (!result.ok) return failed(result.error.code);
 
-  const response = NextResponse.redirect(`${app.appUrl}/${locale}/app`);
+  // A course system launch waiting to be linked comes back to its linking page.
+  const next = afterLogInPath(locale, request.cookies.has(LTI_LINK_COOKIE));
+  const response = NextResponse.redirect(`${app.appUrl}${next}`);
   response.cookies.delete(OAUTH_STATE_COOKIE);
   const expires = new Date(Date.now() + sessionLifetimeDays * 24 * 60 * 60 * 1000);
   response.cookies.set(

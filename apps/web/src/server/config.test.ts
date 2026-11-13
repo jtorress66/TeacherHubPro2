@@ -50,6 +50,7 @@ describe('parseWebConfig', () => {
         canva: { provider: 'local' },
         microsoft: { provider: 'local' },
         microsoftTeams: true,
+        lti: { provider: 'off' },
         voice: 'nova',
         realtime: {
           url: 'http://localhost:3200',
@@ -184,6 +185,7 @@ describe('parseWebConfig', () => {
         canva: { provider: 'off' },
         microsoft: { provider: 'off' },
         microsoftTeams: false,
+        lti: { provider: 'off' },
         voice: null,
         realtime: {
           url: 'https://teacherhubpro-realtime.onrender.com',
@@ -241,6 +243,34 @@ describe('parseWebConfig', () => {
     ).toMatchObject(offWith('TOKEN_ENCRYPTION_KEY must be 32 random bytes, base64 encoded'));
     expect(parseWebConfig({ ...local, CANVA_PROVIDER: 'adobe' })).toMatchObject(
       offWith('CANVA_PROVIDER must be off, local or canva'),
+    );
+  });
+
+  it('keeps LTI school systems off unless LTI_PROVIDER turns them on', () => {
+    expect(parseWebConfig({ ...local, LTI_PROVIDER: 'Local' })).toMatchObject({
+      value: { lti: { provider: 'local' }, warnings: [] },
+    });
+    expect(parseWebConfig({ ...production, LTI_PROVIDER: 'on' })).toMatchObject({
+      value: { lti: { provider: 'on', encryptionKey: testEncryptionKey }, warnings: [] },
+    });
+    expect(parseWebConfig({ ...production, LTI_PROVIDER: 'off' })).toMatchObject({
+      value: { lti: { provider: 'off' }, warnings: [] },
+    });
+  });
+
+  it('turns only LTI off, with a warning, when its settings are wrong', () => {
+    const offWith = (warning: string) => ({
+      ok: true,
+      value: { lti: { provider: 'off' }, warnings: [warning] },
+    });
+    expect(parseWebConfig({ ...production, LTI_PROVIDER: 'local' })).toMatchObject(
+      offWith('LTI_PROVIDER=local is only allowed when APP_ENV is development or test'),
+    );
+    expect(parseWebConfig({ ...local, LTI_PROVIDER: 'canvas' })).toMatchObject(
+      offWith('LTI_PROVIDER must be off, local or on'),
+    );
+    expect(parseWebConfig({ ...local, LTI_PROVIDER: 'on' })).toMatchObject(
+      offWith('TOKEN_ENCRYPTION_KEY must be 32 random bytes, base64 encoded'),
     );
   });
 

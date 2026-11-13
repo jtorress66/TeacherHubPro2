@@ -32,6 +32,18 @@ export const comingSoon: ReadonlySet<ToolId> = new Set<ToolId>([
   'clever',
 ]);
 
+/** The school systems that can launch TeacherHubPro over LTI 1.3, when it is on. */
+export const ltiTools: ReadonlySet<ToolId> = new Set<ToolId>([
+  'canvas',
+  'schoology',
+  'moodle',
+  'brightspace',
+]);
+
+/** What is still coming: every school system while LTI is off, only the rest while it is on. */
+export const comingSoonWith = (ltiOn: boolean): ReadonlySet<ToolId> =>
+  ltiOn ? new Set([...comingSoon].filter((id) => !ltiTools.has(id))) : comingSoon;
+
 const isOneOf = <T extends string>(options: readonly T[], value: unknown): value is T =>
   typeof value === 'string' && (options as readonly string[]).includes(value);
 
