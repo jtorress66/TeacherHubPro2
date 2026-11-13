@@ -73,4 +73,10 @@ export {
   remoteKeySet,
   type KeySetResolver,
 } from './lti/jose-lti-token-verifier.ts';
-export { LocalLtiPlatform, type LocalLaunch } from './lti/local-lti-platform.ts';
+export {
+  LocalLtiPlatform,
+  type LocalClassList,
+  type LocalLaunch,
+  type ServiceTokenRequest,
+} from './lti/local-lti-platform.ts';
+export { HttpLtiMembershipsClient } from './lti/http-lti-memberships-client.ts';

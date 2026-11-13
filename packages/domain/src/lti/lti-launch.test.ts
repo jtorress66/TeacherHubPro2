@@ -55,9 +55,34 @@ describe('checkLaunch', () => {
         resourceLinkId: 'link-3',
         givenName: 'Ana',
         locale: 'es-PR',
+        membershipsUrl: null,
         expiresAt: new Date((seconds + 600) * 1000),
       },
     });
+  });
+
+  it('keeps the course’s class list address when the course system offers one', () => {
+    const service = (url: unknown) =>
+      claims({
+        [ltiClaim.namesRoleService]: {
+          context_memberships_url: url,
+          service_versions: ['2.0'],
+        },
+      });
+    const urlOf = (url: unknown) => {
+      const checked = checkLaunch(service(url), ctx);
+      return checked.ok ? checked.value.membershipsUrl : 'refused';
+    };
+
+    expect(urlOf('https://lms.lincoln.edu/api/lti/courses/9/names_and_roles')).toBe(
+      'https://lms.lincoln.edu/api/lti/courses/9/names_and_roles',
+    );
+    expect(urlOf('http://localhost:3100/api/test-lms/memberships')).toBe(
+      'http://localhost:3100/api/test-lms/memberships',
+    );
+    for (const unsafe of ['http://lms.lincoln.edu/roster', 'ftp://lms', 'not a url', 7, null]) {
+      expect(urlOf(unsafe)).toBeNull();
+    }
   });
 
   it('leaves out what the platform did not send', () => {

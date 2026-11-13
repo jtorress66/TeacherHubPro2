@@ -626,6 +626,16 @@ export const frAppB = {
     studentTitle: 'Pas encore disponible pour les élèves',
     studentText:
       'Les élèves ne peuvent pas encore ouvrir TeacherHubPro depuis la plateforme de cours. Votre enseignant partagera vos devoirs avec vous.',
+    toolValuesRosters:
+      'Pour que les enseignants puissent importer leurs listes de classe, activez aussi le service Names and Role Provisioning (NRPS) de la plateforme pour TeacherHubPro.',
+    importRoster: 'Importer les élèves depuis votre plateforme de cours',
+    course: 'Cours',
+    importHint:
+      'Les cours apparaissent ici une fois que vous avez ouvert TeacherHubPro depuis ceux-ci.',
+    importNote:
+      'Seuls les élèves actifs sont importés, avec leur prénom et leur nom. Les élèves qui quittent le cours restent dans votre liste.',
+    imported:
+      '{added} ajoutés, {alreadyThere} déjà dans la liste, {noName} ignorés car la plateforme n’a pas communiqué leur nom.',
   },
   teams: {
     title: 'Microsoft Teams',
@@ -1181,6 +1191,9 @@ export const frAppB = {
     teams_declined:
       'Microsoft Teams n’a pas été autorisé. Si Microsoft a indiqué qu’un administrateur doit l’approuver, demandez à l’administrateur informatique de votre école d’approuver TeacherHubPro.',
     teams_failed: 'Microsoft Teams n’a pas répondu. Veuillez réessayer.',
+    course_system_refused:
+      'Votre plateforme de cours n’a pas communiqué la liste de classe de ce cours. Demandez à l’équipe informatique de votre école d’activer Names and Role Provisioning pour TeacherHubPro.',
+    course_system_unavailable: 'Votre plateforme de cours n’a pas répondu. Veuillez réessayer.',
     grading_off: "Activez d'abord « Compter comme une note » pour ce jeu.",
     name_taken: 'Ce nom est déjà en jeu. Choisis ton propre nom.',
     email_failed: "L'e-mail n'a pas pu être envoyé. Vérifiez l'adresse et réessayez.",

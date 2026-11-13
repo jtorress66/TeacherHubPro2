@@ -4,6 +4,7 @@ import {
   aUser,
   FakeLtiTokens,
   FakeLtiTokenVerifier,
+  InMemoryLtiCourseRepository,
   InMemoryLtiNonceRepository,
   InMemoryLtiPlatformRepository,
   InMemoryLtiUserLinkRepository,
@@ -46,6 +47,7 @@ function ltiWorld() {
     ltiPlatforms,
     ltiNonces: new InMemoryLtiNonceRepository(),
     ltiUserLinks: new InMemoryLtiUserLinkRepository(ltiPlatforms),
+    ltiCourses: new InMemoryLtiCourseRepository(ltiPlatforms),
     ltiTokenVerifier: new FakeLtiTokenVerifier([tokens], () => world.clock.now()),
   };
 }
@@ -512,6 +514,99 @@ describe('CompleteLtiLaunch', () => {
       ok: false,
       error: { code: 'replayed' },
     });
+  });
+});
+
+const membershipsUrl = 'https://lms.lincoln.edu/api/lti/courses/9/names_and_roles';
+const fromCourse = {
+  [ltiClaim.context]: { id: 'course-9', title: 'Science 5' },
+  [ltiClaim.namesRoleService]: {
+    context_memberships_url: membershipsUrl,
+    service_versions: ['2.0'],
+  },
+};
+
+describe('CompleteLtiLaunch and LinkLtiAccount remember the teacher’s course', () => {
+  it('remembers the course a linked teacher launched from, and when', async () => {
+    const world = ltiWorld();
+    const { teacher, platform } = await registered(world);
+    await world.ltiUserLinks.link(platform.id, 'canvas-user-1', teacher.id, world.clock.now());
+
+    expect(valueOf(await launch(world, fromCourse)).kind).toBe('signedIn');
+
+    expect(await world.ltiCourses.listForTeacher(teacher.schoolId, teacher.id)).toEqual([
+      {
+        platformId: platform.id,
+        schoolId: teacher.schoolId,
+        teacherId: teacher.id,
+        contextId: 'course-9',
+        title: 'Science 5',
+        membershipsUrl,
+        lastLaunchedAt: world.clock.now(),
+      },
+    ]);
+  });
+
+  it('remembers nothing for a launch outside a course, or a refused one', async () => {
+    const world = ltiWorld();
+    const { teacher, platform } = await registered(world);
+    await world.ltiUserLinks.link(platform.id, 'canvas-user-1', teacher.id, world.clock.now());
+
+    expect(valueOf(await launch(world)).kind).toBe('signedIn');
+    await world.users.save({ ...teacher, suspendedAt: world.clock.now() });
+    expect((await launch(world, fromCourse)).ok).toBe(false);
+
+    expect(await world.ltiCourses.listForTeacher(teacher.schoolId, teacher.id)).toEqual([]);
+  });
+
+  it('carries the course in the link ticket and remembers it once the teacher links', async () => {
+    const world = ltiWorld();
+    const { teacher, platform } = await registered(world);
+    const outcome = valueOf(await launch(world, fromCourse));
+    const ticket = outcome.kind === 'needsLink' ? outcome.ticket : '';
+    expect(world.ticketSigner.verify(ticket, world.clock.now())).toMatchObject({
+      contextId: 'course-9',
+      contextTitle: 'Science 5',
+      membershipsUrl,
+    });
+    expect(await world.ltiCourses.listForTeacher(teacher.schoolId, teacher.id)).toEqual([]);
+
+    valueOf(await new LinkLtiAccount(world).execute({ actor: teacher, ticket }));
+
+    expect(await world.ltiCourses.listForTeacher(teacher.schoolId, teacher.id)).toEqual([
+      expect.objectContaining({
+        platformId: platform.id,
+        contextId: 'course-9',
+        title: 'Science 5',
+        membershipsUrl,
+      }),
+    ]);
+  });
+
+  it('remembers a course without a class list address, which cannot be imported', async () => {
+    const world = ltiWorld();
+    const { teacher } = await registered(world);
+    const outcome = valueOf(await launch(world, { [ltiClaim.context]: { id: 'course-3' } }));
+    const ticket = outcome.kind === 'needsLink' ? outcome.ticket : '';
+
+    valueOf(await new LinkLtiAccount(world).execute({ actor: teacher, ticket }));
+
+    expect(await world.ltiCourses.listForTeacher(teacher.schoolId, teacher.id)).toEqual([
+      expect.objectContaining({ contextId: 'course-3', title: 'course-3', membershipsUrl: null }),
+    ]);
+  });
+
+  it('remembers nothing when another school’s teacher tries to link', async () => {
+    const world = ltiWorld();
+    await registered(world);
+    const outcome = valueOf(await launch(world, fromCourse));
+    const ticket = outcome.kind === 'needsLink' ? outcome.ticket : '';
+    const elsewhere = aUser({ id: 'x' as User['id'], schoolId: 'other-school' as SchoolId });
+
+    expect(await new LinkLtiAccount(world).execute({ actor: elsewhere, ticket })).toEqual(
+      forbidden,
+    );
+    expect(await world.ltiCourses.listForTeacher(elsewhere.schoolId, elsewhere.id)).toEqual([]);
   });
 });
 

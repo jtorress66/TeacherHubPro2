@@ -44,14 +44,16 @@ const maxDeployments = 50;
 const localHosts = new Set(['localhost', '127.0.0.1', '[::1]']);
 
 /** An https address; plain http only for this computer (development and tests). */
+export function isSecureAddress(value: string): boolean {
+  if (!URL.canParse(value)) return false;
+  const url = new URL(value);
+  return url.protocol === 'https:' || (url.protocol === 'http:' && localHosts.has(url.hostname));
+}
+
 function endpoint(field: string, value: string): Result<string, ValidationError> {
   const text = requiredText(field, value, maxUrlLength);
   if (!text.ok) return text;
-  if (!URL.canParse(text.value)) return invalid(field, 'invalid_format');
-  const url = new URL(text.value);
-  const secure =
-    url.protocol === 'https:' || (url.protocol === 'http:' && localHosts.has(url.hostname));
-  return secure ? ok(text.value) : invalid(field, 'invalid_format');
+  return isSecureAddress(text.value) ? ok(text.value) : invalid(field, 'invalid_format');
 }
 
 function deployments(value: string | readonly string[]): Result<string[], ValidationError> {

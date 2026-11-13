@@ -97,6 +97,14 @@ describe('web container against Postgres', () => {
     const second = await launch();
     expect(second.ok && second.value.kind).toBe('signedIn');
     expect((await lti.toolKeys.publicKeySet()).keys.length).toBeGreaterThan(0);
+    const courses = await lti.listCourses.execute({ actor: user });
+    expect(courses.ok && courses.value).toEqual([
+      expect.objectContaining({
+        contextId: 'test-course',
+        title: 'Test course',
+        membershipsUrl: `${config.appUrl}/api/test-lms/memberships`,
+      }),
+    ]);
   });
 
   it('signs a teacher up into their own school on a trial, and authenticates the session', async () => {

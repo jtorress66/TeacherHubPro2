@@ -41,6 +41,8 @@ import {
   canvaConnectionRepositoryContract,
   calendarFeedRepositoryContract,
   ltiRepositoryContract,
+  ltiRosterRepositoryContract,
+  toolJwtSignerContract,
   toolKeyStoreContract,
   FakeSecretCipher,
   FixedClock,
@@ -122,6 +124,27 @@ withParents(parentsFor.accounts, () => {
     nonces: repos.ltiNonces,
     userLinks: repos.ltiUserLinks,
   }));
+});
+
+withParents(parentsFor.ltiRosters, () => {
+  ltiRosterRepositoryContract('Postgres', () => ({
+    platforms: repos.ltiPlatforms,
+    courses: repos.ltiCourses,
+    studentLinks: repos.ltiStudentLinks,
+    students: repos.students,
+  }));
+});
+
+withParents(parentsFor.none, () => {
+  toolJwtSignerContract(
+    'PostgresToolKeyStore',
+    () =>
+      new PostgresToolKeyStore(db, {
+        cipher: new FakeSecretCipher(),
+        tokens: new SequentialTokenGenerator(),
+        clock: new FixedClock(new Date('2026-11-12T12:00:00Z')),
+      }),
+  );
 });
 
 withParents(parentsFor.none, () => {

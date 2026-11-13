@@ -1,6 +1,6 @@
 import type { LtiPlatformId } from '../shared/ids.ts';
 import { err, ok, type Result } from '../shared/result.ts';
-import type { LtiPlatform } from './lti-platform.ts';
+import { isSecureAddress, type LtiPlatform } from './lti-platform.ts';
 
 const claimBase = 'https://purl.imsglobal.org/spec/lti/claim';
 
@@ -14,6 +14,8 @@ export const ltiClaim = {
   resourceLink: `${claimBase}/resource_link`,
   launchPresentation: `${claimBase}/launch_presentation`,
   targetLinkUri: `${claimBase}/target_link_uri`,
+  /** Names and Role Provisioning Services: where the course's class list can be read. */
+  namesRoleService: 'https://purl.imsglobal.org/spec/lti-nrps/claim/namesroleservice',
 } as const;
 
 const lis = 'http://purl.imsglobal.org/vocab/lis/v2';
@@ -43,6 +45,8 @@ export interface LtiLaunch {
   readonly givenName: string | null;
   /** The course system's language for the page (such as `es-PR`), when it sent one. */
   readonly locale: string | null;
+  /** Where the course's class list can be read (Names and Role Provisioning), when offered. */
+  readonly membershipsUrl: string | null;
   /** When the launch token expires; its nonce must stay used until then. */
   readonly expiresAt: Date;
 }
@@ -113,6 +117,12 @@ function checkMessage(claims: Claims, ctx: LaunchContext): LtiLaunchErrorCode | 
   return text(claims.sub) === null ? 'missing_subject' : null;
 }
 
+/** The class list address, only when it is https (or this computer's, in tests). */
+function membershipsUrlOf(service: unknown): string | null {
+  const url = field(service, 'context_memberships_url');
+  return url !== null && isSecureAddress(url) ? url : null;
+}
+
 function roleOf(roles: unknown): LtiRole {
   if (!Array.isArray(roles)) return 'learner';
   return roles.some((role) => typeof role === 'string' && teacherRoles.has(role))
@@ -147,6 +157,7 @@ export function checkLaunch(
     resourceLinkId: field(claims[ltiClaim.resourceLink], 'id'),
     givenName: text(claims.given_name),
     locale: field(claims[ltiClaim.launchPresentation], 'locale'),
+    membershipsUrl: membershipsUrlOf(claims[ltiClaim.namesRoleService]),
     expiresAt: new Date(Number(claims.exp) * 1000),
   });
 }

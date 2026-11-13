@@ -629,6 +629,15 @@ export const deAppB = {
     studentTitle: 'Für Schülerinnen und Schüler noch nicht verfügbar',
     studentText:
       'Schülerinnen und Schüler können TeacherHubPro noch nicht aus dem Kurssystem öffnen. Deine Lehrkraft teilt deine Aufgaben mit dir.',
+    toolValuesRosters:
+      'Damit Lehrkräfte ihre Klassenlisten importieren können, aktivieren Sie im Kurssystem außerdem den Dienst „Names and Role Provisioning“ (NRPS) für TeacherHubPro.',
+    importRoster: 'Schülerinnen und Schüler aus Ihrem Kurssystem importieren',
+    course: 'Kurs',
+    importHint: 'Kurse erscheinen hier, nachdem Sie TeacherHubPro einmal aus ihnen geöffnet haben.',
+    importNote:
+      'Übernommen werden nur aktive Schülerinnen und Schüler, mit Vor- und Nachnamen. Wer den Kurs verlässt, bleibt auf Ihrer Liste.',
+    imported:
+      '{added} hinzugefügt, {alreadyThere} bereits auf der Liste, {noName} übersprungen, weil das Kurssystem keinen Namen übermittelt hat.',
   },
   teams: {
     title: 'Microsoft Teams',
@@ -1180,6 +1189,10 @@ export const deAppB = {
     teams_declined:
       'Microsoft Teams wurde nicht erlaubt. Falls Microsoft gemeldet hat, dass eine Administration zustimmen muss, bitten Sie die IT-Administration Ihrer Schule, TeacherHubPro zu genehmigen.',
     teams_failed: 'Microsoft Teams hat nicht geantwortet. Bitte versuchen Sie es erneut.',
+    course_system_refused:
+      'Ihr Kurssystem hat die Klassenliste dieses Kurses nicht freigegeben. Bitten Sie die IT Ihrer Schule, „Names and Role Provisioning“ für TeacherHubPro zu aktivieren.',
+    course_system_unavailable:
+      'Ihr Kurssystem hat nicht geantwortet. Bitte versuchen Sie es erneut.',
     grading_off: 'Aktivieren Sie zuerst „Als Note zählen“ für dieses Spiel.',
     name_taken: 'Mit diesem Namen spielt schon jemand. Wähle deinen eigenen Namen.',
     email_failed:

@@ -520,3 +520,9 @@ export {
   type SavedLtiLogin,
   type StartedLtiLogin,
 } from './lti/lti-launch.ts';
+export {
+  ImportLtiRoster,
+  ListLtiCourses,
+  type ImportLtiRosterDeps,
+  type LtiRosterImport,
+} from './lti/lti-roster.ts';

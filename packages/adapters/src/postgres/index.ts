@@ -8,8 +8,10 @@ import type {
   AttachmentRepository,
   CanvaConnectionRepository,
   CalendarFeedRepository,
+  LtiCourseRepository,
   LtiNonceRepository,
   LtiPlatformRepository,
+  LtiStudentLinkRepository,
   LtiUserLinkRepository,
   MicrosoftConnectionRepository,
   ClassroomConnectionRepository,
@@ -63,8 +65,10 @@ import { PostgresAttendanceSessionRepository } from './repositories/postgres-att
 import { PostgresClassRepository } from './repositories/postgres-class-repository.ts';
 import { PostgresCalendarFeedRepository } from './repositories/postgres-calendar-feed-repository.ts';
 import {
+  PostgresLtiCourseRepository,
   PostgresLtiNonceRepository,
   PostgresLtiPlatformRepository,
+  PostgresLtiStudentLinkRepository,
   PostgresLtiUserLinkRepository,
 } from './repositories/postgres-lti-repositories.ts';
 import { PostgresGameRepository } from './repositories/postgres-game-repository.ts';
@@ -162,6 +166,8 @@ export interface PostgresRepositories {
   readonly ltiPlatforms: LtiPlatformRepository;
   readonly ltiNonces: LtiNonceRepository;
   readonly ltiUserLinks: LtiUserLinkRepository;
+  readonly ltiCourses: LtiCourseRepository;
+  readonly ltiStudentLinks: LtiStudentLinkRepository;
   readonly microsoftConnections: MicrosoftConnectionRepository;
   readonly formsExports: FormsExportRepository;
   readonly studentNotes: StudentNoteRepository;
@@ -223,6 +229,8 @@ export function createPostgresRepositories(db: Kysely<Database>): PostgresReposi
     ltiPlatforms: new PostgresLtiPlatformRepository(db),
     ltiNonces: new PostgresLtiNonceRepository(db),
     ltiUserLinks: new PostgresLtiUserLinkRepository(db),
+    ltiCourses: new PostgresLtiCourseRepository(db),
+    ltiStudentLinks: new PostgresLtiStudentLinkRepository(db),
     microsoftConnections: new PostgresMicrosoftConnectionRepository(db),
     formsExports: new PostgresFormsExportRepository(db),
     studentNotes: new PostgresStudentNoteRepository(db),

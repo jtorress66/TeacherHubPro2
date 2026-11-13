@@ -325,6 +325,24 @@ export interface LtiUserLinksTable {
   created_at: Date;
 }
 
+/** A course a teacher opened TeacherHubPro from. */
+export interface LtiCoursesTable {
+  platform_id: string;
+  context_id: string;
+  teacher_id: string;
+  school_id: string;
+  title: string;
+  memberships_url: string | null;
+  last_launched_at: Date;
+}
+
+/** Which roster student a course system learner is (an id only, never an email). */
+export interface LtiStudentLinksTable {
+  platform_id: string;
+  student_id: string;
+  subject: string;
+}
+
 /** TeacherHubPro's own signing keys: the private half encrypted, the public half as a JWK. */
 export interface ToolKeysTable {
   kid: string;
@@ -661,6 +679,8 @@ export interface Database {
   lti_nonces: LtiNoncesTable;
   lti_user_links: LtiUserLinksTable;
   tool_keys: ToolKeysTable;
+  lti_courses: LtiCoursesTable;
+  lti_student_links: LtiStudentLinksTable;
   microsoft_connections: MicrosoftConnectionsTable;
   forms_exports: FormsExportsTable;
   student_notes: StudentNotesTable;

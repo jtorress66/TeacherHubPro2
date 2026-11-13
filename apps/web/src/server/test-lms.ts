@@ -39,3 +39,17 @@ export function autoPostPage(action: string, fields: Readonly<Record<string, str
     '<script>document.forms[0].submit()</script></body></html>',
   ].join('');
 }
+
+/** The fields of a client credentials request to the pretend course system's token address. */
+export function readServiceTokenRequest(form: URLSearchParams | FormData) {
+  const field = (name: string): string | null => {
+    const value = form.get(name);
+    return typeof value === 'string' ? value : null;
+  };
+  return {
+    grantType: field('grant_type'),
+    clientAssertionType: field('client_assertion_type'),
+    clientAssertion: field('client_assertion'),
+    scope: field('scope'),
+  };
+}

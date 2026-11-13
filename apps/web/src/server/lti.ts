@@ -150,3 +150,29 @@ export const ltiToolValues = (appUrl: string) => ({
   jwksUrl: `${appUrl}/api/lti/jwks`,
   domain: new URL(appUrl).host,
 });
+
+const courseOption = z.tuple([z.string().min(1), z.string().min(1)]);
+
+/** A teacher's course as one form value: its course system and its id there. */
+export const ltiCourseOption = (course: {
+  readonly platformId: LtiPlatformId;
+  readonly contextId: string;
+}): string =>
+  Buffer.from(JSON.stringify([course.platformId, course.contextId])).toString('base64url');
+
+/** The course a form value names, or null for anything else. */
+export function readLtiCourseOption(
+  value: unknown,
+): { readonly platformId: LtiPlatformId; readonly contextId: string } | null {
+  if (typeof value !== 'string' || value === '') return null;
+  let json: unknown;
+  try {
+    json = JSON.parse(Buffer.from(value, 'base64url').toString('utf8'));
+  } catch {
+    return null;
+  }
+  const parsed = courseOption.safeParse(json);
+  if (!parsed.success) return null;
+  const [platformId, contextId] = parsed.data;
+  return { platformId: platformId as LtiPlatformId, contextId };
+}

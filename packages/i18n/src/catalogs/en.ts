@@ -1555,6 +1555,15 @@ export const en = {
     studentTitle: 'Not available for students yet',
     studentText:
       'Students can’t open TeacherHubPro from the course system yet. Your teacher will share your assignments with you.',
+    toolValuesRosters:
+      'So teachers can import their class lists, also turn on the course system’s Names and Role Provisioning service (NRPS) for TeacherHubPro.',
+    importRoster: 'Import students from your course system',
+    course: 'Course',
+    importHint: 'Courses appear here after you open TeacherHubPro from them once.',
+    importNote:
+      'Only active students come in, with their first and last names. Students who leave the course stay on your list.',
+    imported:
+      '{added} added, {alreadyThere} already on the list, {noName} skipped because the course system didn’t share their name.',
   },
   teams: {
     title: 'Microsoft Teams',
@@ -2101,6 +2110,9 @@ export const en = {
     teams_declined:
       "Microsoft Teams was not allowed. If Microsoft said an administrator must approve it, ask your school's IT administrator to approve TeacherHubPro.",
     teams_failed: 'Microsoft Teams did not respond. Please try again.',
+    course_system_refused:
+      "Your course system didn't share this course's class list. Ask your school's IT team to turn on Names and Role Provisioning for TeacherHubPro.",
+    course_system_unavailable: 'Your course system did not respond. Please try again.',
     grading_off: 'Turn on “Count as a grade” for this game first.',
     name_taken: 'That name is already playing. Pick your own name.',
     email_failed: 'The email could not be sent. Check the address and try again.',

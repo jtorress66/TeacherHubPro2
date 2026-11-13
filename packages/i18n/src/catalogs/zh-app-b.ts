@@ -585,6 +585,14 @@ export const zhAppB = {
       '从课程中打开 TeacherHubPro 时出了问题。请返回后重试。如果问题持续出现，请让学校的 IT 团队检查 TeacherHubPro 的设置。',
     studentTitle: '暂不向学生开放',
     studentText: '学生暂时还不能从课程系统中打开 TeacherHubPro。老师会与你分享作业。',
+    toolValuesRosters:
+      '为了让老师能够导入班级名单，还请在课程系统中为 TeacherHubPro 开启“Names and Role Provisioning”（NRPS）服务。',
+    importRoster: '从课程系统导入学生',
+    course: '课程',
+    importHint: '从某门课程打开过一次 TeacherHubPro 后，该课程就会出现在这里。',
+    importNote: '只导入在读学生的名字和姓氏。离开课程的学生仍会保留在您的名单中。',
+    imported:
+      '已添加 {added} 名，{alreadyThere} 名已在名单中，{noName} 名因课程系统未提供姓名而跳过。',
   },
   teams: {
     title: 'Microsoft Teams',
@@ -1111,6 +1119,9 @@ export const zhAppB = {
     teams_declined:
       '未允许 Microsoft Teams。如果 Microsoft 提示需要管理员批准，请联系您学校的 IT 管理员批准 TeacherHubPro。',
     teams_failed: 'Microsoft Teams 没有响应，请重试。',
+    course_system_refused:
+      '您的课程系统没有提供该课程的班级名单。请让学校的 IT 团队为 TeacherHubPro 开启 Names and Role Provisioning。',
+    course_system_unavailable: '课程系统没有响应，请重试。',
     grading_off: '请先为此游戏开启“计入成绩”。',
     name_taken: '这个名字已经在游戏中了。请选择你自己的名字。',
     email_failed: '无法发送电子邮件。请检查地址后重试。',
