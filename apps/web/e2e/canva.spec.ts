@@ -23,7 +23,8 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     await expect(card.getByRole('alert')).toContainText(t('canva.connectFirst'));
     await card.getByRole('link', { name: t('canva.settingsLink') }).click();
 
-    const settings = page.getByRole('region', { name: t('canva.title') });
+    // Exact: the Canvas card's name also contains "Canva".
+    const settings = page.getByRole('region', { name: t('canva.title'), exact: true });
     await expect(settings).toContainText(t('canva.notConnected'));
     await settings.getByRole('link', { name: t('canva.connect') }).click();
     await expect(settings.getByRole('status')).toHaveText(t('canva.connectedNotice'));
@@ -54,7 +55,7 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     );
 
     // Disconnecting forgets the access.
-    await page.goto(`/${locale}/app/settings`);
+    await page.goto(`/${locale}/app/integrations`);
     await settings.getByRole('button', { name: t('canva.disconnect') }).click();
     await expect(settings.getByRole('link', { name: t('canva.connect') })).toBeVisible();
   });

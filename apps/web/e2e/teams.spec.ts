@@ -18,7 +18,7 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     // Before Teams is allowed, the class page offers no Teams import.
     await expect(page.getByRole('form', { name: t('teams.importRoster') })).toHaveCount(0);
 
-    await page.goto(`/${locale}/app/settings`);
+    await page.goto(`/${locale}/app/integrations`);
     const teams = page.getByRole('region', { name: t('teams.title'), exact: true });
     await expect(teams).toContainText(t('teams.notAllowed'));
     await teams.getByRole('link', { name: t('teams.allow') }).click();

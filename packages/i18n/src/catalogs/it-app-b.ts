@@ -429,8 +429,8 @@ export const itAppB = {
     ready: 'Il Suo design è pronto in Canva.',
     openDesign: 'Apri il design in Canva',
     note: 'Solo questo materiale va al Suo account Canva, mai informazioni sugli studenti.',
-    connectFirst: 'Colleghi Canva nelle Impostazioni per aprirlo in Canva.',
-    settingsLink: 'Vai alle Impostazioni',
+    connectFirst: 'Colleghi Canva in Strumenti collegati per aprirlo in Canva.',
+    settingsLink: 'Vai a Strumenti collegati',
     downloadPptx: 'Scarica PowerPoint',
   },
   microsoft: {
@@ -449,8 +449,87 @@ export const itAppB = {
     saved: 'Salvato su OneDrive.',
     openFile: 'Apri in OneDrive',
     note: 'Solo questo file va nel Suo OneDrive, in una cartella TeacherHubPro, mai informazioni sugli studenti.',
-    connectFirst: 'Colleghi Microsoft nelle Impostazioni per salvarlo su OneDrive.',
-    settingsLink: 'Vai alle Impostazioni',
+    connectFirst: 'Colleghi Microsoft in Strumenti collegati per salvarlo su OneDrive.',
+    settingsLink: 'Vai a Strumenti collegati',
+  },
+  connectedTools: {
+    title: 'Strumenti collegati',
+    intro: 'Colleghi TeacherHubPro agli strumenti che Lei e la Sua scuola usate già.',
+    filter: 'Mostra strumenti',
+    all: 'Tutti',
+    comingSoon: 'Prossimamente',
+    onRequest: 'Disponibile su richiesta',
+    comingSoonText: 'La Sua scuola lo usa? Ce lo dica, così sappiamo che serve.',
+    onRequestText: 'Lo attiviamo per le scuole che lo richiedono.',
+    askAbout: 'Chiedi informazioni su {tool}',
+    requestMessage: 'La nostra scuola vorrebbe usare {tool} con TeacherHubPro.',
+    signInNote: 'Acceda con il Suo account Google dalla pagina di accesso.',
+    viaClassroom: 'Pronto: usa il Suo collegamento a Google Classroom.',
+    needsClassroom: 'Colleghi Google Classroom per usarlo.',
+    moved:
+      'Google Classroom, Canva, Microsoft e il Suo link del calendario sono in Strumenti collegati.',
+    movedLink: 'Apri Strumenti collegati',
+    group: {
+      google: 'Google',
+      microsoft: 'Microsoft',
+      canva: 'Canva',
+      calendar: 'Calendario',
+      schoolSystems: 'Sistemi scolastici',
+    },
+    tool: {
+      googleSignIn: {
+        name: 'Accesso con Google',
+        text: 'Si registri e acceda con il Suo account Google.',
+      },
+      classroom: {
+        name: 'Google Classroom',
+        text: 'Importi elenchi di studenti, pubblichi compiti e documenti Word e invii presentazioni.',
+      },
+      forms: {
+        name: 'Google Forms',
+        text: 'Trasformi le domande di un compito in un quiz di Google Forms.',
+      },
+      slides: {
+        name: 'Google Drive e Presentazioni',
+        text: 'I documenti Word e le presentazioni vengono creati nel Suo Google Drive.',
+      },
+      onedrive: {
+        name: 'Microsoft OneDrive',
+        text: 'Salvi presentazioni (PowerPoint) e schede (Word) in una cartella TeacherHubPro nel Suo OneDrive. Vengono inviati solo i file che salva, mai i dati degli studenti.',
+      },
+      teams: {
+        name: 'Microsoft Teams',
+        text: 'Importi gli elenchi da una classe di Teams e vi condivida compiti. L’amministratore IT della Sua scuola lo approva una volta.',
+      },
+      canva: {
+        name: 'Canva',
+        text: 'Apra presentazioni e schede nel Suo account Canva come design modificabili. Viene inviato solo ciò che sceglie, mai i dati degli studenti.',
+      },
+      calendar: {
+        name: 'Google Calendar, Outlook e Apple Calendar',
+        text: 'Veda i Suoi piani di lezione e le scadenze nel calendario con un link privato.',
+      },
+      canvas: {
+        name: 'Canvas',
+        text: 'Apra TeacherHubPro nei corsi di Canvas e invii i voti confermati al registro di Canvas.',
+      },
+      schoology: {
+        name: 'Schoology',
+        text: 'Apra TeacherHubPro nei corsi di Schoology e invii i voti confermati al registro di Schoology.',
+      },
+      moodle: {
+        name: 'Moodle',
+        text: 'Apra TeacherHubPro nei corsi di Moodle e invii i voti confermati al registro di Moodle.',
+      },
+      brightspace: {
+        name: 'D2L Brightspace',
+        text: 'Apra TeacherHubPro nei corsi di D2L Brightspace e invii i voti confermati al registro di D2L Brightspace.',
+      },
+      clever: {
+        name: 'Clever',
+        text: 'Acceda con Clever e importi gli elenchi delle classi dall’account Clever della Sua scuola.',
+      },
+    },
   },
   calendarFeed: {
     title: 'Calendario',

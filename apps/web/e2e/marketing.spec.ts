@@ -104,19 +104,22 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
       t('marketing.features.gradebook.title'),
     );
     await page.goto(`/${locale}/integrations`);
+    const tool = (name: string) => page.getByRole('region', { name, exact: true });
+    await expect(tool(t('connectedTools.tool.canva.name'))).toBeVisible();
+    await expect(tool(t('connectedTools.tool.onedrive.name'))).toBeVisible();
+    const teamsCard = tool(t('connectedTools.tool.teams.name'));
+    await expect(teamsCard).toContainText(t('connectedTools.onRequest'));
     await expect(
-      page.getByRole('heading', { name: t('marketing.integrationsPage.canva') }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole('heading', { name: t('marketing.integrationsPage.microsoft') }),
-    ).toBeVisible();
-    const teamsCard = page
-      .getByRole('listitem')
-      .filter({ has: page.getByRole('heading', { name: t('marketing.integrationsPage.teams') }) });
-    await expect(teamsCard).toContainText(t('marketing.integrationsPage.teamsText'));
-    await expect(
-      teamsCard.getByRole('link', { name: t('marketing.integrationsPage.teamsContact') }),
-    ).toHaveAttribute('href', `/${locale}/contact`);
+      teamsCard.getByRole('link', {
+        name: t('connectedTools.askAbout', { tool: t('connectedTools.tool.teams.name') }),
+      }),
+    ).toHaveAttribute('href', `/${locale}/contact?tool=teams`);
+    await page
+      .getByRole('navigation', { name: t('connectedTools.filter') })
+      .getByRole('link', { name: t('connectedTools.group.schoolSystems') })
+      .click();
+    await expect(tool('Canvas')).toContainText(t('connectedTools.comingSoon'));
+    await expect(tool(t('connectedTools.tool.canva.name'))).toHaveCount(0);
     await page.goto(`/${locale}/use-cases/schools`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(
       t('marketing.useCases.schools.title'),

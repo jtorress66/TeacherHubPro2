@@ -5,7 +5,7 @@ export interface MicrosoftNotice {
   readonly key: MessageKey;
 }
 
-/** What Settings says after connecting Microsoft (the callback's `?microsoft=` outcome). */
+/** What Connected tools says after connecting Microsoft (or allowing Teams) (the callback's `?microsoft=` outcome). */
 const notices: Readonly<Record<string, MicrosoftNotice>> = {
   connected: { role: 'status', key: 'microsoft.connectedNotice' },
   teams: { role: 'status', key: 'teams.allowedNotice' },

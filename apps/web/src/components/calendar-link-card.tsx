@@ -13,7 +13,7 @@ import { FormAlert } from './forms.tsx';
 const initial: CalendarLinkState = {};
 
 /**
- * The Settings card for the calendar subscription link: make one, see it once with the steps to
+ * The Connected tools card for the calendar subscription link: make one, see it once with the steps to
  * add it to Google Calendar, Outlook or Apple Calendar, replace it, or turn it off.
  */
 export function CalendarLinkCard({
@@ -28,8 +28,11 @@ export function CalendarLinkCard({
   // Shown only while the link is on: once turned off, the address no longer works.
   const url = active ? state.url : undefined;
   return (
-    <section className="card stack" aria-labelledby="calendar-heading">
-      <h2 id="calendar-heading">{t('calendarFeed.title')}</h2>
+    <section className="card stack tool-card" aria-labelledby="calendar-heading">
+      <div className="tool-head">
+        <h2 id="calendar-heading">{t('calendarFeed.title')}</h2>
+        <span className="badge">{t('connectedTools.group.calendar')}</span>
+      </div>
       <p className="muted">{t('calendarFeed.intro')}</p>
       <FormAlert message={state.error} />
       {url === undefined ? null : (

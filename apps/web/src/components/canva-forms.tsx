@@ -35,7 +35,7 @@ export function OpenInCanvaForm(props: {
         <p role="alert" className="alert">
           {state.connect === true ? t('canva.connectFirst') : state.error}{' '}
           {state.connect === true ? (
-            <a href={`/${props.locale}/app/settings`}>{t('canva.settingsLink')}</a>
+            <a href={`/${props.locale}/app/integrations`}>{t('canva.settingsLink')}</a>
           ) : null}
         </p>
       )}

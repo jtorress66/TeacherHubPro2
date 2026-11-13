@@ -40,6 +40,7 @@ export const frAppA = {
     semesters: 'Semestres',
     billing: 'Forfaits et facturation',
     settings: 'Paramètres',
+    connectedTools: 'Outils connectés',
     logOut: 'Se déconnecter',
     menu: 'Menu',
     groupPlan: 'Planifier',

@@ -19,7 +19,7 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Volcanoes');
     const presentation = page.url();
 
-    // Before connecting, OneDrive points the teacher to Settings.
+    // Before connecting, OneDrive points the teacher to Connected tools.
     const card = page.getByRole('region', { name: t('microsoft.title') });
     await card.getByRole('button', { name: t('microsoft.save') }).click();
     await expect(card.getByRole('alert')).toContainText(t('microsoft.connectFirst'));
@@ -54,7 +54,7 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     );
 
     // Disconnecting forgets the access.
-    await page.goto(`/${locale}/app/settings`);
+    await page.goto(`/${locale}/app/integrations`);
     await settings.getByRole('button', { name: t('microsoft.disconnect') }).click();
     await expect(settings.getByRole('link', { name: t('microsoft.connect') })).toBeVisible();
   });

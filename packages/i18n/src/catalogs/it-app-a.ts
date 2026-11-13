@@ -40,6 +40,7 @@ export const itAppA = {
     semesters: 'Semestri',
     billing: 'Piani e fatturazione',
     settings: 'Impostazioni',
+    connectedTools: 'Strumenti collegati',
     logOut: 'Esci',
     menu: 'Menu',
     groupPlan: 'Pianificare',

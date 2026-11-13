@@ -432,8 +432,8 @@ export const frAppB = {
     ready: 'Votre design est prêt dans Canva.',
     openDesign: 'Ouvrir le design dans Canva',
     note: "Seul ce contenu est envoyé à votre compte Canva, jamais d'informations sur les élèves.",
-    connectFirst: 'Connectez Canva dans les Paramètres pour ouvrir ceci dans Canva.',
-    settingsLink: 'Aller aux Paramètres',
+    connectFirst: 'Connectez Canva dans Outils connectés pour ouvrir ceci dans Canva.',
+    settingsLink: 'Aller à Outils connectés',
     downloadPptx: 'Télécharger en PowerPoint',
   },
   microsoft: {
@@ -452,8 +452,88 @@ export const frAppB = {
     saved: 'Enregistré dans OneDrive.',
     openFile: 'Ouvrir dans OneDrive',
     note: "Seul ce fichier va dans votre OneDrive, dans un dossier TeacherHubPro, jamais d'informations sur les élèves.",
-    connectFirst: 'Connectez Microsoft dans les Paramètres pour enregistrer ceci dans OneDrive.',
-    settingsLink: 'Aller aux Paramètres',
+    connectFirst: 'Connectez Microsoft dans Outils connectés pour enregistrer ceci dans OneDrive.',
+    settingsLink: 'Aller à Outils connectés',
+  },
+  connectedTools: {
+    title: 'Outils connectés',
+    intro: 'Connectez TeacherHubPro aux outils que vous et votre école utilisez déjà.',
+    filter: 'Afficher les outils',
+    all: 'Tous',
+    comingSoon: 'Bientôt disponible',
+    onRequest: 'Disponible sur demande',
+    comingSoonText:
+      'Votre école l’utilise ? Dites-le-nous pour que nous sachions qu’il est demandé.',
+    onRequestText: 'Nous l’activons pour les écoles qui le demandent.',
+    askAbout: 'Se renseigner sur {tool}',
+    requestMessage: 'Notre école souhaite utiliser {tool} avec TeacherHubPro.',
+    signInNote: 'Connectez-vous avec votre compte Google depuis la page de connexion.',
+    viaClassroom: 'Prêt : il utilise votre connexion Google Classroom.',
+    needsClassroom: 'Connectez Google Classroom pour l’utiliser.',
+    moved:
+      'Google Classroom, Canva, Microsoft et votre lien d’agenda se trouvent dans Outils connectés.',
+    movedLink: 'Ouvrir Outils connectés',
+    group: {
+      google: 'Google',
+      microsoft: 'Microsoft',
+      canva: 'Canva',
+      calendar: 'Calendrier',
+      schoolSystems: 'Systèmes scolaires',
+    },
+    tool: {
+      googleSignIn: {
+        name: 'Connexion avec Google',
+        text: 'Inscrivez-vous et connectez-vous avec votre compte Google.',
+      },
+      classroom: {
+        name: 'Google Classroom',
+        text: 'Importez des listes d’élèves, publiez des devoirs et des documents Word, et envoyez des présentations.',
+      },
+      forms: {
+        name: 'Google Forms',
+        text: 'Transformez les questions d’un devoir en quiz Google Forms.',
+      },
+      slides: {
+        name: 'Google Drive et Slides',
+        text: 'Les documents Word et les présentations sont créés dans votre propre Google Drive.',
+      },
+      onedrive: {
+        name: 'Microsoft OneDrive',
+        text: 'Enregistrez présentations (PowerPoint) et fiches (Word) dans un dossier TeacherHubPro de votre propre OneDrive. Seuls les fichiers que vous enregistrez sont envoyés, jamais les données des élèves.',
+      },
+      teams: {
+        name: 'Microsoft Teams',
+        text: 'Importez des listes depuis une classe Teams et partagez-y des devoirs. L’administrateur informatique de votre école l’approuve une fois.',
+      },
+      canva: {
+        name: 'Canva',
+        text: 'Ouvrez présentations et fiches dans votre propre compte Canva sous forme de designs modifiables. Seul ce que vous choisissez est envoyé, jamais les données des élèves.',
+      },
+      calendar: {
+        name: 'Google Agenda, Outlook et Apple Calendar',
+        text: 'Voyez vos plans de cours et dates de remise dans votre agenda grâce à un lien privé.',
+      },
+      canvas: {
+        name: 'Canvas',
+        text: 'Ouvrez TeacherHubPro dans les cours Canvas et envoyez les notes confirmées au carnet de notes de Canvas.',
+      },
+      schoology: {
+        name: 'Schoology',
+        text: 'Ouvrez TeacherHubPro dans les cours Schoology et envoyez les notes confirmées au carnet de notes de Schoology.',
+      },
+      moodle: {
+        name: 'Moodle',
+        text: 'Ouvrez TeacherHubPro dans les cours Moodle et envoyez les notes confirmées au carnet de notes de Moodle.',
+      },
+      brightspace: {
+        name: 'D2L Brightspace',
+        text: 'Ouvrez TeacherHubPro dans les cours D2L Brightspace et envoyez les notes confirmées au carnet de notes de D2L Brightspace.',
+      },
+      clever: {
+        name: 'Clever',
+        text: 'Connectez-vous avec Clever et importez les listes de classe du compte Clever de votre école.',
+      },
+    },
   },
   calendarFeed: {
     title: 'Calendrier',

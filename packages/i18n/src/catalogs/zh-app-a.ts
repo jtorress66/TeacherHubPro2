@@ -39,6 +39,7 @@ export const zhAppA = {
     semesters: '学期',
     billing: '套餐与账单',
     settings: '设置',
+    connectedTools: '已连接的工具',
     logOut: '退出登录',
     menu: '菜单',
     groupPlan: '规划',

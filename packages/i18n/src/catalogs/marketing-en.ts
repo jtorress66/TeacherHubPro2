@@ -370,28 +370,6 @@ export const marketingEn = {
         'Google sign-in, Google Classroom, Forms, Drive and Slides, Canva, Microsoft OneDrive, Stripe and email.',
       title: 'Integrations',
       intro: 'The services TeacherHubPro works with today, through their official APIs.',
-      googleSignIn: 'Google sign-in',
-      googleSignInText: 'Sign up and log in with your Google account.',
-      classroom: 'Google Classroom',
-      classroomText: 'Import rosters, post assignments and Word documents, and send presentations.',
-      forms: 'Google Forms',
-      formsText: 'Turn an assignment’s questions into a Google Forms quiz.',
-      slides: 'Google Drive and Slides',
-      slidesText: 'Word documents and presentations are created in your own Google Drive.',
-      canva: 'Canva',
-      canvaText:
-        'Open presentations and worksheets in your own Canva account as editable designs. Only what you choose is sent, never student data.',
-      microsoft: 'Microsoft OneDrive',
-      microsoftText:
-        'Save presentations (PowerPoint) and worksheets (Word) to a TeacherHubPro folder in your own OneDrive. Only the files you save are sent, never student data.',
-      teams: 'Microsoft Teams (for schools)',
-      teamsText:
-        "Does your school use Microsoft Teams? Contact us and we'll set up the Teams connection for your classes: import class lists from a Teams class and share assignments to it. Your school's IT administrator approves it once.",
-      teamsContact: 'Contact us',
-      stripe: 'Stripe',
-      stripeText: 'Secure payments for plans; card details never touch our servers.',
-      email: 'Email',
-      emailText: 'Family portal links, password links and weekly parent updates by email.',
     },
     enterprisePage: {
       metaTitle: 'Schools and districts | TeacherHubPro',

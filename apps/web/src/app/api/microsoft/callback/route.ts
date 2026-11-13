@@ -51,7 +51,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       ? await outcomeOf(app.microsoft, params, saved, user, `${app.appUrl}/api/microsoft/callback`)
       : 'failed';
   const response = NextResponse.redirect(
-    `${app.appUrl}/${locale}/app/settings?microsoft=${encodeURIComponent(outcome)}`,
+    `${app.appUrl}/${locale}/app/integrations?microsoft=${encodeURIComponent(outcome)}`,
   );
   response.cookies.delete(MICROSOFT_OAUTH_COOKIE);
   return response;

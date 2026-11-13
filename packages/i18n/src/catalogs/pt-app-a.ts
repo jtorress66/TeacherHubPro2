@@ -40,6 +40,7 @@ export const ptAppA = {
     semesters: 'Semestres',
     billing: 'Planos e cobrança',
     settings: 'Configurações',
+    connectedTools: 'Ferramentas conectadas',
     logOut: 'Sair',
     menu: 'Menu',
     groupPlan: 'Planejar',

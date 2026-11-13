@@ -1,7 +1,14 @@
 import type { Metadata } from 'next';
 import { createTranslator } from '@thp/i18n';
-import { PageIntro, Points, TrialCta } from '../../../../components/marketing-sections.tsx';
+import { PageIntro, TrialCta } from '../../../../components/marketing-sections.tsx';
 import { MarketingShell } from '../../../../components/marketing-shell.tsx';
+import { ToolCard, ToolFilter, ToolRequest, ToolText } from '../../../../components/tool-card.tsx';
+import {
+  comingSoon,
+  toolGroupFrom,
+  toolsIn,
+  type ToolId,
+} from '../../../../server/connected-tools.ts';
 import { marketingMetadata } from '../../../../server/marketing-metadata.ts';
 import { localeFrom, type LocaleParams } from '../../locale-param.ts';
 
@@ -14,70 +21,44 @@ export async function generateMetadata(props: LocaleParams): Promise<Metadata> {
   );
 }
 
-/** Only the services the app really works with today. */
-export default async function IntegrationsPage(props: LocaleParams) {
+/** Teams needs the school's IT to approve it, so it is turned on for schools that ask. */
+const onRequest: ReadonlySet<ToolId> = new Set<ToolId>(['teams']);
+
+/** The services the app works with today, plus the school systems that are coming. */
+export default async function IntegrationsPage(
+  props: LocaleParams & { readonly searchParams: Promise<{ group?: string }> },
+) {
   const locale = await localeFrom(props);
   const t = createTranslator(locale);
+  const group = toolGroupFrom((await props.searchParams).group);
   return (
     <MarketingShell locale={locale} path="/integrations">
       <PageIntro
         title={t('marketing.integrationsPage.title')}
         intro={t('marketing.integrationsPage.intro')}
       />
-      <section className="m-section">
-        <Points
-          items={[
-            {
-              title: t('marketing.integrationsPage.googleSignIn'),
-              text: t('marketing.integrationsPage.googleSignInText'),
-              art: 'lock',
-            },
-            {
-              title: t('marketing.integrationsPage.classroom'),
-              text: t('marketing.integrationsPage.classroomText'),
-              art: 'schools',
-            },
-            {
-              title: t('marketing.integrationsPage.forms'),
-              text: t('marketing.integrationsPage.formsText'),
-              art: 'assignments',
-            },
-            {
-              title: t('marketing.integrationsPage.slides'),
-              text: t('marketing.integrationsPage.slidesText'),
-              art: 'presentations',
-            },
-            {
-              title: t('marketing.integrationsPage.canva'),
-              text: t('marketing.integrationsPage.canvaText'),
-              art: 'presentations',
-            },
-            {
-              title: t('marketing.integrationsPage.microsoft'),
-              text: t('marketing.integrationsPage.microsoftText'),
-              art: 'presentations',
-            },
-            {
-              title: t('marketing.integrationsPage.teams'),
-              text: t('marketing.integrationsPage.teamsText'),
-              art: 'schools',
-              link: {
-                href: `/${locale}/contact`,
-                label: t('marketing.integrationsPage.teamsContact'),
-              },
-            },
-            {
-              title: t('marketing.integrationsPage.stripe'),
-              text: t('marketing.integrationsPage.stripeText'),
-              art: 'shield',
-            },
-            {
-              title: t('marketing.integrationsPage.email'),
-              text: t('marketing.integrationsPage.emailText'),
-              art: 'families',
-            },
-          ]}
-        />
+      <section className="m-section stack">
+        <ToolFilter locale={locale} path={`/${locale}/integrations`} current={group} />
+        <div className="settings-grid">
+          {toolsIn(group).map((tool) => (
+            <ToolCard
+              key={tool.id}
+              locale={locale}
+              headingId={`${tool.id}-heading`}
+              heading={t(`connectedTools.tool.${tool.id}.name`)}
+              group={tool.group}
+            >
+              <ToolText locale={locale} id={tool.id} />
+              {comingSoon.has(tool.id) || onRequest.has(tool.id) ? (
+                <ToolRequest
+                  locale={locale}
+                  id={tool.id}
+                  status={comingSoon.has(tool.id) ? 'comingSoon' : 'onRequest'}
+                />
+              ) : null}
+            </ToolCard>
+          ))}
+        </div>
       </section>
       <TrialCta locale={locale} />
     </MarketingShell>

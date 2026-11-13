@@ -397,31 +397,6 @@ export const marketingIt: MarketingMessages = {
         'Accesso con Google, Google Classroom, Forms, Drive e Slides, Canva, Microsoft OneDrive, Stripe ed email.',
       title: 'Integrazioni',
       intro: 'I servizi con cui TeacherHubPro funziona oggi, tramite le loro API ufficiali.',
-      googleSignIn: 'Accesso con Google',
-      googleSignInText: 'Si registri e acceda con il Suo account Google.',
-      classroom: 'Google Classroom',
-      classroomText:
-        'Importi gli elenchi degli studenti, pubblichi compiti e documenti Word e invii presentazioni.',
-      forms: 'Google Forms',
-      formsText: 'Trasformi le domande di un compito in un quiz di Google Forms.',
-      slides: 'Google Drive e Slides',
-      slidesText: 'I documenti Word e le presentazioni vengono creati nel Suo Google Drive.',
-      canva: 'Canva',
-      canvaText:
-        'Apra presentazioni e schede di lavoro nel Suo account Canva come design modificabili. Viene inviato solo ciò che sceglie, mai dati degli studenti.',
-      microsoft: 'Microsoft OneDrive',
-      microsoftText:
-        'Salvi presentazioni (PowerPoint) e schede di lavoro (Word) in una cartella TeacherHubPro del Suo OneDrive. Vengono inviati solo i file che salva, mai dati degli studenti.',
-      teams: 'Microsoft Teams (per le scuole)',
-      teamsText:
-        'La Sua scuola usa Microsoft Teams? Ci contatti e configureremo il collegamento con Teams per le Sue classi: importi gli elenchi della classe da una classe di Teams e condivida compiti con essa. L’amministratore IT della Sua scuola lo approva una sola volta.',
-      teamsContact: 'Ci contatti',
-      stripe: 'Stripe',
-      stripeText:
-        'Pagamenti sicuri per i piani; i dati delle carte non passano mai dai nostri server.',
-      email: 'Email',
-      emailText:
-        'Link al portale per le famiglie, link per la password e aggiornamenti settimanali ai genitori via email.',
     },
     enterprisePage: {
       metaTitle: 'Scuole e distretti | TeacherHubPro',

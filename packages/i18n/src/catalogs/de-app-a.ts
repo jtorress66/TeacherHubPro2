@@ -40,6 +40,7 @@ export const deAppA = {
     semesters: 'Halbjahre',
     billing: 'Tarife und Abrechnung',
     settings: 'Einstellungen',
+    connectedTools: 'Verbundene Tools',
     logOut: 'Abmelden',
     menu: 'Menü',
     groupPlan: 'Planen',
