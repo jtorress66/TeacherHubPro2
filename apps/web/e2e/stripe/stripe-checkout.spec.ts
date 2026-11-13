@@ -126,8 +126,10 @@ async function payWithTestCard(page: Page): Promise<void> {
     await postalCode.fill('10001');
   }
   // "Save my info with Link" requires a phone number when ticked; this test pays without Link.
-  const saveWithLink = page.locator('#enableStripePass');
-  if (await saveWithLink.isChecked().catch(() => false)) await saveWithLink.dispatchEvent('click');
+  // The box is #enableStripePass in the older layout and #payment-linkOptInInput (ticked by
+  // default, inside the payment frame) in the newer one.
+  const saveWithLink = await findInFrames(page, ['#enableStripePass', '#payment-linkOptInInput']);
+  if (saveWithLink && (await saveWithLink.isChecked())) await saveWithLink.click();
   const pay = await waitForField(page, payButton, 10_000);
   if (!pay) throw new Error('Stripe Checkout pay button not found');
   await pay.click();
