@@ -76,12 +76,27 @@ async function waitForField(page: Page, selectors: readonly string[], timeout: n
   return input;
 }
 
+/**
+ * Checkout's pay button: on the page itself in the older layout, inside the embedded payment form
+ * (with a Link email box above the card) in the layout Stripe rolled out in November 2026.
+ */
+const payButton = [
+  '[data-testid="hosted-payment-submit-button"]',
+  '[data-testid="payment-form-submit-button"]',
+] as const;
+
 /** Pays on Stripe's hosted Checkout with its documented test card. */
 async function payWithTestCard(page: Page): Promise<void> {
   const [cardNumber] = cardFields;
+  // The newer layout asks for an email for Link first; one Link does not know shows the card form.
+  const linkEmail = await findInFrames(page, ['#linkAuthentication-emailInput']);
+  if (linkEmail && (await linkEmail.inputValue()) === '') {
+    await linkEmail.pressSequentially('checkout-test@example.com', { delay: 30 });
+  }
   // Checkout may list payment methods as an accordion whose Card entry starts collapsed.
   if (!(await waitForField(page, cardNumber.selectors, 5_000))) {
-    await page.getByTestId('card-accordion-item-button').dispatchEvent('click');
+    const accordion = await findInFrames(page, ['[data-testid="card-accordion-item-button"]']);
+    await accordion?.dispatchEvent('click');
   }
   for (const field of cardFields) {
     const input = await waitForField(page, field.selectors, field.required ? 30_000 : 1_000);
@@ -95,7 +110,9 @@ async function payWithTestCard(page: Page): Promise<void> {
   // "Save my info with Link" requires a phone number when ticked; this test pays without Link.
   const saveWithLink = page.locator('#enableStripePass');
   if (await saveWithLink.isChecked().catch(() => false)) await saveWithLink.dispatchEvent('click');
-  await page.getByTestId('hosted-payment-submit-button').click();
+  const pay = await waitForField(page, payButton, 10_000);
+  if (!pay) throw new Error('Stripe Checkout pay button not found');
+  await pay.click();
 }
 
 // On failure, list every frame's form controls in the job log, so a changed Checkout layout can be
@@ -141,7 +158,9 @@ test('a teacher signs up and buys the Individual monthly plan on Stripe Checkout
     .getByRole('button', { name: t('billing.choose', { plan }) })
     .click();
   await page.waitForURL(/checkout\.stripe\.com/);
-  await page.getByTestId('hosted-payment-submit-button').waitFor();
+  if (!(await waitForField(page, payButton, 60_000))) {
+    throw new Error('Stripe Checkout did not show its pay button');
+  }
   await payWithTestCard(page);
 
   await page.waitForURL(/\/en\/app\/billing\?checkout=success/, { timeout: 60_000 });
