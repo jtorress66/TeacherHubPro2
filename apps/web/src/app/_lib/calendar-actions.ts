@@ -25,7 +25,7 @@ export async function makeCalendarLinkAction(
   const locale = localeOf(data);
   const { user } = await requireUser(locale);
   const made = await getAppContainer().makeCalendarLink.execute({ actor: user });
-  revalidatePath(`/${locale}/app/settings`);
+  revalidatePath(`/${locale}/app/integrations`);
   return made.ok ? { url: made.value.url } : { error: messageFor(made.error, locale) };
 }
 
@@ -34,5 +34,5 @@ export async function turnOffCalendarLinkAction(data: FormData): Promise<void> {
   const locale = localeOf(data);
   const { user } = await requireUser(locale);
   await getAppContainer().turnOffCalendarLink.execute({ actor: user });
-  revalidatePath(`/${locale}/app/settings`);
+  revalidatePath(`/${locale}/app/integrations`);
 }

@@ -24,7 +24,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         })
       : null;
   const response = NextResponse.redirect(
-    `${app.appUrl}/${locale}/app/settings?canva=${connected?.ok === true ? 'connected' : 'failed'}`,
+    `${app.appUrl}/${locale}/app/integrations?canva=${connected?.ok === true ? 'connected' : 'failed'}`,
   );
   response.cookies.delete(CANVA_OAUTH_COOKIE);
   return response;

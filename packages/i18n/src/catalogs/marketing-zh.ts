@@ -334,28 +334,6 @@ export const marketingZh: MarketingMessages = {
         'Google 登录、Google Classroom、Forms、Drive 和 Slides、Canva、Microsoft OneDrive、Stripe 以及电子邮件。',
       title: '集成',
       intro: 'TeacherHubPro 目前通过官方 API 配合使用的服务。',
-      googleSignIn: 'Google 登录',
-      googleSignInText: '使用您的 Google 账户注册和登录。',
-      classroom: 'Google Classroom',
-      classroomText: '导入学生名单、发布作业和 Word 文档，以及发送演示文稿。',
-      forms: 'Google Forms',
-      formsText: '将作业中的题目转换为 Google Forms 测验。',
-      slides: 'Google Drive 和 Slides',
-      slidesText: 'Word 文档和演示文稿会创建在您自己的 Google Drive 中。',
-      canva: 'Canva',
-      canvaText:
-        '在您自己的 Canva 账户中将演示文稿和练习单作为可编辑设计打开。只发送您选择的内容，绝不发送学生数据。',
-      microsoft: 'Microsoft OneDrive',
-      microsoftText:
-        '将演示文稿（PowerPoint）和练习单（Word）保存到您自己 OneDrive 中的 TeacherHubPro 文件夹。只发送您保存的文件，绝不发送学生数据。',
-      teams: 'Microsoft Teams（面向学校）',
-      teamsText:
-        '您的学校使用 Microsoft Teams 吗？联系我们，我们会为您的班级设置 Teams 连接：从 Teams 班级导入班级名单并向其分享作业。您学校的 IT 管理员只需批准一次。',
-      teamsContact: '联系我们',
-      stripe: 'Stripe',
-      stripeText: '方案的安全付款；银行卡信息从不经过我们的服务器。',
-      email: '电子邮件',
-      emailText: '通过电子邮件发送家庭门户链接、密码链接和每周家长更新。',
     },
     enterprisePage: {
       metaTitle: '学校和学区 | TeacherHubPro',

@@ -46,6 +46,7 @@ export default async function AppLayout(props: LocaleParams & { readonly childre
       links: [
         { href: `${base}/semesters`, label: t('nav.semesters'), icon: 'semesters' },
         { href: `${base}/billing`, label: t('nav.billing'), icon: 'billing' },
+        { href: `${base}/integrations`, label: t('nav.connectedTools'), icon: 'connectedTools' },
         { href: `${base}/settings`, label: t('nav.settings'), icon: 'settings' },
       ],
     },

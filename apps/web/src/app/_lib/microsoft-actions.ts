@@ -53,5 +53,5 @@ export async function disconnectMicrosoftAction(data: FormData): Promise<void> {
   const locale = localeOf(data);
   const { user } = await requireUser(locale);
   await getAppContainer().microsoft?.disconnect.execute({ actor: user });
-  revalidatePath(`/${locale}/app/settings`);
+  revalidatePath(`/${locale}/app/integrations`);
 }

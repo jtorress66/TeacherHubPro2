@@ -14,7 +14,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const { user } = await requireUser(locale);
   const code = request.nextUrl.searchParams.get('code');
   const state = request.nextUrl.searchParams.get('state');
-  const settings = `${app.appUrl}/${locale}/app/settings`;
+  const tools = `${app.appUrl}/${locale}/app/integrations`;
   const connected =
     saved !== null && code !== null && state === saved.state
       ? await app.finishClassroomConnect.execute({
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         })
       : null;
   const response = NextResponse.redirect(
-    `${settings}?classroom=${connected?.ok === true ? 'connected' : 'failed'}`,
+    `${tools}?classroom=${connected?.ok === true ? 'connected' : 'failed'}`,
   );
   response.cookies.delete(OAUTH_STATE_COOKIE);
   return response;

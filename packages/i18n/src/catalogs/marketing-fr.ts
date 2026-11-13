@@ -410,32 +410,6 @@ export const marketingFr: MarketingMessages = {
       title: 'Intégrations',
       intro:
         "Les services avec lesquels TeacherHubPro fonctionne aujourd'hui, via leurs API officielles.",
-      googleSignIn: 'Connexion avec Google',
-      googleSignInText: 'Inscrivez-vous et connectez-vous avec votre compte Google.',
-      classroom: 'Google Classroom',
-      classroomText:
-        "Importez des listes d'élèves, publiez des devoirs et des documents Word, et envoyez des présentations.",
-      forms: 'Google Forms',
-      formsText: "Transformez les questions d'un devoir en quiz Google Forms.",
-      slides: 'Google Drive et Slides',
-      slidesText:
-        'Les documents Word et les présentations sont créés dans votre propre Google Drive.',
-      canva: 'Canva',
-      canvaText:
-        "Ouvrez vos présentations et fiches dans votre propre compte Canva comme designs modifiables. Seul ce que vous choisissez est envoyé, jamais de données d'élèves.",
-      microsoft: 'Microsoft OneDrive',
-      microsoftText:
-        "Enregistrez vos présentations (PowerPoint) et vos fiches (Word) dans un dossier TeacherHubPro de votre propre OneDrive. Seuls les fichiers que vous enregistrez sont envoyés, jamais de données d'élèves.",
-      teams: 'Microsoft Teams (pour les écoles)',
-      teamsText:
-        'Votre école utilise Microsoft Teams ? Contactez-nous et nous configurerons la connexion Teams pour vos classes : importez les listes de classe depuis une classe Teams et partagez-y des devoirs. L’administrateur informatique de votre école l’approuve une seule fois.',
-      teamsContact: 'Nous contacter',
-      stripe: 'Stripe',
-      stripeText:
-        'Des paiements sécurisés pour les formules ; les données de carte ne passent jamais par nos serveurs.',
-      email: 'E-mail',
-      emailText:
-        'Liens du portail des familles, liens de mot de passe et nouvelles hebdomadaires aux parents par e-mail.',
     },
     enterprisePage: {
       metaTitle: 'Écoles et districts | TeacherHubPro',

@@ -170,7 +170,7 @@ test('Google Classroom (local stand-in) connects, imports a roster and shares an
   const classPath = await classWithAssignment(page, 'en', 'Quiz');
   const assignmentPath = new URL(page.url()).pathname;
 
-  await page.goto('/en/app/settings');
+  await page.goto('/en/app/integrations');
   await page.getByRole('link', { name: t('classroom.connect') }).click();
   await expect(
     page.getByRole('status').filter({ hasText: t('classroom.connectedNotice') }),

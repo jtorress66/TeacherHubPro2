@@ -9,8 +9,14 @@ import { Hidden, Select, TextArea } from './form-fields.tsx';
 
 const initial: LeadFormState = {};
 
-/** The contact form: becomes a lead for the team. */
-export function ContactForm({ locale }: { readonly locale: Locale }) {
+/** The contact form: becomes a lead for the team. A "tell us" link can start the message. */
+export function ContactForm({
+  locale,
+  message,
+}: {
+  readonly locale: Locale;
+  readonly message?: string | undefined;
+}) {
   const t = createTranslator(locale);
   const [state, action] = useActionState(captureLeadAction, initial);
   if (state.sent === true) {
@@ -74,7 +80,7 @@ export function ContactForm({ locale }: { readonly locale: Locale }) {
           name="interest"
           label={t('marketing.contactPage.interest')}
           options={visitorInterests.map((i) => ({ id: i, name: t(`marketing.interests.${i}`) }))}
-          defaultValue="features"
+          defaultValue={message === undefined ? 'features' : 'school'}
         />
       </div>
       <TextArea
@@ -82,6 +88,7 @@ export function ContactForm({ locale }: { readonly locale: Locale }) {
         name="message"
         label={t('marketing.contactPage.message')}
         error={errors.message}
+        defaultValue={message}
         rows={5}
       />
       <p className="hint">{t('marketing.contactPage.consent')}</p>

@@ -436,8 +436,8 @@ export const deAppB = {
     ready: 'Ihr Design ist in Canva bereit.',
     openDesign: 'Design in Canva öffnen',
     note: 'Nur dieses Material geht an Ihr Canva-Konto, niemals Daten von Schülerinnen und Schülern.',
-    connectFirst: 'Verbinden Sie Canva in den Einstellungen, um dies in Canva zu öffnen.',
-    settingsLink: 'Zu den Einstellungen',
+    connectFirst: 'Verbinden Sie Canva unter Verbundene Tools, um dies in Canva zu öffnen.',
+    settingsLink: 'Zu Verbundene Tools',
     downloadPptx: 'Als PowerPoint herunterladen',
   },
   microsoft: {
@@ -456,8 +456,89 @@ export const deAppB = {
     saved: 'In OneDrive gespeichert.',
     openFile: 'In OneDrive öffnen',
     note: 'Nur diese Datei geht in Ihr OneDrive, in einen Ordner „TeacherHubPro“, niemals Daten von Schülerinnen und Schülern.',
-    connectFirst: 'Verbinden Sie Microsoft in den Einstellungen, um dies in OneDrive zu speichern.',
-    settingsLink: 'Zu den Einstellungen',
+    connectFirst:
+      'Verbinden Sie Microsoft unter Verbundene Tools, um dies in OneDrive zu speichern.',
+    settingsLink: 'Zu Verbundene Tools',
+  },
+  connectedTools: {
+    title: 'Verbundene Tools',
+    intro: 'Verbinden Sie TeacherHubPro mit den Tools, die Sie und Ihre Schule bereits nutzen.',
+    filter: 'Tools anzeigen',
+    all: 'Alle',
+    comingSoon: 'Demnächst',
+    onRequest: 'Auf Anfrage verfügbar',
+    comingSoonText:
+      'Nutzt Ihre Schule es? Sagen Sie es uns, damit wir wissen, dass es gebraucht wird.',
+    onRequestText: 'Wir schalten es für Schulen frei, die danach fragen.',
+    askAbout: 'Nach {tool} fragen',
+    requestMessage: 'Unsere Schule möchte {tool} mit TeacherHubPro nutzen.',
+    signInNote: 'Melden Sie sich auf der Anmeldeseite mit Ihrem Google-Konto an.',
+    viaClassroom: 'Bereit: nutzt Ihre Google-Classroom-Verbindung.',
+    needsClassroom: 'Verbinden Sie Google Classroom, um es zu nutzen.',
+    moved:
+      'Google Classroom, Canva, Microsoft und Ihr Kalenderlink befinden sich unter Verbundene Tools.',
+    movedLink: 'Verbundene Tools öffnen',
+    group: {
+      google: 'Google',
+      microsoft: 'Microsoft',
+      canva: 'Canva',
+      calendar: 'Kalender',
+      schoolSystems: 'Schulsysteme',
+    },
+    tool: {
+      googleSignIn: {
+        name: 'Anmeldung mit Google',
+        text: 'Registrieren und anmelden mit Ihrem Google-Konto.',
+      },
+      classroom: {
+        name: 'Google Classroom',
+        text: 'Klassenlisten importieren, Aufgaben und Word-Dokumente veröffentlichen und Präsentationen senden.',
+      },
+      forms: {
+        name: 'Google Forms',
+        text: 'Die Fragen einer Aufgabe in ein Google-Forms-Quiz verwandeln.',
+      },
+      slides: {
+        name: 'Google Drive und Präsentationen',
+        text: 'Word-Dokumente und Präsentationen werden in Ihrem eigenen Google Drive erstellt.',
+      },
+      onedrive: {
+        name: 'Microsoft OneDrive',
+        text: 'Präsentationen (PowerPoint) und Arbeitsblätter (Word) in einem TeacherHubPro-Ordner in Ihrem eigenen OneDrive speichern. Nur die Dateien, die Sie speichern, werden gesendet, nie Schülerdaten.',
+      },
+      teams: {
+        name: 'Microsoft Teams',
+        text: 'Klassenlisten aus einer Teams-Klasse importieren und Aufgaben dort teilen. Die IT-Administration Ihrer Schule genehmigt es einmal.',
+      },
+      canva: {
+        name: 'Canva',
+        text: 'Präsentationen und Arbeitsblätter in Ihrem eigenen Canva-Konto als bearbeitbare Designs öffnen. Nur was Sie auswählen, wird gesendet, nie Schülerdaten.',
+      },
+      calendar: {
+        name: 'Google Kalender, Outlook und Apple Kalender',
+        text: 'Sehen Sie Ihre Unterrichtspläne und Abgabetermine über einen privaten Link in Ihrem Kalender.',
+      },
+      canvas: {
+        name: 'Canvas',
+        text: 'TeacherHubPro in Canvas-Kursen öffnen und bestätigte Noten ins Canvas-Notenbuch senden.',
+      },
+      schoology: {
+        name: 'Schoology',
+        text: 'TeacherHubPro in Schoology-Kursen öffnen und bestätigte Noten ins Schoology-Notenbuch senden.',
+      },
+      moodle: {
+        name: 'Moodle',
+        text: 'TeacherHubPro in Moodle-Kursen öffnen und bestätigte Noten ins Moodle-Notenbuch senden.',
+      },
+      brightspace: {
+        name: 'D2L Brightspace',
+        text: 'TeacherHubPro in D2L Brightspace-Kursen öffnen und bestätigte Noten ins D2L Brightspace-Notenbuch senden.',
+      },
+      clever: {
+        name: 'Clever',
+        text: 'Mit Clever anmelden und Klassenlisten aus dem Clever-Konto Ihrer Schule übernehmen.',
+      },
+    },
   },
   calendarFeed: {
     title: 'Kalender',

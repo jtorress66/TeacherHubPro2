@@ -188,6 +188,28 @@ h2 {
   grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
 }
 
+/* Connected tools: the name with its group tag on one line, wrapping on narrow screens */
+.tool-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.tool-head h2 {
+  margin: 0;
+}
+
+.tool-filter {
+  margin-bottom: 0.5rem;
+}
+
+.badge.tool-status {
+  background: var(--surface-2);
+  color: var(--fg);
+}
+
 .field-row {
   display: grid;
   gap: 1rem;

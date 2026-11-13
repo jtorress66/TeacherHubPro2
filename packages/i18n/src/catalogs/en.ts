@@ -41,6 +41,7 @@ export const en = {
     semesters: 'Semesters',
     billing: 'Plans and billing',
     settings: 'Settings',
+    connectedTools: 'Connected tools',
     logOut: 'Log out',
     menu: 'Menu',
     groupPlan: 'Plan',
@@ -1369,8 +1370,8 @@ export const en = {
     ready: 'Your design is ready in Canva.',
     openDesign: 'Open the design in Canva',
     note: 'Only this material goes to your Canva account, never student information.',
-    connectFirst: 'Connect Canva in Settings to open this in Canva.',
-    settingsLink: 'Go to Settings',
+    connectFirst: 'Connect Canva in Connected tools to open this in Canva.',
+    settingsLink: 'Go to Connected tools',
     downloadPptx: 'Download PowerPoint',
   },
   microsoft: {
@@ -1388,8 +1389,86 @@ export const en = {
     saved: 'Saved to OneDrive.',
     openFile: 'Open in OneDrive',
     note: 'Only this file goes to your OneDrive, in a TeacherHubPro folder, never student information.',
-    connectFirst: 'Connect Microsoft in Settings to save this to OneDrive.',
-    settingsLink: 'Go to Settings',
+    connectFirst: 'Connect Microsoft in Connected tools to save this to OneDrive.',
+    settingsLink: 'Go to Connected tools',
+  },
+  connectedTools: {
+    title: 'Connected tools',
+    intro: 'Connect TeacherHubPro to the tools you and your school already use.',
+    filter: 'Show tools',
+    all: 'All',
+    comingSoon: 'Coming soon',
+    onRequest: 'Available on request',
+    comingSoonText: 'Does your school use it? Tell us, so we know it’s needed.',
+    onRequestText: 'We turn this on for schools that ask for it.',
+    askAbout: 'Ask about {tool}',
+    requestMessage: 'Our school would like to use {tool} with TeacherHubPro.',
+    signInNote: 'Log in with your Google account from the login page.',
+    viaClassroom: 'Ready: it uses your Google Classroom connection.',
+    needsClassroom: 'Connect Google Classroom to use it.',
+    moved: 'Google Classroom, Canva, Microsoft and your calendar link are in Connected tools.',
+    movedLink: 'Open Connected tools',
+    group: {
+      google: 'Google',
+      microsoft: 'Microsoft',
+      canva: 'Canva',
+      calendar: 'Calendar',
+      schoolSystems: 'School systems',
+    },
+    tool: {
+      googleSignIn: {
+        name: 'Google sign-in',
+        text: 'Sign up and log in with your Google account.',
+      },
+      classroom: {
+        name: 'Google Classroom',
+        text: 'Import rosters, post assignments and Word documents, and send presentations.',
+      },
+      forms: {
+        name: 'Google Forms',
+        text: 'Turn an assignment’s questions into a Google Forms quiz.',
+      },
+      slides: {
+        name: 'Google Drive and Slides',
+        text: 'Word documents and presentations are created in your own Google Drive.',
+      },
+      onedrive: {
+        name: 'Microsoft OneDrive',
+        text: 'Save presentations (PowerPoint) and worksheets (Word) to a TeacherHubPro folder in your own OneDrive. Only the files you save are sent, never student data.',
+      },
+      teams: {
+        name: 'Microsoft Teams',
+        text: 'Import class lists from a Teams class and share assignments to it. Your school’s IT administrator approves it once.',
+      },
+      canva: {
+        name: 'Canva',
+        text: 'Open presentations and worksheets in your own Canva account as editable designs. Only what you choose is sent, never student data.',
+      },
+      calendar: {
+        name: 'Google Calendar, Outlook and Apple Calendar',
+        text: 'See your lesson plans and due dates in your calendar through a private link.',
+      },
+      canvas: {
+        name: 'Canvas',
+        text: 'Open TeacherHubPro inside Canvas courses and send confirmed grades to the Canvas gradebook.',
+      },
+      schoology: {
+        name: 'Schoology',
+        text: 'Open TeacherHubPro inside Schoology courses and send confirmed grades to the Schoology gradebook.',
+      },
+      moodle: {
+        name: 'Moodle',
+        text: 'Open TeacherHubPro inside Moodle courses and send confirmed grades to the Moodle gradebook.',
+      },
+      brightspace: {
+        name: 'D2L Brightspace',
+        text: 'Open TeacherHubPro inside D2L Brightspace courses and send confirmed grades to the D2L Brightspace gradebook.',
+      },
+      clever: {
+        name: 'Clever',
+        text: 'Sign in with Clever and bring in class lists from your school’s Clever account.',
+      },
+    },
   },
   calendarFeed: {
     title: 'Calendar',

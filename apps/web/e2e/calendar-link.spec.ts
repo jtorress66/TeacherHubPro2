@@ -63,7 +63,7 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     await weeklyPlan(page, locale, names.plan, names.theme);
     await dueAssignment(page, locale, names.assignment, daysFromNow(10));
 
-    await page.goto(`/${locale}/app/settings`);
+    await page.goto(`/${locale}/app/integrations`);
     const card = page.getByRole('region', { name: t('calendarFeed.title'), exact: true });
     await expect(card).toContainText(t('calendarFeed.intro'));
     const first = await makeLink(page, locale, t('calendarFeed.make'));

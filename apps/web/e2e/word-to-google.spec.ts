@@ -8,7 +8,7 @@ const wordDocument = Buffer.concat([Buffer.from('PK\u0003\u0004'), Buffer.alloc(
 
 async function connectGoogle(page: Page, locale: Locale): Promise<void> {
   const t = createTranslator(locale);
-  await page.goto(`/${locale}/app/settings`);
+  await page.goto(`/${locale}/app/integrations`);
   await page.getByRole('link', { name: t('classroom.connect') }).click();
   await expect(
     page.getByRole('status').filter({ hasText: t('classroom.connectedNotice') }),
