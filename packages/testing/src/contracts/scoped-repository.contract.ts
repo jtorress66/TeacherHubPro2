@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { SchoolId } from '@thp/domain';
-import type { Deletable, SchoolOwned, ScopedRepository } from '@thp/ports';
+import type { BatchFindable, Deletable, SchoolOwned, ScopedRepository } from '@thp/ports';
 
 export interface ListMethod<T extends SchoolOwned, R> {
   readonly name: string;
@@ -92,6 +92,40 @@ export function deletableContract<
       await repository.delete(schoolB, entity.id);
 
       expect(await repository.findById(schoolA, entity.id)).toEqual(entity);
+    });
+  });
+}
+
+/** Shared suite for repositories that read several rows at once. */
+export function batchFindableContract<
+  T extends SchoolOwned,
+  R extends ScopedRepository<T> & BatchFindable<T>,
+>(name: string, { make, sample }: Pick<ScopedRepositoryContract<T, R>, 'make' | 'sample'>): void {
+  describe(`${name} (batch find contract)`, () => {
+    it("finds the school's rows by id and leaves out unknown ids", async () => {
+      const repository = make();
+      const entity = sample(schoolA, 'one');
+      await repository.save(entity);
+
+      expect(await repository.findByIds(schoolA, [entity.id, 'missing'])).toEqual([entity]);
+    });
+
+    it("never returns another school's rows", async () => {
+      const repository = make();
+      const entity = sample(schoolA, 'one');
+      const other = sample(schoolB, 'two');
+      await repository.save(entity);
+      await repository.save(other);
+
+      expect(await repository.findByIds(schoolA, [entity.id, other.id])).toEqual([entity]);
+      expect(await repository.findByIds(schoolB, [entity.id, other.id])).toEqual([other]);
+    });
+
+    it('returns nothing for no ids', async () => {
+      const repository = make();
+      await repository.save(sample(schoolA, 'one'));
+
+      expect(await repository.findByIds(schoolA, [])).toEqual([]);
     });
   });
 }

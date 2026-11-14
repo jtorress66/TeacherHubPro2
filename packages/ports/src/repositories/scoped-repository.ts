@@ -19,3 +19,11 @@ export interface ScopedRepository<T extends SchoolOwned> {
 export interface Deletable<T extends SchoolOwned> {
   delete(schoolId: SchoolId, id: T['id']): Promise<void>;
 }
+
+/**
+ * Several of a school's rows in one read. Ids that are unknown or belong to another school are
+ * simply left out; the order of the result is not guaranteed.
+ */
+export interface BatchFindable<T extends SchoolOwned> {
+  findByIds(schoolId: SchoolId, ids: readonly T['id'][]): Promise<readonly T[]>;
+}

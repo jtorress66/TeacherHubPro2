@@ -57,7 +57,7 @@ import type {
   User,
   UserId,
 } from '@thp/domain';
-import type { Deletable, ScopedRepository } from './scoped-repository.ts';
+import type { BatchFindable, Deletable, ScopedRepository } from './scoped-repository.ts';
 
 /** A school is its own scope. */
 export interface SchoolRepository {
@@ -140,7 +140,8 @@ export interface GradeCategoryRepository
   listByClass(schoolId: SchoolId, classId: ClassId): Promise<readonly GradeCategory[]>;
 }
 
-export interface AssignmentRepository extends ScopedRepository<Assignment>, Deletable<Assignment> {
+export interface AssignmentRepository
+  extends ScopedRepository<Assignment>, Deletable<Assignment>, BatchFindable<Assignment> {
   listByClass(schoolId: SchoolId, classId: ClassId): Promise<readonly Assignment[]>;
   countByCategory(schoolId: SchoolId, categoryId: GradeCategoryId): Promise<number>;
 }
@@ -162,7 +163,8 @@ export interface GradeRepository extends ScopedRepository<Grade> {
   deleteByAssignment(schoolId: SchoolId, assignmentId: AssignmentId): Promise<void>;
 }
 
-export interface SubmissionRepository extends ScopedRepository<Submission> {
+export interface SubmissionRepository
+  extends ScopedRepository<Submission>, BatchFindable<Submission> {
   listByAssignment(schoolId: SchoolId, assignmentId: AssignmentId): Promise<readonly Submission[]>;
   /** A student's one submission for an assignment, if any. */
   findFor(
@@ -264,7 +266,8 @@ export interface AttendanceSessionRepository extends ScopedRepository<Attendance
   ): Promise<readonly AttendanceSession[]>;
 }
 
-export interface GameRepository extends ScopedRepository<Game>, Deletable<Game> {
+export interface GameRepository
+  extends ScopedRepository<Game>, Deletable<Game>, BatchFindable<Game> {
   listByTeacher(schoolId: SchoolId, teacherId: UserId): Promise<readonly Game[]>;
   /** The games shared with a class, as its students' links list them. */
   listByClass(schoolId: SchoolId, classId: ClassId): Promise<readonly Game[]>;
@@ -324,7 +327,7 @@ export interface LiveAnswerRepository {
 }
 
 export interface LearningPathRepository
-  extends ScopedRepository<LearningPath>, Deletable<LearningPath> {
+  extends ScopedRepository<LearningPath>, Deletable<LearningPath>, BatchFindable<LearningPath> {
   /** Oldest first. */
   listByStudent(schoolId: SchoolId, studentId: StudentId): Promise<readonly LearningPath[]>;
   /** Oldest first. */

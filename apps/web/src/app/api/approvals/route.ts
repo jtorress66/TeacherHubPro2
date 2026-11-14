@@ -27,7 +27,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     timeZone,
   });
   const t = createTranslator(locale);
-  return new Response(approvalsCsv(listed.value.rows, t, when), {
+  return new Response(approvalsCsv(listed.value.rows, t, when, locale), {
     headers: {
       'Content-Type': 'text/csv; charset=utf-8',
       'Content-Disposition': attachmentDisposition(`${t('approvals.title')}.csv`),

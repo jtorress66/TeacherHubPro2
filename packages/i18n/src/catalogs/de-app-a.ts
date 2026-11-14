@@ -304,6 +304,9 @@ export const deAppA = {
     grades: 'Noten gespeichert: {count}',
     limit:
       'Die neuesten {count} werden angezeigt. Grenzen Sie die Daten ein, um ältere Freigaben zu sehen.',
+    item: 'Element',
+    week: 'Woche vom {date}',
+    deleted: '(gelöscht)',
   },
   admin: {
     title: 'Schulnutzer',

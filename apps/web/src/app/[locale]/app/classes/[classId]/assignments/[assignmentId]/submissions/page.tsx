@@ -1,12 +1,13 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import type { AssignmentId, ClassId, JobId } from '@thp/domain';
+import { describeAnswer, type AssignmentId, type ClassId, type JobId } from '@thp/domain';
 import { createTranslator } from '@thp/i18n';
 import {
   GradeWithAiForm,
   ReviewForm,
 } from '../../../../../../../../components/assignment-tools.tsx';
+import { AnswerReview, ScoreLine } from '../../../../../../../../components/answer-review.tsx';
 import { JobProgress } from '../../../../../../../../components/job-progress.tsx';
 import { getAppContainer } from '../../../../../../../../container.ts';
 import { requireUser } from '../../../../../../../_lib/auth.ts';
@@ -38,7 +39,6 @@ export default async function SubmissionsPage(props: Props) {
     job === undefined ? null : await app.getJob.execute({ actor: user, jobId: job as JobId });
   const base = `/${locale}/app/classes/${classId}/assignments/${assignmentId}`;
   const ids = { locale, classId, assignmentId };
-  const questionsById = new Map(assignment.questions.map((q) => [q.id as string, q]));
 
   return (
     <section className="stack">
@@ -106,20 +106,22 @@ export default async function SubmissionsPage(props: Props) {
                       const scored = submission.questionScores[question.id];
                       return (
                         <div key={question.id}>
-                          <dt>{questionsById.get(question.id)?.prompt}</dt>
+                          <dt>{question.prompt}</dt>
                           <dd>
-                            {submission.answers[question.id] ?? t('grading.noAnswer')}
+                            <AnswerReview
+                              description={describeAnswer(
+                                question,
+                                submission.answers[question.id],
+                              )}
+                              t={t}
+                            />
                             {scored === undefined ? null : (
-                              <span className="muted small">
-                                {' '}
-                                ·{' '}
-                                {t('grading.scoreFor', {
-                                  score: scored.score,
-                                  points: question.points,
-                                })}{' '}
-                                ({t(`grading.source_${scored.source}`)})
-                                {scored.feedback === null ? '' : ` · ${scored.feedback}`}
-                              </span>
+                              <ScoreLine
+                                scored={scored}
+                                points={question.points}
+                                t={t}
+                                locale={locale}
+                              />
                             )}
                           </dd>
                         </div>

@@ -18,6 +18,20 @@ export class PostgresAssignmentRepository implements AssignmentRepository {
     return row === undefined ? null : assignmentMapper.fromRow(row);
   }
 
+  async findByIds(
+    schoolId: SchoolId,
+    ids: readonly AssignmentId[],
+  ): Promise<readonly Assignment[]> {
+    if (ids.length === 0) return [];
+    const rows = await this.db
+      .selectFrom('assignments')
+      .selectAll()
+      .where('school_id', '=', schoolId)
+      .where('id', 'in', ids)
+      .execute();
+    return rows.map(assignmentMapper.fromRow);
+  }
+
   save(assignment: Assignment): Promise<void> {
     return upsert(this.db, 'assignments', assignmentMapper.toRow(assignment));
   }

@@ -497,6 +497,7 @@ export {
   type ApprovalRow,
   type ApprovalsQuery,
 } from './security/approvals.ts';
+export type { ApprovalItem } from './security/approval-items.ts';
 export { CopyStudents, type CopyStudentsDeps } from './students/copy-students.ts';
 export {
   calendarDaysAhead,

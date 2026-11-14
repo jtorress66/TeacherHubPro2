@@ -302,6 +302,9 @@ export const ptAppA = {
     familyEmails: 'e-mails às famílias enviados: {count}',
     grades: 'notas salvas: {count}',
     limit: 'Mostrando as {count} mais recentes. Restrinja as datas para ver aprovações anteriores.',
+    item: 'Item',
+    week: 'Semana de {date}',
+    deleted: '(excluído)',
   },
   admin: {
     title: 'Usuários da escola',

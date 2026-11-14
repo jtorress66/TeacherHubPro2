@@ -306,6 +306,9 @@ export const itAppA = {
     grades: 'voti salvati: {count}',
     limit:
       'Sono mostrate le {count} più recenti. Restringi le date per vedere approvazioni precedenti.',
+    item: 'Elemento',
+    week: 'Settimana del {date}',
+    deleted: '(eliminato)',
   },
   admin: {
     title: 'Utenti della scuola',

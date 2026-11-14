@@ -60,6 +60,11 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     await expect(rows.filter({ hasText: approved(t('approvals.kept')) })).toContainText(
       'Historia 6',
     );
+    // The item column names the assignment, read from the submission.
+    await expect(table.getByRole('columnheader', { name: t('approvals.item') })).toBeVisible();
+    await expect(rows.filter({ hasText: approved(t('approvals.kept')) })).toContainText(
+      'Quiz espacial',
+    );
     await expect(table).not.toContainText('Zayas');
     await expect(table).not.toContainText('Acosta');
 
@@ -74,10 +79,13 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
         t('approvals.when'),
         t('approvals.teacher'),
         t('approvals.what'),
+        t('approvals.item'),
         t('approvals.className'),
       ].join(','),
     );
     expect(lines).toHaveLength(3);
+    expect(lines[1]).toContain(',Quiz espacial,');
+    expect(lines[2]).toContain(',Quiz espacial,');
     expect(lines.join('\n')).toContain(approved(t('approvals.kept')));
 
     // Another type of approval: nothing yet.

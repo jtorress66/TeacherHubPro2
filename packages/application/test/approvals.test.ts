@@ -1,6 +1,25 @@
 import { describe, expect, it } from 'vitest';
-import type { ApprovalAction, AuditEventId, ClassId, SchoolId, User, UserId } from '@thp/domain';
-import { aClass, aUser } from '@thp/testing';
+import type {
+  ApprovalAction,
+  AssignmentId,
+  AuditEventId,
+  ClassId,
+  GameId,
+  LearningPathId,
+  SchoolId,
+  SubmissionId,
+  User,
+  UserId,
+} from '@thp/domain';
+import {
+  aClass,
+  aGame,
+  aLearningPath,
+  anAssignment,
+  aPrepBatch,
+  aSubmission,
+  aUser,
+} from '@thp/testing';
 import { ListApprovals, maxListedApprovals, recordApproval } from '../src/index.ts';
 import { makeWorld } from './world.ts';
 
@@ -155,5 +174,92 @@ describe('ListApprovals', () => {
     expect(maxListedApprovals).toBe(500);
     expect(listed.ok && listed.value.rows).toHaveLength(500);
     expect(listed.ok && listed.value.limited).toBe(true);
+  });
+
+  describe('names the approved item', () => {
+    async function withItems(schoolId: SchoolId) {
+      const world = await withApprovals();
+      const quiz = anAssignment({
+        id: 'assignment-1' as AssignmentId,
+        schoolId,
+        title: 'Fractions quiz',
+      });
+      await world.assignments.save(quiz);
+      await world.submissions.save(
+        aSubmission({ id: 'submission-7' as SubmissionId, schoolId, assignmentId: quiz.id }),
+      );
+      await world.games.save(aGame({ id: 'game-1' as GameId, schoolId, title: 'Planet race' }));
+      await world.prepBatches.save({ ...aPrepBatch('batch-7'), schoolId });
+      await world.learningPaths.save(
+        aLearningPath({ id: 'path-7' as LearningPathId, schoolId, subject: 'science' }),
+      );
+      const approve = async (action: ApprovalAction, targetId: string) => {
+        await recordApproval(world, {
+          actor: ana,
+          action,
+          schoolId: schoolA,
+          targetId,
+          classId: science.id,
+        });
+        world.clock.advanceBy(60_000);
+      };
+      await approve('ai_grade_approved', 'submission-7');
+      await approve('ai_grade_approved', 'submission-7');
+      await approve('game_grades_approved', 'game-1');
+      await approve('prep_approved', 'batch-7');
+      await approve('learning_path_assigned', 'path-7');
+      return world;
+    }
+
+    const items = async (world: Awaited<ReturnType<typeof withItems>>) => {
+      const listed = await new ListApprovals(world).execute({
+        actor: admin,
+        schoolId: schoolA,
+        filter: {},
+      });
+      return listed.ok ? listed.value.rows.map((row) => [row.event.targetId, row.item]) : listed;
+    };
+
+    it('by assignment title, game title, week start or subject; never a student', async () => {
+      expect(await items(await withItems(schoolA))).toEqual([
+        ['path-7', { kind: 'subject', subject: 'science' }],
+        ['batch-7', { kind: 'week', start: '2026-11-09' }],
+        ['game-1', { kind: 'title', text: 'Planet race' }],
+        ['submission-7', { kind: 'title', text: 'Fractions quiz' }],
+        ['submission-7', { kind: 'title', text: 'Fractions quiz' }],
+        ['path-1', { kind: 'deleted' }],
+        ['batch-1', { kind: 'deleted' }],
+        ['submission-1', { kind: 'deleted' }],
+      ]);
+    });
+
+    it('says the item was deleted when its assignment is gone', async () => {
+      const world = await withItems(schoolA);
+      await world.assignments.delete(schoolA, 'assignment-1' as AssignmentId);
+
+      const listed = await items(world);
+
+      expect(Array.isArray(listed) && listed.slice(3, 5)).toEqual([
+        ['submission-7', { kind: 'deleted' }],
+        ['submission-7', { kind: 'deleted' }],
+      ]);
+    });
+
+    it("never resolves another school's items, even with the same ids", async () => {
+      const listed = await items(await withItems(schoolB));
+
+      expect(Array.isArray(listed) && listed.map(([, item]) => item)).toEqual(
+        Array.from({ length: 8 }, () => ({ kind: 'deleted' })),
+      );
+    });
+
+    it("reads a prep batch only as its approving teacher's", async () => {
+      const world = await withItems(schoolA);
+      await world.prepBatches.save({ ...aPrepBatch('batch-7'), teacherId: ben.id });
+
+      const listed = await items(world);
+
+      expect(Array.isArray(listed) && listed[1]).toEqual(['batch-7', { kind: 'deleted' }]);
+    });
   });
 });

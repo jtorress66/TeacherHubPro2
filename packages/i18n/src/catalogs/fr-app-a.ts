@@ -306,6 +306,9 @@ export const frAppA = {
     grades: 'notes enregistrées : {count}',
     limit:
       'Affichage des {count} plus récentes. Réduisez la période pour voir les approbations plus anciennes.',
+    item: 'Élément',
+    week: 'Semaine du {date}',
+    deleted: '(supprimé)',
   },
   admin: {
     title: "Utilisateurs de l'école",

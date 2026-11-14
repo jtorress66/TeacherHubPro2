@@ -94,6 +94,7 @@ export * from './rubrics/rubric-request.ts';
 export * from './substitutes/sub-packet.ts';
 export * from './speech/speech.ts';
 export * from './assignments/answers.ts';
+export * from './assignments/answer-description.ts';
 export * from './assignments/attachment.ts';
 export * from './assignments/student-link.ts';
 export * from './assignments/extracted-test.ts';
