@@ -46,6 +46,43 @@ test.describe('search engines', () => {
 for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
   const t = createTranslator(locale);
 
+  test(`the intro video waits to be played, with captions and a script (${locale})`, async ({
+    page,
+    request,
+  }) => {
+    await page.goto(`/${locale}`);
+    const section = page.getByRole('region', { name: t('marketing.video.title') });
+    await expect(section.getByRole('heading', { level: 2 })).toHaveText(t('marketing.video.title'));
+    const video = section.locator('video');
+    await expect(video).toHaveAttribute('poster', '/video/teacherhubpro-intro-poster.jpg');
+    await expect(video).toHaveAttribute('controls', '');
+    await expect(video).toHaveAttribute('preload', 'none');
+    await expect(video).not.toHaveAttribute('autoplay');
+    await expect(video).not.toHaveAttribute('loop');
+    expect(
+      await video.evaluate((element) => element instanceof HTMLVideoElement && element.paused),
+    ).toBe(true);
+    await expect(video.locator('source')).toHaveAttribute('src', '/video/teacherhubpro-intro.mp4');
+    await expect(video.locator('track[kind="captions"]')).toHaveCount(7);
+    const track = video.locator('track[default]');
+    await expect(track).toHaveCount(1);
+    await expect(track).toHaveAttribute('srclang', locale);
+    await expect(section).toContainText(t('marketing.video.note'));
+
+    const captions = await request.get((await track.getAttribute('src')) ?? '');
+    expect(captions.headers()['content-type']).toBe('text/vtt; charset=utf-8');
+    const vtt = await captions.text();
+    expect(vtt.startsWith('WEBVTT')).toBe(true);
+    // The closing line, in the page's language.
+    expect(vtt).toContain(t('marketing.video.p9').split('. ').at(-1));
+    expect((await request.get('/api/video-captions/xx.vtt')).status()).toBe(404);
+
+    const script = section.locator('details');
+    await script.getByText(t('marketing.video.scriptTitle')).click();
+    await expect(script.getByText(t('marketing.video.p2'))).toBeVisible();
+    expect(await axe(page)).toEqual([]);
+  });
+
   test(`the public site: landing, pages, contact, chatbot and leads (${locale})`, async ({
     page,
     browser,

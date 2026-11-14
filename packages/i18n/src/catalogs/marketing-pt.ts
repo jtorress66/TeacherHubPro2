@@ -79,6 +79,20 @@ export const marketingPt: MarketingMessages = {
       ctaText:
         'Configure uma turma em minutos e deixe a IA fazer o rascunho da sua próxima semana.',
     },
+    video: {
+      title: 'Conheça o TeacherHubPro em cerca de um minuto',
+      note: 'O vídeo é narrado em inglês, com legendas em português: escolha CC no player.',
+      scriptTitle: 'Ler o roteiro do vídeo',
+      p1: 'Conheça o TeacherHubPro, seu espaço de trabalho com IA para ensinar, criado para facilitar o dia a dia em sala de aula.',
+      p2: 'Planejando a próxima semana? Basta digitar uma frase. O Agente de Preparação cria seus planos de aula, slides, folhas de atividades, um quiz de sexta-feira e até um e-mail para os pais.',
+      p3: 'Cada plano semanal é alinhado aos padrões Common Core, organizado por dia e totalmente editável. Seu plano, do seu jeito.',
+      p4: 'Transforme qualquer aula em slides em segundos. Apresente em tela cheia na aula, imprima cópias ou envie direto para o Google Classroom.',
+      p5: 'Crie provas online ou importe um PDF. Os alunos respondem por um link privado, e a IA sugere notas para você confirmar.',
+      p6: 'Mantenha seu diário de notas, boletins e frequência em um só lugar, com um portal privado que mantém as famílias informadas.',
+      p7: 'Comece cada dia com a Central de Comando: as turmas de hoje, o que falta corrigir, os alunos que podem precisar de ajuda e as próximas aulas.',
+      p8: 'E você está sempre no controle. A IA cria rascunhos, e você decide. Nada chega aos alunos ou às famílias até que você aprove.',
+      p9: 'Experimente o TeacherHubPro grátis por sete dias. Sem cartão de crédito. Acesse teacherhubpro.com.',
+    },
     feature: {
       lesson_planner: {
         title: 'Planejador de aulas',

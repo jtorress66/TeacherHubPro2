@@ -82,6 +82,20 @@ export const marketingFr: MarketingMessages = {
       ctaText:
         "Créez une classe en quelques minutes et laissez l'IA préparer un brouillon de votre semaine prochaine.",
     },
+    video: {
+      title: 'Découvrez TeacherHubPro en une minute environ',
+      note: 'La vidéo est narrée en anglais, avec des sous-titres en français : choisissez CC dans le lecteur.',
+      scriptTitle: 'Lire le texte de la vidéo',
+      p1: 'Voici TeacherHubPro, votre espace de travail pédagogique avec IA, conçu pour faciliter l’enseignement au quotidien.',
+      p2: 'Vous préparez la semaine prochaine ? Tapez une seule phrase. L’Agent de préparation rédige vos plans de cours, diaporamas, fiches d’exercices, un quiz du vendredi et même un e-mail aux parents.',
+      p3: 'Chaque plan hebdomadaire est aligné sur les normes Common Core, organisé par jour et entièrement modifiable. Votre plan, à votre façon.',
+      p4: 'Transformez n’importe quel cours en diapositives en quelques secondes. Présentez en plein écran en classe, imprimez des polycopiés ou envoyez-les directement dans Google Classroom.',
+      p5: 'Créez des tests en ligne ou importez un PDF. Les élèves répondent depuis un lien privé, et l’IA suggère des notes que vous confirmez.',
+      p6: 'Gardez votre carnet de notes, vos bulletins et les présences au même endroit, avec un portail privé qui tient les familles informées.',
+      p7: 'Commencez chaque journée avec le Centre de commande : les cours du jour, ce qu’il reste à corriger, les élèves qui pourraient avoir besoin d’aide et les prochaines leçons.',
+      p8: 'Et vous gardez toujours la main. L’IA rédige, vous décidez. Rien n’arrive aux élèves ni aux familles avant que vous ne l’approuviez.',
+      p9: 'Essayez TeacherHubPro gratuitement pendant sept jours. Sans carte bancaire. Rendez-vous sur teacherhubpro.com.',
+    },
     feature: {
       lesson_planner: {
         title: 'Planificateur de cours',
