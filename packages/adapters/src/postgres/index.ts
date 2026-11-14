@@ -1,6 +1,7 @@
 import type { Kysely } from 'kysely';
 import type {
   AiUsageStats,
+  ApprovalLogReader,
   AuditLog,
   BlockedDomainRepository,
   EmailConfirmationRepository,
@@ -145,7 +146,7 @@ export { PostgresToolKeyStore } from './repositories/postgres-tool-key-store.ts'
 
 export interface PostgresRepositories {
   readonly rateLimiter: RateLimiter;
-  readonly auditLog: AuditLog;
+  readonly auditLog: AuditLog & ApprovalLogReader;
   readonly schools: SchoolRepository;
   readonly users: UserRepository;
   readonly classes: ClassRepository;

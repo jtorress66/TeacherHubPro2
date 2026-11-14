@@ -36,6 +36,7 @@ import type {
 import { checkAiAccess } from '../accounts/ai-access.ts';
 import { findManagedClass } from '../classes/managed-class.ts';
 import { fail, type UseCaseError } from '../errors.ts';
+import { recordApproval, type ApprovalLogDeps } from '../security/approvals.ts';
 import type { JobHandler } from '../jobs/jobs.ts';
 import { byName } from '../students/roster-order.ts';
 
@@ -225,9 +226,12 @@ export class UpdateLearningPath {
   }
 }
 
-/** Puts the path on the student's link; the path they had in the subject is archived. */
+/**
+ * Puts the path on the student's link; the path they had in the subject is archived. Logged as
+ * an approval.
+ */
 export class AssignLearningPath {
-  constructor(private readonly deps: PathDeps & { readonly clock: Clock }) {}
+  constructor(private readonly deps: PathDeps & ApprovalLogDeps) {}
 
   async execute(input: PathRef): Promise<Result<LearningPath, UseCaseError>> {
     const path = await findOwnPath(this.deps, input.actor, input.pathId);
@@ -242,6 +246,13 @@ export class AssignLearningPath {
       if (archived.ok) await this.deps.learningPaths.save(archived.value);
     }
     await this.deps.learningPaths.save(assigned.value);
+    await recordApproval(this.deps, {
+      actor: input.actor,
+      action: 'learning_path_assigned',
+      schoolId: assigned.value.schoolId,
+      targetId: assigned.value.id,
+      classId: assigned.value.classId,
+    });
     return assigned;
   }
 }

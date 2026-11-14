@@ -601,4 +601,49 @@ describe('Games: results, leaderboard and grades', () => {
       }),
     ).toEqual(forbidden);
   });
+
+  it('logs the approval once, with the game, its class and how many grades were saved', async () => {
+    const world = makeWorld();
+    const s = await setUp(world);
+    await play(world, s.anaToken, s.game, 4);
+    await play(world, s.benToken, s.game, 2);
+    expect(
+      (await new ConfirmGameGrades(world).execute({ actor: s.actor, gameId: s.game.id })).ok,
+    ).toBe(false);
+    valueOf(
+      await new SaveGameGrading(world).execute({
+        actor: s.actor,
+        gameId: s.game.id,
+        countAsGrade: true,
+        method: 'best',
+        points: 10,
+        categoryId: s.category('Tareas'),
+      }),
+    );
+    expect(
+      (
+        await new ConfirmGameGrades(world).execute({
+          actor: colleagueOf(s.actor),
+          gameId: s.game.id,
+        })
+      ).ok,
+    ).toBe(false);
+    expect(world.auditLog.events).toEqual([]);
+
+    valueOf(await new ConfirmGameGrades(world).execute({ actor: s.actor, gameId: s.game.id }));
+
+    expect(world.auditLog.events).toEqual([
+      {
+        id: expect.any(String) as unknown,
+        schoolId: s.actor.schoolId,
+        actorId: s.actor.id,
+        action: 'game_grades_approved',
+        targetId: s.game.id,
+        at: world.clock.now(),
+        review: null,
+        count: 2,
+        classId: s.cls.id,
+      },
+    ]);
+  });
 });

@@ -41,6 +41,7 @@ import type {
 } from '@thp/ports';
 import { fail, type UseCaseError } from '../errors.ts';
 import { findEditableClass } from '../gradebook/gradebook-access.ts';
+import { recordApproval, type ApprovalLogDeps } from '../security/approvals.ts';
 import { parentEmails } from './prep-batches.ts';
 
 type Item<K extends PrepItem['kind']> = Extract<PrepItem, { kind: K }>;
@@ -50,7 +51,7 @@ const ofKind = <K extends PrepItem['kind']>(items: readonly PrepItem[], kind: K)
 
 const maxTitleLength = 200;
 
-interface PublishDeps {
+interface PublishDeps extends ApprovalLogDeps {
   readonly prepBatches: PrepBatchRepository;
   readonly classes: ClassRepository;
   readonly lessonPlans: LessonPlanRepository;
@@ -69,7 +70,8 @@ interface PublishDeps {
 /**
  * The teacher's approval: saves the items they kept (the weekly plan, slide decks, worksheets in
  * the AI assistant's history, and the quiz as an assignment due Friday) and emails each family
- * on the roster once. A batch is published only once.
+ * on the roster once. A batch is published only once, and logged as an approval with the number
+ * of family emails sent.
  */
 export class PublishPrepBatch {
   constructor(private readonly deps: PublishDeps) {}
@@ -98,6 +100,14 @@ export class PublishPrepBatch {
     const done = markPublished(batch, published, this.deps.clock.now());
     if (!done.ok) return done;
     await this.deps.prepBatches.save(done.value);
+    await recordApproval(this.deps, {
+      actor,
+      action: 'prep_approved',
+      schoolId: batch.schoolId,
+      targetId: batch.id,
+      classId: batch.classId,
+      count: emails.emailsSent,
+    });
     return done;
   }
 

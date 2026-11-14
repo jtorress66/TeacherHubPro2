@@ -54,6 +54,7 @@ import {
   accountProtectionContract,
   marketingContract,
   rateLimiterContract,
+  approvalLogReaderContract,
   auditLogContract,
   gamePlayRepositoryContract,
   liveRepositoryContract,
@@ -450,4 +451,5 @@ withParents(parentsFor.none, () => {
 
 withParents(parentsFor.school, () => {
   auditLogContract('PostgresAuditLog', () => repos.auditLog);
+  approvalLogReaderContract('PostgresAuditLog', () => repos.auditLog);
 });

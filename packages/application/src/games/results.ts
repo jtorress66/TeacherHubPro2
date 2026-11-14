@@ -23,12 +23,12 @@ import type {
   GamePlayRepository,
   GameRepository,
   GradeRepository,
-  IdGenerator,
   StudentRepository,
 } from '@thp/ports';
 import type { LinkDeps } from '../assignments/student-portal.ts';
 import { fail, type UseCaseError } from '../errors.ts';
 import { findEditableClass } from '../gradebook/gradebook-access.ts';
+import { recordApproval, type ApprovalLogDeps } from '../security/approvals.ts';
 import { findOwnGame, type GameRef } from './game-access.ts';
 import { linkGame } from './play.ts';
 
@@ -144,14 +144,15 @@ export class GetGameResults {
 /**
  * Turns the game's draft grades into gradebook grades in one step, with any scores the teacher
  * adjusted. Only students on the roster who played get a grade; confirming again updates them.
+ * Each confirmation is logged as an approval, with how many grades it saved.
  */
 export class ConfirmGameGrades {
   constructor(
-    private readonly deps: ResultsDeps & {
-      readonly classes: ClassRepository;
-      readonly assignments: AssignmentRepository;
-      readonly ids: IdGenerator;
-    },
+    private readonly deps: ResultsDeps &
+      ApprovalLogDeps & {
+        readonly classes: ClassRepository;
+        readonly assignments: AssignmentRepository;
+      },
   ) {}
 
   async execute(
@@ -188,6 +189,14 @@ export class ConfirmGameGrades {
       grades.push(grade.value);
     }
     for (const grade of grades) await this.deps.grades.save(grade);
+    await recordApproval(this.deps, {
+      actor: input.actor,
+      action: 'game_grades_approved',
+      schoolId: game.schoolId,
+      targetId: game.id,
+      classId: cls.value.id,
+      count: grades.length,
+    });
     return ok(grades);
   }
 }

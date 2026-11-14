@@ -39,6 +39,7 @@ export default async function AppLayout(props: LocaleParams & { readonly childre
         { href: `${base}/games`, label: t('nav.games'), icon: 'games' },
         { href: `${base}/live`, label: t('nav.live'), icon: 'live' },
         { href: `${base}/learning`, label: t('nav.learning'), icon: 'learning' },
+        { href: `${base}/approvals`, label: t('nav.approvals'), icon: 'approvals' },
       ],
     },
     {

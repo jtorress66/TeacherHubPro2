@@ -251,6 +251,42 @@ describe('reviewing and assigning a path', () => {
   });
 });
 
+describe('approval log for learning paths', () => {
+  it('logs each assignment once, with the path and its class, never the student', async () => {
+    const world = makeWorld();
+    const s = await setUp(world);
+    const [job] = valueOf(await s.request({ studentId: s.ana.id }));
+    if (job === undefined) throw new Error('no job');
+    const draft = await s.run(job);
+    expect(
+      (
+        await new AssignLearningPath(world).execute({
+          actor: colleagueOf(s.actor),
+          pathId: draft.id,
+        })
+      ).ok,
+    ).toBe(false);
+    expect(world.auditLog.events).toEqual([]);
+
+    valueOf(await new AssignLearningPath(world).execute({ actor: s.actor, pathId: draft.id }));
+
+    expect(world.auditLog.events).toEqual([
+      {
+        id: expect.any(String) as unknown,
+        schoolId: s.actor.schoolId,
+        actorId: s.actor.id,
+        action: 'learning_path_assigned',
+        targetId: draft.id,
+        at: world.clock.now(),
+        review: null,
+        count: null,
+        classId: s.cls.id,
+      },
+    ]);
+    expect(JSON.stringify(world.auditLog.events)).not.toContain(s.ana.id);
+  });
+});
+
 describe('the student’s link', () => {
   it('shows only assigned paths, with progress, and never the answers', async () => {
     const world = makeWorld();

@@ -5,6 +5,7 @@ import { createLessonPlan, type UserId } from '@thp/domain';
 import { migrateDown, migrateToLatest } from '../../src/postgres/index.ts';
 import { migrationProvider } from '../../src/postgres/migrations/index.ts';
 import { PostgresMicrosoftConnectionRepository } from '../../src/postgres/repositories/postgres-assignment-repositories.ts';
+import { PostgresAuditLog } from '../../src/postgres/repositories/postgres-hardening.ts';
 import { PostgresLessonPlanRepository } from '../../src/postgres/repositories/postgres-lesson-plan-repository.ts';
 import { PostgresUserRepository } from '../../src/postgres/repositories/postgres-user-repository.ts';
 import { connect, schoolA, truncateAll } from './test-db.ts';
@@ -98,6 +99,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0031_approval_log',
           '0030_lti_rosters',
           '0029_lti',
           '0028_calendar_feeds',
@@ -167,6 +169,7 @@ describe('migrations', () => {
           '0028_calendar_feeds',
           '0029_lti',
           '0030_lti_rosters',
+          '0031_approval_log',
         ],
       },
     });
@@ -274,6 +277,20 @@ describe('migrations', () => {
     expect((await read('google-only'))?.emailConfirmedAt).toBeInstanceOf(Date);
     expect((await read('root'))?.emailConfirmedAt).toBeInstanceOf(Date);
     expect((await read('confirmed-later'))?.emailConfirmedAt).toBeInstanceOf(Date);
+    await truncateAll(db);
+  });
+
+  it('keeps activity logged before the approval log, with no review, count or class', async () => {
+    const migrator = new Migrator({ db, provider: migrationProvider });
+    await truncateAll(db);
+    expect((await migrator.migrateTo('0030_lti_rosters')).error).toBeUndefined();
+    await sql`INSERT INTO schools (id, name) VALUES (${schoolA}, 'Lincoln')`.execute(db);
+    await sql`INSERT INTO audit_events (id, school_id, actor_id, action, target_id, at)
+        VALUES ('old', ${schoolA}, 'teacher-1', 'grades_saved', 'a1', now())`.execute(db);
+
+    expect((await migrateToLatest(db)).ok).toBe(true);
+    const [event] = await new PostgresAuditLog(db).listForSchool(schoolA, 10);
+    expect(event).toMatchObject({ id: 'old', review: null, count: null, classId: null });
     await truncateAll(db);
   });
 });
