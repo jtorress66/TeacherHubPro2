@@ -18,6 +18,7 @@ import {
   studentRepositoryContract,
 } from '../contracts/roster.contract.ts';
 import {
+  batchFindableContract,
   deletableContract,
   scopedRepositoryContract,
 } from '../contracts/scoped-repository.contract.ts';
@@ -194,6 +195,7 @@ scopedRepositoryContract('InMemoryAssignmentRepository', {
   ],
 });
 deletableContract('InMemoryAssignmentRepository', assignments);
+batchFindableContract('InMemoryAssignmentRepository', assignments);
 assignmentLookupContract('InMemoryAssignmentRepository', () => new InMemoryAssignmentRepository());
 
 scopedRepositoryContract('InMemoryGradeRepository', {
@@ -219,9 +221,12 @@ reportCardCommentContract(
   () => new InMemoryReportCardCommentRepository(),
 );
 
-scopedRepositoryContract('InMemorySubmissionRepository', {
+const submissions = {
   make: () => new InMemorySubmissionRepository(),
-  sample: (schoolId, id) => aSubmission({ schoolId, id: id as SubmissionId }),
+  sample: (schoolId: SchoolId, id: string) => aSubmission({ schoolId, id: id as SubmissionId }),
+};
+scopedRepositoryContract('InMemorySubmissionRepository', {
+  ...submissions,
   change: (submission) => ({ ...submission, aiFailure: 'timeout' }),
   lists: [
     {
@@ -230,6 +235,8 @@ scopedRepositoryContract('InMemorySubmissionRepository', {
     },
   ],
 });
+
+batchFindableContract('InMemorySubmissionRepository', submissions);
 
 scopedRepositoryContract('InMemoryAttendanceSessionRepository', {
   make: () => new InMemoryAttendanceSessionRepository(),
@@ -264,6 +271,7 @@ scopedRepositoryContract('InMemoryGameRepository', {
   ],
 });
 deletableContract('InMemoryGameRepository', games);
+batchFindableContract('InMemoryGameRepository', games);
 gamePlayRepositoryContract('InMemory', () => new InMemoryGamePlayRepository());
 
 scopedRepositoryContract('InMemorySubscriptionRepository', {

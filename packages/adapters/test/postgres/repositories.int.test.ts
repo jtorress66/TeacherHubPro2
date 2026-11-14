@@ -62,6 +62,7 @@ import {
   mailerContract,
   portalRepositoryContract,
   SequentialIdGenerator,
+  batchFindableContract,
   gradeRepositoryContract,
   reportCardCommentContract,
   passwordCredentialRepositoryContract,
@@ -280,6 +281,7 @@ withParents(parentsFor.category, () => {
     ],
   });
   deletableContract('PostgresAssignmentRepository', assignments);
+  batchFindableContract('PostgresAssignmentRepository', assignments);
   assignmentLookupContract('PostgresAssignmentRepository', () => repos.assignments);
 });
 
@@ -330,9 +332,12 @@ withParents(parentsFor.grading, () => {
   });
   reportCardCommentContract('PostgresReportCardCommentRepository', () => repos.reportCardComments);
 
-  scopedRepositoryContract('PostgresSubmissionRepository', {
+  const submissions = {
     make: () => repos.submissions,
-    sample: (schoolId, id) => aSubmission({ schoolId, id: id as SubmissionId }),
+    sample: (schoolId: SchoolId, id: string) => aSubmission({ schoolId, id: id as SubmissionId }),
+  };
+  scopedRepositoryContract('PostgresSubmissionRepository', {
+    ...submissions,
     change: (submission) => ({ ...submission, aiFailure: 'timeout' }),
     lists: [
       {
@@ -341,6 +346,7 @@ withParents(parentsFor.grading, () => {
       },
     ],
   });
+  batchFindableContract('PostgresSubmissionRepository', submissions);
 });
 
 withParents(parentsFor.none, () => {
@@ -368,6 +374,7 @@ withParents(parentsFor.class, () => {
     ],
   });
   deletableContract('PostgresGameRepository', games);
+  batchFindableContract('PostgresGameRepository', games);
 });
 
 withParents(parentsFor.games, () => {

@@ -35,6 +35,16 @@ for (const locale of ['es', 'en'] as const satisfies readonly Locale[]) {
     await page.getByRole('link', { name: t('questions.submissions') }).click();
     const ana = page.getByTestId('submission-Zayas');
     await expect(ana).toContainText(t('grading.status_submitted'));
+    // Answers read as the student saw them: the option's letter and text, not its stored index.
+    const choice = ana.getByRole('definition').filter({ hasText: 'Mercury' });
+    await expect(choice).toContainText('A. Mercury');
+    await expect(choice).toContainText(
+      `${t('grading.correct')} · ${t('grading.pointsOf', { score: 4, points: 4 })}`,
+    );
+    await expect(choice).not.toContainText(/^0/);
+    await expect(
+      ana.getByRole('definition').filter({ hasText: t('questions.true') }),
+    ).toContainText(t('grading.pointsOf', { score: 2, points: 2 }));
     await page.getByRole('button', { name: t('grading.gradeWithAi') }).click();
     await expect(ana).toContainText(t('grading.status_ai_graded'), { timeout: 30_000 });
     await expect(ana).toContainText(t('grading.draft', { score: 8, max: 10 }));

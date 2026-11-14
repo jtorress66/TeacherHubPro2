@@ -106,17 +106,19 @@ export default async function ApprovalsPage(props: Props) {
                 <th scope="col">{t('approvals.when')}</th>
                 <th scope="col">{t('approvals.teacher')}</th>
                 <th scope="col">{t('approvals.what')}</th>
+                <th scope="col">{t('approvals.item')}</th>
                 <th scope="col">{t('approvals.className')}</th>
               </tr>
             </thead>
             <tbody>
               {rows.map((row) => {
-                const [at, teacher, what, className] = approvalCells(row, t, when);
+                const [at, teacher, what, item, className] = approvalCells(row, t, when, locale);
                 return (
                   <tr key={row.event.id}>
                     <td>{at}</td>
                     <td>{teacher}</td>
                     <td>{what}</td>
+                    <td>{item}</td>
                     <td>{className}</td>
                   </tr>
                 );

@@ -117,6 +117,13 @@ export class InMemoryScopedRepository<T extends SchoolOwned> implements ScopedRe
     return Promise.resolve();
   }
 
+  findByIds(schoolId: SchoolId, ids: readonly T['id'][]): Promise<readonly T[]> {
+    const wanted = new Set<string>(ids);
+    return Promise.resolve(
+      [...this.rows.values()].filter((row) => row.schoolId === schoolId && wanted.has(row.id)),
+    );
+  }
+
   delete(schoolId: SchoolId, id: T['id']): Promise<void> {
     if (this.rows.get(id)?.schoolId === schoolId) this.rows.delete(id);
     return Promise.resolve();

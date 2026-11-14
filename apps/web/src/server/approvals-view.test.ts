@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { ApprovalRow } from '@thp/application';
-import type { AuditEvent, AuditEventId, ClassId, SchoolId, UserId } from '@thp/domain';
+import type { AuditEvent, AuditEventId, ClassId, LocalDate, SchoolId, UserId } from '@thp/domain';
 import { createTranslator } from '@thp/i18n';
 import {
   approvalCells,
@@ -30,6 +30,7 @@ const row = (
   event: event(overrides),
   teacherName: 'Ana López',
   className: 'Science 5',
+  item: { kind: 'title', text: 'Fractions quiz' },
   ...names,
 });
 
@@ -77,38 +78,59 @@ describe('approvalCells', () => {
   const t = createTranslator('en');
 
   it('says whether an AI grade was kept or changed, with the class, never a student', () => {
-    expect(approvalCells(row(), t, when)).toEqual([
+    expect(approvalCells(row(), t, when, 'en')).toEqual([
       stamp,
       'Ana López',
       'Approved an AI-suggested grade (kept as suggested)',
+      'Fractions quiz',
       'Science 5',
     ]);
-    expect(approvalCells(row({ review: 'changed' }), t, when)[2]).toBe(
+    expect(approvalCells(row({ review: 'changed' }), t, when, 'en')[2]).toBe(
       'Approved an AI-suggested grade (changed by the teacher)',
     );
   });
 
   it('gives the counts for game grades and weekly prep', () => {
     expect(
-      approvalCells(row({ action: 'game_grades_approved', review: null, count: 3 }), t, when)[2],
+      approvalCells(
+        row({ action: 'game_grades_approved', review: null, count: 3 }),
+        t,
+        when,
+        'en',
+      )[2],
     ).toBe('Approved a game’s grades (grades saved: 3)');
     expect(
-      approvalCells(row({ action: 'prep_approved', review: null, count: 0 }), t, when)[2],
+      approvalCells(row({ action: 'prep_approved', review: null, count: 0 }), t, when, 'en')[2],
     ).toBe('Approved a weekly prep (family emails sent: 0)');
-    expect(approvalCells(row({ action: 'learning_path_assigned', review: null }), t, when)[2]).toBe(
-      'Assigned a learning path',
-    );
+    expect(
+      approvalCells(row({ action: 'learning_path_assigned', review: null }), t, when, 'en')[2],
+    ).toBe('Assigned a learning path');
   });
 
   it('shows a dash for a missing class and a former user for a missing name', () => {
     expect(
-      approvalCells(row({ classId: null }, { className: null, teacherName: null }), t, when),
-    ).toEqual([stamp, 'A former user', expect.any(String), '—']);
+      approvalCells(row({ classId: null }, { className: null, teacherName: null }), t, when, 'en'),
+    ).toEqual([stamp, 'A former user', expect.any(String), expect.any(String), '—']);
+  });
+
+  it('names the item: a title, the week of a prep batch, a subject, or that it was deleted', () => {
+    const item = (value: ApprovalRow['item'], locale: 'en' | 'es' = 'en') =>
+      approvalCells(row({}, { item: value }), createTranslator(locale), when, locale)[3];
+
+    expect(item({ kind: 'title', text: 'Planet race' })).toBe('Planet race');
+    expect(item({ kind: 'week', start: '2026-11-09' as LocalDate })).toBe('Week of Nov 9, 2026');
+    expect(item({ kind: 'week', start: '2026-11-09' as LocalDate }, 'es')).toBe(
+      'Semana del 9 nov 2026',
+    );
+    expect(item({ kind: 'subject', subject: 'science' })).toBe('Science');
+    expect(item({ kind: 'subject', subject: 'science' }, 'es')).toBe('Ciencias');
+    expect(item({ kind: 'deleted' })).toBe('(deleted)');
+    expect(item({ kind: 'deleted' }, 'es')).toBe('(eliminado)');
   });
 
   it('is translated', () => {
     const es = createTranslator('es');
-    expect(approvalCells(row(), es, when)[2]).toBe(
+    expect(approvalCells(row(), es, when, 'es')[2]).toBe(
       'Aprobó una nota sugerida por la IA (se mantuvo la sugerencia)',
     );
   });
@@ -116,17 +138,28 @@ describe('approvalCells', () => {
 
 describe('approvalsCsv', () => {
   it('writes a translated header row, then one line per approval', () => {
-    const csv = approvalsCsv([row()], createTranslator('es'), when);
+    const csv = approvalsCsv([row()], createTranslator('es'), when, 'es');
 
     expect(csv.slice(1).split('\r\n')).toEqual([
-      'Cuándo,Maestro,Qué,Clase',
-      `"${stamp}",Ana López,Aprobó una nota sugerida por la IA (se mantuvo la sugerencia),Science 5`,
+      'Cuándo,Maestro,Qué,Elemento,Clase',
+      `"${stamp}",Ana López,Aprobó una nota sugerida por la IA (se mantuvo la sugerencia),Fractions quiz,Science 5`,
       '',
     ]);
   });
 
+  it('never lets a teacher-typed title run as a formula', () => {
+    const csv = approvalsCsv(
+      [row({}, { item: { kind: 'title', text: '=HYPERLINK("x")' } })],
+      createTranslator('en'),
+      when,
+      'en',
+    );
+
+    expect(csv).toContain(`"'=HYPERLINK(""x"")"`);
+  });
+
   it('starts with a byte order mark so spreadsheets read accents', () => {
-    expect(approvalsCsv([], createTranslator('en'), when).charCodeAt(0)).toBe(0xfeff);
+    expect(approvalsCsv([], createTranslator('en'), when, 'en').charCodeAt(0)).toBe(0xfeff);
   });
 });
 

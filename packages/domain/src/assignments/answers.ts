@@ -31,7 +31,8 @@ export const normalizeBlank = (value: string): string =>
     .replace(/\s+/g, ' ')
     .replace(/[.,;:!?]+$/, '');
 
-function matchingAnswer(answer: string): Readonly<Record<string, unknown>> | null {
+/** A matching answer's left → right object, or null when it is not one. */
+export function readMatchingAnswer(answer: string): Readonly<Record<string, unknown>> | null {
   try {
     const parsed: unknown = JSON.parse(answer);
     return typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)
@@ -74,7 +75,7 @@ const rules: { readonly [T in QuestionType]: AnswerRule<T> } = {
   },
   matching: {
     parse: (question, answer) => {
-      const chosen = matchingAnswer(answer);
+      const chosen = readMatchingAnswer(answer);
       if (chosen === null) return invalid(question.id, 'invalid_format');
       const lefts = new Set(question.pairs.map((pair) => pair.left));
       const rights = new Set(question.pairs.map((pair) => pair.right));
@@ -84,7 +85,7 @@ const rules: { readonly [T in QuestionType]: AnswerRule<T> } = {
       return valid ? ok(answer) : invalid(question.id, 'not_allowed');
     },
     score: (question, answer) => {
-      const chosen = matchingAnswer(answer) ?? {};
+      const chosen = readMatchingAnswer(answer) ?? {};
       const correct = question.pairs.filter((pair) => chosen[pair.left] === pair.right).length;
       return round((correct / question.pairs.length) * question.points);
     },

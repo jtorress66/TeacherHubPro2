@@ -18,6 +18,17 @@ export class PostgresGameRepository implements GameRepository {
     return row === undefined ? null : gameMapper.fromRow(row);
   }
 
+  async findByIds(schoolId: SchoolId, ids: readonly GameId[]): Promise<readonly Game[]> {
+    if (ids.length === 0) return [];
+    const rows = await this.db
+      .selectFrom('games')
+      .selectAll()
+      .where('school_id', '=', schoolId)
+      .where('id', 'in', ids)
+      .execute();
+    return rows.map(gameMapper.fromRow);
+  }
+
   save(game: Game): Promise<void> {
     return upsert(this.db, 'games', gameMapper.toRow(game));
   }

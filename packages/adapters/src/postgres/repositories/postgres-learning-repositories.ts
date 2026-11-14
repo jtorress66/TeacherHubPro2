@@ -25,6 +25,20 @@ export class PostgresLearningPathRepository implements LearningPathRepository {
     return row === undefined ? null : learningPathMapper.fromRow(row);
   }
 
+  async findByIds(
+    schoolId: SchoolId,
+    ids: readonly LearningPathId[],
+  ): Promise<readonly LearningPath[]> {
+    if (ids.length === 0) return [];
+    const rows = await this.db
+      .selectFrom('learning_paths')
+      .selectAll()
+      .where('school_id', '=', schoolId)
+      .where('id', 'in', ids)
+      .execute();
+    return rows.map(learningPathMapper.fromRow);
+  }
+
   /** A second assigned path for the student in the subject breaks a unique index and fails. */
   save(path: LearningPath): Promise<void> {
     return upsert(this.db, 'learning_paths', learningPathMapper.toRow(path));

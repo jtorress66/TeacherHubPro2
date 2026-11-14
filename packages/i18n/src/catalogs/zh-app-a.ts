@@ -296,6 +296,9 @@ export const zhAppA = {
     familyEmails: '已发送家庭邮件：{count}',
     grades: '已保存成绩：{count}',
     limit: '显示最近的 {count} 条。缩小日期范围可查看更早的审批。',
+    item: '项目',
+    week: '{date} 当周',
+    deleted: '（已删除）',
   },
   admin: {
     title: '学校用户',

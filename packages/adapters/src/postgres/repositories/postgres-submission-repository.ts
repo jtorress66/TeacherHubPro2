@@ -18,6 +18,20 @@ export class PostgresSubmissionRepository implements SubmissionRepository {
     return row === undefined ? null : submissionMapper.fromRow(row);
   }
 
+  async findByIds(
+    schoolId: SchoolId,
+    ids: readonly SubmissionId[],
+  ): Promise<readonly Submission[]> {
+    if (ids.length === 0) return [];
+    const rows = await this.db
+      .selectFrom('submissions')
+      .selectAll()
+      .where('school_id', '=', schoolId)
+      .where('id', 'in', ids)
+      .execute();
+    return rows.map(submissionMapper.fromRow);
+  }
+
   save(submission: Submission): Promise<void> {
     return upsert(this.db, 'submissions', submissionMapper.toRow(submission));
   }

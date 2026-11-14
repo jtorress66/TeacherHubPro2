@@ -1654,3 +1654,8 @@ tr[aria-current='true'] {
   grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
   align-items: start;
 }
+
+/* One line of a student's answer on the review page. */
+.answer-line {
+  display: block;
+}

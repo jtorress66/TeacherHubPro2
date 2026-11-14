@@ -22,6 +22,7 @@ import type {
   UserRepository,
 } from '@thp/ports';
 import { fail, type UseCaseError } from '../errors.ts';
+import { approvalItems, type ApprovalItem, type ApprovalItemDeps } from './approval-items.ts';
 
 /** What a use case needs to log an approval. */
 export interface ApprovalLogDeps {
@@ -77,6 +78,8 @@ export interface ApprovalRow {
   readonly teacherName: string | null;
   /** Null when no class was recorded or it was deleted. */
   readonly className: string | null;
+  /** What was approved, looked up now, so renamed or deleted items show as they are. */
+  readonly item: ApprovalItem;
 }
 
 export interface ApprovalList {
@@ -93,7 +96,7 @@ export interface ApprovalList {
  */
 export class ListApprovals {
   constructor(
-    private readonly deps: {
+    private readonly deps: ApprovalItemDeps & {
       readonly auditLog: ApprovalLogReader;
       readonly users: UserRepository;
       readonly classes: ClassRepository;
@@ -120,6 +123,7 @@ export class ListApprovals {
       this.deps.users.listBySchool(schoolId),
       this.deps.classes.listBySchool(schoolId, { includeArchived: true }),
     ]);
+    const itemOf = await approvalItems(this.deps, schoolId, events);
     const names = new Map<string, string>(users.map((user) => [user.id, user.name]));
     const classNames = new Map<string, string>(classes.map((cls) => [cls.id, cls.name]));
     return ok({
@@ -127,6 +131,7 @@ export class ListApprovals {
         event,
         teacherName: names.get(event.actorId) ?? null,
         className: event.classId === null ? null : (classNames.get(event.classId) ?? null),
+        item: itemOf(event),
       })),
       teachers: admin
         ? users

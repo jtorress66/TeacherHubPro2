@@ -2,7 +2,11 @@ import { describe, expect, it } from 'vitest';
 import type { ClassId, LearningPathId, LessonAttemptId, SchoolId, StudentId } from '@thp/domain';
 import type { LearningPathRepository, LessonAttemptRepository } from '@thp/ports';
 import { aLearningPath, aLessonAttempt } from '../fixtures.ts';
-import { deletableContract, scopedRepositoryContract } from './scoped-repository.contract.ts';
+import {
+  batchFindableContract,
+  deletableContract,
+  scopedRepositoryContract,
+} from './scoped-repository.contract.ts';
 
 const schoolA = 'school-a' as SchoolId;
 const schoolB = 'school-b' as SchoolId;
@@ -38,6 +42,7 @@ export function learningRepositoryContract(name: string, make: () => LearningRep
     ],
   });
   deletableContract(`${name} learning paths`, paths);
+  batchFindableContract(`${name} learning paths`, paths);
 
   describe(`${name} (LearningPathRepository)`, () => {
     it('lists oldest first, only the student’s or the class’s', async () => {
