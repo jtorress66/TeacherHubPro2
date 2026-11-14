@@ -34,8 +34,9 @@ test('the home page drawing moves, and stays still for people who ask for reduce
 
 for (const colorScheme of ['light', 'dark'] as const) {
   test.describe(`${colorScheme} theme`, () => {
+    // Contrast is read from text at rest: a fading-in hero phrase is briefly lighter mid-animation.
     test.beforeEach(async ({ page }) => {
-      await page.emulateMedia({ colorScheme });
+      await page.emulateMedia({ colorScheme, reducedMotion: 'reduce' });
     });
 
     test('public pages meet WCAG AA in English and Spanish', async ({ page }) => {

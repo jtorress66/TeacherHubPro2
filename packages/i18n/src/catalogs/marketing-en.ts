@@ -71,6 +71,20 @@ export const marketingEn = {
       ctaTitle: 'Try it with your own classes',
       ctaText: 'Set up a class in minutes and let the AI draft your next week.',
     },
+    video: {
+      title: 'See TeacherHubPro in about a minute',
+      note: 'Captions are available in seven languages: choose CC in the player.',
+      scriptTitle: 'Read the video script',
+      p1: 'Meet TeacherHubPro, your AI teaching workspace, built to make everyday teaching easier.',
+      p2: 'Planning next week? Just type one sentence. The Prep Agent drafts your lesson plans, slides, worksheets, a Friday quiz, and even a parent email.',
+      p3: 'Every weekly plan is aligned to Common Core standards, organized by day, and fully editable. Your plan, your way.',
+      p4: 'Turn any lesson into slides in seconds. Present full screen in class, print handouts, or send them straight to Google Classroom.',
+      p5: 'Build online tests, or import a PDF. Students answer from a private link, and the AI suggests grades for you to confirm.',
+      p6: 'Keep your gradebook, report cards, and attendance in one place, with a private portal that keeps families informed.',
+      p7: 'Start each day with the Command Center: today’s classes, what’s left to grade, students who may need help, and upcoming lessons.',
+      p8: 'And you’re always in control. The AI drafts, and you decide. Nothing reaches students or families until you approve it.',
+      p9: 'Try TeacherHubPro free for seven days. No credit card needed. Visit teacherhubpro.com.',
+    },
     feature: {
       lesson_planner: {
         title: 'Lesson planner',

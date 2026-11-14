@@ -8,6 +8,7 @@ import {
   LessonPlanIllustration,
   ParentPortalIllustration,
 } from '../../../components/hero-illustrations.tsx';
+import { IntroVideo } from '../../../components/intro-video.tsx';
 import { MarketingArt } from '../../../components/marketing-art.tsx';
 import {
   Faq,
@@ -81,7 +82,10 @@ const faqNumbers = ['1', '2', '3', '4', '5'] as const;
 const trustNumbers = ['1', '2', '3', '4'] as const;
 const steps = ['1', '2', '3'] as const;
 
-/** The landing page: the workspace hero, then what the app does, for whom, and how it is priced. */
+/**
+ * The landing page: the workspace hero and a short video, then what the app does, for whom, and
+ * how it is priced.
+ */
 export default async function HomePage({
   params,
 }: {
@@ -109,6 +113,8 @@ export default async function HomePage({
           phrases={[t('home.phraseLessons'), t('home.phraseAi'), t('home.phraseWorkflow')]}
         />
       </section>
+
+      <IntroVideo locale={locale} />
 
       <section className="m-section" aria-labelledby="features-heading">
         <h2 id="features-heading">{t('marketing.landing.featuresTitle')}</h2>

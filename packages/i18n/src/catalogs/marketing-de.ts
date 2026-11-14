@@ -81,6 +81,20 @@ export const marketingDe: MarketingMessages = {
       ctaText:
         'Richten Sie in wenigen Minuten eine Klasse ein und lassen Sie die KI Ihre nächste Woche entwerfen.',
     },
+    video: {
+      title: 'TeacherHubPro in etwa einer Minute',
+      note: 'Das Video ist auf Englisch gesprochen, mit deutschen Untertiteln: Wählen Sie im Player „CC“.',
+      scriptTitle: 'Den Text des Videos lesen',
+      p1: 'Lernen Sie TeacherHubPro kennen, Ihren KI-Arbeitsbereich für den Unterricht, der den Schulalltag leichter macht.',
+      p2: 'Sie planen die nächste Woche? Tippen Sie einfach einen Satz. Der Vorbereitungsagent entwirft Ihre Unterrichtspläne, Folien, Arbeitsblätter, ein Freitagsquiz und sogar eine Elternmail.',
+      p3: 'Jeder Wochenplan ist an den Common-Core-Standards ausgerichtet, nach Tagen geordnet und vollständig bearbeitbar. Ihr Plan, ganz nach Ihren Vorstellungen.',
+      p4: 'Machen Sie aus jeder Stunde in Sekunden Folien. Präsentieren Sie im Vollbild in der Klasse, drucken Sie Handouts oder senden Sie sie direkt an Google Classroom.',
+      p5: 'Erstellen Sie Online-Tests oder importieren Sie ein PDF. Die Schülerinnen und Schüler antworten über einen privaten Link, und die KI schlägt Noten vor, die Sie bestätigen.',
+      p6: 'Führen Sie Notenbuch, Zeugnisse und Anwesenheit an einem Ort, mit einem privaten Portal, das die Familien auf dem Laufenden hält.',
+      p7: 'Beginnen Sie jeden Tag in der Kommandozentrale: die heutigen Klassen, was noch zu bewerten ist, wer Hilfe brauchen könnte, und die kommenden Stunden.',
+      p8: 'Und Sie behalten immer die Kontrolle. Die KI entwirft, Sie entscheiden. Nichts erreicht Schüler oder Familien, bevor Sie es freigeben.',
+      p9: 'Testen Sie TeacherHubPro sieben Tage lang kostenlos. Keine Kreditkarte nötig. Besuchen Sie teacherhubpro.com.',
+    },
     feature: {
       lesson_planner: {
         title: 'Unterrichtsplaner',
