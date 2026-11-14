@@ -27,6 +27,9 @@ export async function ActivityLog(props: {
     <section className="card stack" aria-labelledby="activity-heading">
       <h2 id="activity-heading">{t('activity.title')}</h2>
       <p className="hint">{t('activity.intro')}</p>
+      <p>
+        <a href={`/${props.locale}/app/approvals`}>{t('activity.seeApprovals')}</a>
+      </p>
       {events.value.length === 0 ? (
         <p>{t('activity.empty')}</p>
       ) : (

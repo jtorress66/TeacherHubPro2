@@ -33,6 +33,7 @@ import type {
   AssignmentRepository,
 } from '@thp/ports';
 import { checkAiAccess } from '../accounts/ai-access.ts';
+import { recordApproval, type ApprovalLogDeps } from '../security/approvals.ts';
 import { fail, submissionFailure, type UseCaseError } from '../errors.ts';
 import type { JobHandler } from '../jobs/jobs.ts';
 import {
@@ -176,12 +177,19 @@ type DecisionDeps = AssignmentAccessDeps & {
   readonly ids: IdGenerator;
 };
 
+interface Decided {
+  /** The submission as it was before the decision. */
+  readonly before: Submission;
+  readonly after: Submission;
+  readonly assignment: Assignment;
+}
+
 /** Records the teacher's decision as the student's one grade (replacing any earlier one). */
 async function decide(
   deps: DecisionDeps,
   input: AssignmentRef & { readonly submissionId: SubmissionId },
   apply: (submission: Submission, gradeId: GradeId) => Result<ConfirmedSubmission, SubmissionError>,
-): Promise<Result<Submission, UseCaseError>> {
+): Promise<Result<Decided, UseCaseError>> {
   const found = await editableAssignment(deps, input);
   if (!found.ok) return found;
   const submission = await deps.submissions.findById(
@@ -198,7 +206,11 @@ async function decide(
   if (!decided.ok) return submissionFailure(decided.error);
   await deps.grades.save(decided.value.grade);
   await deps.submissions.save(decided.value.submission);
-  return ok(decided.value.submission);
+  return ok({
+    before: submission,
+    after: decided.value.submission,
+    assignment: found.value.assignment,
+  });
 }
 
 interface Decision extends AssignmentRef {
@@ -206,14 +218,17 @@ interface Decision extends AssignmentRef {
   readonly comment?: string | null;
 }
 
-/** The teacher accepts the draft (code scores plus AI suggestions), optionally adjusting it. */
+/**
+ * The teacher accepts the draft (code scores plus AI suggestions), optionally adjusting it. The
+ * approval is logged with whether the suggested score was kept.
+ */
 export class ConfirmGrade {
-  constructor(private readonly deps: DecisionDeps) {}
+  constructor(private readonly deps: DecisionDeps & ApprovalLogDeps) {}
 
-  execute(
+  async execute(
     input: Decision & { readonly score?: number },
   ): Promise<Result<Submission, UseCaseError>> {
-    return decide(this.deps, input, (submission, gradeId) =>
+    const decided = await decide(this.deps, input, (submission, gradeId) =>
       confirmAiGrade(submission, {
         gradeId,
         teacherId: input.actor.id,
@@ -221,6 +236,17 @@ export class ConfirmGrade {
         ...(input.score === undefined ? {} : { score: input.score }),
       }),
     );
+    if (!decided.ok) return decided;
+    const { before, after, assignment } = decided.value;
+    await recordApproval(this.deps, {
+      actor: input.actor,
+      action: 'ai_grade_approved',
+      schoolId: after.schoolId,
+      targetId: after.id,
+      classId: assignment.classId,
+      review: after.finalScore === before.aiDraft?.score ? 'kept' : 'changed',
+    });
+    return ok(after);
   }
 }
 
@@ -228,8 +254,10 @@ export class ConfirmGrade {
 export class GradeByHand {
   constructor(private readonly deps: DecisionDeps) {}
 
-  execute(input: Decision & { readonly score: number }): Promise<Result<Submission, UseCaseError>> {
-    return decide(this.deps, input, (submission, gradeId) =>
+  async execute(
+    input: Decision & { readonly score: number },
+  ): Promise<Result<Submission, UseCaseError>> {
+    const decided = await decide(this.deps, input, (submission, gradeId) =>
       gradeManually(submission, {
         gradeId,
         teacherId: input.actor.id,
@@ -237,5 +265,6 @@ export class GradeByHand {
         score: input.score,
       }),
     );
+    return decided.ok ? ok(decided.value.after) : decided;
   }
 }

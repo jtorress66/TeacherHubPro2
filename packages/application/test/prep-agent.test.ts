@@ -432,4 +432,41 @@ describe('PublishPrepBatch', () => {
       await new PublishPrepBatch(world).execute({ actor: setup.actor, batchId: batch.id }),
     ).toEqual({ ok: false, error: { field: 'status', code: 'not_allowed' } });
   });
+
+  it('logs the approval once, with the batch, its class and the family emails sent', async () => {
+    const world = makeWorld();
+    const { ref, cls, batch } = await readyBatch(world);
+
+    valueOf(await new PublishPrepBatch(world).execute(ref));
+    expect((await new PublishPrepBatch(world).execute(ref)).ok).toBe(false);
+
+    expect(world.auditLog.events).toEqual([
+      {
+        id: expect.any(String) as unknown,
+        schoolId: ref.actor.schoolId,
+        actorId: ref.actor.id,
+        action: 'prep_approved',
+        targetId: batch.id,
+        at: world.clock.now(),
+        review: null,
+        count: 2,
+        classId: cls.id,
+      },
+    ]);
+  });
+
+  it('counts only the family emails that were actually sent', async () => {
+    const world = makeWorld();
+    const { ref } = await readyBatch(world);
+
+    valueOf(
+      await new PublishPrepBatch({ ...world, mailer: new FakeMailer({ reject: true }) }).execute(
+        ref,
+      ),
+    );
+
+    expect(world.auditLog.events.map((event) => [event.action, event.count])).toEqual([
+      ['prep_approved', 0],
+    ]);
+  });
 });

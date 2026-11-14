@@ -419,6 +419,9 @@ export interface AuditEventsTable {
   action: string;
   target_id: string | null;
   at: Date;
+  review: string | null;
+  count: number | null;
+  class_id: string | null;
 }
 
 export interface LeadsTable {

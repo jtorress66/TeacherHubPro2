@@ -61,6 +61,9 @@ export class RecordActivity {
       actorId: input.actor.id,
       action: input.action,
       targetId: input.targetId ?? null,
+      review: null,
+      count: null,
+      classId: null,
       at: this.deps.clock.now(),
     });
   }

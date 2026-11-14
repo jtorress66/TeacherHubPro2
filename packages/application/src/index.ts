@@ -487,6 +487,16 @@ export {
   type LeadList,
 } from './marketing/leads.ts';
 export { ListActivity, RecordActivity, Throttle, maxListedActivity } from './security/hardening.ts';
+export {
+  ListApprovals,
+  maxListedApprovals,
+  recordApproval,
+  type Approval,
+  type ApprovalList,
+  type ApprovalLogDeps,
+  type ApprovalRow,
+  type ApprovalsQuery,
+} from './security/approvals.ts';
 export { CopyStudents, type CopyStudentsDeps } from './students/copy-students.ts';
 export {
   calendarDaysAhead,

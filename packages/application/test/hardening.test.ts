@@ -73,6 +73,9 @@ describe('RecordActivity and ListActivity', () => {
         action: 'grades_saved',
         targetId: 'assignment-1',
         at: world.clock.now(),
+        review: null,
+        count: null,
+        classId: null,
       },
     ]);
   });

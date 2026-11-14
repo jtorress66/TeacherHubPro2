@@ -169,6 +169,7 @@ import {
   CopyStudents,
   RecordActivity,
   ListActivity,
+  ListApprovals,
   SetUpFirstSuperAdmin,
   RequestPasswordReset,
   SetPassword,
@@ -476,6 +477,7 @@ export interface AppContainer {
   readonly throttle: Throttle;
   readonly recordActivity: RecordActivity;
   readonly listActivity: ListActivity;
+  readonly listApprovals: ListApprovals;
   /** Whether the first super admin setup page is on (a key is set). */
   readonly superAdminSetupAvailable: boolean;
   readonly setUpFirstSuperAdmin: SetUpFirstSuperAdmin;
@@ -987,6 +989,7 @@ export function createAppContainer(
     throttle: new Throttle(deps),
     recordActivity: new RecordActivity(deps),
     listActivity: new ListActivity(deps),
+    listApprovals: new ListApprovals(deps),
     superAdminSetupAvailable: config.superAdminSetupKey !== null,
     setUpFirstSuperAdmin: new SetUpFirstSuperAdmin(deps),
     requestPasswordReset: new RequestPasswordReset(deps),

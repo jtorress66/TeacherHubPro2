@@ -29,6 +29,7 @@ import * as reconfirmPasswordAccounts from './0027_reconfirm_password_accounts.t
 import * as calendarFeeds from './0028_calendar_feeds.ts';
 import * as lti from './0029_lti.ts';
 import * as ltiRosters from './0030_lti_rosters.ts';
+import * as approvalLog from './0031_approval_log.ts';
 
 /** Ordered list of migrations, bundled with the code (no filesystem lookups at runtime). */
 const migrations: Readonly<Record<string, Migration>> = {
@@ -62,6 +63,7 @@ const migrations: Readonly<Record<string, Migration>> = {
   '0028_calendar_feeds': calendarFeeds,
   '0029_lti': lti,
   '0030_lti_rosters': ltiRosters,
+  '0031_approval_log': approvalLog,
 };
 
 export const migrationProvider: MigrationProvider = {

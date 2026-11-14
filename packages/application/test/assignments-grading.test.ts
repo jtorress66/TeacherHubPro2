@@ -496,6 +496,104 @@ describe('Grading', () => {
   });
 });
 
+describe('Approval log for AI grades', () => {
+  /** Ana's submission with an AI draft of 7 (4 scored by code, 3 suggested by the AI). */
+  async function drafted(world: World) {
+    const setup = await classWithQuiz(world);
+    const token = await link(world, setup);
+    valueOf(
+      await new SubmitAnswers(world).execute({
+        token,
+        assignmentId: setup.assignment.id,
+        answers: { q1: '0', q2: 'Because the Earth spins' },
+      }),
+    );
+    valueOf(await new RequestAiGrading(world).execute(setup.base));
+    await runJobs(world, new GradingHandler({ ...world, grader: new FakeSubmissionGrader(0.5) }));
+    const submission = valueOf(await new ListSubmissions(world).execute(setup.base)).rows.find(
+      (row) => row.submission !== null,
+    )?.submission;
+    if (!submission) throw new Error('no submission');
+    expect(submission.aiDraft?.score).toBe(7);
+    return { ...setup, submission };
+  }
+
+  it('logs a confirmed AI grade as kept when the teacher keeps the suggested score', async () => {
+    const world = makeWorld();
+    const s = await drafted(world);
+
+    valueOf(await new ConfirmGrade(world).execute({ ...s.base, submissionId: s.submission.id }));
+
+    expect(world.auditLog.events).toEqual([
+      {
+        id: expect.any(String) as unknown,
+        schoolId: s.actor.schoolId,
+        actorId: s.actor.id,
+        action: 'ai_grade_approved',
+        targetId: s.submission.id,
+        at: world.clock.now(),
+        review: 'kept',
+        count: null,
+        classId: s.cls.id,
+      },
+    ]);
+  });
+
+  it('counts typing the same score as the suggestion as kept', async () => {
+    const world = makeWorld();
+    const s = await drafted(world);
+
+    valueOf(
+      await new ConfirmGrade(world).execute({ ...s.base, submissionId: s.submission.id, score: 7 }),
+    );
+
+    expect(world.auditLog.events.map((event) => event.review)).toEqual(['kept']);
+  });
+
+  it('logs a confirmed AI grade as changed when the teacher adjusts the score', async () => {
+    const world = makeWorld();
+    const s = await drafted(world);
+
+    valueOf(
+      await new ConfirmGrade(world).execute({ ...s.base, submissionId: s.submission.id, score: 8 }),
+    );
+
+    expect(world.auditLog.events).toMatchObject([
+      { action: 'ai_grade_approved', targetId: s.submission.id, review: 'changed' },
+    ]);
+    expect(JSON.stringify(world.auditLog.events)).not.toContain('Zayas');
+  });
+
+  it('logs nothing when the confirmation fails or the teacher grades by hand', async () => {
+    const world = makeWorld();
+    const s = await drafted(world);
+
+    expect(
+      (
+        await new ConfirmGrade(world).execute({
+          ...s.base,
+          submissionId: s.submission.id,
+          score: -1,
+        })
+      ).ok,
+    ).toBe(false);
+    expect(
+      (
+        await new ConfirmGrade(world).execute({
+          ...s.base,
+          actor: colleagueOf(s.actor),
+          submissionId: s.submission.id,
+        })
+      ).ok,
+    ).toBe(false);
+    valueOf(
+      await new GradeByHand(world).execute({ ...s.base, submissionId: s.submission.id, score: 5 }),
+    );
+
+    expect(world.auditLog.events).toEqual([]);
+  });
+});
+
 describe('Google Classroom', () => {
   const classroom = new FakeClassroom({
     accessToken: 'classroom-access',

@@ -176,12 +176,13 @@ export async function gradeSubmissionAction(
     submissionId: text(data, 'submissionId') as SubmissionId,
     comment: orNull(text(data, 'comment')),
   };
-  const result =
-    text(data, 'intent') === 'confirm'
-      ? await app.confirmGrade.execute({ ...decision, ...(score === undefined ? {} : { score }) })
-      : await app.gradeByHand.execute({ ...decision, score: score ?? Number.NaN });
+  // Confirming an AI draft logs its own approval in the use case; grading by hand is logged here.
+  const confirming = text(data, 'intent') === 'confirm';
+  const result = confirming
+    ? await app.confirmGrade.execute({ ...decision, ...(score === undefined ? {} : { score }) })
+    : await app.gradeByHand.execute({ ...decision, score: score ?? Number.NaN });
   if (!result.ok) return { errors: formErrors(result.error, locale) };
-  await record(ref.actor, 'submission_graded', decision.submissionId);
+  if (!confirming) await record(ref.actor, 'submission_graded', decision.submissionId);
   revalidatePath(`${assignmentPath(locale, classId, assignmentId)}/submissions`);
   revalidatePath(`${classPath(locale, classId)}/gradebook`);
   revalidatePath(`${classPath(locale, classId)}/report-cards`);
