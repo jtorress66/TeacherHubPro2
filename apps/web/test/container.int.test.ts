@@ -35,6 +35,9 @@ afterAll(() => db.destroy());
 
 const uniqueEmail = () => `teacher+${randomUUID().slice(0, 8)}@school.edu`;
 const password = 'correct horse battery';
+const chromeOnWindows =
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
+const newBrowser = { sessionToken: null, userAgent: null };
 
 async function signUp(email = uniqueEmail()) {
   const result = await app.signUp.execute({
@@ -44,6 +47,7 @@ async function signUp(email = uniqueEmail()) {
     language: 'es',
     defaultSchoolName: 'Mi escuela',
     adult: true,
+    userAgent: chromeOnWindows,
   });
   if (!result.ok) throw new Error(JSON.stringify(result.error));
   return result.value;
@@ -88,7 +92,12 @@ describe('web container against Postgres', () => {
         role: 'teacher',
         nonce: new URL(redirectUrl).searchParams.get('nonce') ?? '',
       });
-      return lti.completeLaunch.execute({ idToken, state: saved.state, saved });
+      return lti.completeLaunch.execute({
+        idToken,
+        state: saved.state,
+        saved,
+        browser: newBrowser,
+      });
     };
 
     const first = await launch();
@@ -152,13 +161,39 @@ describe('web container against Postgres', () => {
 
   it('logs in with the password, and logging out ends the session', async () => {
     const email = uniqueEmail();
-    await signUp(email);
+    const { sessionToken } = await signUp(email);
 
-    const login = await app.logIn.execute({ email, password });
-    expect(login.ok).toBe(true);
-    if (!login.ok) return;
-    await app.logOut.execute(login.value.sessionToken);
-    expect((await app.authenticate.execute(login.value.sessionToken)).ok).toBe(false);
+    const login = await app.logIn.execute({
+      email,
+      password,
+      browser: { sessionToken, userAgent: chromeOnWindows },
+    });
+    if (!login.ok || login.value.signIn.kind !== 'signedIn') throw new Error(JSON.stringify(login));
+    const token = login.value.signIn.sessionToken;
+    await app.logOut.execute(token);
+    expect((await app.authenticate.execute(token)).ok).toBe(false);
+  });
+
+  it('asks before signing in on a second device, then signs the first one out', async () => {
+    const email = uniqueEmail();
+    const { sessionToken: first } = await signUp(email);
+
+    const login = await app.logIn.execute({ email, password, browser: newBrowser });
+    if (!login.ok || login.value.signIn.kind !== 'confirm') throw new Error(JSON.stringify(login));
+    const { ticket } = login.value.signIn;
+    expect(await app.describeSignInConfirmation.execute({ ticket })).toEqual({
+      ok: true,
+      value: { device: { browser: 'chrome', os: 'windows' }, minutesAgo: 0 },
+    });
+    expect((await app.authenticate.execute(first)).ok).toBe(true);
+
+    const confirmed = await app.confirmSignIn.execute({ ticket, userAgent: null });
+    if (!confirmed.ok) throw new Error(JSON.stringify(confirmed.error));
+    expect((await app.authenticate.execute(confirmed.value.sessionToken)).ok).toBe(true);
+    expect(await app.authenticate.execute(first)).toEqual({
+      ok: false,
+      error: { code: 'session_replaced' },
+    });
   });
 
   it('signs in with the local Google stand-in', async () => {
@@ -173,9 +208,11 @@ describe('web container against Postgres', () => {
       redirectUri: `${config.appUrl}/api/auth/google/callback`,
       language: 'en',
       defaultSchoolName: 'My School',
+      browser: newBrowser,
     });
     expect(result.ok && result.value).toMatchObject({
       created: true,
+      signIn: { kind: 'signedIn' },
       school: { name: 'My School' },
     });
   });

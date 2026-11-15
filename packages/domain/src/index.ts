@@ -17,6 +17,7 @@ export {
 } from './shared/markdown.ts';
 
 export * from './accounts/session.ts';
+export * from './accounts/device.ts';
 export * from './accounts/password-policy.ts';
 export * from './schools/school.ts';
 export * from './schools/school-logo.ts';

@@ -59,7 +59,10 @@ import {
   InMemoryRateLimiter,
   InMemoryAuditLog,
 } from '@thp/testing';
-import { ConfirmEmail, SignUp } from '../src/index.ts';
+import { ConfirmEmail, SignUp, type SignInBrowser } from '../src/index.ts';
+
+/** A browser with no session cookie and no user agent. */
+export const noBrowser: SignInBrowser = { sessionToken: null, userAgent: null };
 
 export const googleProfile = {
   email: 'ana.google@gmail.com' as Email,
@@ -148,13 +151,14 @@ export type World = ReturnType<typeof makeWorld>;
 
 export const password = 'correct horse battery';
 
-export const signUpInput = (email = 'ana@school.edu') => ({
+export const signUpInput = (email = 'ana@school.edu', userAgent: string | null = null) => ({
   name: 'Ana López',
   email,
   password,
   language: 'es',
   defaultSchoolName: 'Mi escuela',
   adult: true,
+  userAgent,
 });
 
 /** The secret of the newest emailed link to an address (it follows the link's #). */
@@ -166,8 +170,8 @@ export function emailedToken(world: World, email: string): string {
 }
 
 /** A teacher who has just signed up with email and password, before confirming their email. */
-export async function signedUpUnconfirmed(world: World, email?: string) {
-  const result = await new SignUp(world).execute(signUpInput(email));
+export async function signedUpUnconfirmed(world: World, email?: string, userAgent?: string) {
+  const result = await new SignUp(world).execute(signUpInput(email, userAgent));
   if (!result.ok) throw new Error(`sign-up failed: ${JSON.stringify(result.error)}`);
   return result.value;
 }
@@ -176,8 +180,8 @@ export async function signedUpUnconfirmed(world: World, email?: string) {
  * A teacher who has signed up and confirmed their email from the emailed link. The confirmation
  * email is read and taken out of the outbox, so tests see only the mail they cause.
  */
-export async function signedUp(world: World, email?: string) {
-  const account = await signedUpUnconfirmed(world, email);
+export async function signedUp(world: World, email?: string, userAgent?: string) {
+  const account = await signedUpUnconfirmed(world, email, userAgent);
   const confirmed = await new ConfirmEmail(world).execute({
     token: emailedToken(world, account.user.email),
   });

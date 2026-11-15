@@ -9,6 +9,11 @@ import {
   sessionCookieOptions,
 } from '../../../../../server/cookies.ts';
 import { afterLogInPath, LTI_LINK_COOKIE } from '../../../../../server/lti.ts';
+import {
+  confirmSignInPath,
+  SIGN_IN_CONFIRM_COOKIE,
+  signInConfirmCookieOptions,
+} from '../../../../../server/sign-in-confirm.ts';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,17 +36,33 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     redirectUri: `${app.appUrl}/api/auth/google/callback`,
     language: locale,
     defaultSchoolName: createTranslator(locale)('defaults.schoolName'),
+    browser: {
+      sessionToken: request.cookies.get(SESSION_COOKIE)?.value ?? null,
+      userAgent: request.headers.get('user-agent'),
+    },
   });
   if (!result.ok) return failed(result.error.code);
 
   // A course system launch waiting to be linked comes back to its linking page.
   const next = afterLogInPath(locale, request.cookies.has(LTI_LINK_COOKIE));
+  const { signIn } = result.value;
+  // The account is in use on another device: ask first, on the confirmation page.
+  if (signIn.kind === 'confirm') {
+    const response = NextResponse.redirect(`${app.appUrl}${confirmSignInPath(locale, next)}`);
+    response.cookies.delete(OAUTH_STATE_COOKIE);
+    response.cookies.set(
+      SIGN_IN_CONFIRM_COOKIE,
+      signIn.ticket,
+      signInConfirmCookieOptions(app.appUrl),
+    );
+    return response;
+  }
   const response = NextResponse.redirect(`${app.appUrl}${next}`);
   response.cookies.delete(OAUTH_STATE_COOKIE);
   const expires = new Date(Date.now() + sessionLifetimeDays * 24 * 60 * 60 * 1000);
   response.cookies.set(
     SESSION_COOKIE,
-    result.value.sessionToken,
+    signIn.sessionToken,
     sessionCookieOptions(app.appUrl, expires),
   );
   return response;

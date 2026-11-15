@@ -1174,6 +1174,33 @@ export const deAppB = {
     use: 'Bewertungsraster verwenden',
     useHint: 'Füllt das Feld für das Bewertungsraster mit einem Ihrer gespeicherten Raster.',
   },
+  signInConfirm: {
+    title: 'Auf einem anderen Gerät angemeldet',
+    body: 'Dieses Konto ist bereits auf einem anderen Gerät angemeldet ({device}, aktiv {when}). Wenn Sie fortfahren, wird dieses Gerät abgemeldet.',
+    bodyUnknownDevice:
+      'Dieses Konto ist bereits auf einem anderen Gerät angemeldet (aktiv {when}). Wenn Sie fortfahren, wird dieses Gerät abgemeldet.',
+    justNow: 'gerade eben',
+    continue: 'Hier fortfahren',
+    cancel: 'Abbrechen',
+  },
+  devices: {
+    label: '{browser} auf {os}',
+    browser_chrome: 'Chrome',
+    browser_edge: 'Edge',
+    browser_firefox: 'Firefox',
+    browser_safari: 'Safari',
+    browser_samsung: 'Samsung Internet',
+    browser_opera: 'Opera',
+    browser_unknown: 'Unbekannter Browser',
+    os_windows: 'Windows',
+    os_macos: 'macOS',
+    os_iphone: 'iPhone',
+    os_ipad: 'iPad',
+    os_android: 'Android',
+    os_chromeos: 'ChromeOS',
+    os_linux: 'Linux',
+    os_unknown: 'einem unbekannten Gerät',
+  },
   confirmEmail: {
     bannerTitle: 'Bestätigen Sie Ihre E-Mail, um die KI-Werkzeuge zu nutzen',
     bannerText:
@@ -1247,6 +1274,9 @@ export const deAppB = {
     invalid_credentials: 'E-Mail-Adresse oder Passwort ist falsch.',
     unauthenticated: 'Bitte melden Sie sich an.',
     session_expired: 'Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.',
+    session_replaced:
+      'Sie wurden abgemeldet, weil Ihr Konto auf einem anderen Gerät angemeldet wurde. Wenn Sie das nicht waren, ändern Sie Ihr Passwort.',
+    sign_in_expired: 'Die Anmeldung hat zu lange gewartet. Bitte melden Sie sich erneut an.',
     google_failed:
       'Die Anmeldung mit Google hat nicht funktioniert. Bitte versuchen Sie es erneut.',
     google_email_unverified: 'Google hat diese E-Mail-Adresse nicht bestätigt.',

@@ -26,7 +26,7 @@ import {
   tokens,
   type LtiWorld,
 } from './lti-world.ts';
-import { signedUp } from './world.ts';
+import { signedUp, noBrowser } from './world.ts';
 
 describe('RegisterLtiPlatform, ListLtiPlatforms and RemoveLtiPlatform', () => {
   it('lets a school admin register, list and remove their school’s course system', async () => {
@@ -312,7 +312,10 @@ describe('CompleteLtiLaunch', () => {
     const outcome = valueOf(await launch(world));
 
     expect(outcome).toMatchObject({ kind: 'signedIn', language: teacher.language });
-    const token = outcome.kind === 'signedIn' ? outcome.sessionToken : '';
+    const token =
+      outcome.kind === 'signedIn' && outcome.signIn.kind === 'signedIn'
+        ? outcome.signIn.sessionToken
+        : '';
     const session = await world.sessions.findByTokenHash(await world.tokenHasher.hash(token));
     expect(session?.userId).toBe(teacher.id);
   });
@@ -354,11 +357,15 @@ describe('CompleteLtiLaunch', () => {
     const idToken = await tokens.sign(launchClaims(world, saved));
     const complete = new CompleteLtiLaunch(world);
 
-    expect(await complete.execute({ idToken, state: 'forged', saved })).toEqual({
-      ok: false,
-      error: { code: 'state_mismatch' },
-    });
-    expect(await complete.execute({ idToken, state: saved.state, saved: null })).toEqual({
+    expect(await complete.execute({ idToken, state: 'forged', saved, browser: noBrowser })).toEqual(
+      {
+        ok: false,
+        error: { code: 'state_mismatch' },
+      },
+    );
+    expect(
+      await complete.execute({ idToken, state: saved.state, saved: null, browser: noBrowser }),
+    ).toEqual({
       ok: false,
       error: { code: 'state_mismatch' },
     });
@@ -371,7 +378,12 @@ describe('CompleteLtiLaunch', () => {
     const idToken = await tokens.signWithOtherKey(launchClaims(world, saved));
 
     expect(
-      await new CompleteLtiLaunch(world).execute({ idToken, state: saved.state, saved }),
+      await new CompleteLtiLaunch(world).execute({
+        idToken,
+        state: saved.state,
+        saved,
+        browser: noBrowser,
+      }),
     ).toEqual({ ok: false, error: { code: 'invalid_token' } });
   });
 
@@ -401,7 +413,12 @@ describe('CompleteLtiLaunch', () => {
     valueOf(await new RemoveLtiPlatform(world).execute({ actor: admin, platformId: platform.id }));
     const idToken = await tokens.sign(launchClaims(world, saved));
     expect(
-      await new CompleteLtiLaunch(world).execute({ idToken, state: saved.state, saved }),
+      await new CompleteLtiLaunch(world).execute({
+        idToken,
+        state: saved.state,
+        saved,
+        browser: noBrowser,
+      }),
     ).toEqual({ ok: false, error: { code: 'unknown_platform' } });
   });
 
@@ -412,8 +429,12 @@ describe('CompleteLtiLaunch', () => {
     const idToken = await tokens.sign(launchClaims(world, saved));
     const complete = new CompleteLtiLaunch(world);
 
-    expect((await complete.execute({ idToken, state: saved.state, saved })).ok).toBe(true);
-    expect(await complete.execute({ idToken, state: saved.state, saved })).toEqual({
+    expect(
+      (await complete.execute({ idToken, state: saved.state, saved, browser: noBrowser })).ok,
+    ).toBe(true);
+    expect(
+      await complete.execute({ idToken, state: saved.state, saved, browser: noBrowser }),
+    ).toEqual({
       ok: false,
       error: { code: 'replayed' },
     });

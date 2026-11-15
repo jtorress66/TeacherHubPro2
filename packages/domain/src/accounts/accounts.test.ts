@@ -42,6 +42,7 @@ describe('sessions', () => {
     tokenHash: 'hash-1',
     userId: 'teacher-1' as UserId,
     schoolId: 'school-1' as SchoolId,
+    device: null,
     now,
   });
 
@@ -53,6 +54,10 @@ describe('sessions', () => {
       schoolId: 'school-1',
       createdAt: now,
       expiresAt: new Date('2026-10-01T08:00:00Z'),
+      lastSeenAt: now,
+      device: null,
+      endedAt: null,
+      endedReason: null,
     });
   });
 

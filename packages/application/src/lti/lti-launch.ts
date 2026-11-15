@@ -24,7 +24,12 @@ import type {
   UserRepository,
   Clock,
 } from '@thp/ports';
-import { SessionIssuer, type SessionIssuerDeps } from '../accounts/session-issuer.ts';
+import {
+  SignInGate,
+  type SignInBrowser,
+  type SignInGateDeps,
+  type SignInStep,
+} from '../accounts/sign-in-gate.ts';
 import {
   issuePlaceTicket,
   ltiItemTarget,
@@ -148,7 +153,8 @@ export class StartLtiLogin {
 }
 
 interface SignedIn {
-  readonly sessionToken: string;
+  /** Signed in, or asked to confirm first because the account is in use on another device. */
+  readonly signIn: SignInStep;
   readonly language: Language;
 }
 
@@ -174,7 +180,7 @@ export type LtiLaunchOutcome =
     }
   | { readonly kind: 'learnerNotYet'; readonly locale: string | null };
 
-export interface CompleteLtiLaunchDeps extends SessionIssuerDeps, LtiItemDeps {
+export interface CompleteLtiLaunchDeps extends SignInGateDeps, LtiItemDeps {
   readonly ltiPlatforms: LtiPlatformRepository;
   readonly ltiTokenVerifier: LtiTokenVerifier;
   readonly ltiNonces: LtiNonceRepository;
@@ -213,16 +219,17 @@ async function rememberCourse(
  * them is kept.
  */
 export class CompleteLtiLaunch {
-  private readonly sessions: SessionIssuer;
+  private readonly gate: SignInGate;
 
   constructor(private readonly deps: CompleteLtiLaunchDeps) {
-    this.sessions = new SessionIssuer(deps);
+    this.gate = new SignInGate(deps);
   }
 
   async execute(input: {
     readonly idToken: string;
     readonly state: string;
     readonly saved: SavedLtiLogin | null;
+    readonly browser: SignInBrowser;
   }): Promise<Result<LtiLaunchOutcome, LtiError>> {
     const { saved } = input;
     if (saved?.state !== input.state) return refuse('state_mismatch');
@@ -261,7 +268,10 @@ export class CompleteLtiLaunch {
     }
     if (user.suspendedAt !== null) return refuse('account_suspended');
     await rememberCourse(this.deps.ltiCourses, launch.value, user, now);
-    const signedIn = { sessionToken: await this.sessions.issue(user), language: user.language };
+    const signedIn = {
+      signIn: await this.gate.admit(user, input.browser),
+      language: user.language,
+    };
     if (placeTicket !== null) return ok({ kind: 'pickContent', ticket: placeTicket, ...signedIn });
     const { placedItem } = launch.value;
     const target = placedItem === null ? null : await ltiItemTarget(this.deps, user, placedItem);

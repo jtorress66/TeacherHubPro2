@@ -1176,6 +1176,33 @@ export const frAppB = {
     use: 'Utiliser une grille',
     useHint: "Remplit le champ de grille avec l'une de vos grilles enregistrées.",
   },
+  signInConfirm: {
+    title: 'Connecté sur un autre appareil',
+    body: 'Ce compte est déjà connecté sur un autre appareil ({device}, actif {when}). Si vous continuez, cet appareil sera déconnecté.',
+    bodyUnknownDevice:
+      'Ce compte est déjà connecté sur un autre appareil (actif {when}). Si vous continuez, cet appareil sera déconnecté.',
+    justNow: "à l'instant",
+    continue: 'Continuer ici',
+    cancel: 'Annuler',
+  },
+  devices: {
+    label: '{browser} sur {os}',
+    browser_chrome: 'Chrome',
+    browser_edge: 'Edge',
+    browser_firefox: 'Firefox',
+    browser_safari: 'Safari',
+    browser_samsung: 'Samsung Internet',
+    browser_opera: 'Opera',
+    browser_unknown: 'Navigateur inconnu',
+    os_windows: 'Windows',
+    os_macos: 'macOS',
+    os_iphone: 'iPhone',
+    os_ipad: 'iPad',
+    os_android: 'Android',
+    os_chromeos: 'ChromeOS',
+    os_linux: 'Linux',
+    os_unknown: 'appareil inconnu',
+  },
   confirmEmail: {
     bannerTitle: "Confirmez votre e-mail pour utiliser les outils d'IA",
     bannerText:
@@ -1246,6 +1273,9 @@ export const frAppB = {
     invalid_credentials: "L'e-mail ou le mot de passe est incorrect.",
     unauthenticated: 'Veuillez vous connecter.',
     session_expired: 'Votre session a expiré. Veuillez vous reconnecter.',
+    session_replaced:
+      "Vous avez été déconnecté, car votre compte s'est connecté sur un autre appareil. Si ce n'était pas vous, changez votre mot de passe.",
+    sign_in_expired: 'La connexion a attendu trop longtemps. Veuillez vous reconnecter.',
     google_failed: "La connexion avec Google n'a pas fonctionné. Veuillez réessayer.",
     google_email_unverified: "Google n'a pas vérifié cette adresse e-mail.",
     forbidden: "Vous n'avez pas l'autorisation de faire cela.",

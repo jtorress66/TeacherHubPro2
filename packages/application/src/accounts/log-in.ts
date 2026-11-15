@@ -1,9 +1,14 @@
 import { ok, parseEmail, type Result, type User } from '@thp/domain';
 import type { PasswordCredentialRepository, PasswordHasher, UserRepository } from '@thp/ports';
 import { fail, type UseCaseError } from '../errors.ts';
-import { SessionIssuer, type SessionIssuerDeps } from './session-issuer.ts';
+import {
+  SignInGate,
+  type SignInBrowser,
+  type SignInGateDeps,
+  type SignInStep,
+} from './sign-in-gate.ts';
 
-export interface LogInDeps extends SessionIssuerDeps {
+export interface LogInDeps extends SignInGateDeps {
   readonly users: UserRepository;
   readonly credentials: PasswordCredentialRepository;
   readonly passwordHasher: PasswordHasher;
@@ -11,21 +16,22 @@ export interface LogInDeps extends SessionIssuerDeps {
 
 export interface LoggedIn {
   readonly user: User;
-  readonly sessionToken: string;
+  readonly signIn: SignInStep;
 }
 
 export class LogIn {
-  private readonly sessions: SessionIssuer;
+  private readonly gate: SignInGate;
   /** Checked when there is no password to compare, so failed logins take the same time either way. */
   private decoyHash: Promise<string> | undefined;
 
   constructor(private readonly deps: LogInDeps) {
-    this.sessions = new SessionIssuer(deps);
+    this.gate = new SignInGate(deps);
   }
 
   async execute(input: {
     email: string;
     password: string;
+    browser: SignInBrowser;
   }): Promise<Result<LoggedIn, UseCaseError>> {
     const email = parseEmail('email', input.email);
     const user = email.ok ? await this.deps.users.findByEmail(email.value) : null;
@@ -41,6 +47,7 @@ export class LogIn {
       const passwordHash = await this.deps.passwordHasher.hash(input.password);
       await this.deps.credentials.save({ userId: user.id, passwordHash });
     }
-    return ok({ user, sessionToken: await this.sessions.issue(user) });
+    // Asked only now, after the right password, so it never reveals that an account exists.
+    return ok({ user, signIn: await this.gate.admit(user, input.browser) });
   }
 }

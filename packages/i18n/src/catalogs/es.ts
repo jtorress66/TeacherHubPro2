@@ -65,6 +65,8 @@ export const es: Messages = {
     continueWithGoogle: 'Continuar con Google',
     or: 'o',
     sessionExpired: 'Tu sesión terminó. Vuelve a iniciar sesión.',
+    signedOutElsewhere:
+      'Se cerró tu sesión porque tu cuenta inició sesión en otro dispositivo. Si no fuiste tú, cambia tu contraseña.',
     adultConfirm:
       'Tengo 18 años o más y soy maestro, personal escolar, tutor o padre o madre de familia.',
     contactUs: 'Contáctenos',
@@ -2160,6 +2162,33 @@ export const es: Messages = {
     use: 'Usar una rúbrica',
     useHint: 'Llena el cuadro de rúbrica con una de sus rúbricas guardadas.',
   },
+  signInConfirm: {
+    title: 'Sesión iniciada en otro dispositivo',
+    body: 'Esta cuenta ya tiene la sesión iniciada en otro dispositivo ({device}, activo {when}). Si continúas, se cerrará la sesión en ese dispositivo.',
+    bodyUnknownDevice:
+      'Esta cuenta ya tiene la sesión iniciada en otro dispositivo (activo {when}). Si continúas, se cerrará la sesión en ese dispositivo.',
+    justNow: 'ahora mismo',
+    continue: 'Continuar aquí',
+    cancel: 'Cancelar',
+  },
+  devices: {
+    label: '{browser} en {os}',
+    browser_chrome: 'Chrome',
+    browser_edge: 'Edge',
+    browser_firefox: 'Firefox',
+    browser_safari: 'Safari',
+    browser_samsung: 'Samsung Internet',
+    browser_opera: 'Opera',
+    browser_unknown: 'Navegador desconocido',
+    os_windows: 'Windows',
+    os_macos: 'macOS',
+    os_iphone: 'iPhone',
+    os_ipad: 'iPad',
+    os_android: 'Android',
+    os_chromeos: 'ChromeOS',
+    os_linux: 'Linux',
+    os_unknown: 'dispositivo desconocido',
+  },
   confirmEmail: {
     bannerTitle: 'Confirme su correo para usar las herramientas de IA',
     bannerText:
@@ -2229,6 +2258,9 @@ export const es: Messages = {
     invalid_credentials: 'El correo o la contraseña no son correctos.',
     unauthenticated: 'Inicia sesión.',
     session_expired: 'Tu sesión terminó. Vuelve a iniciar sesión.',
+    session_replaced:
+      'Se cerró tu sesión porque tu cuenta inició sesión en otro dispositivo. Si no fuiste tú, cambia tu contraseña.',
+    sign_in_expired: 'El inicio de sesión esperó demasiado. Vuelve a iniciar sesión.',
     google_failed: 'No se pudo iniciar sesión con Google. Inténtalo de nuevo.',
     google_email_unverified: 'Google no ha verificado este correo.',
     forbidden: 'No tienes permiso para hacer eso.',

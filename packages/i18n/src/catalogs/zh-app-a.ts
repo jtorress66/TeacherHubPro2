@@ -62,6 +62,8 @@ export const zhAppA = {
     continueWithGoogle: '使用 Google 继续',
     or: '或',
     sessionExpired: '您的会话已结束，请重新登录。',
+    signedOutElsewhere:
+      '由于您的账户已在另一台设备上登录，您已被退出登录。如果这不是您本人操作，请更改密码。',
     adultConfirm: '我已年满 18 岁，并且是教师、学校教职员工、辅导老师或家长。',
     contactUs: '联系我们',
   },

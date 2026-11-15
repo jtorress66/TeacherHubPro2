@@ -34,6 +34,7 @@ import {
   signedUp,
   signedUpUnconfirmed,
   type World,
+  noBrowser,
 } from './world.ts';
 
 const refused = (code: string) => ({ ok: false, error: { code } });
@@ -224,6 +225,7 @@ describe('Automatic confirmation', () => {
         redirectUri: 'https://app/cb',
         language: 'en',
         defaultSchoolName: 'My School',
+        browser: noBrowser,
       }),
     );
     expect(signedIn.user.emailConfirmedAt).toEqual(world.clock.now());
@@ -240,6 +242,7 @@ describe('Automatic confirmation', () => {
         redirectUri: 'https://app/cb',
         language: 'en',
         defaultSchoolName: 'My School',
+        browser: noBrowser,
       }),
     );
     expect(signedIn.user.id).toBe(user.id);
@@ -276,7 +279,12 @@ describe('Suspension', () => {
 
   it('ends every session and refuses password log in, Google sign-in and old sessions', async () => {
     const { world, root, teacher, sessionToken } = await setUp();
-    await new LogIn(world).execute({ email: teacher.email, password });
+    // Signing in again from the same browser keeps the first session as an ended tombstone.
+    await new LogIn(world).execute({
+      email: teacher.email,
+      password,
+      browser: { sessionToken, userAgent: null },
+    });
     expect(world.sessions.all().filter((s) => s.userId === teacher.id)).toHaveLength(2);
 
     const suspended = valueOf(
@@ -292,9 +300,9 @@ describe('Suspension', () => {
     expect(await new AuthenticateSession(world).execute(sessionToken)).toEqual(
       refused('unauthenticated'),
     );
-    expect(await new LogIn(world).execute({ email: teacher.email, password })).toEqual(
-      refused('account_suspended'),
-    );
+    expect(
+      await new LogIn(world).execute({ email: teacher.email, password, browser: noBrowser }),
+    ).toEqual(refused('account_suspended'));
     const google = {
       ...world,
       google: new FakeGoogleIdentity({
@@ -307,6 +315,7 @@ describe('Suspension', () => {
         redirectUri: 'https://app/cb',
         language: 'en',
         defaultSchoolName: 'My School',
+        browser: noBrowser,
       }),
     ).toEqual(refused('account_suspended'));
   });
@@ -321,7 +330,11 @@ describe('Suspension', () => {
       }),
     );
     expect(
-      await new LogIn(world).execute({ email: teacher.email, password: 'wrong password!' }),
+      await new LogIn(world).execute({
+        email: teacher.email,
+        password: 'wrong password!',
+        browser: noBrowser,
+      }),
     ).toEqual(refused('invalid_credentials'));
   });
 
@@ -340,7 +353,9 @@ describe('Suspension', () => {
     valueOf(await new SuspendUser(world).execute(target));
     const back = valueOf(await new ReinstateUser(world).execute(target));
     expect(back.suspendedAt).toBeNull();
-    expect((await new LogIn(world).execute({ email: teacher.email, password })).ok).toBe(true);
+    expect(
+      (await new LogIn(world).execute({ email: teacher.email, password, browser: noBrowser })).ok,
+    ).toBe(true);
   });
 
   it('never suspends yourself or another super admin', async () => {
@@ -438,6 +453,7 @@ describe('Blocked domains', () => {
         redirectUri: 'https://app/cb',
         language: 'en',
         defaultSchoolName: 'My School',
+        browser: noBrowser,
       }),
     ).toEqual(refused('blocked_domain'));
   });

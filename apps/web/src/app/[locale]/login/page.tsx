@@ -16,16 +16,25 @@ const notices: Readonly<Record<string, MessageKey>> = {
   google_email_unverified: 'errors.google_email_unverified',
   account_suspended: 'errors.account_suspended',
   blocked_domain: 'errors.blocked_domain',
+  sign_in_expired: 'errors.sign_in_expired',
 };
 
 export default async function LogInPage(
-  props: LocaleParams & { readonly searchParams: Promise<{ expired?: string; error?: string }> },
+  props: LocaleParams & {
+    readonly searchParams: Promise<{ expired?: string; replaced?: string; error?: string }>;
+  },
 ) {
   const locale = await localeFrom(props);
   const t = createTranslator(locale);
-  const { expired, error } = await props.searchParams;
+  const { expired, replaced, error } = await props.searchParams;
   const noticeKey =
-    expired === '1' ? 'auth.sessionExpired' : error === undefined ? undefined : notices[error];
+    replaced === '1'
+      ? 'auth.signedOutElsewhere'
+      : expired === '1'
+        ? 'auth.sessionExpired'
+        : error === undefined
+          ? undefined
+          : notices[error];
   return (
     <AuthShell
       locale={locale}

@@ -1,13 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import type { Email } from '@thp/domain';
 import { SignInWithGoogle } from '../src/index.ts';
-import { googleProfile, makeWorld, signedUp } from './world.ts';
+import { googleProfile, makeWorld, signedUp, noBrowser } from './world.ts';
 
 const input = (code = 'good-code') => ({
   code,
   redirectUri: 'https://app.teacherhub.test/api/auth/google/callback',
   language: 'en',
   defaultSchoolName: 'My School',
+  browser: noBrowser,
 });
 
 describe('SignInWithGoogle', () => {

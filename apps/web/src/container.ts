@@ -296,6 +296,9 @@ import {
   UpdateStudent,
   defaultOnboardingItems,
   LogIn,
+  ConfirmSignIn,
+  DescribeSignInConfirmation,
+  ResumeSignIn,
   LogOut,
   SignInWithGoogle,
   SignUp,
@@ -541,6 +544,9 @@ export interface AppContainer {
   readonly saveSubPacket: SaveSubPacket;
   readonly signUp: SignUp;
   readonly logIn: LogIn;
+  readonly confirmSignIn: ConfirmSignIn;
+  readonly describeSignInConfirmation: DescribeSignInConfirmation;
+  readonly resumeSignIn: ResumeSignIn;
   readonly logOut: LogOut;
   readonly authenticate: AuthenticateSession;
   readonly signInWithGoogle: SignInWithGoogle;
@@ -1052,6 +1058,9 @@ export function createAppContainer(
     saveSubPacket: new SaveSubPacket(deps),
     signUp: new SignUp(deps),
     logIn: new LogIn(deps),
+    confirmSignIn: new ConfirmSignIn(deps),
+    describeSignInConfirmation: new DescribeSignInConfirmation(deps),
+    resumeSignIn: new ResumeSignIn(deps),
     logOut: new LogOut(deps),
     authenticate: new AuthenticateSession(deps),
     signInWithGoogle: new SignInWithGoogle(deps),

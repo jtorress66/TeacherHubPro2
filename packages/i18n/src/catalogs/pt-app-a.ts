@@ -63,6 +63,8 @@ export const ptAppA = {
     continueWithGoogle: 'Continuar com o Google',
     or: 'ou',
     sessionExpired: 'Sua sessão terminou. Entre novamente.',
+    signedOutElsewhere:
+      'Sua sessão foi encerrada porque sua conta entrou em outro dispositivo. Se não foi você, altere sua senha.',
     adultConfirm:
       'Tenho 18 anos ou mais e sou professor, funcionário da escola, tutor ou pai ou mãe.',
     contactUs: 'Fale conosco',

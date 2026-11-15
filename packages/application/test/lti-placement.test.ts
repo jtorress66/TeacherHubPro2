@@ -321,7 +321,10 @@ describe('CompleteLtiLaunch with content placed in a course', () => {
     const outcome = valueOf(await launch(world, deepLinking()));
 
     expect(outcome).toMatchObject({ kind: 'pickContent', language: teacher.language });
-    const token = outcome.kind === 'pickContent' ? outcome.sessionToken : '';
+    const token =
+      outcome.kind === 'pickContent' && outcome.signIn.kind === 'signedIn'
+        ? outcome.signIn.sessionToken
+        : '';
     const session = await world.sessions.findByTokenHash(await world.tokenHasher.hash(token));
     expect(session?.userId).toBe(teacher.id);
   });
