@@ -16,7 +16,18 @@ import {
   type FieldErrors,
 } from '../../server/forms.ts';
 import { afterLogInPath, LTI_LINK_COOKIE } from '../../server/lti.ts';
-import { requireUser, setSessionCookie, takeSessionCookie } from './auth.ts';
+import {
+  safeNextPath,
+  SIGN_IN_CONFIRM_COOKIE,
+  signInProblem,
+} from '../../server/sign-in-confirm.ts';
+import {
+  landSignIn,
+  requireUser,
+  setSessionCookie,
+  signInBrowser,
+  takeSessionCookie,
+} from './auth.ts';
 import { record } from './activity.ts';
 import { callerAddress, throttle } from './limits.ts';
 
@@ -51,6 +62,7 @@ export async function signUpAction(_state: FormState, data: FormData): Promise<F
     ...fields,
     language: locale,
     defaultSchoolName: createTranslator(locale)('defaults.schoolName'),
+    userAgent: (await signInBrowser()).userAgent,
   });
   if (!result.ok) return { errors: formErrors(result.error, locale) };
   await setSessionCookie(result.value.sessionToken);
@@ -66,15 +78,55 @@ export async function logInAction(_state: FormState, data: FormData): Promise<Fo
     ['logInAddress', await callerAddress()],
   ]);
   if (limited !== null) return { errors: formErrors(limited, locale) };
-  const result = await getAppContainer().logIn.execute(credentials);
+  const result = await getAppContainer().logIn.execute({
+    ...credentials,
+    browser: await signInBrowser(),
+  });
   if (!result.ok) {
     const errors = formErrors(result.error, locale);
     const suspended = 'code' in result.error && result.error.code === 'account_suspended';
     return suspended ? { errors, suspended } : { errors };
   }
-  await setSessionCookie(result.value.sessionToken);
   // A course system launch waiting to be linked comes back to its linking page.
-  redirect(afterLogInPath(locale, (await cookies()).has(LTI_LINK_COOKIE)));
+  const next = afterLogInPath(locale, (await cookies()).has(LTI_LINK_COOKIE));
+  redirect(await landSignIn(result.value.signIn, locale, next));
+}
+
+const nextOf = (data: FormData, locale: Locale): string => {
+  const next = data.get('next');
+  return safeNextPath(typeof next === 'string' ? next : null) ?? `/${locale}/app`;
+};
+
+/** Takes the ticket of a sign-in waiting for confirmation; it works once. */
+async function takePendingSignIn(): Promise<string | undefined> {
+  const store = await cookies();
+  const ticket = store.get(SIGN_IN_CONFIRM_COOKIE)?.value;
+  store.delete(SIGN_IN_CONFIRM_COOKIE);
+  return ticket;
+}
+
+/** "Continue here": signs this browser in and every other device of the account out. */
+export async function confirmSignInAction(data: FormData): Promise<void> {
+  const locale = localeOf(data);
+  const ticket = await takePendingSignIn();
+  const result =
+    ticket === undefined
+      ? null
+      : await getAppContainer().confirmSignIn.execute({
+          ticket,
+          userAgent: (await signInBrowser()).userAgent,
+        });
+  if (!result?.ok) {
+    redirect(`/${locale}/login?error=${signInProblem(result?.error)}`);
+  }
+  await setSessionCookie(result.value.sessionToken);
+  redirect(nextOf(data, locale));
+}
+
+/** "Cancel": back to the log in page; nothing changes, and the other device stays signed in. */
+export async function cancelSignInAction(data: FormData): Promise<void> {
+  await takePendingSignIn();
+  redirect(`/${localeOf(data)}/login`);
 }
 
 export async function logOutAction(data: FormData): Promise<void> {

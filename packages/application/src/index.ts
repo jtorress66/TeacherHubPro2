@@ -3,6 +3,20 @@ export { SignUp, type SignUpDeps, type SignUpInput, type SignedIn } from './acco
 export { LogIn, type LogInDeps, type LoggedIn } from './accounts/log-in.ts';
 export { LogOut } from './accounts/log-out.ts';
 export {
+  SignInGate,
+  signInConfirmTicketLifetimeMs,
+  type SignInBrowser,
+  type SignInGateDeps,
+  type SignInStep,
+} from './accounts/sign-in-gate.ts';
+export {
+  ConfirmSignIn,
+  DescribeSignInConfirmation,
+  ResumeSignIn,
+  type ConfirmSignInDeps,
+  type SignInConfirmation,
+} from './accounts/confirm-sign-in.ts';
+export {
   AuthenticateSession,
   type Access,
   type Authenticated,

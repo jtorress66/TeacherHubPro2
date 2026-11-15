@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Browser, type Page } from '@playwright/test';
 import { createTranslator, type Locale } from '@thp/i18n';
 import { resetSuperAdmins } from './database.ts';
-import { logIn, signUp, skipTour, uniqueEmail } from './helpers.ts';
+import { continueHere, logIn, signUp, skipTour, uniqueEmail } from './helpers.ts';
 
 const setupKey = 'e2e-super-admin-setup-key';
 const newPassword = 'a brand new long password';
@@ -165,6 +165,8 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
 
     const reset = await choosePassword(browser, locale, await emailedLink(page, locale, email));
     await logIn(reset, locale, email, newPassword);
+    // The account is still signed in on the first browser, so the new one asks first.
+    await continueHere(reset, locale);
     await expect(reset).toHaveURL(new RegExp(`/${locale}/app$`));
   });
 }

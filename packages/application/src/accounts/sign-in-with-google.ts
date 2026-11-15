@@ -3,10 +3,15 @@ import type { BlockedDomainRepository, GoogleIdentity, GoogleProfile } from '@th
 import { fail, type UseCaseError } from '../errors.ts';
 import { AccountCreator, type Account, type AccountCreatorDeps } from './account-creator.ts';
 import { findSchoolSubscription } from './school-subscription.ts';
-import { SessionIssuer, type SessionIssuerDeps } from './session-issuer.ts';
-import { checkNewAccountEmail, type SignedIn } from './sign-up.ts';
+import {
+  SignInGate,
+  type SignInBrowser,
+  type SignInGateDeps,
+  type SignInStep,
+} from './sign-in-gate.ts';
+import { checkNewAccountEmail } from './sign-up.ts';
 
-export interface SignInWithGoogleDeps extends AccountCreatorDeps, SessionIssuerDeps {
+export interface SignInWithGoogleDeps extends AccountCreatorDeps, SignInGateDeps {
   readonly google: GoogleIdentity;
   readonly blockedDomains: BlockedDomainRepository;
 }
@@ -16,9 +21,11 @@ export interface GoogleSignInInput {
   readonly redirectUri: string;
   readonly language: string;
   readonly defaultSchoolName: string;
+  readonly browser: SignInBrowser;
 }
 
-export interface GoogleSignedIn extends SignedIn {
+export interface GoogleSignedIn extends Account {
+  readonly signIn: SignInStep;
   /** True when this sign-in created the account. */
   readonly created: boolean;
 }
@@ -30,11 +37,11 @@ export interface GoogleSignedIn extends SignedIn {
  */
 export class SignInWithGoogle {
   private readonly accounts: AccountCreator;
-  private readonly sessions: SessionIssuer;
+  private readonly gate: SignInGate;
 
   constructor(private readonly deps: SignInWithGoogleDeps) {
     this.accounts = new AccountCreator(deps);
-    this.sessions = new SessionIssuer(deps);
+    this.gate = new SignInGate(deps);
   }
 
   async execute(input: GoogleSignInInput): Promise<Result<GoogleSignedIn, UseCaseError>> {
@@ -49,8 +56,8 @@ export class SignInWithGoogle {
     }
     const account = existing ?? (await this.newAccount(profile.value, input));
     if (!account.ok) return account;
-    const sessionToken = await this.sessions.issue(account.value.user);
-    return ok({ ...account.value, sessionToken, created: existing === null });
+    const signIn = await this.gate.admit(account.value.user, input.browser);
+    return ok({ ...account.value, signIn, created: existing === null });
   }
 
   private async existingAccount(

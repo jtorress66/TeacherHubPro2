@@ -1,4 +1,12 @@
-import type { Session, UserId } from '@thp/domain';
+import {
+  endSignInSession,
+  isSessionActive,
+  isSessionExpired,
+  touchSession,
+  type Session,
+  type SessionEndedReason,
+  type UserId,
+} from '@thp/domain';
 import type {
   PasswordCredential,
   PasswordCredentialRepository,
@@ -15,6 +23,34 @@ export class InMemorySessionRepository implements SessionRepository {
 
   findByTokenHash(tokenHash: string): Promise<Session | null> {
     return Promise.resolve(this.sessions.get(tokenHash) ?? null);
+  }
+
+  listActiveForUser(userId: UserId, now: Date): Promise<readonly Session[]> {
+    return Promise.resolve(
+      this.all().filter((session) => session.userId === userId && isSessionActive(session, now)),
+    );
+  }
+
+  endAllForUserExcept(
+    userId: UserId,
+    keepTokenHash: string,
+    reason: SessionEndedReason,
+    at: Date,
+  ): Promise<void> {
+    for (const session of this.all()) {
+      if (session.userId !== userId || session.tokenHash === keepTokenHash) continue;
+      if (isSessionExpired(session, at)) this.sessions.delete(session.tokenHash);
+      else if (session.endedAt === null) {
+        this.sessions.set(session.tokenHash, endSignInSession(session, reason, at));
+      }
+    }
+    return Promise.resolve();
+  }
+
+  touch(tokenHash: string, at: Date): Promise<void> {
+    const session = this.sessions.get(tokenHash);
+    if (session?.endedAt === null) this.sessions.set(tokenHash, touchSession(session, at));
+    return Promise.resolve();
   }
 
   delete(tokenHash: string): Promise<void> {

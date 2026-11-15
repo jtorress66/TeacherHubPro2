@@ -30,6 +30,7 @@ import * as calendarFeeds from './0028_calendar_feeds.ts';
 import * as lti from './0029_lti.ts';
 import * as ltiRosters from './0030_lti_rosters.ts';
 import * as approvalLog from './0031_approval_log.ts';
+import * as oneSignIn from './0032_one_sign_in.ts';
 
 /** Ordered list of migrations, bundled with the code (no filesystem lookups at runtime). */
 const migrations: Readonly<Record<string, Migration>> = {
@@ -64,6 +65,7 @@ const migrations: Readonly<Record<string, Migration>> = {
   '0029_lti': lti,
   '0030_lti_rosters': ltiRosters,
   '0031_approval_log': approvalLog,
+  '0032_one_sign_in': oneSignIn,
 };
 
 export const migrationProvider: MigrationProvider = {

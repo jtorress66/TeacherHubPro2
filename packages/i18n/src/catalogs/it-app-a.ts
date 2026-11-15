@@ -63,6 +63,8 @@ export const itAppA = {
     continueWithGoogle: 'Continua con Google',
     or: 'oppure',
     sessionExpired: 'La sessione è scaduta. Acceda di nuovo.',
+    signedOutElsewhere:
+      "È stato disconnesso perché il Suo account ha effettuato l'accesso su un altro dispositivo. Se non è stato Lei, cambi la password.",
     adultConfirm:
       'Ho almeno 18 anni e sono un insegnante, un membro del personale scolastico, un tutor o un genitore.',
     contactUs: 'Contattaci',

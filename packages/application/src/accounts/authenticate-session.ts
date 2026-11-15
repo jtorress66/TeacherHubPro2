@@ -1,6 +1,8 @@
 import {
   accessFor,
-  isSessionActive,
+  isSessionEnded,
+  isSessionExpired,
+  needsTouch,
   ok,
   type Access,
   type Result,
@@ -46,10 +48,12 @@ export class AuthenticateSession {
     const session = await this.deps.sessions.findByTokenHash(tokenHash);
     if (!session) return fail('unauthenticated');
     const now = this.deps.clock.now();
-    if (!isSessionActive(session, now)) {
+    if (isSessionExpired(session, now)) {
       await this.deps.sessions.delete(tokenHash);
       return fail('session_expired');
     }
+    // Kept until it expires, so this browser learns it was signed in on another device.
+    if (isSessionEnded(session)) return fail('session_replaced');
     const user = await this.deps.users.findById(session.schoolId, session.userId);
     const school = await this.deps.schools.findById(session.schoolId);
     if (!user || !school) return fail('unauthenticated');
@@ -58,6 +62,7 @@ export class AuthenticateSession {
       return fail('account_suspended');
     }
 
+    if (needsTouch(session, now)) await this.deps.sessions.touch(tokenHash, now);
     const subscription = await findSchoolSubscription(this.deps.subscriptions, school.id);
     const access = accessFor(user, subscription, now);
     return ok({ user, school, subscription, access });

@@ -5,6 +5,10 @@ import { defaultLocale } from '@thp/i18n';
 import { getAppContainer } from '../../../../container.ts';
 import { SESSION_COOKIE, sessionCookieOptions } from '../../../../server/cookies.ts';
 import {
+  SIGN_IN_CONFIRM_COOKIE,
+  signInConfirmCookieOptions,
+} from '../../../../server/sign-in-confirm.ts';
+import {
   decodeLtiLogin,
   localeFromLti,
   ltiItemPath,
@@ -23,7 +27,7 @@ const field = (data: FormData, name: string): string => {
   return typeof value === 'string' ? value : '';
 };
 
-type SignedInOutcome = Extract<LtiLaunchOutcome, { readonly sessionToken: string }>;
+type SignedInOutcome = Extract<LtiLaunchOutcome, { readonly signIn: unknown }>;
 
 /** The app page a signed-in teacher lands on. */
 function signedInPath(outcome: SignedInOutcome): string {
@@ -46,9 +50,26 @@ function landing(appUrl: string, outcome: LtiLaunchOutcome): NextResponse {
     }
     return response;
   }
-  const response = NextResponse.redirect(`${appUrl}${signedInPath(outcome)}`, 303);
-  const expires = new Date(Date.now() + sessionLifetimeDays * 24 * 60 * 60 * 1000);
-  response.cookies.set(SESSION_COOKIE, outcome.sessionToken, sessionCookieOptions(appUrl, expires));
+  const { signIn } = outcome;
+  const next = signedInPath(outcome);
+  // The browser's own cookie is not sent with a launch posted from the course system's site, so
+  // a sign-in that needs asking is resumed on this site, where it is.
+  const response = NextResponse.redirect(
+    signIn.kind === 'signedIn'
+      ? `${appUrl}${next}`
+      : `${appUrl}/api/auth/resume-sign-in?${new URLSearchParams({ next }).toString()}`,
+    303,
+  );
+  if (signIn.kind === 'signedIn') {
+    const expires = new Date(Date.now() + sessionLifetimeDays * 24 * 60 * 60 * 1000);
+    response.cookies.set(
+      SESSION_COOKIE,
+      signIn.sessionToken,
+      sessionCookieOptions(appUrl, expires),
+    );
+  } else {
+    response.cookies.set(SIGN_IN_CONFIRM_COOKIE, signIn.ticket, signInConfirmCookieOptions(appUrl));
+  }
   if (outcome.kind === 'pickContent') {
     response.cookies.set(LTI_PLACE_COOKIE, outcome.ticket, ltiPlaceCookieOptions(appUrl));
   }
@@ -69,6 +90,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     idToken: field(data, 'id_token'),
     state: field(data, 'state'),
     saved: decodeLtiLogin(request.cookies.get(LTI_LOGIN_COOKIE)?.value),
+    // Usually missing: the course system posts from its own site, so Lax cookies stay behind.
+    browser: {
+      sessionToken: request.cookies.get(SESSION_COOKIE)?.value ?? null,
+      userAgent: request.headers.get('user-agent'),
+    },
   });
   const response = completed.ok
     ? landing(app.appUrl, completed.value)

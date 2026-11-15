@@ -1,16 +1,23 @@
 import { describe, expect, it } from 'vitest';
 import { InMemorySubscriptionRepository, InMemoryUserRepository } from '@thp/testing';
 import { AuthenticateSession, LogIn, LogOut } from '../src/index.ts';
-import { advanceDays, makeWorld, password, signedUp } from './world.ts';
+import { advanceDays, makeWorld, password, signedUp, noBrowser } from './world.ts';
 
 describe('LogIn', () => {
   it('signs in with the right password and starts a new session', async () => {
     const world = makeWorld();
     const { user } = await signedUp(world);
+    advanceDays(world, 1);
 
-    const result = await new LogIn(world).execute({ email: ' ANA@school.edu ', password });
+    const result = await new LogIn(world).execute({
+      email: ' ANA@school.edu ',
+      password,
+      browser: noBrowser,
+    });
 
     expect(result.ok && result.value.user.id).toBe(user.id);
+    expect(result.ok && result.value.signIn.kind).toBe('signedIn');
+    expect(await world.sessions.listActiveForUser(user.id, world.clock.now())).toHaveLength(1);
     expect(world.sessions.all()).toHaveLength(2);
   });
 
@@ -20,11 +27,19 @@ describe('LogIn', () => {
     const logIn = new LogIn(world);
     const refused = { ok: false, error: { code: 'invalid_credentials' } };
 
-    expect(await logIn.execute({ email: 'ana@school.edu', password: 'wrong password!' })).toEqual(
+    expect(
+      await logIn.execute({
+        email: 'ana@school.edu',
+        password: 'wrong password!',
+        browser: noBrowser,
+      }),
+    ).toEqual(refused);
+    expect(
+      await logIn.execute({ email: 'nobody@school.edu', password, browser: noBrowser }),
+    ).toEqual(refused);
+    expect(await logIn.execute({ email: 'not an email', password, browser: noBrowser })).toEqual(
       refused,
     );
-    expect(await logIn.execute({ email: 'nobody@school.edu', password })).toEqual(refused);
-    expect(await logIn.execute({ email: 'not an email', password })).toEqual(refused);
   });
 
   it('still checks a password hash when the email is unknown, so timing does not reveal accounts', async () => {
@@ -36,7 +51,7 @@ describe('LogIn', () => {
       return verify(candidate, hash);
     };
 
-    await new LogIn(world).execute({ email: 'nobody@school.edu', password });
+    await new LogIn(world).execute({ email: 'nobody@school.edu', password, browser: noBrowser });
 
     expect(checked).toHaveLength(1);
   });
@@ -46,7 +61,9 @@ describe('LogIn', () => {
     const { user } = await signedUp(world);
     world.credentials = new (world.credentials.constructor as new () => typeof world.credentials)();
 
-    expect(await new LogIn(world).execute({ email: user.email, password })).toEqual({
+    expect(
+      await new LogIn(world).execute({ email: user.email, password, browser: noBrowser }),
+    ).toEqual({
       ok: false,
       error: { code: 'invalid_credentials' },
     });
@@ -57,7 +74,7 @@ describe('LogIn', () => {
     const { user } = await signedUp(world);
     await world.credentials.save({ userId: user.id, passwordHash: `legacy$${password}` });
 
-    await new LogIn(world).execute({ email: user.email, password });
+    await new LogIn(world).execute({ email: user.email, password, browser: noBrowser });
 
     const credential = await world.credentials.findByUserId(user.id);
     expect(credential?.passwordHash.startsWith('fake$')).toBe(true);

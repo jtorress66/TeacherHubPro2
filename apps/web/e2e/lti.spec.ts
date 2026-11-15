@@ -2,7 +2,15 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Browser, type Page } from '@playwright/test';
 import { createTranslator, type Locale } from '@thp/i18n';
 import { joinSchoolOf, makeSchoolAdmin } from './database.ts';
-import { appPath, classWithStudents, password, signUp, skipTour, uniqueEmail } from './helpers.ts';
+import {
+  appPath,
+  classWithStudents,
+  continueHere,
+  password,
+  signUp,
+  skipTour,
+  uniqueEmail,
+} from './helpers.ts';
 
 const appUrl = 'http://localhost:3100';
 
@@ -124,6 +132,8 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     await teacher.getByLabel(t('auth.email'), { exact: true }).fill(teacherEmail);
     await teacher.getByLabel(t('auth.password'), { exact: true }).fill(password);
     await teacher.getByRole('button', { name: t('auth.logIn') }).click();
+    // Their sign-up session is still active, and its cookie is gone: it counts as another device.
+    await continueHere(teacher, locale);
     await expect(teacher).toHaveURL(new RegExp(`/${locale}/lti/link$`));
     await expect(
       teacher.getByText(t('lti.linkSignedInAs', { name: 'Ana López', email: teacherEmail })),
@@ -141,10 +151,15 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
       teacher.getByRole('region', { name: t('connectedTools.tool.clever.name'), exact: true }),
     ).toContainText(t('connectedTools.comingSoon'));
 
-    // The next launch signs them straight in.
+    // A launch from the same browser signs them straight in.
+    await launch(teacher, locale, `client=${clientId}`, 'Launch as teacher');
+    await expect(teacher).toHaveURL(appPath(locale));
+
+    // From a browser without their cookie, the launch asks first, as any other sign-in does.
     await teacher.context().clearCookies();
     await skipTour(teacher);
     await launch(teacher, locale, `client=${clientId}`, 'Launch as teacher');
+    await continueHere(teacher, locale);
     await expect(teacher).toHaveURL(appPath(locale));
 
     // Students are not served yet.

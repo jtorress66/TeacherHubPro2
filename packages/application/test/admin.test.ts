@@ -30,7 +30,7 @@ import {
   UpdateUser,
 } from '../src/index.ts';
 import { valueOf } from './classroom.ts';
-import { makeWorld, signedUp, type World } from './world.ts';
+import { makeWorld, signedUp, type World, noBrowser } from './world.ts';
 
 /** The world with the admin ports, and a setup key. */
 function adminWorld(setupKey: string | null = 'right-key') {
@@ -350,8 +350,13 @@ describe('Passwords', () => {
     });
     valueOf(await new SetPassword(world).execute({ token, password: 'a long new password' }));
     expect(
-      (await new LogIn(world).execute({ email: teacher.email, password: 'a long new password' }))
-        .ok,
+      (
+        await new LogIn(world).execute({
+          email: teacher.email,
+          password: 'a long new password',
+          browser: noBrowser,
+        })
+      ).ok,
     ).toBe(true);
     expect(
       await new SetPassword(world).execute({ token, password: 'another long password' }),

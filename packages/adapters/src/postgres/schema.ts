@@ -646,6 +646,11 @@ export interface SessionsTable {
   school_id: string;
   created_at: Date;
   expires_at: Date;
+  last_seen_at: Date;
+  device_browser: string | null;
+  device_os: string | null;
+  ended_at: Date | null;
+  ended_reason: string | null;
 }
 
 export interface PasswordCredentialsTable {

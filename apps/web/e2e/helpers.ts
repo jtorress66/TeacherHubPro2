@@ -85,6 +85,17 @@ export async function logIn(
   await page.getByRole('button', { name: t('auth.logIn') }).click();
 }
 
+/**
+ * After a sign-in from a second browser while the account is in use in another one: checks the
+ * "already signed in on another device" page and chooses "Continue here".
+ */
+export async function continueHere(page: Page, locale: Locale): Promise<void> {
+  const t = createTranslator(locale);
+  await expect(page).toHaveURL(new RegExp(`/${locale}/login/confirm`));
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(t('signInConfirm.title'));
+  await page.getByRole('button', { name: t('signInConfirm.continue') }).click();
+}
+
 /** Signs in through the local stand-in for Google's account picker. */
 export async function continueWithGoogle(
   page: Page,

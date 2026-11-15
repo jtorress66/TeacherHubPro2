@@ -63,6 +63,8 @@ export const deAppA = {
     continueWithGoogle: 'Weiter mit Google',
     or: 'oder',
     sessionExpired: 'Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.',
+    signedOutElsewhere:
+      'Sie wurden abgemeldet, weil Ihr Konto auf einem anderen Gerät angemeldet wurde. Wenn Sie das nicht waren, ändern Sie Ihr Passwort.',
     adultConfirm:
       'Ich bin mindestens 18 Jahre alt und Lehrkraft, Mitarbeiter einer Schule, Nachhilfelehrkraft oder Elternteil.',
     contactUs: 'Kontakt aufnehmen',

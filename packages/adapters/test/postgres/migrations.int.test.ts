@@ -1,12 +1,13 @@
 import { sql } from 'kysely';
 import { Migrator } from 'kysely/migration';
 import { afterAll, describe, expect, it } from 'vitest';
-import { createLessonPlan, type UserId } from '@thp/domain';
+import { createLessonPlan, isSessionActive, type UserId } from '@thp/domain';
 import { migrateDown, migrateToLatest } from '../../src/postgres/index.ts';
 import { migrationProvider } from '../../src/postgres/migrations/index.ts';
 import { PostgresMicrosoftConnectionRepository } from '../../src/postgres/repositories/postgres-assignment-repositories.ts';
 import { PostgresAuditLog } from '../../src/postgres/repositories/postgres-hardening.ts';
 import { PostgresLessonPlanRepository } from '../../src/postgres/repositories/postgres-lesson-plan-repository.ts';
+import { PostgresSessionRepository } from '../../src/postgres/repositories/postgres-session-repository.ts';
 import { PostgresUserRepository } from '../../src/postgres/repositories/postgres-user-repository.ts';
 import { connect, schoolA, truncateAll } from './test-db.ts';
 
@@ -99,6 +100,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0032_one_sign_in',
           '0031_approval_log',
           '0030_lti_rosters',
           '0029_lti',
@@ -170,6 +172,7 @@ describe('migrations', () => {
           '0029_lti',
           '0030_lti_rosters',
           '0031_approval_log',
+          '0032_one_sign_in',
         ],
       },
     });
@@ -291,6 +294,31 @@ describe('migrations', () => {
     expect((await migrateToLatest(db)).ok).toBe(true);
     const [event] = await new PostgresAuditLog(db).listForSchool(schoolA, 10);
     expect(event).toMatchObject({ id: 'old', review: null, count: null, classId: null });
+    await truncateAll(db);
+  });
+
+  it('keeps sessions started before one sign-in signed in, counted as seen at the upgrade', async () => {
+    const migrator = new Migrator({ db, provider: migrationProvider });
+    await truncateAll(db);
+    expect((await migrator.migrateTo('0031_approval_log')).error).toBeUndefined();
+    await sql`INSERT INTO schools (id, name) VALUES (${schoolA}, 'Lincoln')`.execute(db);
+    await oldUser('teacher-1', 'teacher-1@school.edu', 'teacher');
+    const created = new Date('2026-11-01T08:00:00.000Z');
+    const expires = new Date('2026-12-01T08:00:00.000Z');
+    await sql`INSERT INTO sessions (token_hash, user_id, school_id, created_at, expires_at)
+        VALUES ('old-hash', 'teacher-1', ${schoolA}, ${created}, ${expires})`.execute(db);
+
+    const before = new Date();
+    expect((await migrateToLatest(db)).ok).toBe(true);
+    const session = await new PostgresSessionRepository(db).findByTokenHash('old-hash');
+    // A teacher at work during the upgrade gets the warning, not a silent sign-out.
+    expect(session?.lastSeenAt.getTime()).toBeGreaterThanOrEqual(before.getTime() - 1000);
+    expect(session).toMatchObject({
+      device: null,
+      endedAt: null,
+      endedReason: null,
+    });
+    expect(session && isSessionActive(session, new Date('2026-11-14T08:00:00.000Z'))).toBe(true);
     await truncateAll(db);
   });
 });

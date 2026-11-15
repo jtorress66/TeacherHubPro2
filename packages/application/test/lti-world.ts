@@ -14,6 +14,7 @@ import {
   StartLtiLogin,
   type LtiPlatformDetails,
   type SavedLtiLogin,
+  type SignInBrowser,
 } from '../src/index.ts';
 import { colleagueOf, valueOf } from './classroom.ts';
 import { makeWorld, signedUp } from './world.ts';
@@ -111,6 +112,7 @@ export async function launch(
   world: LtiWorld,
   overrides: Record<string, unknown> = {},
   savedOverrides: Partial<SavedLtiLogin> = {},
+  browser: SignInBrowser = { sessionToken: null, userAgent: null },
 ) {
   const saved = await startLogin(world);
   const idToken = await tokens.sign(launchClaims(world, saved, overrides));
@@ -118,6 +120,7 @@ export async function launch(
     idToken,
     state: saved.state,
     saved: { ...saved, ...savedOverrides },
+    browser,
   });
 }
 

@@ -1158,6 +1158,33 @@ export const ptAppB = {
     use: 'Usar uma rubrica',
     useHint: 'Preenche o campo de rubrica com uma das suas rubricas salvas.',
   },
+  signInConfirm: {
+    title: 'Conectado em outro dispositivo',
+    body: 'Esta conta já está conectada em outro dispositivo ({device}, ativo {when}). Se você continuar, esse dispositivo será desconectado.',
+    bodyUnknownDevice:
+      'Esta conta já está conectada em outro dispositivo (ativo {when}). Se você continuar, esse dispositivo será desconectado.',
+    justNow: 'agora mesmo',
+    continue: 'Continuar aqui',
+    cancel: 'Cancelar',
+  },
+  devices: {
+    label: '{browser} em {os}',
+    browser_chrome: 'Chrome',
+    browser_edge: 'Edge',
+    browser_firefox: 'Firefox',
+    browser_safari: 'Safari',
+    browser_samsung: 'Samsung Internet',
+    browser_opera: 'Opera',
+    browser_unknown: 'Navegador desconhecido',
+    os_windows: 'Windows',
+    os_macos: 'macOS',
+    os_iphone: 'iPhone',
+    os_ipad: 'iPad',
+    os_android: 'Android',
+    os_chromeos: 'ChromeOS',
+    os_linux: 'Linux',
+    os_unknown: 'dispositivo desconhecido',
+  },
   confirmEmail: {
     bannerTitle: 'Confirme seu e-mail para usar as ferramentas de IA',
     bannerText:
@@ -1227,6 +1254,9 @@ export const ptAppB = {
     invalid_credentials: 'E-mail ou senha incorretos.',
     unauthenticated: 'Faça login.',
     session_expired: 'Sua sessão terminou. Faça login novamente.',
+    session_replaced:
+      'Sua sessão foi encerrada porque sua conta entrou em outro dispositivo. Se não foi você, altere sua senha.',
+    sign_in_expired: 'O login esperou demais. Entre novamente.',
     google_failed: 'O login com o Google não funcionou. Tente novamente.',
     google_email_unverified: 'O Google não verificou este endereço de e-mail.',
     forbidden: 'Você não tem permissão para fazer isso.',

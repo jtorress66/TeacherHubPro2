@@ -1162,6 +1162,33 @@ export const itAppB = {
     use: 'Usa una rubrica',
     useHint: 'Compila il campo della rubrica con una delle Sue rubriche salvate.',
   },
+  signInConfirm: {
+    title: 'Accesso effettuato su un altro dispositivo',
+    body: "Questo account ha già effettuato l'accesso su un altro dispositivo ({device}, attivo {when}). Se continua, quel dispositivo verrà disconnesso.",
+    bodyUnknownDevice:
+      "Questo account ha già effettuato l'accesso su un altro dispositivo (attivo {when}). Se continua, quel dispositivo verrà disconnesso.",
+    justNow: 'proprio ora',
+    continue: 'Continua qui',
+    cancel: 'Annulla',
+  },
+  devices: {
+    label: '{browser} su {os}',
+    browser_chrome: 'Chrome',
+    browser_edge: 'Edge',
+    browser_firefox: 'Firefox',
+    browser_safari: 'Safari',
+    browser_samsung: 'Samsung Internet',
+    browser_opera: 'Opera',
+    browser_unknown: 'Browser sconosciuto',
+    os_windows: 'Windows',
+    os_macos: 'macOS',
+    os_iphone: 'iPhone',
+    os_ipad: 'iPad',
+    os_android: 'Android',
+    os_chromeos: 'ChromeOS',
+    os_linux: 'Linux',
+    os_unknown: 'dispositivo sconosciuto',
+  },
   confirmEmail: {
     bannerTitle: 'Confermi la Sua email per usare gli strumenti di IA',
     bannerText:
@@ -1231,6 +1258,9 @@ export const itAppB = {
     invalid_credentials: 'Email o password non corretti.',
     unauthenticated: "Effettui l'accesso.",
     session_expired: "La Sua sessione è terminata. Effettui di nuovo l'accesso.",
+    session_replaced:
+      "È stato disconnesso perché il Suo account ha effettuato l'accesso su un altro dispositivo. Se non è stato Lei, cambi la password.",
+    sign_in_expired: "L'accesso ha atteso troppo a lungo. Acceda di nuovo.",
     google_failed: "L'accesso con Google non è riuscito. Riprovi.",
     google_email_unverified: 'Google non ha verificato questo indirizzo email.',
     forbidden: "Non ha l'autorizzazione per farlo.",

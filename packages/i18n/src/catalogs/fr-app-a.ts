@@ -63,6 +63,8 @@ export const frAppA = {
     continueWithGoogle: 'Continuer avec Google',
     or: 'ou',
     sessionExpired: 'Votre session a expiré. Veuillez vous reconnecter.',
+    signedOutElsewhere:
+      "Vous avez été déconnecté, car votre compte s'est connecté sur un autre appareil. Si ce n'était pas vous, changez votre mot de passe.",
     adultConfirm:
       "J'ai 18 ans ou plus et je suis enseignant, membre du personnel scolaire, tuteur ou parent.",
     contactUs: 'Nous contacter',

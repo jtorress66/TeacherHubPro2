@@ -64,6 +64,8 @@ export const en = {
     continueWithGoogle: 'Continue with Google',
     or: 'or',
     sessionExpired: 'Your session has ended. Please log in again.',
+    signedOutElsewhere:
+      "You were signed out because your account was signed in on another device. If this wasn't you, change your password.",
     adultConfirm: 'I am 18 or older and a teacher, school staff member, tutor or parent.',
     contactUs: 'Contact us',
   },
@@ -2134,6 +2136,33 @@ export const en = {
     use: 'Use a rubric',
     useHint: 'Fills the rubric box with one of your saved rubrics.',
   },
+  signInConfirm: {
+    title: 'Signed in on another device',
+    body: 'This account is already signed in on another device ({device}, active {when}). If you continue, that device will be signed out.',
+    bodyUnknownDevice:
+      'This account is already signed in on another device (active {when}). If you continue, that device will be signed out.',
+    justNow: 'just now',
+    continue: 'Continue here',
+    cancel: 'Cancel',
+  },
+  devices: {
+    label: '{browser} on {os}',
+    browser_chrome: 'Chrome',
+    browser_edge: 'Edge',
+    browser_firefox: 'Firefox',
+    browser_safari: 'Safari',
+    browser_samsung: 'Samsung Internet',
+    browser_opera: 'Opera',
+    browser_unknown: 'Unknown browser',
+    os_windows: 'Windows',
+    os_macos: 'macOS',
+    os_iphone: 'iPhone',
+    os_ipad: 'iPad',
+    os_android: 'Android',
+    os_chromeos: 'ChromeOS',
+    os_linux: 'Linux',
+    os_unknown: 'unknown device',
+  },
   confirmEmail: {
     bannerTitle: 'Confirm your email to use the AI tools',
     bannerText:
@@ -2203,6 +2232,9 @@ export const en = {
     invalid_credentials: 'Email or password is incorrect.',
     unauthenticated: 'Please log in.',
     session_expired: 'Your session has ended. Please log in again.',
+    session_replaced:
+      "You were signed out because your account was signed in on another device. If this wasn't you, change your password.",
+    sign_in_expired: 'That sign-in waited too long. Please log in again.',
     google_failed: 'Google sign-in did not work. Please try again.',
     google_email_unverified: 'Google has not verified this email address.',
     forbidden: "You don't have permission to do that.",

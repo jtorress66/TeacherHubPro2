@@ -1,5 +1,6 @@
 import {
   checkPassword,
+  deviceFromUserAgent,
   isThrowawayEmail,
   matchesBlockedDomain,
   ok,
@@ -32,6 +33,8 @@ export interface SignUpInput {
   readonly defaultSchoolName: string;
   /** "I am 18 or older and a teacher, school staff member, tutor or parent." */
   readonly adult: boolean;
+  /** The browser's user agent, kept only as coarse browser and system keys. */
+  readonly userAgent: string | null;
 }
 
 export interface SignedIn extends Account {
@@ -95,7 +98,11 @@ export class SignUp {
     await this.deps.credentials.save({ userId: account.value.user.id, passwordHash });
     // A failed email does not undo the account: the banner in the app can resend it.
     await this.confirmations.send(account.value.user);
-    const sessionToken = await this.sessions.issue(account.value.user);
+    // A new account has no other sign-in to ask about.
+    const sessionToken = await this.sessions.issue(
+      account.value.user,
+      deviceFromUserAgent(input.userAgent),
+    );
     return ok({ ...account.value, sessionToken });
   }
 }

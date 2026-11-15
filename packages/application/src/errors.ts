@@ -5,6 +5,8 @@ export type ApplicationErrorCode =
   | 'invalid_credentials'
   | 'unauthenticated'
   | 'session_expired'
+  | 'session_replaced'
+  | 'sign_in_expired'
   | 'google_failed'
   | 'google_email_unverified'
   | 'forbidden'
