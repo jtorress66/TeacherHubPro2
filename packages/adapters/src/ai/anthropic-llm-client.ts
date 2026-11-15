@@ -24,7 +24,16 @@ export interface AnthropicConfig {
   /** The SDK retries rate limits, overloads and server errors this many times. */
   readonly maxRetries?: number;
   readonly baseURL?: string;
+  /** Told when Claude refuses the key itself (expired, deleted or wrong), never with the key. */
+  readonly onKeyRefused?: () => void;
 }
+
+/** What a free check of the key found. */
+export type KeyCheck = 'ok' | 'refused' | 'unreachable';
+
+const isKeyRefusal = (error: unknown): boolean =>
+  error instanceof Anthropic.AuthenticationError ||
+  error instanceof Anthropic.PermissionDeniedError;
 
 /**
  * Prompt caching: a breakpoint caches everything before it, so it goes on text that is the same
@@ -79,8 +88,10 @@ function errorCode(error: unknown): LlmError['code'] {
 export class AnthropicLlmClient implements LlmClient {
   private readonly client: Anthropic;
   private readonly model: string;
+  private readonly onKeyRefused: () => void;
 
   constructor(config: AnthropicConfig) {
+    this.onKeyRefused = config.onKeyRefused ?? (() => undefined);
     this.client = new Anthropic({
       apiKey: config.apiKey,
       timeout: config.timeoutMs ?? 120_000,
@@ -110,7 +121,18 @@ export class AnthropicLlmClient implements LlmClient {
         usage: usageOf(response.usage),
       });
     } catch (error) {
+      if (isKeyRefusal(error)) this.onKeyRefused();
       return err({ code: errorCode(error) });
+    }
+  }
+
+  /** Whether Claude accepts the key, by listing models: free, and writes nothing. */
+  async checkKey(): Promise<KeyCheck> {
+    try {
+      await this.client.models.list({ limit: 1 });
+      return 'ok';
+    } catch (error) {
+      return isKeyRefusal(error) ? 'refused' : 'unreachable';
     }
   }
 }

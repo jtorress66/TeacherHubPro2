@@ -74,13 +74,33 @@ import { chatFirst } from './worker-loop.ts';
 
 // Composition root: the only place in the worker where concrete adapters are created.
 
+/** Printed when Claude refuses the key itself; the key is never printed. */
+export const keyRefusedMessage =
+  'Claude refused ANTHROPIC_API_KEY (expired, deleted or wrong). AI writing fails until it is replaced.';
+
+const claudeClient = (config: Extract<LlmConfig, { provider: 'anthropic' }>) =>
+  new AnthropicLlmClient({
+    apiKey: config.apiKey,
+    ...(config.model === null ? {} : { model: config.model }),
+    onKeyRefused: () => {
+      process.stderr.write(`${keyRefusedMessage}\n`);
+    },
+  });
+
+/** At start: a free check that Claude accepts the key, so a bad key shows in the log at once. */
+export async function checkClaudeKey(config: LlmConfig): Promise<string> {
+  if (config.provider === 'local') return 'AI key check skipped (local model).';
+  const found = await claudeClient(config).checkKey();
+  if (found === 'refused') return keyRefusedMessage;
+  return found === 'ok'
+    ? 'Claude accepted the API key.'
+    : 'Claude could not be reached to check the API key.';
+}
+
 /** Claude reports each call's token usage (numbers only) to stdout, to watch cache hit rates. */
 function llmClient(config: LlmConfig): LlmClient {
   if (config.provider === 'local') return new LocalLlmClient(localReply);
-  const claude = new AnthropicLlmClient({
-    apiKey: config.apiKey,
-    ...(config.model === null ? {} : { model: config.model }),
-  });
+  const claude = claudeClient(config);
   return new UsageReportingLlmClient(claude, (usage) => {
     process.stdout.write(`${formatUsage(usage)}\n`);
   });

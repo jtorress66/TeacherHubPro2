@@ -6,7 +6,7 @@ import {
   parseMailConfig,
   parseTtsConfig,
 } from './config.ts';
-import { createJobRunner } from './container.ts';
+import { checkClaudeKey, createJobRunner } from './container.ts';
 import { runWorkerLoop } from './worker-loop.ts';
 
 /** `pnpm --filter @thp/worker start`: runs background jobs until SIGTERM or SIGINT. */
@@ -34,6 +34,7 @@ for (const signal of ['SIGTERM', 'SIGINT'] as const) {
 process.stdout.write(
   `Worker started (${llm.value.provider} model, ${tts.value.provider} voice, ${mail.value.provider} mail).\n`,
 );
+process.stdout.write(`${await checkClaudeKey(llm.value)}\n`);
 await runWorkerLoop({
   runNext: () => runner.runNext.execute(),
   sweep: () => runner.housekeeping(),
