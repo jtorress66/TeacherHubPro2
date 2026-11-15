@@ -2,10 +2,13 @@
 
 import { isLocale, type Locale } from '@thp/i18n';
 import { callerAddress, throttle } from './limits.ts';
+import type { SubmittedValues } from '../../server/form-values.ts';
 import { getAppContainer } from '../../container.ts';
-import { formErrors } from '../../server/error-messages.ts';
+import { formErrors, rejectedForm } from '../../server/error-messages.ts';
 
 export interface PasswordFormState {
+  /** What the teacher sent, when it was refused, so the form shows it again. */
+  readonly values?: SubmittedValues;
   readonly errors?: Readonly<Record<string, string>>;
   readonly done?: boolean;
   /** The email the setup page promoted. */
@@ -29,11 +32,11 @@ export async function requestPasswordResetAction(
 ): Promise<PasswordFormState> {
   const locale = localeOf(data);
   const limited = await throttle([['passwordReset', await callerAddress()]]);
-  if (limited !== null) return { errors: formErrors(limited, locale) };
+  if (limited !== null) return rejectedForm(limited, locale, data);
   const sent = await getAppContainer().requestPasswordReset.execute({
     email: text(data, 'email').trim(),
   });
-  return sent.ok ? { done: true } : { errors: formErrors(sent.error, locale) };
+  return sent.ok ? { done: true } : rejectedForm(sent.error, locale, data);
 }
 
 /** Saves the password chosen from an emailed link; the link's secret comes from its #hash. */
@@ -61,5 +64,6 @@ export async function setUpSuperAdminAction(
   });
   return promoted.ok
     ? { done: true, email: promoted.value.email }
-    : { errors: formErrors(promoted.error, locale) };
+    : // Only the email comes back: the setup key is a secret.
+      { errors: formErrors(promoted.error, locale), values: { email: text(data, 'email') } };
 }

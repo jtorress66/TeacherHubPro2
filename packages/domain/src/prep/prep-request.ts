@@ -2,7 +2,13 @@ import type { ClassId, GradeCategoryId } from '../shared/ids.ts';
 import { isLanguage, type Language } from '../shared/language.ts';
 import { addDays, parseLocalDate, type LocalDate } from '../shared/local-date.ts';
 import { ok, type Result } from '../shared/result.ts';
-import { invalid, requiredText, type ValidationError } from '../shared/validation.ts';
+import {
+  invalid,
+  isWholeNumberIn,
+  outOfRange,
+  requiredText,
+  type ValidationError,
+} from '../shared/validation.ts';
 import { isMonday } from '../lesson-plans/plan-fields.ts';
 import {
   isGradeLevel,
@@ -64,9 +70,7 @@ export function createPrepRequest(input: PrepRequestInput): Result<PrepRequest, 
   if (!isStandardSubject(input.subject)) return invalid('subject', 'not_allowed');
   if (!isGradeLevel(input.grade)) return invalid('grade', 'not_allowed');
   const { days } = input;
-  if (!Number.isInteger(days) || days < prepDaysRange.min || days > prepDaysRange.max) {
-    return invalid('days', 'out_of_range');
-  }
+  if (!isWholeNumberIn(days, prepDaysRange)) return outOfRange('days', prepDaysRange);
   if (input.options.quiz && input.quizCategoryId === null) {
     return invalid('quizCategoryId', 'required');
   }

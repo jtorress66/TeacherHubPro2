@@ -6,6 +6,7 @@ import { attendanceStatuses, type AttendanceStatus } from '@thp/domain';
 import { createTranslator, type Locale } from '@thp/i18n';
 import { saveAttendanceAction, type AttendanceFormState } from '../app/_lib/attendance-actions.ts';
 import { FormAlert } from './forms.tsx';
+import { prefill } from '../server/form-values.ts';
 
 export interface SheetRowView {
   readonly id: string;
@@ -16,6 +17,10 @@ export interface SheetRowView {
 }
 
 const initial: AttendanceFormState = {};
+
+/** The status sent for a student, when it is one; otherwise the stored one. */
+const statusOf = (sent: string | undefined, stored: AttendanceStatus): AttendanceStatus =>
+  attendanceStatuses.find((status) => status === sent) ?? stored;
 
 function SheetButtons({ locale }: { readonly locale: Locale }) {
   const t = createTranslator(locale);
@@ -45,10 +50,24 @@ export function AttendanceSheetForm(props: {
   readonly date: string;
   readonly rows: readonly SheetRowView[];
 }) {
-  const t = createTranslator(props.locale);
   const [state, action] = useActionState(saveAttendanceAction, initial);
+  const sent = prefill(state.values);
+  return <SheetForm {...props} state={state} action={action} key={sent.key} />;
+}
+
+function SheetForm(
+  props: Parameters<typeof AttendanceSheetForm>[0] & {
+    readonly state: AttendanceFormState;
+    readonly action: (data: FormData) => void;
+  },
+) {
+  const t = createTranslator(props.locale);
+  const { state, action } = props;
+  const sent = prefill(state.values);
   const [statuses, setStatuses] = useState<Record<string, AttendanceStatus>>(() =>
-    Object.fromEntries(props.rows.map((row) => [row.id, row.status])),
+    Object.fromEntries(
+      props.rows.map((row) => [row.id, statusOf(sent.text(`status.${row.id}`), row.status)]),
+    ),
   );
   const markAllPresent = () => {
     setStatuses(Object.fromEntries(props.rows.map((row) => [row.id, 'present' as const])));
@@ -117,7 +136,7 @@ export function AttendanceSheetForm(props: {
                         min={1}
                         max={240}
                         name={`minutesLate.${row.id}`}
-                        defaultValue={row.minutesLate ?? undefined}
+                        defaultValue={sent.text(`minutesLate.${row.id}`, row.minutesLate)}
                         aria-label={t('attendance.minutesLateFor', { name: row.name })}
                         aria-invalid={lateError ? true : undefined}
                         className="minutes"
@@ -131,7 +150,7 @@ export function AttendanceSheetForm(props: {
                     type="text"
                     maxLength={200}
                     name={`note.${row.id}`}
-                    defaultValue={row.note ?? undefined}
+                    defaultValue={sent.text(`note.${row.id}`, row.note)}
                     aria-label={t('attendance.noteFor', { name: row.name })}
                     aria-invalid={noteError ? true : undefined}
                   />

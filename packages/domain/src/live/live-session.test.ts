@@ -63,6 +63,7 @@ describe('createLiveSession', () => {
       expect(errorOf(createLiveSession({ ...input, questionSeconds }))).toEqual({
         field: 'questionSeconds',
         code: 'out_of_range',
+        range: { min: 5, max: 120 },
       });
     }
   });

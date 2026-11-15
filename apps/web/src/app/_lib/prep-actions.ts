@@ -4,12 +4,15 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import type { PrepBatchId } from '@thp/domain';
 import { isLocale, type Locale } from '@thp/i18n';
+import { submittedValues, type SubmittedValues } from '../../server/form-values.ts';
 import { getAppContainer } from '../../container.ts';
-import { formErrors } from '../../server/error-messages.ts';
+import { formErrors, rejectedForm } from '../../server/error-messages.ts';
 import { parseEmailForm, parsePrepForm, prepEmailTemplate } from '../../server/prep-forms.ts';
 import { requireUser } from './auth.ts';
 
 export interface PrepFormState {
+  /** What the teacher sent, when it was refused, so the form shows it again. */
+  readonly values?: SubmittedValues;
   readonly errors?: Readonly<Record<string, string>>;
 }
 
@@ -57,7 +60,7 @@ export async function startPrepAction(
       emailTemplate: prepEmailTemplate(language, { className, teacherName: user.name }),
     },
   });
-  if (!started.ok) return { errors: formErrors(started.error, locale) };
+  if (!started.ok) return rejectedForm(started.error, locale, data);
   revalidatePath(prepPath(locale));
   redirect(`${prepPath(locale)}/${started.value.id}`);
 }
@@ -87,10 +90,11 @@ export async function publishPrepAction(
       errors: Object.fromEntries(
         Object.entries(errors).map(([field, message]) => [emailFields[field] ?? field, message]),
       ),
+      values: submittedValues(data),
     };
   }
   const published = await container.publishPrepBatch.execute(ref);
-  if (!published.ok) return { errors: formErrors(published.error, locale) };
+  if (!published.ok) return rejectedForm(published.error, locale, data);
   revalidatePath(path);
   redirect(path);
 }

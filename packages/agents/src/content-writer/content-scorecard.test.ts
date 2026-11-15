@@ -51,6 +51,8 @@ describe('scoreContent', () => {
       language: 1,
       validCodes: 1,
       questionCount: 1,
+      numbering: 1,
+      uniqueQuestions: 1,
     });
   });
 
@@ -60,6 +62,8 @@ describe('scoreContent', () => {
       language: 0,
       validCodes: 0,
       questionCount: 0,
+      numbering: 0,
+      uniqueQuestions: 0,
     });
   });
 
@@ -75,6 +79,49 @@ describe('scoreContent', () => {
   });
 
   it('lists its metrics', () => {
-    expect(contentMetrics).toEqual(['structure', 'language', 'validCodes', 'questionCount']);
+    expect(contentMetrics).toEqual([
+      'structure',
+      'language',
+      'validCodes',
+      'questionCount',
+      'numbering',
+      'uniqueQuestions',
+    ]);
+  });
+
+  const quizOf = (questions: readonly string[], answers: readonly string[]) =>
+    ['# Quiz', '', '## Questions', ...questions, '', '## Answer key', ...answers].join('\n');
+  const three = aContentRequest({ type: 'quiz', questionCount: 3 });
+
+  it('scores a quiz numbered 1 to the last with one matching answer key', () => {
+    const quiz = quizOf(['1. Red?', '2. Blue?', '3. Green?'], ['1. a', '2. b', '3. c']);
+    expect(scoreContent(three, quiz, quiz)).toMatchObject({ numbering: 1, uniqueQuestions: 1 });
+  });
+
+  it.each([
+    ['a gap in the questions', ['1. Red?', '2. Blue?', '4. Green?'], ['1. a', '2. b', '3. c']],
+    ['a short answer key', ['1. Red?', '2. Blue?', '3. Green?'], ['1. a', '2. b']],
+    ['numbering restarted', ['1. Red?', '2. Blue?', '1. Green?'], ['1. a', '2. b', '3. c']],
+  ])('fails the numbering of a quiz with %s', (_name, questions, answers) => {
+    const quiz = quizOf(questions, answers);
+    expect(scoreContent(three, quiz, quiz).numbering).toBe(0);
+  });
+
+  it('fails the numbering of a quiz without numbered questions', () => {
+    const quiz = '# Quiz\n\nNo questions here.';
+    expect(scoreContent(three, quiz, quiz).numbering).toBe(0);
+  });
+
+  it('fails the numbering of a quiz with two answer keys', () => {
+    const quiz = `${quizOf(['1. Red?', '2. Blue?', '3. Green?'], ['1. a', '2. b', '3. c'])}\n\n## Answer key\n1. a`;
+    expect(scoreContent(three, quiz, quiz).numbering).toBe(0);
+  });
+
+  it('fails a quiz that asks the same question twice, whatever the case or punctuation', () => {
+    const quiz = quizOf(
+      ['1. What is red?', '2. Blue?', '3. what is RED'],
+      ['1. a', '2. b', '3. c'],
+    );
+    expect(scoreContent(three, quiz, quiz).uniqueQuestions).toBe(0);
   });
 });

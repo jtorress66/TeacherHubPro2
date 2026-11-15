@@ -33,6 +33,7 @@ export default async function GenerationProgressPage(props: Props) {
         locale={locale}
         jobId={job.value.id}
         retryHref={assistant}
+        progressKey="assistant.writingQuestions"
         labels={{
           working: t('assistant.working'),
           failed: t('drafts.failed'),

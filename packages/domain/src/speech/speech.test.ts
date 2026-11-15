@@ -7,6 +7,12 @@ import {
   speechParts,
 } from './speech.ts';
 
+describe('maxSpeechTextLength', () => {
+  it('stays at 40,000 characters when longer drafts are allowed, so read-aloud costs do not grow', () => {
+    expect(maxSpeechTextLength).toBe(40_000);
+  });
+});
+
 describe('speakableText', () => {
   it('drops Markdown marks, table rules and blanks so they are not read aloud', () => {
     const markdown = [

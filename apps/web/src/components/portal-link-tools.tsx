@@ -10,6 +10,7 @@ import {
 import { CopyLink } from './assignment-tools.tsx';
 import { FormAlert } from './forms.tsx';
 import { Hidden } from './form-fields.tsx';
+import { prefill } from '../server/form-values.ts';
 
 const initial: PortalFormState = {};
 
@@ -28,8 +29,14 @@ export function EmailPortalLinkForm(props: StudentProps & { readonly parentEmail
   const t = createTranslator(props.locale);
   const [state, action] = useActionState(emailPortalLinkAction, initial);
   const id = `portal-${props.studentId}`;
+  const sent = prefill(state.values);
   return (
-    <form action={action} className="stack" aria-label={`${t('portalLinks.email')}: ${props.name}`}>
+    <form
+      action={action}
+      className="stack"
+      aria-label={`${t('portalLinks.email')}: ${props.name}`}
+      key={sent.key}
+    >
       <Hidden
         values={{ locale: props.locale, classId: props.classId, studentId: props.studentId }}
       />
@@ -42,11 +49,20 @@ export function EmailPortalLinkForm(props: StudentProps & { readonly parentEmail
       <div className="field-row align-end">
         <div className="field">
           <label htmlFor={`${id}-to`}>{t('portalLinks.emailTo')}</label>
-          <input id={`${id}-to`} name="to" type="email" defaultValue={props.parentEmail} />
+          <input
+            id={`${id}-to`}
+            name="to"
+            type="email"
+            defaultValue={sent.text('to', props.parentEmail)}
+          />
         </div>
         <div className="field">
           <label htmlFor={`${id}-language`}>{t('portalLinks.emailLanguage')}</label>
-          <select id={`${id}-language`} name="language" defaultValue={props.locale}>
+          <select
+            id={`${id}-language`}
+            name="language"
+            defaultValue={sent.text('language', props.locale)}
+          >
             {locales.map((l) => (
               <option key={l} value={l}>
                 {localeInfo[l].nativeName}

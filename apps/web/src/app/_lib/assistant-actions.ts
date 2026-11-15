@@ -11,13 +11,16 @@ import {
   parseSlides,
   parseSubPacketForm,
 } from '../../server/assistant-forms.ts';
-import { formErrors } from '../../server/error-messages.ts';
+import { formErrors, rejectedForm } from '../../server/error-messages.ts';
+import type { SubmittedValues } from '../../server/form-values.ts';
 import { requireUser } from './auth.ts';
 import { scheduledAtOf } from '../../server/schedule-form.ts';
 import { teacherTimeZone } from './time-zone.ts';
 
 export interface AssistantFormState {
   readonly errors?: Readonly<Record<string, string>>;
+  /** What the teacher sent, when it was refused, so the form shows it again. */
+  readonly values?: SubmittedValues;
   readonly saved?: boolean;
   /** After sending slides to Classroom: the assignment and the deck. */
   readonly url?: string;
@@ -54,7 +57,7 @@ export async function requestGenerationAction(
   const { locale, input } = parseContentForm(data);
   const { user } = await requireUser(locale);
   const job = await getAppContainer().requestGeneration.execute({ actor: user, ...input });
-  if (!job.ok) return { errors: formErrors(job.error, locale) };
+  if (!job.ok) return rejectedForm(job.error, locale, data);
   redirect(`${assistantPath(locale)}/jobs/${job.value.id}`);
 }
 
@@ -77,7 +80,7 @@ export async function requestPresentationDraftAction(
   const { locale, input } = parsePresentationRequestForm(data);
   const { user } = await requireUser(locale);
   const job = await getAppContainer().requestPresentationDraft.execute({ actor: user, ...input });
-  if (!job.ok) return { errors: formErrors(job.error, locale) };
+  if (!job.ok) return rejectedForm(job.error, locale, data);
   redirect(`${presentationsPath(locale)}/jobs/${job.value.id}`);
 }
 
@@ -94,7 +97,7 @@ export async function createPresentationAction(
       ? { actor: user, name: text(data, 'name'), theme: text(data, 'theme') }
       : { actor: user, jobId: jobId as JobId },
   );
-  if (!created.ok) return { errors: formErrors(created.error, locale) };
+  if (!created.ok) return rejectedForm(created.error, locale, data);
   revalidatePath(presentationsPath(locale));
   redirect(`${presentationsPath(locale)}/${created.value.id}`);
 }
@@ -138,7 +141,7 @@ export async function saveSubPacketAction(
   const { locale, classId, details } = parseSubPacketForm(data);
   const { user } = await requireUser(locale);
   const saved = await getAppContainer().saveSubPacket.execute({ actor: user, classId, details });
-  if (!saved.ok) return { errors: formErrors(saved.error, locale) };
+  if (!saved.ok) return rejectedForm(saved.error, locale, data);
   revalidatePath(`/${locale}/app/classes/${classId}/sub-packet`);
   return done(state);
 }
@@ -152,7 +155,7 @@ export async function sendPresentationToClassroomAction(
   const { user } = await requireUser(locale);
   const timeZone = await teacherTimeZone();
   const scheduledAt = scheduledAtOf(data, timeZone);
-  if (!scheduledAt.ok) return { errors: formErrors(scheduledAt.error, locale) };
+  if (!scheduledAt.ok) return rejectedForm(scheduledAt.error, locale, data);
   const when = (at: Date) =>
     new Intl.DateTimeFormat(locale, { dateStyle: 'full', timeStyle: 'short', timeZone }).format(at);
   const instructions = text(data, 'instructions');
@@ -166,7 +169,7 @@ export async function sendPresentationToClassroomAction(
     dueDate: dueDate === '' ? null : dueDate,
     scheduledAt: scheduledAt.value,
   });
-  if (!sent.ok) return { errors: formErrors(sent.error, locale) };
+  if (!sent.ok) return rejectedForm(sent.error, locale, data);
   return {
     ...(scheduledAt.value === null ? {} : { scheduledFor: when(scheduledAt.value) }),
     url: sent.value.url,

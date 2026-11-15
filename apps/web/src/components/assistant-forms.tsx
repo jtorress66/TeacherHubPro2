@@ -8,6 +8,7 @@ import {
   gradeLevels,
   presentationThemes,
   questionCountRange,
+  questionPartSize,
   slideCountRange,
   type SubPacket,
 } from '@thp/domain';
@@ -23,6 +24,7 @@ import {
 import { Field, FormAlert, Submit } from './forms.tsx';
 import { EslSwitch, Hidden, Select, TextArea, type Option } from './form-fields.tsx';
 import { ScheduleFields } from './schedule-fields.tsx';
+import { prefill, type Prefill } from '../server/form-values.ts';
 
 const initial: AssistantFormState = {};
 const option = (id: string, name: string): Option => ({ id, name });
@@ -30,6 +32,7 @@ const option = (id: string, name: string): Option => ({ id, name });
 function SubjectAndGrade(props: {
   readonly locale: Locale;
   readonly errors: AssistantFormState['errors'];
+  readonly sent: Prefill;
 }) {
   const t = createTranslator(props.locale);
   return (
@@ -39,7 +42,7 @@ function SubjectAndGrade(props: {
         name="subject"
         label={t('assistant.subject')}
         options={assistantSubjects.map((s) => option(s, t(`assistant.subject_${s}`)))}
-        defaultValue="math"
+        defaultValue={props.sent.text('subject', 'math')}
         error={props.errors?.subject}
       />
       <Select
@@ -47,14 +50,14 @@ function SubjectAndGrade(props: {
         name="grade"
         label={t('assistant.grade')}
         options={gradeLevels.map((g) => option(g, g === 'K' ? t('drafts.grade_K') : g))}
-        defaultValue="4"
+        defaultValue={props.sent.text('grade', '4')}
         error={props.errors?.grade}
       />
     </>
   );
 }
 
-function LanguageSelect({ locale }: { readonly locale: Locale }) {
+function LanguageSelect({ locale, sent }: { readonly locale: Locale; readonly sent: Prefill }) {
   const t = createTranslator(locale);
   return (
     <Select
@@ -62,7 +65,7 @@ function LanguageSelect({ locale }: { readonly locale: Locale }) {
       name="language"
       label={t('assistant.language')}
       options={locales.map((l) => option(l, localeInfo[l].nativeName))}
-      defaultValue={locale}
+      defaultValue={sent.text('language', locale)}
     />
   );
 }
@@ -72,8 +75,15 @@ export function ContentForm({ locale }: { readonly locale: Locale }) {
   const t = createTranslator(locale);
   const [state, action] = useActionState(requestGenerationAction, initial);
   const errors = state.errors;
+  const sent = prefill(state.values);
   return (
-    <form action={action} className="stack" noValidate aria-label={t('assistant.title')}>
+    <form
+      action={action}
+      className="stack"
+      noValidate
+      aria-label={t('assistant.title')}
+      key={sent.key}
+    >
       <Hidden values={{ locale }} />
       <FormAlert message={errors?.form} />
       <div className="field-row">
@@ -82,12 +92,19 @@ export function ContentForm({ locale }: { readonly locale: Locale }) {
           name="type"
           label={t('assistant.type')}
           options={contentTypes.map((type) => option(type, t(`assistant.type_${type}`)))}
-          defaultValue="worksheet"
+          defaultValue={sent.text('type', 'worksheet')}
           error={errors?.type}
         />
-        <SubjectAndGrade locale={locale} errors={errors} />
+        <SubjectAndGrade locale={locale} errors={errors} sent={sent} />
       </div>
-      <Field id="topic" name="topic" label={t('assistant.topic')} error={errors?.topic} required />
+      <Field
+        id="topic"
+        name="topic"
+        label={t('assistant.topic')}
+        defaultValue={sent.text('topic')}
+        error={errors?.topic}
+        required
+      />
       <div className="field-row">
         <Select
           id="difficulty"
@@ -96,15 +113,21 @@ export function ContentForm({ locale }: { readonly locale: Locale }) {
           options={(['easy', 'medium', 'hard'] as const).map((d) =>
             option(d, t(`drafts.difficulty_${d}`)),
           )}
-          defaultValue="medium"
+          defaultValue={sent.text('difficulty', 'medium')}
         />
         <Field
           id="questionCount"
           name="questionCount"
           type="number"
           min={questionCountRange.min}
+          max={questionCountRange.max}
           label={t('assistant.questionCount')}
-          defaultValue={questionCountRange.default}
+          defaultValue={sent.text('questionCount', questionCountRange.default)}
+          hint={t('assistant.questionCountHint', {
+            min: questionCountRange.min,
+            max: questionCountRange.max,
+            part: questionPartSize,
+          })}
           error={errors?.questionCount}
         />
         <Field
@@ -112,19 +135,25 @@ export function ContentForm({ locale }: { readonly locale: Locale }) {
           name="durationMinutes"
           type="number"
           min={contentMinutesRange.min}
+          max={contentMinutesRange.max}
           label={t('assistant.duration')}
-          defaultValue={contentMinutesRange.default}
+          defaultValue={sent.text('durationMinutes', contentMinutesRange.default)}
           error={errors?.durationMinutes}
         />
-        <LanguageSelect locale={locale} />
+        <LanguageSelect locale={locale} sent={sent} />
       </div>
       <TextArea
         id="instructions"
         name="instructions"
         label={t('assistant.instructions')}
+        defaultValue={sent.text('instructions')}
         error={errors?.instructions}
       />
-      <EslSwitch label={t('esl.label')} help={t('esl.assistantHelp')} />
+      <EslSwitch
+        label={t('esl.label')}
+        help={t('esl.assistantHelp')}
+        defaultChecked={sent.checked('esl')}
+      />
       <Submit label={t('assistant.submit')} />
     </form>
   );
@@ -154,31 +183,46 @@ export function PresentationRequestForm({ locale }: { readonly locale: Locale })
   const t = createTranslator(locale);
   const [state, action] = useActionState(requestPresentationDraftAction, initial);
   const errors = state.errors;
+  const sent = prefill(state.values);
   return (
-    <form action={action} className="stack" noValidate aria-label={t('presentations.generate')}>
+    <form
+      action={action}
+      className="stack"
+      noValidate
+      aria-label={t('presentations.generate')}
+      key={sent.key}
+    >
       <Hidden values={{ locale }} />
       <FormAlert message={errors?.form} />
-      <Field id="topic" name="topic" label={t('assistant.topic')} error={errors?.topic} required />
+      <Field
+        id="topic"
+        name="topic"
+        label={t('assistant.topic')}
+        defaultValue={sent.text('topic')}
+        error={errors?.topic}
+        required
+      />
       <div className="field-row">
-        <SubjectAndGrade locale={locale} errors={errors} />
+        <SubjectAndGrade locale={locale} errors={errors} sent={sent} />
         <Field
           id="slideCount"
           name="slideCount"
           type="number"
           min={slideCountRange.min}
+          max={slideCountRange.max}
           label={t('presentations.slideCount')}
-          defaultValue={slideCountRange.default}
+          defaultValue={sent.text('slideCount', slideCountRange.default)}
           error={errors?.slideCount}
         />
-        <ThemeSelect locale={locale} />
-        <LanguageSelect locale={locale} />
+        <ThemeSelect locale={locale} sent={sent} />
+        <LanguageSelect locale={locale} sent={sent} />
       </div>
       <Submit label={t('presentations.draftSubmit')} />
     </form>
   );
 }
 
-function ThemeSelect({ locale }: { readonly locale: Locale }) {
+function ThemeSelect({ locale, sent }: { readonly locale: Locale; readonly sent: Prefill }) {
   const t = createTranslator(locale);
   return (
     <Select
@@ -186,7 +230,7 @@ function ThemeSelect({ locale }: { readonly locale: Locale }) {
       name="theme"
       label={t('presentations.theme')}
       options={presentationThemes.map((theme) => option(theme, t(`presentations.theme_${theme}`)))}
-      defaultValue="ocean"
+      defaultValue={sent.text('theme', 'ocean')}
     />
   );
 }
@@ -196,8 +240,15 @@ export function NewPresentationForm({ locale }: { readonly locale: Locale }) {
   const t = createTranslator(locale);
   const [state, action] = useActionState(createPresentationAction, initial);
   const errors = state.errors;
+  const sent = prefill(state.values);
   return (
-    <form action={action} className="stack" noValidate aria-label={t('presentations.newBlank')}>
+    <form
+      action={action}
+      className="stack"
+      noValidate
+      aria-label={t('presentations.newBlank')}
+      key={sent.key}
+    >
       <Hidden values={{ locale }} />
       <FormAlert message={errors?.form} />
       <div className="field-row">
@@ -205,10 +256,11 @@ export function NewPresentationForm({ locale }: { readonly locale: Locale }) {
           id="name"
           name="name"
           label={t('presentations.name')}
+          defaultValue={sent.text('name')}
           error={errors?.name}
           required
         />
-        <ThemeSelect locale={locale} />
+        <ThemeSelect locale={locale} sent={sent} />
       </div>
       <Submit label={t('presentations.create')} />
     </form>
@@ -240,8 +292,15 @@ export function SubPacketForm(props: {
   const [state, action] = useActionState(saveSubPacketAction, initial);
   const errors = state.errors;
   const { notes } = props;
+  const sent = prefill(state.values);
   return (
-    <form action={action} className="stack" noValidate aria-label={t('subPacket.subNotes')}>
+    <form
+      action={action}
+      className="stack"
+      noValidate
+      aria-label={t('subPacket.subNotes')}
+      key={sent.key}
+    >
       <Hidden values={{ locale: props.locale, classId: props.classId }} />
       <FormAlert message={errors?.form} />
       {state.saved ? (
@@ -254,14 +313,14 @@ export function SubPacketForm(props: {
           id="mainOfficeExt"
           name="mainOfficeExt"
           label={t('subPacket.mainOfficeExt')}
-          defaultValue={notes.mainOfficeExt}
+          defaultValue={sent.text('mainOfficeExt', notes.mainOfficeExt)}
           error={errors?.mainOfficeExt}
         />
         <Field
           id="nurseExt"
           name="nurseExt"
           label={t('subPacket.nurseExt')}
-          defaultValue={notes.nurseExt}
+          defaultValue={sent.text('nurseExt', notes.nurseExt)}
           error={errors?.nurseExt}
         />
       </div>
@@ -269,28 +328,28 @@ export function SubPacketForm(props: {
         id="dailyRoutines"
         name="dailyRoutines"
         label={t('subPacket.dailyRoutines')}
-        defaultValue={notes.dailyRoutines}
+        defaultValue={sent.text('dailyRoutines', notes.dailyRoutines)}
         error={errors?.dailyRoutines}
       />
       <TextArea
         id="emergencyProcedures"
         name="emergencyProcedures"
         label={t('subPacket.emergencyProcedures')}
-        defaultValue={notes.emergencyProcedures}
+        defaultValue={sent.text('emergencyProcedures', notes.emergencyProcedures)}
         error={errors?.emergencyProcedures}
       />
       <TextArea
         id="additionalNotes"
         name="additionalNotes"
         label={t('subPacket.additionalNotes')}
-        defaultValue={notes.additionalNotes}
+        defaultValue={sent.text('additionalNotes', notes.additionalNotes)}
         error={errors?.additionalNotes}
       />
       <label className="checkbox">
         <input
           type="checkbox"
           name="includeAccommodations"
-          defaultChecked={notes.includeAccommodations}
+          defaultChecked={sent.checked('includeAccommodations', notes.includeAccommodations)}
         />{' '}
         {t('subPacket.includeAccommodations')}
       </label>
@@ -309,12 +368,13 @@ export function PresentationClassroomForm(props: {
   const t = createTranslator(props.locale);
   const [state, action] = useActionState(sendPresentationToClassroomAction, initial);
   const errors = state.errors ?? {};
+  const sent = prefill(state.values);
   return (
     <form
       action={action}
       className="stack"
       aria-label={t('presentations.classroomSend')}
-      key={state.version}
+      key={`${String(state.version ?? 0)}-${sent.key}`}
     >
       <Hidden values={{ locale: props.locale, presentationId: props.presentationId }} />
       <FormAlert message={errors.form} />
@@ -337,13 +397,14 @@ export function PresentationClassroomForm(props: {
         name="courseId"
         label={t('classroom.course')}
         options={props.courses}
+        defaultValue={sent.text('courseId')}
         error={errors.courseId}
       />
       <Field
         id="slides-post-title"
         name="title"
         label={t('presentations.classroomName')}
-        defaultValue={props.name}
+        defaultValue={sent.text('title', props.name)}
         error={errors.title}
         required
       />
@@ -351,6 +412,7 @@ export function PresentationClassroomForm(props: {
         id="slides-post-instructions"
         name="instructions"
         label={t('presentations.classroomInstructions')}
+        defaultValue={sent.text('instructions')}
         error={errors.instructions}
       />
       <Field
@@ -358,9 +420,15 @@ export function PresentationClassroomForm(props: {
         name="dueDate"
         type="date"
         label={t('presentations.classroomDueDate')}
+        defaultValue={sent.text('dueDate')}
         error={errors.dueDate}
       />
-      <ScheduleFields locale={props.locale} idPrefix="slides-post" error={errors.scheduledAt} />
+      <ScheduleFields
+        locale={props.locale}
+        idPrefix="slides-post"
+        error={errors.scheduledAt}
+        sent={sent}
+      />
       <p className="hint">{t('presentations.classroomNote')}</p>
       <Submit label={t('presentations.classroomSend')} />
     </form>

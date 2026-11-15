@@ -1,7 +1,14 @@
 'use client';
 
 import { useActionState } from 'react';
-import { weekdays, type Class, type Semester, type Student } from '@thp/domain';
+import {
+  firstPeriod,
+  lastPeriod,
+  weekdays,
+  type Class,
+  type Semester,
+  type Student,
+} from '@thp/domain';
 import { createTranslator, type Locale } from '@thp/i18n';
 import {
   addStudentAction,
@@ -16,6 +23,7 @@ import {
 } from '../app/_lib/roster-actions.ts';
 import { Field, FormAlert, Submit } from './forms.tsx';
 import { Select, type Option } from './form-fields.tsx';
+import { prefill, type Prefill } from '../server/form-values.ts';
 
 const initial: RosterFormState = {};
 
@@ -36,13 +44,15 @@ export function ClassForm(props: {
   const t = createTranslator(props.locale);
   const { cls } = props;
   const [state, action] = useActionState(cls ? updateClassAction : createClassAction, initial);
-  const days = cls?.schedule?.days ?? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+  const sent = prefill(state.values);
+  const days = sent.all('days', cls?.schedule?.days ?? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']);
   return (
     <form
       action={action}
       className="stack"
       noValidate
       aria-label={cls ? t('classes.save') : t('classes.newClass')}
+      key={sent.key}
     >
       <input type="hidden" name="locale" value={props.locale} />
       {cls ? <input type="hidden" name="classId" value={cls.id} /> : null}
@@ -50,7 +60,7 @@ export function ClassForm(props: {
       <Field
         label={t('classes.name')}
         name="name"
-        defaultValue={cls?.name}
+        defaultValue={sent.text('name', cls?.name)}
         error={state.errors?.name}
         required
       />
@@ -58,19 +68,19 @@ export function ClassForm(props: {
         <Field
           label={t('classes.subject')}
           name="subject"
-          defaultValue={cls?.subject}
+          defaultValue={sent.text('subject', cls?.subject)}
           error={state.errors?.subject}
         />
         <Field
           label={t('classes.grade')}
           name="grade"
-          defaultValue={cls?.grade}
+          defaultValue={sent.text('grade', cls?.grade)}
           error={state.errors?.grade}
         />
         <Field
           label={t('classes.section')}
           name="section"
-          defaultValue={cls?.section}
+          defaultValue={sent.text('section', cls?.section)}
           error={state.errors?.section}
         />
       </div>
@@ -78,12 +88,16 @@ export function ClassForm(props: {
         <Field
           label={t('classes.schoolYear')}
           name="schoolYear"
-          defaultValue={cls?.schoolYear}
+          defaultValue={sent.text('schoolYear', cls?.schoolYear)}
           error={state.errors?.schoolYear}
         />
         <div className="field">
           <label htmlFor="semesterId">{t('classes.semester')}</label>
-          <select id="semesterId" name="semesterId" defaultValue={cls?.semesterId ?? ''}>
+          <select
+            id="semesterId"
+            name="semesterId"
+            defaultValue={sent.text('semesterId', cls?.semesterId ?? '')}
+          >
             <option value="">{t('classes.noSemester')}</option>
             {props.semesters.map((semester) => (
               <option key={semester.id} value={semester.id}>
@@ -100,22 +114,23 @@ export function ClassForm(props: {
             label={t('classes.period')}
             name="period"
             type="number"
-            min={1}
-            defaultValue={cls?.schedule?.period}
+            min={firstPeriod}
+            max={lastPeriod}
+            defaultValue={sent.text('period', cls?.schedule?.period)}
             error={state.errors?.period}
           />
           <Field
             label={t('classes.startTime')}
             name="startTime"
             type="time"
-            defaultValue={cls?.schedule?.startTime}
+            defaultValue={sent.text('startTime', cls?.schedule?.startTime)}
             error={state.errors?.startTime}
           />
           <Field
             label={t('classes.endTime')}
             name="endTime"
             type="time"
-            defaultValue={cls?.schedule?.endTime}
+            defaultValue={sent.text('endTime', cls?.schedule?.endTime)}
             error={state.errors?.endTime}
           />
         </div>
@@ -139,24 +154,25 @@ export function ClassForm(props: {
 function StudentFields(props: {
   readonly locale: Locale;
   readonly state: RosterFormState;
+  readonly sent: Prefill;
   readonly student?: Student;
 }) {
   const t = createTranslator(props.locale);
-  const { state, student } = props;
+  const { state, sent, student } = props;
   return (
     <>
       <div className="field-row">
         <Field
           label={t('students.firstName')}
           name="firstName"
-          defaultValue={student?.firstName}
+          defaultValue={sent.text('firstName', student?.firstName)}
           error={state.errors?.firstName}
           required
         />
         <Field
           label={t('students.lastName')}
           name="lastName"
-          defaultValue={student?.lastName}
+          defaultValue={sent.text('lastName', student?.lastName)}
           error={state.errors?.lastName}
           required
         />
@@ -165,21 +181,21 @@ function StudentFields(props: {
         <Field
           label={t('students.studentNumber')}
           name="studentNumber"
-          defaultValue={student?.studentNumber}
+          defaultValue={sent.text('studentNumber', student?.studentNumber)}
           error={state.errors?.studentNumber ?? state.errors?.form}
         />
         <Field
           label={t('students.parentEmail')}
           name="parentEmail"
           type="email"
-          defaultValue={student?.parentEmail}
+          defaultValue={sent.text('parentEmail', student?.parentEmail)}
           error={state.errors?.parentEmail}
         />
       </div>
       <Field
         label={t('students.accommodations')}
         name="accommodations"
-        defaultValue={student?.accommodations}
+        defaultValue={sent.text('accommodations', student?.accommodations)}
         error={state.errors?.accommodations}
       />
     </>
@@ -195,9 +211,10 @@ export function AddStudentForm({
 }) {
   const t = createTranslator(locale);
   const [state, action] = useActionState(addStudentAction, initial);
+  const sent = prefill(state.values);
   return (
     <form
-      key={state.version ?? 0}
+      key={`${String(state.version ?? 0)}-${sent.key}`}
       action={action}
       className="stack"
       noValidate
@@ -205,7 +222,7 @@ export function AddStudentForm({
     >
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="classId" value={classId} />
-      <StudentFields locale={locale} state={state} />
+      <StudentFields locale={locale} state={state} sent={sent} />
       <Submit label={t('students.add')} />
     </form>
   );
@@ -220,11 +237,18 @@ export function EditStudentForm({
 }) {
   const t = createTranslator(locale);
   const [state, action] = useActionState(updateStudentAction, initial);
+  const sent = prefill(state.values);
   return (
-    <form action={action} className="stack" noValidate aria-label={t('students.editTitle')}>
+    <form
+      action={action}
+      className="stack"
+      noValidate
+      aria-label={t('students.editTitle')}
+      key={sent.key}
+    >
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="studentId" value={student.id} />
-      <StudentFields locale={locale} state={state} student={student} />
+      <StudentFields locale={locale} state={state} sent={sent} student={student} />
       <Submit label={t('students.save')} />
     </form>
   );
@@ -286,9 +310,10 @@ export function CopyStudentsForm({
   const t = createTranslator(locale);
   const [state, action] = useActionState(copyStudentsAction, initial);
   if (classes.length === 0) return <p className="muted">{t('students.copyNone')}</p>;
+  const sent = prefill(state.values);
   return (
     <form
-      key={state.version ?? 0}
+      key={`${String(state.version ?? 0)}-${sent.key}`}
       action={action}
       className="stack"
       aria-label={t('students.copyTitle')}
@@ -301,6 +326,7 @@ export function CopyStudentsForm({
         name="fromClassId"
         label={t('students.copyFrom')}
         options={classes}
+        defaultValue={sent.text('fromClassId')}
         error={state.errors?.fromClassId}
       />
       <FormAlert message={state.errors?.form} />
@@ -328,9 +354,10 @@ export function SemesterForm({
     semester ? updateSemesterAction : createSemesterAction,
     initial,
   );
+  const sent = prefill(state.values);
   return (
     <form
-      key={semester ? semester.id : String(state.saved ?? false)}
+      key={`${semester ? semester.id : String(state.saved ?? false)}-${sent.key}`}
       action={action}
       className="stack"
       noValidate
@@ -342,7 +369,7 @@ export function SemesterForm({
       <Field
         label={t('semesters.name')}
         name="name"
-        defaultValue={semester?.name}
+        defaultValue={sent.text('name', semester?.name)}
         error={state.errors?.name}
         required
       />
@@ -351,7 +378,7 @@ export function SemesterForm({
           label={t('semesters.startDate')}
           name="startDate"
           type="date"
-          defaultValue={semester?.startDate}
+          defaultValue={sent.text('startDate', semester?.startDate)}
           error={state.errors?.startDate}
           required
         />
@@ -359,20 +386,21 @@ export function SemesterForm({
           label={t('semesters.endDate')}
           name="endDate"
           type="date"
-          defaultValue={semester?.endDate}
+          defaultValue={sent.text('endDate', semester?.endDate)}
           error={state.errors?.endDate}
           required
         />
         <Field
           label={t('semesters.schoolYear')}
           name="schoolYear"
-          defaultValue={semester?.schoolYear}
+          defaultValue={sent.text('schoolYear', semester?.schoolYear)}
           error={state.errors?.schoolYear}
         />
       </div>
       {semester ? null : (
         <label className="checkbox">
-          <input type="checkbox" name="makeActive" /> {t('semesters.makeActive')}
+          <input type="checkbox" name="makeActive" defaultChecked={sent.checked('makeActive')} />{' '}
+          {t('semesters.makeActive')}
         </label>
       )}
       <Submit label={semester ? t('semesters.save') : t('semesters.create')} />

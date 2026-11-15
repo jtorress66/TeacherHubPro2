@@ -188,7 +188,7 @@ describe('createPathRequest', () => {
     });
     expect(createPathRequest({ ...request, lessonCount: 9 })).toMatchObject({
       ok: false,
-      error: { field: 'lessonCount', code: 'out_of_range' },
+      error: { field: 'lessonCount', code: 'out_of_range', range: { min: 3, max: 8 } },
     });
     expect(createPathRequest({ ...request, level: 0 }).ok).toBe(false);
     expect(createPathRequest({ ...request, subject: 'alchemy' }).ok).toBe(false);

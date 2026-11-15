@@ -19,6 +19,7 @@ import {
 import { Field, FormAlert, Submit } from './forms.tsx';
 import { Hidden, Select, TextArea, type Option } from './form-fields.tsx';
 import { Markdown } from './markdown.tsx';
+import { prefill, type Prefill } from '../server/form-values.ts';
 
 const initial: PrepFormState = {};
 const option = (id: string, name: string): Option => ({ id, name });
@@ -40,12 +41,27 @@ export function NewPrepForm(props: {
   readonly classes: readonly PrepClass[];
   readonly weekStart: string;
 }) {
-  const { locale, classes } = props;
-  const t = createTranslator(locale);
   const [state, action] = useActionState(startPrepAction, initial);
-  const [classId, setClassId] = useState(classes[0]?.id ?? '');
+  const sent = prefill(state.values);
+  return (
+    <NewPrepFields {...props} key={sent.key} action={action} errors={state.errors} sent={sent} />
+  );
+}
+
+function NewPrepFields(
+  props: Parameters<typeof NewPrepForm>[0] & {
+    readonly action: (data: FormData) => void;
+    readonly errors: PrepFormState['errors'];
+    readonly sent: Prefill;
+  },
+) {
+  const { locale, classes, action, errors, sent } = props;
+  const t = createTranslator(locale);
+  const [classId, setClassId] = useState(sent.text('classId', classes[0]?.id ?? '') ?? '');
   const cls = classes.find((c) => c.id === classId);
-  const errors = state.errors;
+  // What was sent stays only until the teacher picks another class.
+  const keep = (name: string, fallback: string) =>
+    sent.text('classId') === classId ? sent.text(name, fallback) : fallback;
   return (
     <form action={action} className="stack" noValidate aria-label={t('prep.newTitle')}>
       <Hidden values={{ locale }} />
@@ -72,6 +88,7 @@ export function NewPrepForm(props: {
         name="prompt"
         label={t('prep.prompt')}
         hint={t('prep.promptHint')}
+        defaultValue={sent.text('prompt')}
         error={errors?.prompt}
         rows={2}
       />
@@ -81,7 +98,7 @@ export function NewPrepForm(props: {
           name="weekStart"
           type="date"
           label={t('prep.weekStart')}
-          defaultValue={props.weekStart}
+          defaultValue={keep('weekStart', props.weekStart)}
           error={errors?.weekStart}
         />
         <Field
@@ -89,8 +106,9 @@ export function NewPrepForm(props: {
           name="days"
           type="number"
           min={prepDaysRange.min}
+          max={prepDaysRange.max}
           label={t('prep.days')}
-          defaultValue={prepDaysRange.default}
+          defaultValue={keep('days', String(prepDaysRange.default))}
           error={errors?.days}
         />
         <Select
@@ -98,7 +116,7 @@ export function NewPrepForm(props: {
           name="subject"
           label={t('prep.subject')}
           options={standardSubjects.map((s) => option(s, t(`assistant.subject_${s}`)))}
-          defaultValue={cls?.subject ?? 'math'}
+          defaultValue={keep('subject', cls?.subject ?? 'math')}
           error={errors?.subject}
         />
         <Select
@@ -106,7 +124,7 @@ export function NewPrepForm(props: {
           name="grade"
           label={t('prep.grade')}
           options={gradeLevels.map((g) => option(g, g === 'K' ? t('drafts.grade_K') : g))}
-          defaultValue={cls?.grade ?? '4'}
+          defaultValue={keep('grade', cls?.grade ?? '4')}
           error={errors?.grade}
         />
         <Select
@@ -114,14 +132,19 @@ export function NewPrepForm(props: {
           name="language"
           label={t('prep.language')}
           options={locales.map((l) => option(l, localeInfo[l].nativeName))}
-          defaultValue={locale}
+          defaultValue={keep('language', locale)}
         />
       </div>
       <fieldset className="checks">
         <legend>{t('prep.options')}</legend>
         {optionNames.map((name) => (
           <label key={name} className="checkbox">
-            <input type="checkbox" name="options" value={name} defaultChecked />{' '}
+            <input
+              type="checkbox"
+              name="options"
+              value={name}
+              defaultChecked={sent.all('options', optionNames).includes(name)}
+            />{' '}
             {t(`prep.option_${name}`)}
           </label>
         ))}
@@ -133,7 +156,7 @@ export function NewPrepForm(props: {
           label={t('prep.quizCategory')}
           options={cls?.categories ?? []}
           empty={t('prep.quizCategoryNone')}
-          defaultValue={cls?.categories[0]?.id ?? ''}
+          defaultValue={keep('quizCategoryId', cls?.categories[0]?.id ?? '')}
           error={errors?.quizCategoryId}
         />
       </div>
@@ -302,8 +325,13 @@ export function PrepReview(props: {
   const general = Object.entries(errors).find(
     ([field]) => field !== 'emailSubject' && field !== 'emailBody',
   )?.[1];
+  const sent = prefill(state.values);
+  const kept = sent.all(
+    'keep',
+    items.filter((item) => item.include).map((item) => item.key),
+  );
   return (
-    <form action={action} className="stack" aria-label={t('prep.review')}>
+    <form action={action} className="stack" aria-label={t('prep.review')} key={sent.key}>
       <Hidden values={{ locale, batchId: props.batchId }} />
       <FormAlert message={general} />
       <div className="prep-review">
@@ -320,7 +348,7 @@ export function PrepReview(props: {
                         type="checkbox"
                         name="keep"
                         value={item.key}
-                        defaultChecked={item.include}
+                        defaultChecked={kept.includes(item.key)}
                         aria-label={t('prep.keep', { item: label })}
                       />{' '}
                       {label}
@@ -367,14 +395,14 @@ export function PrepReview(props: {
             id="prep-email-subject"
             name="emailSubject"
             label={t('prep.emailSubjectLabel')}
-            defaultValue={props.parentEmail.subject}
+            defaultValue={sent.text('emailSubject', props.parentEmail.subject)}
             error={errors.emailSubject}
           />
           <TextArea
             id="prep-email-body"
             name="emailBody"
             label={t('prep.emailBodyLabel')}
-            defaultValue={props.parentEmail.body}
+            defaultValue={sent.text('emailBody', props.parentEmail.body)}
             error={errors.emailBody}
             rows={10}
           />

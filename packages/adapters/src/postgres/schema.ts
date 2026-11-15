@@ -160,6 +160,9 @@ export interface JobsTable {
   created_at: Generated<Date>;
   started_at: Date | null;
   finished_at: Date | null;
+  progress_from: number | null;
+  progress_to: number | null;
+  progress_total: number | null;
 }
 
 export interface GradeCategoriesTable {

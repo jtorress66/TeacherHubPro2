@@ -1,6 +1,12 @@
 import { isLanguage, type Language } from '../shared/language.ts';
 import { ok, type Result } from '../shared/result.ts';
-import { invalid, requiredText, type ValidationError } from '../shared/validation.ts';
+import {
+  invalid,
+  isWholeNumberIn,
+  outOfRange,
+  requiredText,
+  type ValidationError,
+} from '../shared/validation.ts';
 import { isGradeLevel, type GradeLevel } from '../standards/common-core.ts';
 import { assistantSubjects, type AssistantSubject } from '../assistant/content-request.ts';
 import { presentationThemes, type PresentationTheme, type SlideInput } from './presentation.ts';
@@ -43,13 +49,8 @@ export function createPresentationRequest(
   }
   if (!isGradeLevel(input.grade)) return invalid('grade', 'not_allowed');
   const slideCount = input.slideCount ?? slideCountRange.default;
-  if (
-    !Number.isInteger(slideCount) ||
-    slideCount < slideCountRange.min ||
-    slideCount > slideCountRange.max
-  ) {
-    return invalid('slideCount', 'out_of_range');
-  }
+  if (!isWholeNumberIn(slideCount, slideCountRange))
+    return outOfRange('slideCount', slideCountRange);
   const theme = input.theme ?? presentationThemes[0];
   if (!(presentationThemes as readonly string[]).includes(theme)) {
     return invalid('theme', 'not_allowed');

@@ -146,7 +146,7 @@ export function createJobRunner(
   const files = new PostgresFileStore(db);
   const handlers = new JobHandlerRegistry([
     new LessonPlanDraftHandler(new LessonPlanner(model)),
-    new GenerationHandler({ writer: new ContentWriter(model), generations, ids, clock }),
+    new GenerationHandler({ writer: new ContentWriter(model), generations, ids, clock, jobs }),
     new PresentationDraftHandler(new PresentationWriter(model)),
     new RubricDraftHandler(new RubricWriter(model)),
     new SpeechHandler({ tts: textToSpeech(tts), files }),

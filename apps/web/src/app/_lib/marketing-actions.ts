@@ -4,11 +4,14 @@ import { revalidatePath } from 'next/cache';
 import { leadStatuses, type LeadId, type LeadStatus } from '@thp/domain';
 import { isLocale, type Locale } from '@thp/i18n';
 import { callerAddress, throttle } from './limits.ts';
+import type { SubmittedValues } from '../../server/form-values.ts';
 import { getAppContainer } from '../../container.ts';
-import { formErrors } from '../../server/error-messages.ts';
+import { rejectedForm } from '../../server/error-messages.ts';
 import { requireUser } from './auth.ts';
 
 export interface LeadFormState {
+  /** What the teacher sent, when it was refused, so the form shows it again. */
+  readonly values?: SubmittedValues;
   readonly errors?: Readonly<Record<string, string>>;
   readonly sent?: boolean;
 }
@@ -35,7 +38,7 @@ export async function captureLeadAction(
 ): Promise<LeadFormState> {
   const locale = localeOf(data);
   const limited = await throttle([['contact', await callerAddress()]]);
-  if (limited !== null) return { errors: formErrors(limited, locale) };
+  if (limited !== null) return rejectedForm(limited, locale, data);
   const captured = await getAppContainer().captureLead.execute({
     name: text(data, 'name'),
     email: text(data, 'email'),
@@ -48,7 +51,7 @@ export async function captureLeadAction(
     locale,
     page: optional(data, 'page'),
   });
-  if (!captured.ok) return { errors: formErrors(captured.error, locale) };
+  if (!captured.ok) return rejectedForm(captured.error, locale, data);
   return { sent: true };
 }
 

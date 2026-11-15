@@ -4,8 +4,9 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import type { ClassId, SemesterId, StudentId } from '@thp/domain';
 import { createTranslator, isLocale, type Locale } from '@thp/i18n';
+import { submittedValues, type SubmittedValues } from '../../server/form-values.ts';
 import { getAppContainer } from '../../container.ts';
-import { formErrors } from '../../server/error-messages.ts';
+import { rejectedForm } from '../../server/error-messages.ts';
 import { parseForm, type FieldErrors } from '../../server/forms.ts';
 import { importErrorMessages } from '../../server/import-messages.ts';
 import { classForm, semesterForm, studentForm, toClassChanges } from '../../server/roster-forms.ts';
@@ -13,6 +14,8 @@ import { record } from './activity.ts';
 import { requireUser } from './auth.ts';
 
 export interface RosterFormState {
+  /** What the teacher sent, when it was refused, so the form shows it again. */
+  readonly values?: SubmittedValues;
   readonly errors?: Readonly<Record<string, string>>;
   readonly messages?: readonly string[];
   readonly saved?: boolean;
@@ -32,9 +35,10 @@ const text = (data: FormData, key: string): string => {
   return typeof value === 'string' ? value : '';
 };
 
-const fieldMessages = (errors: FieldErrors, locale: Locale): RosterFormState => {
+const fieldMessages = (errors: FieldErrors, locale: Locale, data: FormData): RosterFormState => {
   const t = createTranslator(locale);
   return {
+    values: submittedValues(data),
     errors: Object.fromEntries(
       Object.entries(errors).map(([field, code]) => [field, t(`errors.${code}`)]),
     ),
@@ -48,13 +52,13 @@ export async function createClassAction(
   data: FormData,
 ): Promise<RosterFormState> {
   const form = parseForm(classForm, data);
-  if (!form.ok) return fieldMessages(form.error, localeOf(data));
+  if (!form.ok) return fieldMessages(form.error, localeOf(data), data);
   const { user } = await requireUser(form.value.locale);
   const result = await getAppContainer().createClass.execute({
     actor: user,
     details: toClassChanges(form.value),
   });
-  if (!result.ok) return { errors: formErrors(result.error, form.value.locale) };
+  if (!result.ok) return rejectedForm(result.error, form.value.locale, data);
   // The dashboard's setup checklist counts classes.
   revalidatePath(`/${form.value.locale}/app`);
   redirect(classPage(form.value.locale, result.value.id));
@@ -65,14 +69,14 @@ export async function updateClassAction(
   data: FormData,
 ): Promise<RosterFormState> {
   const form = parseForm(classForm, data);
-  if (!form.ok) return fieldMessages(form.error, localeOf(data));
+  if (!form.ok) return fieldMessages(form.error, localeOf(data), data);
   const { user } = await requireUser(form.value.locale);
   const result = await getAppContainer().updateClass.execute({
     actor: user,
     classId: text(data, 'classId') as ClassId,
     details: toClassChanges(form.value),
   });
-  if (!result.ok) return { errors: formErrors(result.error, form.value.locale) };
+  if (!result.ok) return rejectedForm(result.error, form.value.locale, data);
   revalidatePath(classPage(form.value.locale, result.value.id));
   return { saved: true };
 }
@@ -102,7 +106,7 @@ export async function addStudentAction(
   data: FormData,
 ): Promise<RosterFormState> {
   const form = parseForm(studentForm, data);
-  if (!form.ok) return fieldMessages(form.error, localeOf(data));
+  if (!form.ok) return fieldMessages(form.error, localeOf(data), data);
   const { locale, ...details } = form.value;
   const { user } = await requireUser(locale);
   const classId = text(data, 'classId');
@@ -111,7 +115,7 @@ export async function addStudentAction(
     classId: classId as ClassId,
     details,
   });
-  if (!result.ok) return { errors: formErrors(result.error, locale) };
+  if (!result.ok) return rejectedForm(result.error, locale, data);
   await record(user, 'student_added', result.value.id);
   revalidatePath(classPage(locale, classId));
   return { saved: true, version: (state.version ?? 0) + 1 };
@@ -122,7 +126,7 @@ export async function updateStudentAction(
   data: FormData,
 ): Promise<RosterFormState> {
   const form = parseForm(studentForm, data);
-  if (!form.ok) return fieldMessages(form.error, localeOf(data));
+  if (!form.ok) return fieldMessages(form.error, localeOf(data), data);
   const { locale, ...details } = form.value;
   const { user } = await requireUser(locale);
   const result = await getAppContainer().updateStudent.execute({
@@ -130,7 +134,7 @@ export async function updateStudentAction(
     studentId: text(data, 'studentId') as StudentId,
     details,
   });
-  if (!result.ok) return { errors: formErrors(result.error, locale) };
+  if (!result.ok) return rejectedForm(result.error, locale, data);
   await record(user, 'student_updated', result.value.id);
   // Refresh the roster before going back to it, so it shows the change.
   revalidatePath(classPage(locale, result.value.classId));
@@ -183,7 +187,7 @@ export async function copyStudentsAction(
     fromClassId: text(data, 'fromClassId') as ClassId,
     toClassId: classId as ClassId,
   });
-  if (!result.ok) return { errors: formErrors(result.error, locale) };
+  if (!result.ok) return rejectedForm(result.error, locale, data);
   await record(user, 'students_imported', classId);
   revalidatePath(classPage(locale, classId));
   return { copied: result.value, version: (state.version ?? 0) + 1 };
@@ -194,7 +198,7 @@ export async function createSemesterAction(
   data: FormData,
 ): Promise<RosterFormState> {
   const form = parseForm(semesterForm, data);
-  if (!form.ok) return fieldMessages(form.error, localeOf(data));
+  if (!form.ok) return fieldMessages(form.error, localeOf(data), data);
   const { locale, makeActive, ...details } = form.value;
   const { user } = await requireUser(locale);
   const result = await getAppContainer().createSemester.execute({
@@ -202,7 +206,7 @@ export async function createSemesterAction(
     details,
     makeActive,
   });
-  if (!result.ok) return { errors: formErrors(result.error, locale) };
+  if (!result.ok) return rejectedForm(result.error, locale, data);
   revalidatePath(`/${locale}/app/semesters`);
   return { saved: true };
 }
@@ -212,7 +216,7 @@ export async function updateSemesterAction(
   data: FormData,
 ): Promise<RosterFormState> {
   const form = parseForm(semesterForm, data);
-  if (!form.ok) return fieldMessages(form.error, localeOf(data));
+  if (!form.ok) return fieldMessages(form.error, localeOf(data), data);
   const { locale, name, startDate, endDate, schoolYear } = form.value;
   const { user } = await requireUser(locale);
   const result = await getAppContainer().updateSemester.execute({
@@ -220,7 +224,7 @@ export async function updateSemesterAction(
     semesterId: text(data, 'semesterId') as SemesterId,
     details: { name, startDate, endDate, schoolYear },
   });
-  if (!result.ok) return { errors: formErrors(result.error, locale) };
+  if (!result.ok) return rejectedForm(result.error, locale, data);
   revalidatePath(`/${locale}/app/semesters`);
   redirect(`/${locale}/app/semesters`);
 }

@@ -7,7 +7,7 @@ import { z } from 'zod';
 import type { LtiPlatformId } from '@thp/domain';
 import { createTranslator, isLocale, type Locale } from '@thp/i18n';
 import { getAppContainer, type LtiFeature } from '../../container.ts';
-import { formErrors } from '../../server/error-messages.ts';
+import { rejectedForm } from '../../server/error-messages.ts';
 import {
   afterLinkPath,
   LTI_LINK_COOKIE,
@@ -16,9 +16,12 @@ import {
   ltiProblemFor,
   readPlacedItems,
 } from '../../server/lti.ts';
+import { submittedValues, type SubmittedValues } from '../../server/form-values.ts';
 import { requireUser, takeSessionCookie } from './auth.ts';
 
 export interface LtiFormState {
+  /** What the teacher sent, when it was refused, so the form shows it again. */
+  readonly values?: SubmittedValues;
   readonly errors?: Readonly<Record<string, string>>;
   readonly notice?: string;
   /** Changes after each success so the form can clear itself. */
@@ -62,7 +65,7 @@ export async function registerLtiPlatformAction(
   const { user } = await requireUser(locale, { needsAccess: false });
   const details = platformForm.parse(Object.fromEntries(data.entries()));
   const registered = await ltiOrNotFound().register.execute({ actor: user, details });
-  if (!registered.ok) return { errors: formErrors(registered.error, locale) };
+  if (!registered.ok) return rejectedForm(registered.error, locale, data);
   revalidatePath(schoolSystemsPath(locale));
   return {
     notice: createTranslator(locale)('lti.added'),
@@ -117,6 +120,8 @@ export interface LtiPlaceState {
   readonly error?: string;
   /** The signed answer to post back to the course system, once the items are chosen. */
   readonly placement?: { readonly returnUrl: string; readonly jwt: string };
+  /** What the teacher ticked, when it was refused, so the form shows it again. */
+  readonly values?: SubmittedValues;
 }
 
 /**
@@ -135,7 +140,12 @@ export async function placeLtiContentAction(
     ticket: (await cookies()).get(LTI_PLACE_COOKIE)?.value ?? '',
     items: readPlacedItems(data.getAll('item')),
   });
-  if (!placed.ok) return { error: createTranslator(locale)(ltiPlaceErrorKey(placed.error.code)) };
+  if (!placed.ok) {
+    return {
+      error: createTranslator(locale)(ltiPlaceErrorKey(placed.error.code)),
+      values: submittedValues(data),
+    };
+  }
   return { placement: placed.value };
 }
 

@@ -6,11 +6,14 @@ import type { ClassId, GameId, LiveSessionId } from '@thp/domain';
 import type { GameRound, LiveJoin, LiveLobby, RoundResult } from '@thp/application';
 import { isLocale, type Locale } from '@thp/i18n';
 import { callerAddress, throttle } from './limits.ts';
+import type { SubmittedValues } from '../../server/form-values.ts';
 import { getAppContainer } from '../../container.ts';
-import { formErrors, messageFor } from '../../server/error-messages.ts';
+import { messageFor, rejectedForm } from '../../server/error-messages.ts';
 import { requireUser } from './auth.ts';
 
 export interface LiveFormState {
+  /** What the teacher sent, when it was refused, so the form shows it again. */
+  readonly values?: SubmittedValues;
   readonly errors?: Readonly<Record<string, string>>;
 }
 
@@ -43,7 +46,7 @@ export async function startLiveSessionAction(
     ...(mode === '' ? {} : { mode }),
     ...(seconds === '' ? {} : { questionSeconds: Number(seconds) }),
   });
-  if (!session.ok) return { errors: formErrors(session.error, locale) };
+  if (!session.ok) return rejectedForm(session.error, locale, data);
   redirect(`${livePath(locale)}/${session.value.id}`);
 }
 

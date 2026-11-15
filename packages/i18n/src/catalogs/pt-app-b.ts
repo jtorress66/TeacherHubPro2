@@ -127,6 +127,9 @@ export const ptAppB = {
     instructions: 'Instruções adicionais (opcional)',
     submit: 'Escrever',
     working: 'Escrevendo… Isso costuma levar menos de um minuto.',
+    writingQuestions: 'Escrevendo as perguntas {from}–{to} de {total}…',
+    questionCountHint:
+      'De {min} a {max}. Testes com mais de {part} perguntas são escritos em partes e podem levar alguns minutos.',
     open: 'Abrir',
     history: 'Seu histórico',
     historyEmpty: 'Nada ainda. O que você criar aparece aqui.',
@@ -1261,6 +1264,7 @@ export const ptAppB = {
     required: 'Este campo é obrigatório.',
     invalid_format: 'Verifique este valor.',
     out_of_range: 'Este valor está fora do intervalo permitido.',
+    outOfRangeBetween: 'Escolha um número de {min} a {max}.',
     too_short: 'Isto é curto demais.',
     too_long: 'Isto é longo demais.',
     too_large: 'Este arquivo é grande demais.',

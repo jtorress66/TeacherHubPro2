@@ -2,7 +2,14 @@ import type { ClassId } from '../shared/ids.ts';
 import { isLanguage, type Language } from '../shared/language.ts';
 import { parseLocalDate, type LocalDate } from '../shared/local-date.ts';
 import { ok, type Result } from '../shared/result.ts';
-import { invalid, optionalText, requiredText, type ValidationError } from '../shared/validation.ts';
+import {
+  invalid,
+  isWholeNumberIn,
+  optionalText,
+  outOfRange,
+  requiredText,
+  type ValidationError,
+} from '../shared/validation.ts';
 import {
   isGradeLevel,
   standardSubjects,
@@ -73,9 +80,8 @@ export function createDraftRequest(
     return invalid('difficulty', 'not_allowed');
   }
   const minutes = input.durationMinutes ?? 45;
-  if (!Number.isInteger(minutes) || minutes < minDraftMinutes || minutes > maxDraftMinutes) {
-    return invalid('durationMinutes', 'out_of_range');
-  }
+  const allowed = { min: minDraftMinutes, max: maxDraftMinutes };
+  if (!isWholeNumberIn(minutes, allowed)) return outOfRange('durationMinutes', allowed);
   if (!isLanguage(input.language)) return invalid('language', 'not_allowed');
   const instructions = optionalText('instructions', input.instructions, maxInstructionsLength);
   if (!instructions.ok) return instructions;

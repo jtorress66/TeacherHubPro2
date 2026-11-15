@@ -1,7 +1,13 @@
 import { assistantSubjects, type AssistantSubject } from '../assistant/content-request.ts';
 import { isLanguage, type Language } from '../shared/language.ts';
 import { ok, type Result } from '../shared/result.ts';
-import { invalid, optionalText, type ValidationError } from '../shared/validation.ts';
+import {
+  invalid,
+  isWholeNumberIn,
+  optionalText,
+  outOfRange,
+  type ValidationError,
+} from '../shared/validation.ts';
 import { isGradeLevel, type GradeLevel } from '../standards/common-core.ts';
 
 /** 1 rebuilds foundations, 3 is on grade level, 5 stretches past it. */
@@ -61,12 +67,8 @@ export function createPathRequest(input: PathRequestInput): Result<PathRequest, 
   if (!isLanguage(input.language)) return invalid('language', 'invalid_format');
   if (!isLearningLevel(input.level)) return invalid('level', 'out_of_range');
   const lessonCount = input.lessonCount ?? lessonCountRange.default;
-  if (
-    !Number.isInteger(lessonCount) ||
-    lessonCount < lessonCountRange.min ||
-    lessonCount > lessonCountRange.max
-  ) {
-    return invalid('lessonCount', 'out_of_range');
+  if (!isWholeNumberIn(lessonCount, lessonCountRange)) {
+    return outOfRange('lessonCount', lessonCountRange);
   }
   const topic = optionalText('topic', input.topic);
   if (!topic.ok) return topic;

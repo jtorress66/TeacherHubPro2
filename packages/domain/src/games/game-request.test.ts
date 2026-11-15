@@ -55,6 +55,7 @@ describe('createGameRequest', () => {
       expect(errorOf(createGameRequest({ ...input, count }))).toEqual({
         field: 'count',
         code: 'out_of_range',
+        range: { min: 4, max: 15 },
       });
     }
   });

@@ -11,6 +11,7 @@ import {
 } from '../app/_lib/lti-actions.ts';
 import { Hidden } from './form-fields.tsx';
 import { Field, FormAlert, Submit } from './forms.tsx';
+import { prefill } from '../server/form-values.ts';
 
 const initial: LtiFormState = {};
 
@@ -78,8 +79,14 @@ export function LtiPlatformForm({ locale }: { readonly locale: Locale }) {
   const errors = state.errors ?? {};
   const known = ['name', ...platformFields];
   const formError = Object.entries(errors).find(([name]) => !known.includes(name))?.[1];
+  const sent = prefill(state.values);
   return (
-    <form action={action} className="stack" aria-label={t('lti.addTitle')} key={state.version}>
+    <form
+      action={action}
+      className="stack"
+      aria-label={t('lti.addTitle')}
+      key={`${String(state.version ?? 0)}-${sent.key}`}
+    >
       <Hidden values={{ locale }} />
       <FormAlert message={formError} />
       {state.notice === undefined ? null : (
@@ -92,6 +99,7 @@ export function LtiPlatformForm({ locale }: { readonly locale: Locale }) {
         name="name"
         id="lti-name"
         hint={t('lti.nameHint')}
+        defaultValue={sent.text('name')}
         error={errors.name}
       />
       {platformFields.map((name) => (
@@ -102,6 +110,7 @@ export function LtiPlatformForm({ locale }: { readonly locale: Locale }) {
           id={`lti-${name}`}
           type={name.endsWith('Url') ? 'url' : 'text'}
           {...(name === 'deploymentIds' ? { hint: t('lti.deploymentIdsHint') } : {})}
+          defaultValue={sent.text(name)}
           error={errors[name]}
         />
       ))}
@@ -161,8 +170,10 @@ export function PlaceLtiContentForm(props: {
   if (state.placement !== undefined) {
     return <ReturnToCourse locale={props.locale} {...state.placement} />;
   }
+  const sent = prefill(state.values);
+  const ticked = sent.all('item');
   return (
-    <form action={action} className="stack" aria-label={t('lti.placeTitle')}>
+    <form action={action} className="stack" aria-label={t('lti.placeTitle')} key={sent.key}>
       <Hidden values={{ locale: props.locale }} />
       <FormAlert message={state.error} />
       <fieldset className="checks" aria-describedby="lti-place-hint">
@@ -172,7 +183,12 @@ export function PlaceLtiContentForm(props: {
         </p>
         {props.items.map((item) => (
           <label key={item.value} className="checkbox">
-            <input type={props.multiple ? 'checkbox' : 'radio'} name="item" value={item.value} />{' '}
+            <input
+              type={props.multiple ? 'checkbox' : 'radio'}
+              name="item"
+              value={item.value}
+              defaultChecked={ticked.includes(item.value)}
+            />{' '}
             {item.label}
           </label>
         ))}

@@ -10,12 +10,14 @@ import {
   type PasswordFormState,
 } from '../app/_lib/password-actions.ts';
 import { Field, FormAlert, Submit } from './forms.tsx';
+import { prefill } from '../server/form-values.ts';
 
 const initial: PasswordFormState = {};
 
 export function ForgotPasswordForm({ locale }: { readonly locale: Locale }) {
   const t = createTranslator(locale);
   const [state, action] = useActionState(requestPasswordResetAction, initial);
+  const sent = prefill(state.values);
   if (state.done === true) {
     return (
       <p role="status" className="notice">
@@ -24,7 +26,13 @@ export function ForgotPasswordForm({ locale }: { readonly locale: Locale }) {
     );
   }
   return (
-    <form action={action} className="stack" noValidate aria-label={t('passwords.forgotTitle')}>
+    <form
+      action={action}
+      className="stack"
+      noValidate
+      aria-label={t('passwords.forgotTitle')}
+      key={sent.key}
+    >
       <input type="hidden" name="locale" value={locale} />
       <FormAlert message={state.errors?.form} />
       <Field
@@ -32,6 +40,7 @@ export function ForgotPasswordForm({ locale }: { readonly locale: Locale }) {
         name="email"
         type="email"
         autoComplete="email"
+        defaultValue={sent.text('email')}
         error={state.errors?.email}
         required
       />
@@ -102,6 +111,7 @@ export function SetPasswordForm({ locale }: { readonly locale: Locale }) {
 export function SetUpSuperAdminForm({ locale }: { readonly locale: Locale }) {
   const t = createTranslator(locale);
   const [state, action] = useActionState(setUpSuperAdminAction, initial);
+  const sent = prefill(state.values);
   if (state.done === true) {
     return (
       <div className="stack">
@@ -117,7 +127,13 @@ export function SetUpSuperAdminForm({ locale }: { readonly locale: Locale }) {
     );
   }
   return (
-    <form action={action} className="stack" noValidate aria-label={t('passwords.setupTitle')}>
+    <form
+      action={action}
+      className="stack"
+      noValidate
+      aria-label={t('passwords.setupTitle')}
+      key={sent.key}
+    >
       <input type="hidden" name="locale" value={locale} />
       <FormAlert message={state.errors?.form} />
       <Field
@@ -125,6 +141,7 @@ export function SetUpSuperAdminForm({ locale }: { readonly locale: Locale }) {
         name="email"
         type="email"
         autoComplete="email"
+        defaultValue={sent.text('email')}
         error={state.errors?.email}
         required
       />

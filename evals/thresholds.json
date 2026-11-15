@@ -10,7 +10,9 @@
     "structure": 1,
     "language": 1,
     "validCodes": 1,
-    "questionCount": 0.9
+    "questionCount": 0.9,
+    "numbering": 0.9,
+    "uniqueQuestions": 1
   },
   "presentations": {
     "structure": 1,

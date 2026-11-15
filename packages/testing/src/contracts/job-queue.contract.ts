@@ -23,7 +23,28 @@ export function jobQueueContract(name: string, make: () => JobQueue): void {
         attempts: 0,
         result: null,
         error: null,
+        progress: null,
       });
+    });
+
+    it('keeps the progress a running job reports, for its owner to read', async () => {
+      const queue = make();
+      const job = await queue.enqueue(newJob());
+      await queue.claimNext(['lesson_plan']);
+      await queue.reportProgress(job.id, { from: 26, to: 50, total: 75 });
+
+      expect(await queue.findForOwner(schoolId, ownerId, job.id)).toMatchObject({
+        status: 'running',
+        progress: { from: 26, to: 50, total: 75 },
+      });
+    });
+
+    it('ignores progress reported for a job that is not running', async () => {
+      const queue = make();
+      const job = await queue.enqueue(newJob());
+      await queue.reportProgress(job.id, { from: 1, to: 25, total: 75 });
+
+      expect((await queue.findForOwner(schoolId, ownerId, job.id))?.progress).toBeNull();
     });
 
     it('claims the oldest queued job of the requested kinds, once', async () => {

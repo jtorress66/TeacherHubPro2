@@ -127,6 +127,9 @@ export const itAppB = {
     instructions: 'Istruzioni aggiuntive (facoltative)',
     submit: 'Scrivi',
     working: 'Scrittura in corso… Di solito ci vuole meno di un minuto.',
+    writingQuestions: 'Scrittura delle domande {from}–{to} di {total}…',
+    questionCountHint:
+      'Da {min} a {max}. I test con più di {part} domande vengono scritti in parti e possono richiedere alcuni minuti.',
     open: 'Apri',
     history: 'La Sua cronologia',
     historyEmpty: 'Ancora niente. Ciò che crea apparirà qui.',
@@ -1265,6 +1268,7 @@ export const itAppB = {
     required: 'Questo campo è obbligatorio.',
     invalid_format: 'Verifichi questo valore.',
     out_of_range: "Questo valore è fuori dall'intervallo consentito.",
+    outOfRangeBetween: 'Scegli un numero da {min} a {max}.',
     too_short: 'È troppo corto.',
     too_long: 'È troppo lungo.',
     too_large: 'Questo file è troppo grande.',

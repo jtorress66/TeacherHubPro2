@@ -1,7 +1,13 @@
 import { assistantSubjects, type AssistantSubject } from '../assistant/content-request.ts';
 import { isLanguage, type Language } from '../shared/language.ts';
 import { ok, type Result } from '../shared/result.ts';
-import { invalid, requiredText, type ValidationError } from '../shared/validation.ts';
+import {
+  invalid,
+  isWholeNumberIn,
+  outOfRange,
+  requiredText,
+  type ValidationError,
+} from '../shared/validation.ts';
 import { draftDifficulties, type DraftDifficulty } from '../lesson-plans/plan-draft.ts';
 import { findStandard, isGradeLevel, type GradeLevel } from '../standards/common-core.ts';
 import { isContentKind, maxItemTextLength, minItemsFor, type ContentKind } from './content.ts';
@@ -73,9 +79,7 @@ export function createGameRequest(input: GameRequestInput): Result<GameRequest, 
   if (!topic.ok) return topic;
   const range = gameCountRange(input.kind);
   const count = input.count ?? range.default;
-  if (!Number.isInteger(count) || count < range.min || count > range.max) {
-    return invalid('count', 'out_of_range');
-  }
+  if (!isWholeNumberIn(count, range)) return outOfRange('count', range);
   const standard = input.standard?.trim() ?? '';
   if (standard !== '' && findStandard(standard) === null) {
     return invalid('standard', 'invalid_format');

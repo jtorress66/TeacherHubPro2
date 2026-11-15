@@ -128,8 +128,9 @@ describe('createPrepRequest', () => {
       return result.ok ? null : result.error;
     };
     expect(code({ weekStart: '2026-11-10' })).toEqual({ field: 'weekStart', code: 'not_allowed' });
-    expect(code({ days: 0 })).toEqual({ field: 'days', code: 'out_of_range' });
-    expect(code({ days: 6 })).toEqual({ field: 'days', code: 'out_of_range' });
+    const days = { field: 'days', code: 'out_of_range', range: { min: 1, max: 5 } };
+    expect(code({ days: 0 })).toEqual(days);
+    expect(code({ days: 6 })).toEqual(days);
     expect(code({ prompt: ' ' })).toEqual({ field: 'prompt', code: 'required' });
     expect(code({ prompt: 'x'.repeat(501) })).toEqual({ field: 'prompt', code: 'too_long' });
     expect(code({ subject: 'art' })).toEqual({ field: 'subject', code: 'not_allowed' });

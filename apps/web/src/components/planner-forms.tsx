@@ -9,7 +9,9 @@ import {
   folderColors,
   gradeLevels,
   materialTypes,
+  maxDraftMinutes,
   maxSkills,
+  minDraftMinutes,
   planWeekdays,
   standardDomains,
   standardSubjects,
@@ -32,6 +34,7 @@ import { Field, FormAlert, Submit } from './forms.tsx';
 import { JobProgress } from './job-progress.tsx';
 import { PrCodesPicker, type PrSelection } from './pr-codes-picker.tsx';
 import type { PrOptions } from '../server/plan-standards-options.ts';
+import { prefill } from '../server/form-values.ts';
 import {
   Checks,
   ErrorText,
@@ -561,8 +564,9 @@ export function PlanCommands(props: {
   const t = createTranslator(props.locale);
   const [state, action] = useActionState(planCommandAction, initial);
   const hidden = { locale: props.locale, planId: props.planId };
+  const sent = prefill(state.values);
   return (
-    <div className="stack no-print">
+    <div className="stack no-print" key={sent.key}>
       <FormAlert message={state.errors?.form ?? state.errors?.name} />
       <form action={action} className="field-row" aria-label={t('planner.duplicate')}>
         <Hidden values={{ ...hidden, intent: 'duplicate' }} />
@@ -571,7 +575,7 @@ export function PlanCommands(props: {
           name="start"
           type="date"
           label={t('planner.duplicateStart')}
-          defaultValue={props.nextStart}
+          defaultValue={sent.text('start', props.nextStart)}
           error={state.errors?.start ?? state.errors?.['w0.weekStart'] ?? state.errors?.lessonDate}
         />
         <Submit label={t('planner.duplicate')} />
@@ -584,13 +588,18 @@ export function PlanCommands(props: {
           label={t('planner.folder')}
           empty={t('planner.noFolder')}
           options={props.folders}
-          defaultValue={props.folderId}
+          defaultValue={sent.text('folderId', props.folderId)}
         />
         <Submit label={t('planner.move')} />
       </form>
       <form action={action} className="field-row" aria-label={t('planner.saveAsTemplate')}>
         <Hidden values={{ ...hidden, intent: 'template' }} />
-        <Field id="template-name" name="name" label={t('planner.templateName')} />
+        <Field
+          id="template-name"
+          name="name"
+          label={t('planner.templateName')}
+          defaultValue={sent.text('name')}
+        />
         <Submit label={t('planner.saveAsTemplate')} />
       </form>
       {state.saved ? (
@@ -616,9 +625,10 @@ const colorOptions = (locale: Locale): Option[] => {
 export function NewFolderForm({ locale }: { readonly locale: Locale }) {
   const t = createTranslator(locale);
   const [state, action] = useActionState(folderAction, initial);
+  const sent = prefill(state.values);
   return (
     <form
-      key={state.version}
+      key={`${String(state.version ?? 0)}-${sent.key}`}
       action={action}
       className="field-row"
       aria-label={t('folders.create')}
@@ -630,6 +640,7 @@ export function NewFolderForm({ locale }: { readonly locale: Locale }) {
         id="new-folder-name"
         name="name"
         label={t('folders.name')}
+        defaultValue={sent.text('name')}
         error={state.errors?.name}
       />
       <Select
@@ -637,6 +648,7 @@ export function NewFolderForm({ locale }: { readonly locale: Locale }) {
         name="color"
         label={t('folders.color')}
         options={colorOptions(locale)}
+        defaultValue={sent.text('color')}
       />
       <Submit label={t('folders.create')} />
     </form>
@@ -650,11 +662,13 @@ export function FolderRow(props: {
   const t = createTranslator(props.locale);
   const [state, action] = useActionState(folderAction, initial);
   const { folder } = props;
+  const sent = prefill(state.values);
   return (
     <form
       action={action}
       className="field-row"
       aria-label={t('folders.renameNamed', { name: folder.name })}
+      key={sent.key}
     >
       <Hidden values={{ locale: props.locale, folderId: folder.id }} />
       <FormAlert message={state.errors?.form} />
@@ -662,7 +676,7 @@ export function FolderRow(props: {
         id={`folder-${folder.id}-name`}
         name="name"
         label={t('folders.name')}
-        defaultValue={folder.name}
+        defaultValue={sent.text('name', folder.name)}
         error={state.errors?.name}
       />
       <Select
@@ -670,7 +684,7 @@ export function FolderRow(props: {
         name="color"
         label={t('folders.color')}
         options={colorOptions(props.locale)}
-        defaultValue={folder.color}
+        defaultValue={sent.text('color', folder.color)}
       />
       <button type="submit" name="intent" value="update" className="button secondary">
         {t('folders.save')}
@@ -698,8 +712,15 @@ export function DraftForm(props: {
   const [state, action] = useActionState(requestDraftAction, initial);
   const errors = state.errors;
   const option = (id: string, name: string): Option => ({ id, name });
+  const sent = prefill(state.values);
   return (
-    <form action={action} className="stack" noValidate aria-label={t('drafts.title')}>
+    <form
+      action={action}
+      className="stack"
+      noValidate
+      aria-label={t('drafts.title')}
+      key={sent.key}
+    >
       <Hidden values={{ locale: props.locale }} />
       <FormAlert message={errors?.form} />
       <div className="field-row">
@@ -711,14 +732,14 @@ export function DraftForm(props: {
             option('weekly', t('planner.kind_weekly')),
             option('conversational_english', t('planner.kind_conversational_english')),
           ]}
-          defaultValue="weekly"
+          defaultValue={sent.text('kind', 'weekly')}
         />
         <Select
           id="subject"
           name="subject"
           label={t('drafts.subject')}
           options={standardSubjects.map((s) => option(s, t(`drafts.subject_${s}`)))}
-          defaultValue="math"
+          defaultValue={sent.text('subject', 'math')}
           error={errors?.subject}
         />
         <Select
@@ -726,11 +747,18 @@ export function DraftForm(props: {
           name="grade"
           label={t('drafts.grade')}
           options={gradeLevels.map((g) => option(g, g === 'K' ? t('drafts.grade_K') : g))}
-          defaultValue="4"
+          defaultValue={sent.text('grade', '4')}
           error={errors?.grade}
         />
       </div>
-      <Field id="topic" name="topic" label={t('drafts.topic')} error={errors?.topic} required />
+      <Field
+        id="topic"
+        name="topic"
+        label={t('drafts.topic')}
+        defaultValue={sent.text('topic')}
+        error={errors?.topic}
+        required
+      />
       <div className="field-row">
         <Select
           id="difficulty"
@@ -739,15 +767,16 @@ export function DraftForm(props: {
           options={(['easy', 'medium', 'hard'] as const).map((d) =>
             option(d, t(`drafts.difficulty_${d}`)),
           )}
-          defaultValue="medium"
+          defaultValue={sent.text('difficulty', 'medium')}
         />
         <Field
           id="durationMinutes"
           name="durationMinutes"
           type="number"
-          min={15}
+          min={minDraftMinutes}
+          max={maxDraftMinutes}
           label={t('drafts.duration')}
-          defaultValue={45}
+          defaultValue={sent.text('durationMinutes', 45)}
           error={errors?.durationMinutes}
         />
         <Field
@@ -755,7 +784,7 @@ export function DraftForm(props: {
           name="start"
           type="date"
           label={t('drafts.start')}
-          defaultValue={props.nextMonday}
+          defaultValue={sent.text('start', props.nextMonday)}
           error={errors?.start}
         />
         <Select
@@ -764,6 +793,7 @@ export function DraftForm(props: {
           label={t('drafts.class')}
           empty={t('planner.noClass')}
           options={props.classes}
+          defaultValue={sent.text('classId')}
           error={errors?.classId}
         />
       </div>
@@ -771,6 +801,7 @@ export function DraftForm(props: {
         id="instructions"
         name="instructions"
         label={t('drafts.instructions')}
+        defaultValue={sent.text('instructions')}
         error={errors?.instructions}
       />
       <Submit label={t('drafts.submit')} />

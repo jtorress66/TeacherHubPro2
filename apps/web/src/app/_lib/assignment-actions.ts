@@ -12,15 +12,18 @@ import type {
 } from '@thp/domain';
 import { createTranslator, isLocale, type Locale } from '@thp/i18n';
 import type { IssuedLink } from '@thp/application';
+import { submittedValues, type SubmittedValues } from '../../server/form-values.ts';
 import { getAppContainer } from '../../container.ts';
 import { scheduledAtOf } from '../../server/schedule-form.ts';
 import { teacherTimeZone } from './time-zone.ts';
 import { parseQuestionsJson, studentLinkUrl } from '../../server/assignment-forms.ts';
-import { formErrors } from '../../server/error-messages.ts';
+import { formErrors, rejectedForm } from '../../server/error-messages.ts';
 import { record } from './activity.ts';
 import { requireUser } from './auth.ts';
 
 export interface AssignmentFormState {
+  /** What the teacher sent, when it was refused, so the form shows it again. */
+  readonly values?: SubmittedValues;
   readonly errors?: Readonly<Record<string, string>>;
   readonly saved?: boolean;
   readonly message?: string;
@@ -95,9 +98,9 @@ export async function saveQuestionsAction(
     ...ref,
     instructions: orNull(text(data, 'instructions')),
   });
-  if (!instructions.ok) return { errors: formErrors(instructions.error, locale) };
+  if (!instructions.ok) return rejectedForm(instructions.error, locale, data);
   const saved = await app.saveQuestions.execute({ ...ref, questions });
-  if (!saved.ok) return { errors: formErrors(saved.error, locale) };
+  if (!saved.ok) return rejectedForm(saved.error, locale, data);
   const path = `${assignmentPath(locale, classId, assignmentId)}/questions`;
   revalidatePath(path);
   if (text(data, 'imported') === '1') redirect(`${path}?saved=1`);
@@ -110,7 +113,12 @@ export async function uploadAttachmentAction(
 ): Promise<AssignmentFormState> {
   const { locale, classId, assignmentId, ref } = await refOf(data);
   const file = fileOf(data, 'file');
-  if (file === null) return { errors: { file: createTranslator(locale)('attachments.noFile') } };
+  if (file === null) {
+    return {
+      errors: { file: createTranslator(locale)('attachments.noFile') },
+      values: submittedValues(data),
+    };
+  }
   const uploaded = await getAppContainer().uploadAttachment.execute({
     ...ref,
     name: file.name,
@@ -146,7 +154,7 @@ export async function requestPdfImportAction(
     ...ref,
     pdf: new Uint8Array(await file.arrayBuffer()),
   });
-  if (!job.ok) return { errors: formErrors(job.error, locale) };
+  if (!job.ok) return rejectedForm(job.error, locale, data);
   redirect(`${assignmentPath(locale, classId, assignmentId)}/import/${job.value.id}`);
 }
 
@@ -157,7 +165,7 @@ export async function requestAiGradingAction(
 ): Promise<AssignmentFormState> {
   const { locale, classId, assignmentId, ref } = await refOf(data);
   const job = await getAppContainer().requestAiGrading.execute(ref);
-  if (!job.ok) return { errors: formErrors(job.error, locale) };
+  if (!job.ok) return rejectedForm(job.error, locale, data);
   if (job.value === null) return { message: createTranslator(locale)('grading.nothingToGrade') };
   redirect(`${assignmentPath(locale, classId, assignmentId)}/submissions?job=${job.value.id}`);
 }
@@ -181,7 +189,7 @@ export async function gradeSubmissionAction(
   const result = confirming
     ? await app.confirmGrade.execute({ ...decision, ...(score === undefined ? {} : { score }) })
     : await app.gradeByHand.execute({ ...decision, score: score ?? Number.NaN });
-  if (!result.ok) return { errors: formErrors(result.error, locale) };
+  if (!result.ok) return rejectedForm(result.error, locale, data);
   if (!confirming) await record(ref.actor, 'submission_graded', decision.submissionId);
   revalidatePath(`${assignmentPath(locale, classId, assignmentId)}/submissions`);
   revalidatePath(`${classPath(locale, classId)}/gradebook`);
@@ -198,7 +206,7 @@ export async function shareAssignmentAction(
     ...ref,
     courseId: text(data, 'courseId'),
   });
-  if (!shared.ok) return { errors: formErrors(shared.error, locale) };
+  if (!shared.ok) return rejectedForm(shared.error, locale, data);
   return done(state, { url: shared.value.url });
 }
 
@@ -210,10 +218,15 @@ export async function postWordToClassroomAction(
   const locale = localeOf(data);
   const { user } = await requireUser(locale);
   const file = fileOf(data, 'file');
-  if (file === null) return { errors: { file: createTranslator(locale)('attachments.noFile') } };
+  if (file === null) {
+    return {
+      errors: { file: createTranslator(locale)('attachments.noFile') },
+      values: submittedValues(data),
+    };
+  }
   const timeZone = await teacherTimeZone();
   const scheduledAt = scheduledAtOf(data, timeZone);
-  if (!scheduledAt.ok) return { errors: formErrors(scheduledAt.error, locale) };
+  if (!scheduledAt.ok) return rejectedForm(scheduledAt.error, locale, data);
   const when = (at: Date) =>
     new Intl.DateTimeFormat(locale, { dateStyle: 'full', timeStyle: 'short', timeZone }).format(at);
   const posted = await getAppContainer().postWordToClassroom.execute({
@@ -226,7 +239,7 @@ export async function postWordToClassroomAction(
     bytes: new Uint8Array(await file.arrayBuffer()),
     scheduledAt: scheduledAt.value,
   });
-  if (!posted.ok) return { errors: formErrors(posted.error, locale) };
+  if (!posted.ok) return rejectedForm(posted.error, locale, data);
   return done(state, {
     url: posted.value.url,
     docUrl: posted.value.docUrl,
@@ -271,7 +284,7 @@ export async function issueLinksAction(
           classId: classId as ClassId,
           studentId: studentId as StudentId,
         });
-  if (!issued.ok) return { errors: formErrors(issued.error, locale) };
+  if (!issued.ok) return rejectedForm(issued.error, locale, data);
   await record(user, 'links_issued', studentId === '' ? classId : studentId);
   const issuedLinks: readonly IssuedLink[] =
     'token' in issued.value ? [issued.value] : issued.value;
@@ -309,7 +322,7 @@ export async function importRosterAction(
     classId: classId as ClassId,
     courseId: text(data, 'courseId'),
   });
-  if (!imported.ok) return { errors: formErrors(imported.error, locale) };
+  if (!imported.ok) return rejectedForm(imported.error, locale, data);
   revalidatePath(classPath(locale, classId));
   return done(state, {
     message: createTranslator(locale)('classroom.imported', imported.value),

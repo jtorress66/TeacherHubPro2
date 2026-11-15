@@ -3,8 +3,9 @@
 import { revalidatePath } from 'next/cache';
 import type { AssignmentId, ClassId } from '@thp/domain';
 import { createTranslator, isLocale, type Locale } from '@thp/i18n';
+import { submittedValues } from '../../server/form-values.ts';
 import { getAppContainer } from '../../container.ts';
-import { formErrors } from '../../server/error-messages.ts';
+import { formErrors, rejectedForm } from '../../server/error-messages.ts';
 import { scheduledAtOf } from '../../server/schedule-form.ts';
 import type { AssignmentFormState } from './assignment-actions.ts';
 import { requireUser } from './auth.ts';
@@ -52,7 +53,7 @@ export async function importTeamsRosterAction(
     classId: classId as ClassId,
     teamsClassId: text(data, 'teamsClassId'),
   });
-  if (!imported.ok) return { errors: formErrors(imported.error, locale) };
+  if (!imported.ok) return rejectedForm(imported.error, locale, data);
   revalidatePath(`/${locale}/app/classes/${classId}`);
   return done(state, {
     message: createTranslator(locale)('classroom.imported', imported.value),
@@ -75,7 +76,7 @@ export async function shareToTeamsAction(
     teamsClassId: text(data, 'teamsClassId'),
     timeZone: await teacherTimeZone(),
   });
-  if (!shared.ok) return { errors: formErrors(shared.error, locale) };
+  if (!shared.ok) return rejectedForm(shared.error, locale, data);
   return done(state, { url: shared.value.url });
 }
 
@@ -90,10 +91,15 @@ export async function postWordToTeamsAction(
   if (!feature.ok) return { errors: feature.errors };
   const value = data.get('file');
   const file = value instanceof File && value.size > 0 ? value : null;
-  if (file === null) return { errors: { file: createTranslator(locale)('attachments.noFile') } };
+  if (file === null) {
+    return {
+      errors: { file: createTranslator(locale)('attachments.noFile') },
+      values: submittedValues(data),
+    };
+  }
   const timeZone = await teacherTimeZone();
   const scheduledAt = scheduledAtOf(data, timeZone);
-  if (!scheduledAt.ok) return { errors: formErrors(scheduledAt.error, locale) };
+  if (!scheduledAt.ok) return rejectedForm(scheduledAt.error, locale, data);
   const posted = await feature.teams.postWord.execute({
     actor: user,
     teamsClassId: text(data, 'teamsClassId'),
@@ -105,7 +111,7 @@ export async function postWordToTeamsAction(
     timeZone,
     scheduledAt: scheduledAt.value,
   });
-  if (!posted.ok) return { errors: formErrors(posted.error, locale) };
+  if (!posted.ok) return rejectedForm(posted.error, locale, data);
   const when = new Intl.DateTimeFormat(locale, {
     dateStyle: 'full',
     timeStyle: 'short',

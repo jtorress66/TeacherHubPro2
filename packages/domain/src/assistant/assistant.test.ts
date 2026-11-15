@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { GenerationId, SchoolId, UserId } from '../shared/ids.ts';
 import {
   createContentRequest,
+  questionCountRange,
   usesStandards,
   type ContentRequestInput,
 } from './content-request.ts';
@@ -64,12 +65,27 @@ describe('createContentRequest', () => {
     [{ topic: '  ' }, 'topic', 'required'],
     [{ difficulty: 'extreme' }, 'difficulty', 'not_allowed'],
     [{ language: 'ru' }, 'language', 'not_allowed'],
-    [{ type: 'quiz', questionCount: 31 }, 'questionCount', 'out_of_range'],
-    [{ type: 'quiz', questionCount: 0 }, 'questionCount', 'out_of_range'],
-    [{ type: 'lesson_plan', durationMinutes: 5 }, 'durationMinutes', 'out_of_range'],
     [{ instructions: 'x'.repeat(1001) }, 'instructions', 'too_long'],
   ] as const)('rejects %o', (overrides, field, code) => {
     expect(createContentRequest(input(overrides))).toEqual({ ok: false, error: { field, code } });
+  });
+
+  it.each([
+    [{ type: 'quiz', questionCount: 101 }, 'questionCount', { min: 1, max: 100 }],
+    [{ type: 'quiz', questionCount: 0 }, 'questionCount', { min: 1, max: 100 }],
+    [{ type: 'quiz', questionCount: 2.5 }, 'questionCount', { min: 1, max: 100 }],
+    [{ type: 'lesson_plan', durationMinutes: 5 }, 'durationMinutes', { min: 10, max: 180 }],
+  ] as const)('refuses %o and names the range it allows', (overrides, field, range) => {
+    expect(createContentRequest(input(overrides))).toEqual({
+      ok: false,
+      error: { field, code: 'out_of_range', range },
+    });
+  });
+
+  it('allows a quiz of up to 100 questions', () => {
+    const hundred = createContentRequest(input({ type: 'quiz', questionCount: 100 }));
+    expect(hundred.ok && hundred.value.questionCount).toBe(100);
+    expect(questionCountRange).toEqual({ min: 1, max: 100, default: 10 });
   });
 
   it('lists standards only for subjects that have Common Core codes', () => {
@@ -122,6 +138,10 @@ describe('createGeneration', () => {
         createdAt: new Date('2026-10-30T12:00:00Z'),
       },
     });
+  });
+
+  it('has room for a 100-question quiz with its answer key', () => {
+    expect(maxGenerationLength).toBeGreaterThanOrEqual(100_000);
   });
 
   it('needs content within the length limit', () => {

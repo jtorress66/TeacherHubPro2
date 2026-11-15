@@ -14,6 +14,7 @@ import {
   type FormState,
 } from '../app/_lib/actions.ts';
 import { ErrorText, Select } from './form-fields.tsx';
+import { prefill } from '../server/form-values.ts';
 
 interface FieldProps {
   readonly label: string;
@@ -26,6 +27,7 @@ interface FieldProps {
   readonly hint?: string;
   readonly autoComplete?: string;
   readonly min?: number;
+  readonly max?: number;
   readonly required?: boolean;
 }
 
@@ -39,6 +41,7 @@ export function Field(props: FieldProps) {
     hint,
     autoComplete,
     min,
+    max,
     required,
   } = props;
   const id = props.id ?? name;
@@ -53,6 +56,7 @@ export function Field(props: FieldProps) {
         defaultValue={defaultValue ?? undefined}
         autoComplete={autoComplete}
         min={min}
+        max={max}
         required={required}
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy}
@@ -93,14 +97,16 @@ const initial: FormState = {};
 export function SignUpForm({ locale }: { readonly locale: Locale }) {
   const t = createTranslator(locale);
   const [state, action] = useActionState(signUpAction, initial);
+  const sent = prefill(state.values);
   return (
-    <form action={action} className="stack" noValidate>
+    <form action={action} className="stack" noValidate key={sent.key}>
       <input type="hidden" name="locale" value={locale} />
       <FormAlert message={state.errors?.form} />
       <Field
         label={t('auth.name')}
         name="name"
         autoComplete="name"
+        defaultValue={sent.text('name')}
         error={state.errors?.name}
         required
       />
@@ -109,6 +115,7 @@ export function SignUpForm({ locale }: { readonly locale: Locale }) {
         name="email"
         type="email"
         autoComplete="email"
+        defaultValue={sent.text('email')}
         error={state.errors?.email}
         required
       />
@@ -127,6 +134,7 @@ export function SignUpForm({ locale }: { readonly locale: Locale }) {
             type="checkbox"
             id="adult"
             name="adult"
+            defaultChecked={sent.checked('adult')}
             required
             aria-invalid={state.errors?.adult ? true : undefined}
             aria-describedby={state.errors?.adult ? 'adult-error' : undefined}
@@ -143,8 +151,9 @@ export function SignUpForm({ locale }: { readonly locale: Locale }) {
 export function LogInForm({ locale }: { readonly locale: Locale }) {
   const t = createTranslator(locale);
   const [state, action] = useActionState(logInAction, initial);
+  const sent = prefill(state.values);
   return (
-    <form action={action} className="stack" noValidate>
+    <form action={action} className="stack" noValidate key={sent.key}>
       <input type="hidden" name="locale" value={locale} />
       {state.suspended === true ? (
         <p role="alert" className="alert">
@@ -158,6 +167,7 @@ export function LogInForm({ locale }: { readonly locale: Locale }) {
         name="email"
         type="email"
         autoComplete="email"
+        defaultValue={sent.text('email')}
         error={state.errors?.email}
         required
       />
@@ -189,21 +199,22 @@ export function ProfileForm(props: {
 }) {
   const t = createTranslator(props.locale);
   const [state, action] = useActionState(updateProfileAction, initial);
+  const sent = prefill(state.values);
   return (
-    <form action={action} className="stack" noValidate>
+    <form action={action} className="stack" noValidate key={sent.key}>
       <input type="hidden" name="locale" value={props.locale} />
       <FormAlert message={state.errors?.form} />
       <Field
         label={t('settings.name')}
         name="name"
         id="profile-name"
-        defaultValue={props.name}
+        defaultValue={sent.text('name', props.name)}
         error={state.errors?.name}
         required
       />
       <div className="field">
         <label htmlFor="language">{t('settings.language')}</label>
-        <select id="language" name="language" defaultValue={props.language}>
+        <select id="language" name="language" defaultValue={sent.text('language', props.language)}>
           {locales.map((code) => (
             <option key={code} value={code}>
               {localeInfo[code].nativeName}
@@ -234,15 +245,16 @@ export function SchoolForm({
 }) {
   const t = createTranslator(locale);
   const [state, action] = useActionState(updateSchoolAction, initial);
+  const sent = prefill(state.values);
   return (
-    <form action={action} className="stack" noValidate>
+    <form action={action} className="stack" noValidate key={sent.key}>
       <input type="hidden" name="locale" value={locale} />
       <FormAlert message={state.errors?.form} />
       <Field
         label={t('settings.schoolName')}
         name="name"
         id="school-name"
-        defaultValue={school.name}
+        defaultValue={sent.text('name', school.name)}
         error={state.errors?.name}
         required
       />
@@ -250,7 +262,7 @@ export function SchoolForm({
         label={t('settings.address')}
         name="address"
         id="school-address"
-        defaultValue={school.address}
+        defaultValue={sent.text('address', school.address)}
         error={state.errors?.address}
       />
       <Field
@@ -258,7 +270,7 @@ export function SchoolForm({
         name="phone"
         id="school-phone"
         type="tel"
-        defaultValue={school.phone}
+        defaultValue={sent.text('phone', school.phone)}
         error={state.errors?.phone}
       />
       <Field
@@ -266,7 +278,7 @@ export function SchoolForm({
         name="email"
         id="school-email"
         type="email"
-        defaultValue={school.email}
+        defaultValue={sent.text('email', school.email)}
         error={state.errors?.email}
       />
       <Select
@@ -277,7 +289,7 @@ export function SchoolForm({
           id: format,
           name: t(`settings.planFormat_${format}`),
         }))}
-        defaultValue={school.planFormat}
+        defaultValue={sent.text('planFormat', school.planFormat)}
         error={state.errors?.planFormat}
       />
       <p className="muted small">{t('settings.planFormatHint')}</p>
@@ -296,8 +308,9 @@ export function UpgradeForm(props: {
 }) {
   const t = createTranslator(props.locale);
   const [state, action] = useActionState(upgradeAction, initial);
+  const sent = prefill(state.values);
   return (
-    <form action={action} className="stack" noValidate aria-label={props.planName}>
+    <form action={action} className="stack" noValidate aria-label={props.planName} key={sent.key}>
       <input type="hidden" name="locale" value={props.locale} />
       <input type="hidden" name="plan" value={props.planId} />
       <FormAlert message={state.errors?.form} />
@@ -308,7 +321,7 @@ export function UpgradeForm(props: {
           id={`quantity-${props.planId}`}
           type="number"
           min={props.minimumSeats}
-          defaultValue={props.minimumSeats}
+          defaultValue={sent.text('quantity', props.minimumSeats)}
           error={state.errors?.quantity}
         />
       )}

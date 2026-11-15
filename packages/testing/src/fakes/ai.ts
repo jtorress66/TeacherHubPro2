@@ -3,6 +3,7 @@ import {
   ok,
   type AiScores,
   type ContentRequest,
+  type JobProgress,
   type ExtractedTest,
   type GradingRequest,
   type Language,
@@ -106,12 +107,25 @@ export const aWeeklyDraft = (overrides: Partial<LessonPlanDraft> = {}): LessonPl
 /** A scripted content writer: returns the given Markdown (or error) and records each request. */
 export class FakeContentWriter implements ContentWriter {
   readonly requests: ContentRequest[] = [];
+  /** Called after each progress report, so a test can look at the job meanwhile. */
+  onReport: () => Promise<void> = () => Promise.resolve();
 
-  constructor(private readonly outcome: Result<string, DraftError>) {}
+  /** `progress`: the steps it reports while writing, in order. */
+  constructor(
+    private readonly outcome: Result<string, DraftError>,
+    private readonly progress: readonly JobProgress[] = [],
+  ) {}
 
-  write(request: ContentRequest): Promise<Result<string, DraftError>> {
+  async write(
+    request: ContentRequest,
+    onProgress?: (progress: JobProgress) => Promise<void>,
+  ): Promise<Result<string, DraftError>> {
     this.requests.push(request);
-    return Promise.resolve(this.outcome);
+    for (const step of this.progress) {
+      await onProgress?.(step);
+      await this.onReport();
+    }
+    return this.outcome;
   }
 }
 

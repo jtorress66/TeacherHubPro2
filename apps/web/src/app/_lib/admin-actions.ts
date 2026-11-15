@@ -4,13 +4,16 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { roles, type ClassId, type Role, type SchoolId, type UserId } from '@thp/domain';
 import { isLocale, type Locale } from '@thp/i18n';
+import { submittedValues, type SubmittedValues } from '../../server/form-values.ts';
 import { getAppContainer } from '../../container.ts';
-import { formErrors } from '../../server/error-messages.ts';
+import { rejectedForm } from '../../server/error-messages.ts';
 import { importErrorMessages } from '../../server/import-messages.ts';
 import { record } from './activity.ts';
 import { requireUser } from './auth.ts';
 
 export interface AdminFormState {
+  /** What the teacher sent, when it was refused, so the form shows it again. */
+  readonly values?: SubmittedValues;
   readonly errors?: Readonly<Record<string, string>>;
   /** Bulk imports: one message per bad row. */
   readonly rowErrors?: readonly string[];
@@ -81,7 +84,7 @@ export async function changeUserRoleAction(
     role: roleOf(data),
     ...schoolOf(data),
   });
-  if (!changed.ok) return { errors: formErrors(changed.error, locale) };
+  if (!changed.ok) return rejectedForm(changed.error, locale, data);
   await record(actor, 'role_changed', userId, schoolOf(data).schoolId);
   revalidatePath(`/${locale}/app/admin`);
   return next(state, { notice: 'saved' });
@@ -98,7 +101,7 @@ export async function sendPasswordLinkAction(
     userId: userId as UserId,
     ...schoolOf(data),
   });
-  if (!sent.ok) return { errors: formErrors(sent.error, locale) };
+  if (!sent.ok) return rejectedForm(sent.error, locale, data);
   await record(actor, 'password_link_sent', userId, schoolOf(data).schoolId);
   return next(state, { notice: 'sent' });
 }
@@ -114,7 +117,7 @@ export async function transferClassesAction(
     toUserId: text(data, 'toUserId') as UserId,
     ...schoolOf(data),
   });
-  if (!moved.ok) return { errors: formErrors(moved.error, locale) };
+  if (!moved.ok) return rejectedForm(moved.error, locale, data);
   revalidatePath(`/${locale}/app/admin`);
   return next(state, { count: moved.value });
 }
@@ -128,7 +131,7 @@ export async function createSchoolAction(
     actor,
     details: schoolDetails(data),
   });
-  if (!created.ok) return { errors: formErrors(created.error, locale) };
+  if (!created.ok) return rejectedForm(created.error, locale, data);
   redirect(`/${locale}/app/super-admin/schools/${created.value.id}`);
 }
 
@@ -143,7 +146,7 @@ export async function updateSchoolAction(
     schoolId,
     details: schoolDetails(data),
   });
-  if (!updated.ok) return { errors: formErrors(updated.error, locale) };
+  if (!updated.ok) return rejectedForm(updated.error, locale, data);
   await record(actor, 'school_updated', schoolId, schoolId);
   revalidatePath(`/${locale}/app/super-admin/schools/${schoolId}`);
   return next(state, { notice: 'saved' });
@@ -158,7 +161,7 @@ export async function deleteSchoolAction(
     actor,
     schoolId: text(data, 'schoolId') as SchoolId,
   });
-  if (!deleted.ok) return { errors: formErrors(deleted.error, locale) };
+  if (!deleted.ok) return rejectedForm(deleted.error, locale, data);
   redirect(`/${locale}/app/super-admin/schools`);
 }
 
@@ -178,7 +181,7 @@ export async function createUserAction(
       language: text(data, 'language'),
     },
   });
-  if (!created.ok) return { errors: formErrors(created.error, locale) };
+  if (!created.ok) return rejectedForm(created.error, locale, data);
   revalidatePath(`/${locale}/app/super-admin/schools/${schoolId}`);
   return next(state, { notice: created.value.email });
 }
@@ -199,7 +202,7 @@ export async function updateUserAction(
       schoolId: text(data, 'schoolId') as SchoolId,
     },
   });
-  if (!updated.ok) return { errors: formErrors(updated.error, locale) };
+  if (!updated.ok) return rejectedForm(updated.error, locale, data);
   redirect(
     `/${locale}/app/super-admin/schools/${updated.value.schoolId}/users/${updated.value.id}?saved=1`,
   );
@@ -216,7 +219,7 @@ export async function deleteUserAction(
     schoolId,
     userId: text(data, 'userId') as UserId,
   });
-  if (!deleted.ok) return { errors: formErrors(deleted.error, locale) };
+  if (!deleted.ok) return rejectedForm(deleted.error, locale, data);
   redirect(`/${locale}/app/super-admin/schools/${schoolId}`);
 }
 
@@ -236,7 +239,11 @@ export async function importTeachersAction(
     schoolId,
     csv: await csvOf(data),
   });
-  if (!imported.ok) return { rowErrors: importErrorMessages(imported.error, locale) };
+  if (!imported.ok)
+    return {
+      rowErrors: importErrorMessages(imported.error, locale),
+      values: submittedValues(data),
+    };
   await record(actor, 'teachers_imported', schoolId, schoolId);
   return next(state, { count: imported.value.imported });
 }
@@ -253,7 +260,11 @@ export async function importSchoolStudentsAction(
     classId: (classId ?? '') as ClassId,
     csv: await csvOf(data),
   });
-  if (!imported.ok) return { rowErrors: importErrorMessages(imported.error, locale) };
+  if (!imported.ok)
+    return {
+      rowErrors: importErrorMessages(imported.error, locale),
+      values: submittedValues(data),
+    };
   await record(actor, 'students_imported', classId, (schoolId ?? '') as SchoolId);
   return next(state, { count: imported.value.imported });
 }

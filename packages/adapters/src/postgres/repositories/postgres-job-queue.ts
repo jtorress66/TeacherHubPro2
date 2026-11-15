@@ -1,5 +1,5 @@
 import { sql, type Kysely } from 'kysely';
-import type { Job, JobId, SchoolId, UserId } from '@thp/domain';
+import type { Job, JobId, JobProgress, SchoolId, UserId } from '@thp/domain';
 import type { IdGenerator, JobQueue, NewJob } from '@thp/ports';
 import { toJson } from '../mappers/columns.ts';
 import { jobFromRow } from '../mappers/job-mapper.ts';
@@ -72,6 +72,19 @@ export class PostgresJobQueue implements JobQueue {
       .updateTable('jobs')
       .set({ status: 'failed', error, finished_at: sql<Date>`clock_timestamp()` })
       .where('id', '=', id)
+      .execute();
+  }
+
+  async reportProgress(id: JobId, progress: JobProgress): Promise<void> {
+    await this.db
+      .updateTable('jobs')
+      .set({
+        progress_from: progress.from,
+        progress_to: progress.to,
+        progress_total: progress.total,
+      })
+      .where('id', '=', id)
+      .where('status', '=', 'running')
       .execute();
   }
 

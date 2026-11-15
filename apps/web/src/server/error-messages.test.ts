@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { ApplicationErrorCode } from '@thp/application';
 import type { ValidationCode } from '@thp/domain';
 import { catalogs, createTranslator } from '@thp/i18n';
-import { formErrors, messageFor } from './error-messages.ts';
+import { formErrors, messageFor, rejectedForm } from './error-messages.ts';
 
 const applicationCodes: ApplicationErrorCode[] = [
   'email_taken',
@@ -90,6 +90,39 @@ describe('error messages', () => {
     }
     expect(formErrors({ field: 'domain', code: 'invalid_format' }, 'en')).toEqual({
       domain: t('errors.invalid_format'),
+    });
+  });
+
+  it('names the range when a number is out of it, in every language', () => {
+    const error = {
+      field: 'questionCount',
+      code: 'out_of_range',
+      range: { min: 1, max: 100 },
+    } as const;
+    expect(messageFor(error, 'en')).toBe('Choose a number from 1 to 100.');
+    expect(messageFor(error, 'es')).toBe('Elige un número del 1 al 100.');
+    expect(formErrors(error, 'en')).toEqual({ questionCount: 'Choose a number from 1 to 100.' });
+    for (const locale of ['fr', 'pt', 'de', 'it', 'zh'] as const) {
+      expect(messageFor(error, locale)).toMatch(/1\D+100/);
+    }
+    expect(messageFor({ field: 'score', code: 'out_of_range' }, 'en')).toBe(
+      catalogs.en.errors.out_of_range,
+    );
+  });
+
+  it('hands the form back what was sent with the errors, so nothing typed is lost', () => {
+    const data = new FormData();
+    data.append('type', 'quiz');
+    data.append('questionCount', '101');
+    data.append('password', 'never-sent-back');
+    const error = {
+      field: 'questionCount',
+      code: 'out_of_range',
+      range: { min: 1, max: 100 },
+    } as const;
+    expect(rejectedForm(error, 'en', data)).toEqual({
+      errors: { questionCount: 'Choose a number from 1 to 100.' },
+      values: { type: 'quiz', questionCount: '101' },
     });
   });
 });

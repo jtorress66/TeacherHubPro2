@@ -20,6 +20,7 @@ import {
 } from '../app/_lib/rubric-actions.ts';
 import { Field, FormAlert, Submit } from './forms.tsx';
 import { EslSwitch, Hidden, Select, TextArea, type Option } from './form-fields.tsx';
+import { prefill, type Prefill } from '../server/form-values.ts';
 
 const initial: RubricFormState = {};
 const option = (id: string, name: string): Option => ({ id, name });
@@ -29,6 +30,7 @@ function SubjectAndGrade(props: {
   readonly errors: RubricFormState['errors'];
   readonly subject?: string | null;
   readonly grade?: string | null;
+  readonly sent: Prefill;
 }) {
   const t = createTranslator(props.locale);
   return (
@@ -39,7 +41,7 @@ function SubjectAndGrade(props: {
         label={t('rubrics.subject')}
         empty={t('rubrics.any')}
         options={assistantSubjects.map((s) => option(s, t(`assistant.subject_${s}`)))}
-        defaultValue={props.subject ?? ''}
+        defaultValue={props.sent.text('subject', props.subject ?? '')}
         error={props.errors?.subject}
       />
       <Select
@@ -48,7 +50,7 @@ function SubjectAndGrade(props: {
         label={t('rubrics.grade')}
         empty={t('rubrics.any')}
         options={gradeLevels.map((g) => option(g, g === 'K' ? t('drafts.grade_K') : g))}
-        defaultValue={props.grade ?? ''}
+        defaultValue={props.sent.text('grade', props.grade ?? '')}
         error={props.errors?.grade}
       />
     </>
@@ -59,10 +61,12 @@ function Counts({
   locale,
   prefix,
   errors,
+  sent,
 }: {
   readonly locale: Locale;
   readonly prefix: string;
   readonly errors: RubricFormState['errors'];
+  readonly sent: Prefill;
 }) {
   const t = createTranslator(locale);
   return (
@@ -72,8 +76,9 @@ function Counts({
         name="criteriaCount"
         type="number"
         min={rubricCriteriaRange.min}
+        max={rubricCriteriaRange.max}
         label={t('rubrics.criteria')}
-        defaultValue={rubricCriteriaRange.default}
+        defaultValue={sent.text('criteriaCount', rubricCriteriaRange.default)}
         error={errors?.criteriaCount ?? errors?.criteria}
       />
       <Field
@@ -81,8 +86,9 @@ function Counts({
         name="levelCount"
         type="number"
         min={rubricLevelRange.min}
+        max={rubricLevelRange.max}
         label={t('rubrics.levels')}
-        defaultValue={rubricLevelRange.default}
+        defaultValue={sent.text('levelCount', rubricLevelRange.default)}
         error={errors?.levelCount ?? errors?.levels}
       />
     </div>
@@ -94,20 +100,35 @@ export function RubricDraftForm({ locale }: { readonly locale: Locale }) {
   const t = createTranslator(locale);
   const [state, action] = useActionState(requestRubricDraftAction, initial);
   const errors = state.errors;
+  const sent = prefill(state.values);
   return (
-    <form action={action} className="stack card" noValidate aria-label={t('rubrics.aiDraft')}>
+    <form
+      action={action}
+      className="stack card"
+      noValidate
+      aria-label={t('rubrics.aiDraft')}
+      key={sent.key}
+    >
       <h2>{t('rubrics.aiDraft')}</h2>
       <Hidden values={{ locale }} />
       <FormAlert message={errors?.form} />
-      <Field id="topic" name="topic" label={t('rubrics.topic')} error={errors?.topic} required />
+      <Field
+        id="topic"
+        name="topic"
+        label={t('rubrics.topic')}
+        defaultValue={sent.text('topic')}
+        error={errors?.topic}
+        required
+      />
       <div className="field-row">
-        <SubjectAndGrade locale={locale} errors={errors} />
+        <SubjectAndGrade locale={locale} errors={errors} sent={sent} />
       </div>
       <div className="field-row">
         <Field
           id="draft-title"
           name="title"
           label={t('rubrics.titleOptional')}
+          defaultValue={sent.text('title')}
           error={errors?.title}
         />
         <Select
@@ -115,15 +136,20 @@ export function RubricDraftForm({ locale }: { readonly locale: Locale }) {
           name="language"
           label={t('assistant.language')}
           options={locales.map((l) => option(l, localeInfo[l].nativeName))}
-          defaultValue={locale}
+          defaultValue={sent.text('language', locale)}
         />
       </div>
-      <EslSwitch label={t('esl.label')} help={t('esl.rubricHelp')} />
-      <Counts locale={locale} prefix="draft" errors={errors} />
+      <EslSwitch
+        label={t('esl.label')}
+        help={t('esl.rubricHelp')}
+        defaultChecked={sent.checked('esl')}
+      />
+      <Counts locale={locale} prefix="draft" errors={errors} sent={sent} />
       <TextArea
         id="instructions"
         name="instructions"
         label={t('assistant.instructions')}
+        defaultValue={sent.text('instructions')}
         error={errors?.instructions}
       />
       <Submit label={t('rubrics.generate')} />
@@ -136,8 +162,15 @@ export function BlankRubricForm({ locale }: { readonly locale: Locale }) {
   const t = createTranslator(locale);
   const [state, action] = useActionState(createRubricAction, initial);
   const errors = state.errors;
+  const sent = prefill(state.values);
   return (
-    <form action={action} className="stack card" noValidate aria-label={t('rubrics.startBlank')}>
+    <form
+      action={action}
+      className="stack card"
+      noValidate
+      aria-label={t('rubrics.startBlank')}
+      key={sent.key}
+    >
       <h2>{t('rubrics.startBlank')}</h2>
       <Hidden values={{ locale }} />
       <FormAlert message={errors?.form} />
@@ -145,10 +178,11 @@ export function BlankRubricForm({ locale }: { readonly locale: Locale }) {
         id="blank-title"
         name="title"
         label={t('rubrics.title')}
+        defaultValue={sent.text('title')}
         error={errors?.title}
         required
       />
-      <Counts locale={locale} prefix="blank" errors={errors} />
+      <Counts locale={locale} prefix="blank" errors={errors} sent={sent} />
       <Submit label={t('rubrics.create')} />
     </form>
   );
@@ -176,6 +210,7 @@ const resize = (list: readonly string[], length: number) =>
 export function RubricEditor(props: { readonly locale: Locale; readonly rubric: Rubric }) {
   const t = createTranslator(props.locale);
   const [state, action] = useActionState(saveRubricAction, initial);
+  const sent = prefill(state.values);
   const [levels, setLevels] = useState<RubricLevel[]>([...props.rubric.levels]);
   const [criteria, setCriteria] = useState<RubricCriterion[]>([...props.rubric.criteria]);
   const errors = state.errors;
@@ -240,12 +275,13 @@ export function RubricEditor(props: { readonly locale: Locale; readonly rubric: 
           {t('rubrics.saved')}
         </p>
       ) : null}
-      <div className="field-row">
+      {/* Keyed alone, so a refused save shows the title and choices sent; the grid keeps its state. */}
+      <div className="field-row" key={sent.key}>
         <Field
           id="title"
           name="title"
           label={t('rubrics.title')}
-          defaultValue={props.rubric.title}
+          defaultValue={sent.text('title', props.rubric.title)}
           required
         />
         <SubjectAndGrade
@@ -253,6 +289,7 @@ export function RubricEditor(props: { readonly locale: Locale; readonly rubric: 
           errors={errors}
           subject={props.rubric.subject}
           grade={props.rubric.grade}
+          sent={sent}
         />
       </div>
       <div className="table-scroll">

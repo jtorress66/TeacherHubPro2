@@ -5,7 +5,8 @@ import { requiredText, type ValidationError } from '../shared/validation.ts';
 import { findStandard, type GradeLevel } from '../standards/common-core.ts';
 import type { AssistantSubject, ContentRequest, ContentType } from './content-request.ts';
 
-export const maxGenerationLength = 40_000;
+/** Room for a 100-question quiz with its answer key. */
+export const maxGenerationLength = 100_000;
 
 /** A piece of content the assistant wrote, kept in the teacher's history until deleted. */
 export interface AiGeneration {

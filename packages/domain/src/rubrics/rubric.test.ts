@@ -167,11 +167,11 @@ describe('createRubricRequest', () => {
     expect(createRubricRequest({ ...input, topic: '' }).ok).toBe(false);
     expect(createRubricRequest({ ...input, criteriaCount: 11 })).toEqual({
       ok: false,
-      error: { field: 'criteriaCount', code: 'out_of_range' },
+      error: { field: 'criteriaCount', code: 'out_of_range', range: { min: 1, max: 10 } },
     });
     expect(createRubricRequest({ ...input, levelCount: 1 })).toEqual({
       ok: false,
-      error: { field: 'levelCount', code: 'out_of_range' },
+      error: { field: 'levelCount', code: 'out_of_range', range: { min: 2, max: 6 } },
     });
     expect(createRubricRequest({ ...input, esl: true, subject: '' })).toMatchObject({
       ok: true,

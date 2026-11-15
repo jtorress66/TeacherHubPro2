@@ -14,6 +14,7 @@ import {
   type GradebookFormState,
 } from '../app/_lib/gradebook-actions.ts';
 import { Field, FormAlert, Submit } from './forms.tsx';
+import { prefill } from '../server/form-values.ts';
 
 const initial: GradebookFormState = {};
 
@@ -42,9 +43,10 @@ function Hidden({ locale, classId }: ClassFormProps) {
 export function AddCategoryForm(props: ClassFormProps) {
   const t = createTranslator(props.locale);
   const [state, action] = useActionState(addCategoryAction, initial);
+  const sent = prefill(state.values);
   return (
     <form
-      key={state.version}
+      key={`${String(state.version ?? 0)}-${sent.key}`}
       action={action}
       className="field-row"
       noValidate
@@ -56,6 +58,7 @@ export function AddCategoryForm(props: ClassFormProps) {
         id="new-category-name"
         label={t('gradebook.categoryName')}
         name="name"
+        defaultValue={sent.text('name')}
         error={state.errors?.name}
       />
       <Field
@@ -64,7 +67,8 @@ export function AddCategoryForm(props: ClassFormProps) {
         name="weightPercent"
         type="number"
         min={0}
-        defaultValue={10}
+        max={100}
+        defaultValue={sent.text('weightPercent', 10)}
         error={state.errors?.weightPercent}
       />
       <Submit label={t('gradebook.addCategory')} />
@@ -78,10 +82,11 @@ export function CategoryRow(props: ClassFormProps & { readonly category: GradeCa
   const { category } = props;
   const [state, action] = useActionState(updateCategoryAction, initial);
   const id = `category-${category.id}`;
+  const sent = prefill(state.values);
   return (
     <tr>
       <td colSpan={3}>
-        <form action={action} className="field-row" noValidate>
+        <form action={action} className="field-row" noValidate key={sent.key}>
           <Hidden {...props} />
           <input type="hidden" name="categoryId" value={category.id} />
           <div className="field">
@@ -91,7 +96,7 @@ export function CategoryRow(props: ClassFormProps & { readonly category: GradeCa
             <input
               id={`${id}-name`}
               name="name"
-              defaultValue={category.name}
+              defaultValue={sent.text('name', category.name)}
               aria-invalid={state.errors?.name ? true : undefined}
             />
           </div>
@@ -107,7 +112,7 @@ export function CategoryRow(props: ClassFormProps & { readonly category: GradeCa
               max={100}
               step="any"
               className="narrow-input"
-              defaultValue={category.weightPercent}
+              defaultValue={sent.text('weightPercent', category.weightPercent)}
               aria-invalid={state.errors?.weightPercent ? true : undefined}
             />
           </div>
@@ -143,9 +148,10 @@ export function AssignmentForm(
   const { assignment } = props;
   const [state, action] = useActionState(saveAssignmentAction, initial);
   const label = assignment ? t('gradebook.editAssignment') : t('gradebook.newAssignment');
+  const sent = prefill(state.values);
   return (
     <form
-      key={assignment ? undefined : state.version}
+      key={`${assignment ? '' : String(state.version ?? 0)}-${sent.key}`}
       action={action}
       className="stack"
       noValidate
@@ -170,7 +176,7 @@ export function AssignmentForm(
           id="assignment-title"
           label={t('gradebook.assignmentTitle')}
           name="title"
-          defaultValue={assignment?.title}
+          defaultValue={sent.text('title', assignment?.title)}
           error={state.errors?.title}
           required
         />
@@ -179,7 +185,7 @@ export function AssignmentForm(
           <select
             id="assignment-category"
             name="categoryId"
-            defaultValue={assignment?.categoryId}
+            defaultValue={sent.text('categoryId', assignment?.categoryId)}
             aria-invalid={state.errors?.categoryId ? true : undefined}
           >
             {props.categories.map((category) => (
@@ -198,7 +204,7 @@ export function AssignmentForm(
           name="points"
           type="number"
           min={1}
-          defaultValue={assignment?.points ?? 100}
+          defaultValue={sent.text('points', assignment?.points ?? 100)}
           hint={t('gradebook.pointsHint')}
           error={state.errors?.points}
         />
@@ -207,7 +213,7 @@ export function AssignmentForm(
           label={t('gradebook.dueDate')}
           name="dueDate"
           type="date"
-          defaultValue={assignment?.dueDate}
+          defaultValue={sent.text('dueDate', assignment?.dueDate)}
           error={state.errors?.dueDate}
         />
       </div>
@@ -246,8 +252,9 @@ export function GradeEntryForm(
     { value: 'missing', label: t('gradebook.status_missing') },
     { value: 'excused', label: t('gradebook.status_excused') },
   ];
+  const sent = prefill(state.values);
   return (
-    <form action={action} className="stack grade-entry" noValidate>
+    <form action={action} className="stack grade-entry" noValidate key={sent.key}>
       <Hidden {...props} />
       <input type="hidden" name="assignmentId" value={props.assignmentId} />
       <FormAlert message={state.errors?.form} />
@@ -278,7 +285,7 @@ export function GradeEntryForm(
                     min={0}
                     step="any"
                     className="narrow-input"
-                    defaultValue={row.score ?? undefined}
+                    defaultValue={sent.text(`score.${row.studentId}`, row.score)}
                     disabled={!props.editable}
                     aria-label={t('gradebook.scoreFor', { name: row.name })}
                     aria-invalid={error ? true : undefined}
@@ -288,7 +295,7 @@ export function GradeEntryForm(
                 <td>
                   <select
                     name={`status.${row.studentId}`}
-                    defaultValue={choiceOf(row.status)}
+                    defaultValue={sent.text(`status.${row.studentId}`, choiceOf(row.status))}
                     disabled={!props.editable}
                     aria-label={t('gradebook.statusFor', { name: row.name })}
                   >
@@ -302,7 +309,7 @@ export function GradeEntryForm(
                 <td>
                   <input
                     name={`comment.${row.studentId}`}
-                    defaultValue={row.comment ?? undefined}
+                    defaultValue={sent.text(`comment.${row.studentId}`, row.comment)}
                     disabled={!props.editable}
                     aria-label={t('gradebook.commentFor', { name: row.name })}
                   />
@@ -328,8 +335,9 @@ export function CommentForm(
   const t = createTranslator(props.locale);
   const [state, action] = useActionState(saveCommentAction, initial);
   const id = `comment-${props.studentId}`;
+  const sent = prefill(state.values);
   return (
-    <form action={action} className="stack" noValidate>
+    <form action={action} className="stack" noValidate key={sent.key}>
       <Hidden {...props} />
       <input type="hidden" name="studentId" value={props.studentId} />
       <label htmlFor={id}>{t('reportCards.commentFor', { name: props.name })}</label>
@@ -338,7 +346,7 @@ export function CommentForm(
         name="comment"
         rows={3}
         maxLength={1000}
-        defaultValue={props.comment ?? undefined}
+        defaultValue={sent.text('comment', props.comment)}
         disabled={!props.editable}
         aria-describedby={`${id}-hint`}
         aria-invalid={state.errors?.comment ? true : undefined}

@@ -9,6 +9,7 @@ import {
 } from '../app/_lib/student360-actions.ts';
 import { FormAlert, Submit } from './forms.tsx';
 import { Hidden, TextArea } from './form-fields.tsx';
+import { prefill } from '../server/form-values.ts';
 
 const initial: Student360FormState = {};
 
@@ -27,18 +28,20 @@ const hidden = (props: StudentProps) => ({
 export function AddNoteForm(props: StudentProps) {
   const t = createTranslator(props.locale);
   const [state, action] = useActionState(addStudentNoteAction, initial);
+  const sent = prefill(state.values);
   return (
     <form
       action={action}
       className="stack"
       aria-label={t('student360.addNote')}
-      key={state.version}
+      key={`${String(state.version ?? 0)}-${sent.key}`}
     >
       <Hidden values={hidden(props)} />
       <TextArea
         id="student-note"
         name="text"
         label={t('student360.note')}
+        defaultValue={sent.text('text')}
         error={state.errors?.text}
       />
       <FormAlert message={state.errors?.form} />

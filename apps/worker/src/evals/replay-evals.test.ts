@@ -132,6 +132,21 @@ describe('ReplayLlmClient', () => {
     });
   });
 
+  it('answers a topic saved with several replies with each in turn, as for a quiz in parts', async () => {
+    const llm = new ReplayLlmClient({ Fractions: ['part 1', 'part 2'] });
+    const request = {
+      system: '',
+      maxTokens: 1,
+      messages: [{ role: 'user' as const, content: 'Topic: Fractions' }],
+    };
+    const texts = [];
+    for (let i = 0; i < 3; i++) {
+      const reply = await llm.complete(request);
+      texts.push(reply.ok ? reply.value.text : null);
+    }
+    expect(texts).toEqual(['part 1', 'part 2', 'part 2']);
+  });
+
   it('fails as invalid_request when no reply is saved for the prompt', async () => {
     const llm = new ReplayLlmClient({});
     const request = {

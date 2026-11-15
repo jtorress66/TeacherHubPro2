@@ -3,12 +3,15 @@
 import { revalidatePath } from 'next/cache';
 import type { ClassId, PortalLinkId, StudentId } from '@thp/domain';
 import { isLocale, type Locale } from '@thp/i18n';
+import type { SubmittedValues } from '../../server/form-values.ts';
 import { getAppContainer } from '../../container.ts';
-import { formErrors } from '../../server/error-messages.ts';
+import { rejectedForm } from '../../server/error-messages.ts';
 import { record } from './activity.ts';
 import { requireUser } from './auth.ts';
 
 export interface PortalFormState {
+  /** What the teacher sent, when it was refused, so the form shows it again. */
+  readonly values?: SubmittedValues;
   readonly errors?: Readonly<Record<string, string>>;
   /** The address a link was just emailed to. */
   readonly sentTo?: string;
@@ -50,7 +53,7 @@ export async function emailPortalLinkAction(
     ...ref,
     to: text(data, 'to'),
   });
-  if (!sent.ok) return { errors: formErrors(sent.error, locale) };
+  if (!sent.ok) return rejectedForm(sent.error, locale, data);
   revalidatePath(pagePath(locale, ref.classId));
   return { sentTo: sent.value.link.sentTo ?? '' };
 }
@@ -64,7 +67,7 @@ export async function issuePortalLinkAction(
   const { user } = await requireUser(locale);
   const ref = refs(data);
   const issued = await getAppContainer().issuePortalLink.execute({ actor: user, ...ref });
-  if (!issued.ok) return { errors: formErrors(issued.error, locale) };
+  if (!issued.ok) return rejectedForm(issued.error, locale, data);
   await record(user, 'portal_link_issued', ref.classId);
   revalidatePath(pagePath(locale, ref.classId));
   return { url: issued.value.url };

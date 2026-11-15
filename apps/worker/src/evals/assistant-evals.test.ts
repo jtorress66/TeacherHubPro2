@@ -8,7 +8,14 @@ import { presentationCases, runPresentationEvals } from './presentation-evals.ts
 const local = () => new LocalLlmClient(localReply);
 
 describe('assistant evals', () => {
-  const thresholds = { structure: 1, language: 1, validCodes: 1, questionCount: 0.9 };
+  const thresholds = {
+    structure: 1,
+    language: 1,
+    validCodes: 1,
+    questionCount: 0.9,
+    numbering: 0.9,
+    uniqueQuestions: 1,
+  };
 
   it('has valid cases covering every content type and every language', async () => {
     expect(new Set(assistantCases.map((c) => c.type))).toEqual(
@@ -27,8 +34,22 @@ describe('assistant evals', () => {
       thresholds,
       assistantCases.filter((c) => c.language === 'en'),
     );
-    expect(report.average).toEqual({ structure: 1, language: 1, validCodes: 1, questionCount: 1 });
+    expect(report.average).toEqual({
+      structure: 1,
+      language: 1,
+      validCodes: 1,
+      questionCount: 1,
+      numbering: 1,
+      uniqueQuestions: 1,
+    });
     expect(report.failing).toEqual([]);
+  });
+
+  it('has a 75-question English quiz, written in parts, scored on its numbering', async () => {
+    const long = assistantCases.filter((c) => (c.questionCount ?? 0) > 25);
+    expect(long).toEqual([expect.objectContaining({ type: 'quiz', questionCount: 75, language: 'en' })]);
+    const report = await runAssistantEvals(local(), thresholds, long);
+    expect(report.cases[0]?.scores).toMatchObject({ questionCount: 1, numbering: 1 });
   });
 
   it('reports why a case failed', async () => {

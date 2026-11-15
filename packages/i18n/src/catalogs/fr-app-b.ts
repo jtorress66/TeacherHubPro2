@@ -129,6 +129,9 @@ export const frAppB = {
     instructions: 'Instructions supplémentaires (facultatif)',
     submit: 'Rédiger',
     working: "Rédaction en cours… Cela prend généralement moins d'une minute.",
+    writingQuestions: 'Rédaction des questions {from} à {to} sur {total}…',
+    questionCountHint:
+      'De {min} à {max}. Les tests de plus de {part} questions sont rédigés en plusieurs parties et peuvent prendre quelques minutes.',
     open: 'Ouvrir',
     history: 'Votre historique',
     historyEmpty: "Rien pour l'instant. Ce que vous créez apparaît ici.",
@@ -1281,6 +1284,7 @@ export const frAppB = {
     required: 'Ce champ est obligatoire.',
     invalid_format: 'Veuillez vérifier cette valeur.',
     out_of_range: 'Cette valeur est hors limites.',
+    outOfRangeBetween: 'Choisissez un nombre de {min} à {max}.',
     too_short: "C'est trop court.",
     too_long: "C'est trop long.",
     too_large: 'Ce fichier est trop volumineux.',

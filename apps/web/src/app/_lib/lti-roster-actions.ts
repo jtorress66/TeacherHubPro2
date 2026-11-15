@@ -5,7 +5,7 @@ import { z } from 'zod';
 import type { ClassId } from '@thp/domain';
 import { createTranslator, isLocale, type Locale } from '@thp/i18n';
 import { getAppContainer } from '../../container.ts';
-import { formErrors } from '../../server/error-messages.ts';
+import { rejectedForm } from '../../server/error-messages.ts';
 import { readLtiCourseOption } from '../../server/lti.ts';
 import type { AssignmentFormState } from './assignment-actions.ts';
 import { requireUser } from './auth.ts';
@@ -36,7 +36,7 @@ export async function importLtiRosterAction(
   });
   const course = form.success ? readLtiCourseOption(form.data.ltiCourse) : null;
   if (lti === null || !form.success || course === null) {
-    return { errors: formErrors({ code: 'not_found' }, locale) };
+    return rejectedForm({ code: 'not_found' }, locale, data);
   }
   const { classId } = form.data;
   const imported = await lti.importRoster.execute({
@@ -45,7 +45,7 @@ export async function importLtiRosterAction(
     platformId: course.platformId,
     contextId: course.contextId,
   });
-  if (!imported.ok) return { errors: formErrors(imported.error, locale) };
+  if (!imported.ok) return rejectedForm(imported.error, locale, data);
   revalidatePath(`/${locale}/app/classes/${classId}`);
   return {
     saved: true,

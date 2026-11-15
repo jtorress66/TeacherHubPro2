@@ -1,4 +1,4 @@
-import type { Job, JobId, SchoolId, UserId } from '@thp/domain';
+import type { Job, JobId, JobProgress, SchoolId, UserId } from '@thp/domain';
 
 export interface NewJob {
   readonly schoolId: SchoolId;
@@ -7,7 +7,13 @@ export interface NewJob {
   readonly payload: unknown;
 }
 
-export interface JobQueue {
+/** Lets a running job say how far it has got, for its owner's progress page. */
+export interface JobProgressReporter {
+  /** Stores the progress of a running job; ignored for a job that is not running. */
+  reportProgress(id: JobId, progress: JobProgress): Promise<void>;
+}
+
+export interface JobQueue extends JobProgressReporter {
   enqueue(job: NewJob): Promise<Job>;
   /** Atomically takes the oldest queued job of the given kinds and marks it running. */
   claimNext(kinds: readonly string[]): Promise<Job | null>;

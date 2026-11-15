@@ -4,13 +4,16 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import type { ClassId, LessonPlanId, PlanFolderId, PlanTemplateId } from '@thp/domain';
 import { isLocale, type Locale } from '@thp/i18n';
+import { submittedValues, type SubmittedValues } from '../../server/form-values.ts';
 import { getAppContainer } from '../../container.ts';
-import { formErrors } from '../../server/error-messages.ts';
+import { rejectedForm } from '../../server/error-messages.ts';
 import { parsePlanForm } from '../../server/plan-forms.ts';
 import { planErrors } from '../../server/planner-messages.ts';
 import { requireUser } from './auth.ts';
 
 export interface PlannerFormState {
+  /** What the teacher sent, when it was refused, so the form shows it again. */
+  readonly values?: SubmittedValues;
   readonly errors?: Readonly<Record<string, string>>;
   readonly saved?: boolean;
   /** Changes after each success so the form can clear itself. */
@@ -76,7 +79,7 @@ export async function planCommandAction(
 
   if (intent === 'duplicate') {
     const copy = await app.duplicatePlan.execute({ ...input, start: text(data, 'start') });
-    if (!copy.ok) return { errors: planErrors(copy.error, locale) };
+    if (!copy.ok) return { errors: planErrors(copy.error, locale), values: submittedValues(data) };
     revalidatePath(plansPath(locale));
     redirect(`${plansPath(locale)}/${copy.value.id}`);
   }
@@ -86,14 +89,14 @@ export async function planCommandAction(
       ...input,
       folderId: folderId === '' ? null : (folderId as PlanFolderId),
     });
-    if (!moved.ok) return { errors: formErrors(moved.error, locale) };
+    if (!moved.ok) return rejectedForm(moved.error, locale, data);
   } else if (intent === 'template') {
     const saved = await app.saveAsTemplate.execute({ ...input, name: text(data, 'name') });
-    if (!saved.ok) return { errors: formErrors(saved.error, locale) };
+    if (!saved.ok) return rejectedForm(saved.error, locale, data);
     revalidatePath(`/${locale}/app/templates`);
   } else {
     const deleted = await app.deletePlan.execute(input);
-    if (!deleted.ok) return { errors: formErrors(deleted.error, locale) };
+    if (!deleted.ok) return rejectedForm(deleted.error, locale, data);
     revalidatePath(plansPath(locale));
     redirect(plansPath(locale));
   }
@@ -119,7 +122,7 @@ export async function folderAction(
       : intent === 'update'
         ? await app.updateFolder.execute({ actor: user, folderId, ...details })
         : await app.createFolder.execute({ actor: user, ...details });
-  if (!result.ok) return { errors: formErrors(result.error, locale) };
+  if (!result.ok) return rejectedForm(result.error, locale, data);
   revalidatePath(plansPath(locale));
   return done(state);
 }
@@ -156,6 +159,6 @@ export async function requestDraftAction(
     start: text(data, 'start'),
     classId: classId === '' ? null : (classId as ClassId),
   });
-  if (!job.ok) return { errors: planErrors(job.error, locale) };
+  if (!job.ok) return { errors: planErrors(job.error, locale), values: submittedValues(data) };
   redirect(`${plansPath(locale)}/draft/${job.value.id}`);
 }

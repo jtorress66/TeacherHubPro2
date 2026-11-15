@@ -10,12 +10,15 @@ import {
   type RubricId,
 } from '@thp/domain';
 import { createTranslator } from '@thp/i18n';
+import type { SubmittedValues } from '../../server/form-values.ts';
 import { getAppContainer } from '../../container.ts';
-import { formErrors } from '../../server/error-messages.ts';
+import { rejectedForm } from '../../server/error-messages.ts';
 import { pageLocale, parseRubricDraftForm, parseRubricGrid } from '../../server/rubric-forms.ts';
 import { requireUser } from './auth.ts';
 
 export interface RubricFormState {
+  /** What the teacher sent, when it was refused, so the form shows it again. */
+  readonly values?: SubmittedValues;
   readonly errors?: Readonly<Record<string, string>>;
   readonly saved?: boolean;
   /** Changes after each save so the form can show it again. */
@@ -37,7 +40,7 @@ export async function requestRubricDraftAction(
   const { locale, input } = parseRubricDraftForm(data);
   const { user } = await requireUser(locale);
   const job = await getAppContainer().requestRubricDraft.execute({ actor: user, ...input });
-  if (!job.ok) return { errors: formErrors(job.error, locale) };
+  if (!job.ok) return rejectedForm(job.error, locale, data);
   redirect(`${rubricsPath(locale)}/jobs/${job.value.id}`);
 }
 
@@ -69,7 +72,7 @@ export async function createRubricAction(
         }
       : { actor: user, jobId: jobId as JobId },
   );
-  if (!created.ok) return { errors: formErrors(created.error, locale) };
+  if (!created.ok) return rejectedForm(created.error, locale, data);
   revalidatePath(rubricsPath(locale));
   redirect(`${rubricsPath(locale)}/${created.value.id}`);
 }
@@ -82,7 +85,7 @@ export async function saveRubricAction(
   const locale = pageLocale(data);
   const { user } = await requireUser(locale);
   const grid = parseRubricGrid(text(data, 'grid'));
-  if (grid === null) return { errors: formErrors({ code: 'not_found' }, locale) };
+  if (grid === null) return rejectedForm({ code: 'not_found' }, locale, data);
   const rubricId = text(data, 'rubricId') as RubricId;
   const updated = await getAppContainer().updateRubric.execute({
     actor: user,
@@ -94,7 +97,7 @@ export async function saveRubricAction(
       ...grid,
     },
   });
-  if (!updated.ok) return { errors: formErrors(updated.error, locale) };
+  if (!updated.ok) return rejectedForm(updated.error, locale, data);
   revalidatePath(`${rubricsPath(locale)}/${rubricId}`);
   return { saved: true, version: (state.version ?? 0) + 1 };
 }
