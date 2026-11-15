@@ -301,3 +301,51 @@ describe('AnthropicLlmClient', () => {
     });
   });
 });
+
+describe('a refused API key', () => {
+  const request = {
+    system: 'Be brief.',
+    messages: [{ role: 'user' as const, content: 'Hi' }],
+    maxTokens: 100,
+  };
+  const watched = () => {
+    const refusals: string[] = [];
+    const claude = new AnthropicLlmClient({
+      apiKey: 'test-key',
+      baseURL,
+      maxRetries: 0,
+      onKeyRefused: () => refusals.push('refused'),
+    });
+    return { claude, refusals };
+  };
+
+  it.each([401, 403])(
+    'is reported when Claude answers %i, so it is not mistaken for an outage',
+    async (status) => {
+      server.use(http.post(endpoint, () => HttpResponse.json({}, { status })));
+      const { claude, refusals } = watched();
+      expect(await claude.complete(request)).toEqual({
+        ok: false,
+        error: { code: 'invalid_request' },
+      });
+      expect(refusals).toEqual(['refused']);
+    },
+  );
+
+  it('is not reported for other errors', async () => {
+    server.use(http.post(endpoint, () => HttpResponse.json({}, { status: 500 })));
+    const { claude, refusals } = watched();
+    await claude.complete(request);
+    expect(refusals).toEqual([]);
+  });
+
+  it('is found by a free check of the key, before any writing', async () => {
+    const models = `${baseURL}/v1/models`;
+    server.use(http.get(models, () => HttpResponse.json({ data: [], has_more: false })));
+    expect(await client().checkKey()).toBe('ok');
+    server.use(http.get(models, () => HttpResponse.json({}, { status: 401 })));
+    expect(await client().checkKey()).toBe('refused');
+    server.use(http.get(models, () => HttpResponse.error()));
+    expect(await client().checkKey()).toBe('unreachable');
+  });
+});

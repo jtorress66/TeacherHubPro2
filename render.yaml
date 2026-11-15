@@ -103,6 +103,9 @@ services:
     region: virginia # same region as the web app and Postgres
     # The worker runs its TypeScript directly with tsx, so there is nothing to build.
     buildCommand: corepack enable && pnpm install --frozen-lockfile
+    # The worker can go live before the web app, so it brings the database up to date itself
+    # (migrations take a lock, so both running them is safe).
+    preDeployCommand: corepack enable && pnpm db:migrate
     startCommand: corepack enable && pnpm --filter @thp/worker start
     buildFilter:
       paths:

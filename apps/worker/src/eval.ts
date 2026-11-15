@@ -56,6 +56,12 @@ const llm = new AnthropicLlmClient({
   timeoutMs: 300_000,
 });
 
+// A refused key would fail every case as "unavailable"; say so plainly instead, before any cost.
+if ((await llm.checkKey()) === 'refused') {
+  process.stderr.write('Claude refused ANTHROPIC_API_KEY (expired, deleted or wrong).\n');
+  process.exit(1);
+}
+
 const suites: readonly [string, () => Promise<EvalReport<string>>][] = [
   ['Lesson planner evals', () => runPlannerEvals(llm, thresholds['lesson-planner'])],
   ['AI assistant evals', () => runAssistantEvals(llm, thresholds.assistant)],
