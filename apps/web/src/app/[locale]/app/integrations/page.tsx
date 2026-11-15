@@ -12,7 +12,7 @@ import { ToolCard, ToolFilter, ToolRequest, ToolText } from '../../../../compone
 import { getAppContainer } from '../../../../container.ts';
 import { isAdminOf } from '@thp/domain';
 import {
-  comingSoonWith,
+  comingSoon,
   ltiTools,
   toolGroupFrom,
   toolsIn,
@@ -53,7 +53,6 @@ export default async function ConnectedToolsPage(
   const teamsAllowed = (await app.teams?.allowed.execute({ actor: user })) ?? null;
   const calendarLink = await app.getCalendarLinkStatus.execute({ actor: user });
   const ltiSetUp = (await app.lti?.setUpForSchool.execute({ actor: user })) ?? null;
-  const comingSoon = comingSoonWith(app.lti !== null);
 
   const plain = (tool: Tool, body: ReactNode) => (
     <ToolCard
@@ -79,8 +78,8 @@ export default async function ConnectedToolsPage(
       </p>,
     );
 
-  // A school system the school has set up opens from the course; otherwise a school can ask,
-  // and its admin can set it up.
+  // A school system the school has set up opens from the course; otherwise a school can ask for
+  // it, and, once it is turned on, its admin can set it up.
   const schoolSystem = (tool: Tool) =>
     plain(
       tool,
@@ -94,7 +93,7 @@ export default async function ConnectedToolsPage(
       ) : (
         <>
           <ToolRequest locale={locale} id={tool.id} status="onRequest" />
-          {isAdminOf(user, user.schoolId) ? (
+          {app.lti !== null && isAdminOf(user, user.schoolId) ? (
             <p>
               <a href={`/${locale}/app/admin/school-systems`}>{t('connectedTools.ltiAdminLink')}</a>
             </p>
@@ -104,7 +103,7 @@ export default async function ConnectedToolsPage(
     );
   const ltiCards = Object.fromEntries([...ltiTools].map((id) => [id, schoolSystem]));
 
-  // The school systems that are not built yet have no entry: they fall back to "coming soon".
+  // A tool that is not built yet has no entry: it falls back to "coming soon".
   const cards: Readonly<Partial<Record<ToolId, (tool: Tool) => ReactNode>>> = {
     googleSignIn: (tool) => plain(tool, <p>{t('connectedTools.signInNote')}</p>),
     classroom: () => (

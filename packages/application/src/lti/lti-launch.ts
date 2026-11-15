@@ -5,6 +5,7 @@ import {
   ok,
   type Language,
   type LtiCourseSource,
+  type LtiGradeService,
   type LtiLaunch,
   type LtiLaunchErrorCode,
   type LtiPlatform,
@@ -36,6 +37,7 @@ import {
   type LtiItemDeps,
   type LtiItemTarget,
 } from './lti-placement.ts';
+import { admitLearner, type LtiLearnerDeps, type LtiLearnerOutcome } from './lti-students.ts';
 
 /** Why a launch or a link could not go ahead; the web app shows a friendly page for each. */
 export type LtiErrorCode =
@@ -178,9 +180,9 @@ export type LtiLaunchOutcome =
       readonly placeTicket: string | null;
       readonly locale: string | null;
     }
-  | { readonly kind: 'learnerNotYet'; readonly locale: string | null };
+  | LtiLearnerOutcome;
 
-export interface CompleteLtiLaunchDeps extends SignInGateDeps, LtiItemDeps {
+export interface CompleteLtiLaunchDeps extends SignInGateDeps, LtiItemDeps, LtiLearnerDeps {
   readonly ltiPlatforms: LtiPlatformRepository;
   readonly ltiTokenVerifier: LtiTokenVerifier;
   readonly ltiNonces: LtiNonceRepository;
@@ -196,7 +198,21 @@ function courseFields(launch: LtiLaunch): Record<string, string> {
   if (launch.contextId !== null) fields.contextId = launch.contextId;
   if (launch.contextTitle !== null) fields.contextTitle = launch.contextTitle;
   if (launch.membershipsUrl !== null) fields.membershipsUrl = launch.membershipsUrl;
+  const grades = launch.gradeService;
+  if (grades?.lineItemsUrl != null) fields.lineItemsUrl = grades.lineItemsUrl;
+  if (grades !== null && grades.scopes.length > 0) fields.gradeScopes = grades.scopes.join(' ');
   return fields;
+}
+
+/** The course's gradebook as a link ticket carries it. */
+function gradeServiceFrom(payload: Readonly<Record<string, string>>): LtiGradeService | null {
+  const { lineItemsUrl, gradeScopes } = payload;
+  if (lineItemsUrl === undefined && gradeScopes === undefined) return null;
+  return {
+    lineItemsUrl: lineItemsUrl ?? null,
+    lineItemUrl: null,
+    scopes: gradeScopes === undefined ? [] : gradeScopes.split(' '),
+  };
 }
 
 /** Remembers the course a teacher opened TeacherHubPro from, so they can import its class list. */
@@ -215,8 +231,8 @@ async function rememberCourse(
  * system and pass every launch check, and its nonce works once. A linked teacher is signed in
  * (unless suspended) and their course remembered, then goes on to choose content to add (deep
  * linking) or to the placed item they opened, when they may see it; a teacher not linked yet gets a
- * ticket to link their account after signing in; students are not served yet, and nothing about
- * them is kept.
+ * ticket to link their account after signing in. A student opening a placed item gets a pass for
+ * it when the class list import linked them to its class; nothing about them is kept.
  */
 export class CompleteLtiLaunch {
   private readonly gate: SignInGate;
@@ -248,7 +264,9 @@ export class CompleteLtiLaunch {
       return refuse('replayed');
     }
     const { locale, subject } = launch.value;
-    if (launch.value.role === 'learner') return ok({ kind: 'learnerNotYet', locale });
+    if (launch.value.role === 'learner') {
+      return ok(await admitLearner(this.deps, platform, launch.value, now));
+    }
 
     const userId = await this.deps.ltiUserLinks.findUserId(platform.id, subject);
     const user = userId === null ? null : await this.deps.users.findById(platform.schoolId, userId);
@@ -308,6 +326,7 @@ function readLinkTicket(deps: LinkDeps, ticket: string): LinkTicket | null {
     contextId: payload.contextId ?? null,
     contextTitle: payload.contextTitle ?? null,
     membershipsUrl: payload.membershipsUrl ?? null,
+    gradeService: gradeServiceFrom(payload),
   };
 }
 

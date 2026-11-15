@@ -9,6 +9,7 @@ import {
   GradingForm,
   ResultsForm,
 } from '../../../../../components/game-forms.tsx';
+import { SendLtiGrades } from '../../../../../components/lti-grades.tsx';
 import { getAppContainer } from '../../../../../container.ts';
 import { formatDuration } from '../../../../../server/game-forms.ts';
 import { contentText } from '../../../../../server/game-text.ts';
@@ -16,7 +17,10 @@ import { deleteGameAction } from '../../../../_lib/game-actions.ts';
 import { requireUser } from '../../../../_lib/auth.ts';
 import { localeFrom, type LocaleParams } from '../../../locale-param.ts';
 
-type Props = LocaleParams & { readonly params: Promise<{ locale: string; gameId: string }> };
+type Props = LocaleParams & {
+  readonly params: Promise<{ locale: string; gameId: string }>;
+  readonly searchParams: Promise<{ ltiJob?: string; ltiGrades?: string }>;
+};
 
 export const metadata: Metadata = { title: 'TeacherHubPro' };
 
@@ -26,6 +30,7 @@ export default async function GamePage(props: Props) {
   const t = createTranslator(locale);
   const { gameId } = await props.params;
   const { user } = await requireUser(locale);
+  const search = await props.searchParams;
   const app = getAppContainer();
   const details = await app.getGame.execute({ actor: user, gameId: gameId as GameId });
   if (!details.ok) notFound();
@@ -83,6 +88,18 @@ export default async function GamePage(props: Props) {
           gameId={game.id}
           categories={categoryOptions}
           grading={game.grading}
+        />
+      )}
+
+      {game.classId === null || game.grading.assignmentId === null ? null : (
+        <SendLtiGrades
+          locale={locale}
+          user={user}
+          classId={game.classId}
+          assignmentId={game.grading.assignmentId}
+          path={`/${locale}/app/games/${game.id}`}
+          jobId={search.ltiJob}
+          problem={search.ltiGrades}
         />
       )}
 

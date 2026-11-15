@@ -60,6 +60,8 @@ const courseOf = (actor: User, overrides: Partial<LtiCourse> = {}): LtiCourse =>
   contextId: 'course-9',
   title: 'Science 5',
   membershipsUrl,
+  lineItemsUrl: null,
+  gradeScopes: [],
   lastLaunchedAt: new Date('2026-09-01T08:00:00Z'),
   ...overrides,
 });

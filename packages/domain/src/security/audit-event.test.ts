@@ -2,13 +2,20 @@ import { describe, expect, it } from 'vitest';
 import { approvalActions, auditActions, isApprovalAction } from './audit-event.ts';
 
 describe('approval actions', () => {
-  it('names the four places a teacher approves AI work that reaches students or families', () => {
+  it('names the five places a teacher approves work that reaches students, families or a course system', () => {
     expect(approvalActions).toEqual([
       'ai_grade_approved',
       'game_grades_approved',
       'prep_approved',
       'learning_path_assigned',
+      'grades_sent_to_course',
     ]);
+  });
+
+  it('logs an admin adding or removing a course system as activity, not as an approval', () => {
+    expect(auditActions).toContain('lti_platform_added');
+    expect(auditActions).toContain('lti_platform_removed');
+    expect(isApprovalAction('lti_platform_added')).toBe(false);
   });
 
   it('are all ordinary activity log actions', () => {

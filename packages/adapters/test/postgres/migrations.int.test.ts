@@ -63,6 +63,7 @@ describe('migrations', () => {
       'live_sessions',
       'lti_courses',
       'lti_nonces',
+      'lti_placements',
       'lti_platforms',
       'lti_student_links',
       'lti_user_links',
@@ -100,6 +101,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0033_lti_grades',
           '0032_one_sign_in',
           '0031_approval_log',
           '0030_lti_rosters',
@@ -173,10 +175,11 @@ describe('migrations', () => {
           '0030_lti_rosters',
           '0031_approval_log',
           '0032_one_sign_in',
+          '0033_lti_grades',
         ],
       },
     });
-    expect(await tableNames()).toHaveLength(58);
+    expect(await tableNames()).toHaveLength(59);
   });
 
   it('turns plans saved before step 8 into valid plans of their kind', async () => {

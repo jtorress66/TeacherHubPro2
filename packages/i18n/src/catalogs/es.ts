@@ -275,12 +275,15 @@ export const es: Messages = {
     action_game_grades_approved: 'Aprobó las notas de un juego',
     action_prep_approved: 'Aprobó una preparación semanal',
     action_learning_path_assigned: 'Asignó una ruta de aprendizaje',
+    action_grades_sent_to_course: 'Envió notas a un sistema de cursos',
+    action_lti_platform_added: 'Añadió un sistema de cursos',
+    action_lti_platform_removed: 'Quitó un sistema de cursos',
     seeApprovals: 'Ver todas las aprobaciones',
   },
   approvals: {
     title: 'Aprobaciones',
     intro:
-      'Cada vez que un trabajo de la IA llega a estudiantes o familias, un maestro lo aprueba antes: notas sugeridas por la IA, notas de juegos, preparación semanal y rutas de aprendizaje. Esta página muestra quién aprobó qué, cuándo y para qué clase. Nunca muestra nombres de estudiantes, notas ni mensajes.',
+      'Cada vez que un trabajo de la IA llega a estudiantes o familias, un maestro lo aprueba antes: notas sugeridas por la IA, notas de juegos, preparación semanal y rutas de aprendizaje. El envío de notas confirmadas a un sistema de cursos también se registra aquí. Esta página muestra quién aprobó qué, cuándo y para qué clase. Nunca muestra nombres de estudiantes, notas ni mensajes.',
     before: 'Las aprobaciones hechas antes de que existiera este registro no aparecen.',
     ownOnly: 'Ves tus propias aprobaciones. Los administradores de la escuela ven las de todos.',
     empty: 'Ninguna aprobación coincide con estos filtros.',
@@ -291,6 +294,7 @@ export const es: Messages = {
     type_game_grades_approved: 'Notas de juegos',
     type_prep_approved: 'Preparación semanal',
     type_learning_path_assigned: 'Rutas de aprendizaje',
+    type_grades_sent_to_course: 'Notas enviadas a un curso',
     fromDate: 'Desde',
     toDate: 'Hasta',
     teacher: 'Maestro',
@@ -305,6 +309,7 @@ export const es: Messages = {
     changed: 'cambiada por el maestro',
     familyEmails: 'correos a familias enviados: {count}',
     grades: 'notas guardadas: {count}',
+    gradesSent: 'notas enviadas: {count}',
     limit: 'Se muestran las últimas {count}. Acota las fechas para ver aprobaciones anteriores.',
     item: 'Elemento',
     week: 'Semana del {date}',
@@ -1061,6 +1066,9 @@ export const es: Messages = {
     failed_pdf_no_text:
       'Este PDF no tiene texto para leer (puede ser un escaneo). Prueba con un PDF exportado de un documento.',
     failed_pdf_unreadable: 'No se pudo abrir este PDF. Comprueba que no tenga contraseña.',
+    failed_course_system_refused:
+      'Su sistema de cursos no permitió que TeacherHubPro enviara notas a este curso. Pida al equipo de informática de su escuela que active Assignment and Grade Services (AGS) para TeacherHubPro.',
+    failed_course_system_unavailable: 'Su sistema de cursos no respondió. Inténtelo de nuevo.',
     tryAgain: 'Intentar de nuevo',
     open: 'Abrir el borrador',
     subject_math: 'Matemáticas',
@@ -1622,9 +1630,26 @@ export const es: Messages = {
       'Este sistema de cursos pertenece a otra escuela, así que no se puede vincular con esta cuenta. Inicie sesión con la cuenta que usa su escuela.',
     problem_failed:
       'Algo salió mal al abrir TeacherHubPro desde su curso. Vuelva e inténtelo de nuevo. Si sigue pasando, pida al equipo de TI de su escuela que revise la configuración de TeacherHubPro.',
-    studentTitle: 'Todavía no disponible para estudiantes',
+    studentTitle: 'Todavía no hay nada que abrir aquí',
     studentText:
-      'Los estudiantes todavía no pueden abrir TeacherHubPro desde el sistema de cursos. Su maestro compartirá sus tareas con usted.',
+      'Abre la tarea o el juego que tu maestro añadió a tu curso. Si no lo encuentras, pregúntale a tu maestro.',
+    askTeacherTitle: 'Habla con tu maestro',
+    askTeacherText:
+      'Pídele a tu maestro que actualice la lista de la clase en TeacherHubPro. Luego vuelve a abrir esto desde tu curso.',
+    sendGradesTitle: 'Enviar notas a su curso',
+    sendGradesIntro:
+      'Solo se envían las notas que usted confirmó, como puntuaciones en el libro de calificaciones del curso. Si las envía de nuevo, se actualizan.',
+    sendGrades: 'Enviar notas a {course}',
+    sendingGrades: 'Enviando notas a su curso…',
+    gradesSentTitle: 'Notas enviadas a {course}',
+    gradesSentCount: '{count} enviadas',
+    gradesNotConfirmed: '{count} sin confirmar todavía',
+    gradesNotLinked: '{count} sin vincular al curso',
+    gradesFailed: '{count} no aceptadas por el sistema de cursos',
+    gradesNotLinkedHint:
+      'Los estudiantes que aún no están vinculados se añaden cuando importa la lista de la clase desde su sistema de cursos, en la página de la clase.',
+    toolValuesGrades:
+      'Para que los maestros puedan enviar las notas confirmadas al libro de calificaciones de sus cursos, active también Assignment and Grade Services (AGS) para TeacherHubPro.',
     toolValuesRosters:
       'Para que los maestros puedan importar sus listas de clase, active también el servicio Names and Role Provisioning (NRPS) del sistema de cursos para TeacherHubPro.',
     importRoster: 'Importar estudiantes de su sistema de cursos',

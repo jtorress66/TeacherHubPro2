@@ -274,12 +274,15 @@ export const deAppA = {
     action_game_grades_approved: 'Die Noten eines Spiels freigegeben',
     action_prep_approved: 'Eine Wochenvorbereitung freigegeben',
     action_learning_path_assigned: 'Einen Lernpfad zugewiesen',
+    action_grades_sent_to_course: 'Noten an ein Kurssystem gesendet',
+    action_lti_platform_added: 'Ein Kurssystem hinzugefügt',
+    action_lti_platform_removed: 'Ein Kurssystem entfernt',
     seeApprovals: 'Alle Freigaben ansehen',
   },
   approvals: {
     title: 'Freigaben',
     intro:
-      'Jedes Mal, wenn Arbeit der KI Schüler:innen oder Familien erreicht, gibt eine Lehrkraft sie vorher frei: von der KI vorgeschlagene Noten, Spielnoten, Wochenvorbereitung und Lernpfade. Diese Seite zeigt, wer was wann für welche Klasse freigegeben hat. Namen von Schüler:innen, Noten oder Nachrichten werden nie angezeigt.',
+      'Jedes Mal, wenn Arbeit der KI Schüler:innen oder Familien erreicht, gibt eine Lehrkraft sie vorher frei: von der KI vorgeschlagene Noten, Spielnoten, Wochenvorbereitung und Lernpfade. Auch das Senden bestätigter Noten an ein Kurssystem wird hier festgehalten. Diese Seite zeigt, wer was wann für welche Klasse freigegeben hat. Namen von Schüler:innen, Noten oder Nachrichten werden nie angezeigt.',
     before: 'Freigaben, die vor Einführung dieses Protokolls erfolgten, sind nicht aufgeführt.',
     ownOnly: 'Sie sehen Ihre eigenen Freigaben. Schuladmins sehen die Freigaben aller.',
     empty: 'Keine Freigaben entsprechen diesen Filtern.',
@@ -290,6 +293,7 @@ export const deAppA = {
     type_game_grades_approved: 'Spielnoten',
     type_prep_approved: 'Wochenvorbereitung',
     type_learning_path_assigned: 'Lernpfade',
+    type_grades_sent_to_course: 'An einen Kurs gesendete Noten',
     fromDate: 'Von',
     toDate: 'Bis',
     teacher: 'Lehrkraft',
@@ -304,6 +308,7 @@ export const deAppA = {
     changed: 'von der Lehrkraft geändert',
     familyEmails: 'E-Mails an Familien gesendet: {count}',
     grades: 'Noten gespeichert: {count}',
+    gradesSent: 'Noten gesendet: {count}',
     limit:
       'Die neuesten {count} werden angezeigt. Grenzen Sie die Daten ein, um ältere Freigaben zu sehen.',
     item: 'Element',

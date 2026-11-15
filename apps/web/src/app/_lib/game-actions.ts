@@ -16,6 +16,7 @@ import {
   parseGradingForm,
 } from '../../server/game-forms.ts';
 import { requireUser } from './auth.ts';
+import { passFor } from './lti-pass.ts';
 
 export interface GameFormState {
   readonly errors?: Readonly<Record<string, string>>;
@@ -208,5 +209,30 @@ export async function finishPreviewRoundAction(
       ...parsed.data,
       gameId: parsed.data.gameId as GameId,
     }),
+  );
+}
+
+/** A round for a student who opened the game from their course system (their pass's cookie). */
+export async function startPassRoundAction(input: StartRoundInput): Promise<RoundReply> {
+  const parsed = startInput.safeParse(input);
+  if (!parsed.success) return { ok: false };
+  const { gameId, mode } = parsed.data;
+  const pass = await passFor({ kind: 'game', id: gameId as GameId });
+  return roundReply(
+    await getAppContainer().startGameRound.execute({
+      pass,
+      gameId: gameId as GameId,
+      ...(mode === undefined ? {} : { mode }),
+    }),
+  );
+}
+
+export async function finishPassRoundAction(input: FinishRoundInput): Promise<FinishReply> {
+  const parsed = finishInput.safeParse(input);
+  if (!parsed.success) return { ok: false };
+  const gameId = parsed.data.gameId as GameId;
+  const pass = await passFor({ kind: 'game', id: gameId });
+  return finishReply(
+    await getAppContainer().finishGameRound.execute({ pass, ...parsed.data, gameId }),
   );
 }

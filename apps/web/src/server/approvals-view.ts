@@ -4,11 +4,12 @@ import {
   addDays,
   approvalActions,
   instantIn,
+  type AuditAction,
   type AuditEvent,
   type LocalDate,
   type UserId,
 } from '@thp/domain';
-import type { Locale, Translate } from '@thp/i18n';
+import type { Locale, MessageKey, Translate } from '@thp/i18n';
 import { formatDate } from './lesson-plan-display.ts';
 
 /** The filters as they arrive in a link: anything unexpected is simply ignored. */
@@ -47,6 +48,12 @@ export function approvalsSearch(params: SearchParams, locale: Locale): string {
   return search.toString();
 }
 
+/** What an approval's count counts; grades saved unless named here. */
+const countKeys: Partial<Record<AuditAction, MessageKey>> = {
+  prep_approved: 'approvals.familyEmails',
+  grades_sent_to_course: 'approvals.gradesSent',
+};
+
 /** What was approved, in words, with the kept/changed note or the count; never content. */
 function describe(event: AuditEvent, t: Translate): string {
   const action = t(`activity.action_${event.action}`);
@@ -55,9 +62,7 @@ function describe(event: AuditEvent, t: Translate): string {
       ? t(`approvals.${event.review}`)
       : event.count === null
         ? null
-        : event.action === 'prep_approved'
-          ? t('approvals.familyEmails', { count: event.count })
-          : t('approvals.grades', { count: event.count });
+        : t(countKeys[event.action] ?? 'approvals.grades', { count: event.count });
   return detail === null ? action : t('approvals.detail', { action, detail });
 }
 

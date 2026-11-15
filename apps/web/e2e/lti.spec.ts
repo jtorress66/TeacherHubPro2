@@ -294,13 +294,122 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     await launch(page, locale, course, 'Add TeacherHubPro content');
     await expect(page).toHaveURL(new RegExp(`/${locale}/app/lti/place$`));
 
-    // Students opening it are not served yet.
+    // A student the class list import has not linked is asked to see their teacher.
     const student = await freshPage(browser);
     await student.goto(coursePage);
     await student
       .getByRole('region', { name: 'In this course' })
       .getByRole('button', { name: 'Open Space quiz as student' })
       .click();
-    await expect(student).toHaveURL(new RegExp(`/${locale}/lti/student$`));
+    await expect(student).toHaveURL(new RegExp(`/${locale}/lti/ask-teacher$`));
+    await expect(student.getByRole('heading', { level: 1 })).toHaveText(t('lti.askTeacherTitle'));
+    await expect(student.getByText(t('lti.askTeacherText'))).toBeVisible();
+  });
+
+  test(`a student answers a placed assignment from the course and the teacher sends the grade back (${locale})`, async ({
+    page,
+    browser,
+  }) => {
+    test.setTimeout(240_000);
+    const adminEmail = await signUp(page, locale, uniqueEmail('admin'));
+    await makeSchoolAdmin(adminEmail);
+    const clientId = await registerTestLms(page, browser, locale);
+    await expect(page.getByText(t('lti.toolValuesGrades'))).toBeVisible();
+
+    // The admin teaches too: a class with an assignment, linked to the test course, whose class
+    // list (Ana Rivera and Ben Ortiz) they import.
+    const classPath = await classWithStudents(page, locale);
+    const assignmentPath = await readyAssignment(page, locale, classPath, 'Space quiz');
+    const course = `client=${clientId}&teacher=grading-teacher`;
+    await launch(page, locale, course, 'Add TeacherHubPro content');
+    await page.getByRole('button', { name: t('lti.linkConfirm') }).click();
+    await expect(page).toHaveURL(new RegExp(`/${locale}/app/lti/place$`));
+    const picker = page.getByRole('form', { name: t('lti.placeTitle') });
+    await picker
+      .getByRole('checkbox', {
+        name: t('lti.placeAssignmentItem', { title: 'Space quiz', className: 'Historia 6' }),
+      })
+      .check();
+    await picker.getByRole('button', { name: t('lti.placeSubmit') }).click();
+    await expect(page).toHaveURL(new RegExp(`/${locale}/test-lms\\?client=`));
+    const coursePage = page.url();
+    await page.goto(classPath);
+    const roster = page.getByRole('form', { name: t('lti.importRoster') });
+    await roster.getByLabel(t('lti.course')).selectOption({ label: 'Test course' });
+    await roster.getByRole('button', { name: t('lti.importRoster') }).click();
+    await expect(roster.getByRole('status')).toHaveText(
+      t('lti.imported', { added: 2, alreadyThere: 0, noName: 1 }),
+    );
+
+    // Ana opens it from the course, with no account and no link of her own, and answers.
+    const ana = await freshPage(browser);
+    await ana.goto(coursePage);
+    await ana
+      .getByRole('region', { name: 'In this course' })
+      .getByRole('button', { name: 'Open Space quiz as student' })
+      .click();
+    await expect(ana).toHaveURL(new RegExp(`/${locale}/lti/assignments/[^/]+$`));
+    await expect(ana.getByRole('heading', { level: 1 })).toHaveText('Space quiz');
+    expect(await axe(ana)).toEqual([]);
+    await ana.getByRole('radio', { name: t('questions.true') }).check();
+    await ana.getByRole('button', { name: t('student.submit') }).click();
+    await expect(ana.getByRole('status')).toBeVisible();
+    await ana.reload();
+    await expect(ana.getByRole('button', { name: t('student.submit') })).toHaveCount(0);
+    const cookies = await ana.context().cookies();
+    const pass = cookies.find((cookie) => cookie.name.startsWith('thp_lti_pass_'));
+    expect(pass?.httpOnly).toBe(true);
+    await ana.context().close();
+
+    // Before the teacher confirms it, nothing goes to the course.
+    await page.goto(assignmentPath);
+    const send = page.getByRole('region', { name: t('lti.sendGradesTitle') });
+    await send
+      .getByRole('button', { name: t('lti.sendGrades', { course: 'Test course' }) })
+      .click();
+    await expect(send.getByRole('status')).toContainText(t('lti.gradesSentCount', { count: 0 }), {
+      timeout: 30_000,
+    });
+    await expect(send.getByRole('status')).toContainText(t('lti.gradesNotConfirmed', { count: 2 }));
+    await expect(send.getByRole('status')).toContainText(t('lti.gradesNotLinked', { count: 3 }));
+
+    // The teacher confirms Ana's grade, then sends it.
+    await page.goto(`${assignmentPath}/submissions`);
+    const answers = page.getByTestId('submission-Rivera');
+    await answers.getByRole('button', { name: t('grading.confirm') }).click();
+    await expect(answers).toContainText(t('grading.status_confirmed'));
+    await page.goto(assignmentPath);
+    expect(await axe(page)).toEqual([]);
+    await send
+      .getByRole('button', { name: t('lti.sendGrades', { course: 'Test course' }) })
+      .click();
+    await expect(send.getByRole('status')).toContainText(
+      t('lti.gradesSentTitle', { course: 'Test course' }),
+      { timeout: 30_000 },
+    );
+    await expect(send.getByRole('status')).toContainText(t('lti.gradesSentCount', { count: 1 }));
+
+    // The course's gradebook has her score, under the course system's id for her.
+    const gradebook = (await (
+      await page.request.get(`/api/test-lms/gradebook?client=${clientId}`)
+    ).json()) as {
+      lineItems: { label: string; scores: { userId: string; scoreGiven: number }[] }[];
+    };
+    expect(gradebook.lineItems).toHaveLength(1);
+    expect(gradebook.lineItems[0]?.label).toBe('Space quiz');
+    expect(gradebook.lineItems[0]?.scores.map((score) => score.userId)).toEqual(['student-1']);
+    await page.goto(`/${locale}/test-lms?client=${clientId}`);
+    await expect(
+      page.getByRole('region', { name: 'Gradebook' }).getByRole('cell', { name: 'student-1' }),
+    ).toBeVisible();
+
+    // The send is in the approval log, by the assignment's title.
+    await page.goto(`/${locale}/app/approvals`);
+    await expect(page.getByRole('table')).toContainText(
+      t('approvals.detail', {
+        action: t('activity.action_grades_sent_to_course'),
+        detail: t('approvals.gradesSent', { count: 1 }),
+      }),
+    );
   });
 }

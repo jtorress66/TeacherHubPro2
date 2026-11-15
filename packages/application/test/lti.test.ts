@@ -51,6 +51,74 @@ describe('RegisterLtiPlatform, ListLtiPlatforms and RemoveLtiPlatform', () => {
     expect(valueOf(await new ListLtiPlatforms(world).execute({ actor: admin }))).toEqual([]);
   });
 
+  it('logs adding and removing a course system in the school’s activity', async () => {
+    const world = ltiWorld();
+    const { user } = await signedUp(world);
+    const admin = asAdmin(user);
+
+    const platform = valueOf(
+      await new RegisterLtiPlatform(world).execute({ actor: admin, details: details() }),
+    );
+    valueOf(await new RemoveLtiPlatform(world).execute({ actor: admin, platformId: platform.id }));
+
+    expect(
+      world.auditLog.events.map(({ action, actorId, schoolId, targetId }) => ({
+        action,
+        actorId,
+        schoolId,
+        targetId,
+      })),
+    ).toEqual([
+      {
+        action: 'lti_platform_added',
+        actorId: admin.id,
+        schoolId: admin.schoolId,
+        targetId: platform.id,
+      },
+      {
+        action: 'lti_platform_removed',
+        actorId: admin.id,
+        schoolId: admin.schoolId,
+        targetId: platform.id,
+      },
+    ]);
+  });
+
+  it('logs nothing for a refused change', async () => {
+    const world = ltiWorld();
+    const { platform, teacher } = await registered(world);
+    const before = world.auditLog.events.length;
+
+    await new RegisterLtiPlatform(world).execute({ actor: teacher, details: details() });
+    await new RemoveLtiPlatform(world).execute({ actor: teacher, platformId: platform.id });
+
+    expect(world.auditLog.events).toHaveLength(before);
+  });
+
+  it('logs a super admin’s change in the school it was made for', async () => {
+    const world = ltiWorld();
+    const { platform, admin } = await registered(world);
+    const root = aUser({
+      id: 'root' as User['id'],
+      schoolId: 'platform-school' as SchoolId,
+      role: 'super_admin',
+    });
+
+    valueOf(
+      await new RemoveLtiPlatform(world).execute({
+        actor: root,
+        platformId: platform.id,
+        schoolId: admin.schoolId,
+      }),
+    );
+
+    expect(world.auditLog.events.at(-1)).toMatchObject({
+      action: 'lti_platform_removed',
+      actorId: 'root',
+      schoolId: admin.schoolId,
+    });
+  });
+
   it('reports the first wrong field', async () => {
     const world = ltiWorld();
     const { user } = await signedUp(world);
@@ -442,12 +510,18 @@ describe('CompleteLtiLaunch', () => {
 });
 
 const membershipsUrl = 'https://lms.lincoln.edu/api/lti/courses/9/names_and_roles';
+const lineItemsUrl = 'https://lms.lincoln.edu/api/lti/courses/9/line_items';
+const gradeScopes = [
+  'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem',
+  'https://purl.imsglobal.org/spec/lti-ags/scope/score',
+];
 const fromCourse = {
   [ltiClaim.context]: { id: 'course-9', title: 'Science 5' },
   [ltiClaim.namesRoleService]: {
     context_memberships_url: membershipsUrl,
     service_versions: ['2.0'],
   },
+  [ltiClaim.gradeService]: { scope: gradeScopes, lineitems: lineItemsUrl },
 };
 
 describe('CompleteLtiLaunch and LinkLtiAccount remember the teacher’s course', () => {
@@ -466,6 +540,8 @@ describe('CompleteLtiLaunch and LinkLtiAccount remember the teacher’s course',
         contextId: 'course-9',
         title: 'Science 5',
         membershipsUrl,
+        lineItemsUrl,
+        gradeScopes,
         lastLaunchedAt: world.clock.now(),
       },
     ]);
@@ -492,6 +568,8 @@ describe('CompleteLtiLaunch and LinkLtiAccount remember the teacher’s course',
       contextId: 'course-9',
       contextTitle: 'Science 5',
       membershipsUrl,
+      lineItemsUrl,
+      gradeScopes: gradeScopes.join(' '),
     });
     expect(await world.ltiCourses.listForTeacher(teacher.schoolId, teacher.id)).toEqual([]);
 
@@ -503,6 +581,8 @@ describe('CompleteLtiLaunch and LinkLtiAccount remember the teacher’s course',
         contextId: 'course-9',
         title: 'Science 5',
         membershipsUrl,
+        lineItemsUrl,
+        gradeScopes,
       }),
     ]);
   });
@@ -516,7 +596,13 @@ describe('CompleteLtiLaunch and LinkLtiAccount remember the teacher’s course',
     valueOf(await new LinkLtiAccount(world).execute({ actor: teacher, ticket }));
 
     expect(await world.ltiCourses.listForTeacher(teacher.schoolId, teacher.id)).toEqual([
-      expect.objectContaining({ contextId: 'course-3', title: 'course-3', membershipsUrl: null }),
+      expect.objectContaining({
+        contextId: 'course-3',
+        title: 'course-3',
+        membershipsUrl: null,
+        lineItemsUrl: null,
+        gradeScopes: [],
+      }),
     ]);
   });
 

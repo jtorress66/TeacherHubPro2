@@ -70,6 +70,7 @@ describe('checkLaunch', () => {
         givenName: 'Ana',
         locale: 'es-PR',
         membershipsUrl: null,
+        gradeService: null,
         placedItem: null,
         deepLinking: null,
         expiresAt: new Date((seconds + 600) * 1000),
@@ -131,6 +132,32 @@ describe('checkLaunch', () => {
     for (const unsafe of ['http://lms.lincoln.edu/roster', 'ftp://lms', 'not a url', 7, null]) {
       expect(urlOf(unsafe)).toBeNull();
     }
+  });
+
+  it('keeps the course’s gradebook addresses and granted scopes when the course system offers them', () => {
+    const lineItems = 'https://lms.lincoln.edu/api/lti/courses/9/line_items';
+    const checked = checkLaunch(
+      claims({
+        [ltiClaim.gradeService]: {
+          scope: [
+            'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem',
+            'https://purl.imsglobal.org/spec/lti-ags/scope/score',
+          ],
+          lineitems: lineItems,
+          lineitem: 'http://lms.lincoln.edu/insecure',
+        },
+      }),
+      ctx,
+    );
+
+    expect(checked.ok && checked.value.gradeService).toEqual({
+      lineItemsUrl: lineItems,
+      lineItemUrl: null,
+      scopes: [
+        'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem',
+        'https://purl.imsglobal.org/spec/lti-ags/scope/score',
+      ],
+    });
   });
 
   it('leaves out what the platform did not send', () => {

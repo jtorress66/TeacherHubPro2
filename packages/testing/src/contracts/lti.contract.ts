@@ -255,6 +255,11 @@ const course = (overrides: Partial<LtiCourse> = {}): LtiCourse => ({
   contextId: 'course-1',
   title: 'Science 5',
   membershipsUrl: 'https://lms.example.edu/courses/1/names_and_roles',
+  lineItemsUrl: 'https://lms.example.edu/courses/1/line_items',
+  gradeScopes: [
+    'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem',
+    'https://purl.imsglobal.org/spec/lti-ags/scope/score',
+  ],
   lastLaunchedAt: new Date('2026-11-12T12:00:00Z'),
   ...overrides,
 });
@@ -293,6 +298,8 @@ export function ltiRosterRepositoryContract(name: string, make: () => LtiRosterR
       const later = course({
         title: 'Science 5 (spring)',
         membershipsUrl: null,
+        lineItemsUrl: null,
+        gradeScopes: [],
         lastLaunchedAt: new Date('2026-11-13T12:00:00Z'),
       });
       await courses.save(later);
@@ -363,6 +370,24 @@ export function ltiRosterRepositoryContract(name: string, make: () => LtiRosterR
 
       await studentLinks.link(schoolA, platform.id, 'lms-1', studentOne);
       expect(await studentLinks.listForClass(schoolB, classOne, platform.id)).toEqual([]);
+    });
+
+    it('finds the students a course system user is, only within the school', async () => {
+      const { studentLinks, platform } = await withPlatform();
+      await studentLinks.link(schoolA, platform.id, 'lms-1', studentOne);
+      await studentLinks.link(schoolA, platform.id, 'lms-2', studentTwo);
+
+      expect(await studentLinks.listStudentIds(schoolA, platform.id, 'lms-1')).toEqual([
+        studentOne,
+      ]);
+      expect(await studentLinks.listStudentIds(schoolA, platform.id, 'lms-2')).toEqual([
+        studentTwo,
+      ]);
+      expect(await studentLinks.listStudentIds(schoolB, platform.id, 'lms-1')).toEqual([]);
+      expect(await studentLinks.listStudentIds(schoolA, platform.id, 'lms-9')).toEqual([]);
+      expect(await studentLinks.listStudentIds(schoolA, 'other' as LtiPlatformId, 'lms-1')).toEqual(
+        [],
+      );
     });
 
     it('forgets links when their course system or student is removed', async () => {

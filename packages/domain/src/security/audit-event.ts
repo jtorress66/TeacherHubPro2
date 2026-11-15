@@ -22,19 +22,23 @@ export const auditActions = [
   'game_grades_approved',
   'prep_approved',
   'learning_path_assigned',
+  'grades_sent_to_course',
+  'lti_platform_added',
+  'lti_platform_removed',
 ] as const;
 export type AuditAction = (typeof auditActions)[number];
 
 /**
- * The moments a teacher approves AI work that then reaches students or families. Each is logged
- * by the use case itself, so no screen or job can skip it. (Sending grades to a course system,
- * `grades_sent_to_course`, will join this list later.)
+ * The moments a teacher approves work that then reaches students, families or a course system:
+ * AI work, and confirmed grades sent to a course's gradebook. Each is logged by the use case (or
+ * job) itself, so no screen can skip it.
  */
 export const approvalActions = [
   'ai_grade_approved',
   'game_grades_approved',
   'prep_approved',
   'learning_path_assigned',
+  'grades_sent_to_course',
 ] as const satisfies readonly AuditAction[];
 export type ApprovalAction = (typeof approvalActions)[number];
 
@@ -59,7 +63,9 @@ export interface AuditEvent {
   readonly at: Date;
   /** Approved AI grades only: whether the suggested score was kept. */
   readonly review: ApprovalReview | null;
-  /** Approvals only, when it matters: grades saved or family emails sent. Never a score. */
+  /**
+   * Approvals only, when it matters: grades saved or sent, or family emails sent. Never a score.
+   */
   readonly count: number | null;
   /** Approvals only: the class the approved work belongs to. */
   readonly classId: ClassId | null;

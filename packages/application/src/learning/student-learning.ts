@@ -28,7 +28,7 @@ async function linkPath(
 ): Promise<Result<{ holder: Holder; path: LearningPath }, UseCaseError>> {
   const holder = await openLink(deps, token);
   if (!holder.ok) return holder;
-  const path = await deps.learningPaths.findById(holder.value.link.schoolId, pathId);
+  const path = await deps.learningPaths.findById(holder.value.student.schoolId, pathId);
   if (path?.studentId !== holder.value.student.id || path.status !== 'assigned') {
     return fail('not_found');
   }
@@ -61,7 +61,7 @@ export class ListStudentPaths {
   }): Promise<Result<readonly StudentPathSummary[], UseCaseError>> {
     const holder = await openLink(this.deps, input.token);
     if (!holder.ok) return holder;
-    const { schoolId } = holder.value.link;
+    const { schoolId } = holder.value.student;
     const paths = (
       await this.deps.learningPaths.listByStudent(schoolId, holder.value.student.id)
     ).filter((path) => path.status === 'assigned');

@@ -18,6 +18,7 @@ const launch = (overrides: Partial<LtiLaunch> = {}): LtiLaunch => ({
   givenName: 'Ana',
   locale: null,
   membershipsUrl: 'https://lms.lincoln.edu/api/lti/courses/9/names_and_roles',
+  gradeService: null,
   placedItem: null,
   deepLinking: null,
   expiresAt: new Date('2026-11-13T12:05:00Z'),
@@ -33,7 +34,21 @@ describe('ltiCourseOf', () => {
       contextId: 'course-9',
       title: 'Science 5',
       membershipsUrl: 'https://lms.lincoln.edu/api/lti/courses/9/names_and_roles',
+      lineItemsUrl: null,
+      gradeScopes: [],
       lastLaunchedAt: now,
+    });
+  });
+
+  it('remembers where the course’s gradebook is and what TeacherHubPro may do there', () => {
+    const gradeService = {
+      lineItemsUrl: 'https://lms.lincoln.edu/api/lti/courses/9/line_items',
+      lineItemUrl: null,
+      scopes: ['https://purl.imsglobal.org/spec/lti-ags/scope/score'],
+    };
+    expect(ltiCourseOf(launch({ gradeService }), teacher, now)).toMatchObject({
+      lineItemsUrl: 'https://lms.lincoln.edu/api/lti/courses/9/line_items',
+      gradeScopes: ['https://purl.imsglobal.org/spec/lti-ags/scope/score'],
     });
   });
 

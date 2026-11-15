@@ -105,6 +105,14 @@ describe('approvalCells', () => {
     expect(
       approvalCells(row({ action: 'learning_path_assigned', review: null }), t, when, 'en')[2],
     ).toBe('Assigned a learning path');
+    expect(
+      approvalCells(
+        row({ action: 'grades_sent_to_course', review: null, count: 2 }),
+        t,
+        when,
+        'en',
+      )[2],
+    ).toBe('Sent grades to a course system (grades sent: 2)');
   });
 
   it('shows a dash for a missing class and a former user for a missing name', () => {

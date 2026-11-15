@@ -124,3 +124,32 @@ export function parseMailConfig(
   }
   return ok({ provider, apiKey, from, appUrl, delivers: true });
 }
+
+export type LtiConfig =
+  | { readonly provider: 'off' }
+  | { readonly provider: 'local' }
+  | { readonly provider: 'on'; readonly encryptionKey: string };
+
+/**
+ * Whether the worker sends grades to schools' course systems (LTI), as the web app's LTI_PROVIDER:
+ * off by default, "local" for the pretend course system (never in production), or "on", which
+ * signs with the tool's key sealed by TOKEN_ENCRYPTION_KEY (the web app's).
+ */
+export function parseLtiConfig(
+  env: Readonly<Record<string, string | undefined>>,
+): Result<LtiConfig, string> {
+  const chosen = env.LTI_PROVIDER?.trim().toLowerCase() ?? '';
+  const provider = chosen === '' ? 'off' : chosen;
+  if (provider === 'off') return ok({ provider });
+  if (provider === 'local') {
+    return env.APP_ENV?.trim().toLowerCase() === 'production'
+      ? err('LTI_PROVIDER=local is only allowed when APP_ENV is development or test.')
+      : ok({ provider });
+  }
+  if (provider !== 'on') return err('LTI_PROVIDER must be off, local or on.');
+  const encryptionKey = env.TOKEN_ENCRYPTION_KEY?.trim() ?? '';
+  if (Buffer.from(encryptionKey, 'base64').length !== 32) {
+    return err('TOKEN_ENCRYPTION_KEY must be 32 random bytes, base64 encoded.');
+  }
+  return ok({ provider, encryptionKey });
+}

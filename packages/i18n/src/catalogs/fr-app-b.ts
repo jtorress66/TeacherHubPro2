@@ -61,6 +61,10 @@ export const frAppB = {
       "Ce PDF ne contient pas de texte lisible (il s'agit peut-être d'un scan). Essayez un PDF exporté depuis un document.",
     failed_pdf_unreadable:
       "Ce PDF n'a pas pu être ouvert. Vérifiez qu'il n'est pas protégé par un mot de passe.",
+    failed_course_system_refused:
+      'Votre plateforme de cours n’a pas permis à TeacherHubPro d’envoyer les notes à ce cours. Demandez à l’équipe informatique de votre établissement d’activer Assignment and Grade Services (AGS) pour TeacherHubPro.',
+    failed_course_system_unavailable:
+      'Votre plateforme de cours n’a pas répondu. Veuillez réessayer.',
     tryAgain: 'Réessayer',
     open: 'Ouvrir le brouillon',
     subject_math: 'Mathématiques',
@@ -629,9 +633,26 @@ export const frAppB = {
       'Cette plateforme de cours appartient à une autre école : elle ne peut donc pas être liée à ce compte. Connectez-vous avec le compte qu’utilise votre école.',
     problem_failed:
       'Un problème est survenu à l’ouverture de TeacherHubPro depuis votre cours. Revenez en arrière et réessayez. Si cela se reproduit, demandez à l’équipe informatique de votre école de vérifier la configuration de TeacherHubPro.',
-    studentTitle: 'Pas encore disponible pour les élèves',
+    studentTitle: 'Rien à ouvrir ici pour l’instant',
     studentText:
-      'Les élèves ne peuvent pas encore ouvrir TeacherHubPro depuis la plateforme de cours. Votre enseignant partagera vos devoirs avec vous.',
+      'Ouvre le devoir ou le jeu que ton enseignant a ajouté à ton cours. Si tu ne le trouves pas, demande à ton enseignant.',
+    askTeacherTitle: 'Demande à ton enseignant',
+    askTeacherText:
+      'Demande à ton enseignant de mettre à jour la liste de la classe dans TeacherHubPro. Ensuite, rouvre ceci depuis ton cours.',
+    sendGradesTitle: 'Envoyer les notes à votre cours',
+    sendGradesIntro:
+      'Seules les notes que vous avez confirmées sont envoyées, comme scores dans le carnet de notes du cours. Un nouvel envoi les met à jour.',
+    sendGrades: 'Envoyer les notes à {course}',
+    sendingGrades: 'Envoi des notes à votre cours…',
+    gradesSentTitle: 'Notes envoyées à {course}',
+    gradesSentCount: 'Envoyées : {count}',
+    gradesNotConfirmed: 'Pas encore confirmées : {count}',
+    gradesNotLinked: 'Non liés au cours : {count}',
+    gradesFailed: 'Refusées par la plateforme de cours : {count}',
+    gradesNotLinkedHint:
+      'Les élèves pas encore liés le seront quand vous importerez la liste de la classe depuis votre plateforme de cours, sur la page de la classe.',
+    toolValuesGrades:
+      'Pour que les enseignants puissent envoyer les notes confirmées au carnet de notes de leurs cours, activez aussi Assignment and Grade Services (AGS) pour TeacherHubPro.',
     toolValuesRosters:
       'Pour que les enseignants puissent importer leurs listes de classe, activez aussi le service Names and Role Provisioning (NRPS) de la plateforme pour TeacherHubPro.',
     importRoster: 'Importer les élèves depuis votre plateforme de cours',

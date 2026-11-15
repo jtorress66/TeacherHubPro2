@@ -54,3 +54,4 @@ export * from './contracts/account-protections.contract.ts';
 export * from './contracts/hardening.contract.ts';
 export * from './fakes/lti.ts';
 export * from './contracts/lti.contract.ts';
+export * from './contracts/lti-grades.contract.ts';

@@ -7,6 +7,7 @@ import {
   AssignmentForm,
   GradeEntryForm,
 } from '../../../../../../../components/gradebook-forms.tsx';
+import { SendLtiGrades } from '../../../../../../../components/lti-grades.tsx';
 import { getAppContainer } from '../../../../../../../container.ts';
 import { requireUser } from '../../../../../../_lib/auth.ts';
 import { deleteAssignmentAction } from '../../../../../../_lib/gradebook-actions.ts';
@@ -14,6 +15,7 @@ import { localeFrom, type LocaleParams } from '../../../../../locale-param.ts';
 
 type Props = LocaleParams & {
   readonly params: Promise<{ locale: string; classId: string; assignmentId: string }>;
+  readonly searchParams: Promise<{ ltiJob?: string; ltiGrades?: string }>;
 };
 
 export const metadata: Metadata = { title: 'TeacherHubPro' };
@@ -23,6 +25,7 @@ export default async function AssignmentPage(props: Props) {
   const t = createTranslator(locale);
   const { classId, assignmentId } = await props.params;
   const { user } = await requireUser(locale);
+  const search = await props.searchParams;
   const app = getAppContainer();
   const input = { actor: user, classId: classId as ClassId };
   const entry = await app.getGradeEntry.execute({
@@ -89,6 +92,15 @@ export default async function AssignmentPage(props: Props) {
           </Link>
         </li>
       </ol>
+      <SendLtiGrades
+        locale={locale}
+        user={user}
+        classId={classId as ClassId}
+        assignmentId={assignment.id}
+        path={`${base}/assignments/${assignment.id}`}
+        jobId={search.ltiJob}
+        problem={search.ltiGrades}
+      />
       {editable ? null : (
         <p role="status" className="notice">
           {t('gradebook.archivedNotice')}

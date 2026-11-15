@@ -1,9 +1,9 @@
-import { decodeJwt, exportJWK, generateKeyPair, SignJWT, type CryptoKey } from 'jose';
+import { decodeJwt } from 'jose';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { checkLaunch, learnersFrom, type LtiPlatformId, type SchoolId } from '@thp/domain';
-import type { PublicJwk, ToolJwtSigner, ToolKeyStore } from '@thp/ports';
+import type { ToolJwtSigner } from '@thp/ports';
 import {
   anLtiPlatform,
   FakeToolKeyStore,
@@ -13,6 +13,7 @@ import {
 } from '@thp/testing';
 import { HttpLtiMembershipsClient } from '../src/lti/http-lti-memberships-client.ts';
 import { LocalLtiPlatform } from '../src/lti/local-lti-platform.ts';
+import { TestToolKeys } from './tool-keys.ts';
 
 // Recorded shapes: the IMS LTI Names and Role Provisioning Services 2.0 membership container and
 // the OAuth 2 client credentials grant of the LTI Advantage security framework, as Canvas and
@@ -183,33 +184,6 @@ describe('HttpLtiMembershipsClient', () => {
   });
 });
 
-/** A real RSA tool key, as the tool key store keeps it, for the pretend course system to check. */
-class TestToolKeys implements ToolKeyStore, ToolJwtSigner {
-  private keys: Promise<{ privateKey: CryptoKey; jwk: PublicJwk }> | undefined;
-
-  constructor(private readonly kid = 'tool-key-1') {}
-
-  async publicKeySet(): Promise<{ readonly keys: readonly PublicJwk[] }> {
-    return { keys: [(await this.pair()).jwk] };
-  }
-
-  async sign(claims: Readonly<Record<string, unknown>>): Promise<string> {
-    const { privateKey } = await this.pair();
-    return new SignJWT({ ...claims })
-      .setProtectedHeader({ alg: 'RS256', kid: this.kid })
-      .sign(privateKey);
-  }
-
-  private pair() {
-    this.keys ??= (async () => {
-      const { publicKey, privateKey } = await generateKeyPair('RS256', { extractable: true });
-      const { kty = 'RSA', n = '', e = '' } = await exportJWK(publicKey);
-      return { privateKey, jwk: { kty, n, e, kid: this.kid, alg: 'RS256', use: 'sig' } };
-    })();
-    return this.keys;
-  }
-}
-
 describe('LocalLtiPlatform class lists', () => {
   const appUrl = 'http://localhost:3100';
   const lms = new LocalLtiPlatform({
@@ -278,7 +252,9 @@ describe('LocalLtiPlatform class lists', () => {
       await request({ clientAssertion: await assertion({ exp: 1 }) }),
       await request({ grantType: 'password' }),
       await request({ clientAssertionType: null }),
-      await request({ scope: 'https://purl.imsglobal.org/spec/lti-ags/scope/score' }),
+      await request({ scope: 'https://lms.example.edu/scope/everything' }),
+      await request({ scope: `${scope} https://lms.example.edu/scope/everything` }),
+      await request({ scope: '' }),
       await request({ clientAssertion: 'not.a.token' }),
     ];
     for (const bad of refused) expect(await lms.grantServiceToken(bad, keys)).toBeNull();

@@ -1,5 +1,10 @@
 import {
+  AesGcmCipher,
   AnthropicLlmClient,
+  HttpLtiGradesClient,
+  localLtiSealKey,
+  NodeRandomTokenGenerator,
+  PostgresToolKeyStore,
   createDatabase,
   createPostgresRepositories,
   LocalTextToSpeech,
@@ -52,9 +57,18 @@ import {
   SweepOldChats,
   SendTrialReminders,
   SweepStaleJobs,
+  LtiGradeSendHandler,
+  type JobHandler,
 } from '@thp/application';
 import type { LlmClient, Mailer, MailTemplates, TextToSpeech } from '@thp/ports';
-import type { DatabaseConfig, LlmConfig, MailConfig, StripeConfig, TtsConfig } from './config.ts';
+import type {
+  DatabaseConfig,
+  LlmConfig,
+  LtiConfig,
+  MailConfig,
+  StripeConfig,
+  TtsConfig,
+} from './config.ts';
 import { localReply } from './local-replies.ts';
 import { chatFirst } from './worker-loop.ts';
 
@@ -88,12 +102,39 @@ function mailerFor(config: MailConfig, db: ReturnType<typeof createDatabase>): M
     : new LocalMailer(db);
 }
 
+/**
+ * Sending grades to schools' course systems (LTI), when it is on: signed with the tool's key,
+ * sealed as the web app seals it (a fixed key for the pretend course system).
+ */
+function ltiHandlers(
+  config: LtiConfig,
+  db: ReturnType<typeof createDatabase>,
+  deps: ReturnType<typeof createPostgresRepositories> & {
+    readonly ids: UuidIdGenerator;
+    readonly clock: SystemClock;
+  },
+): JobHandler[] {
+  if (config.provider === 'off') return [];
+  const tokens = new NodeRandomTokenGenerator();
+  const cipher = new AesGcmCipher(
+    config.provider === 'local' ? localLtiSealKey() : config.encryptionKey,
+  );
+  const toolKeys = new PostgresToolKeyStore(db, { cipher, tokens, clock: deps.clock });
+  return [
+    new LtiGradeSendHandler({
+      ...deps,
+      ltiGrades: new HttpLtiGradesClient({ signer: toolKeys, clock: deps.clock, tokens }),
+    }),
+  ];
+}
+
 /** The job runner: every job kind the worker handles is registered here. */
 export function createJobRunner(
   database: DatabaseConfig,
   llm: LlmConfig,
   tts: TtsConfig,
   mail: MailConfig,
+  lti: LtiConfig,
 ) {
   const db = createDatabase(database.databaseUrl);
   const ids = new UuidIdGenerator();
@@ -134,6 +175,7 @@ export function createJobRunner(
         lessonPlans: repos.lessonPlans,
       }),
     }),
+    ...ltiHandlers(lti, db, { ...repos, ids, clock }),
   ]);
   const sweep = new SweepStaleJobs({ jobs, clock });
   const reminders = new SendTrialReminders({

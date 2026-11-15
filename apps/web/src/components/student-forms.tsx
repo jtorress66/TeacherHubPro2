@@ -3,7 +3,11 @@
 import { useActionState } from 'react';
 import type { StudentQuestion } from '@thp/domain';
 import { createTranslator, type Locale } from '@thp/i18n';
-import { submitAnswersAction, type StudentFormState } from '../app/_lib/student-actions.ts';
+import {
+  submitAnswersAction,
+  submitPassAnswersAction,
+  type StudentFormState,
+} from '../app/_lib/student-actions.ts';
 import { FormAlert, Submit } from './forms.tsx';
 import { Hidden } from './form-fields.tsx';
 
@@ -67,12 +71,16 @@ function Answer({
 /** A student's answer form; once handed in, the page shows that it was. */
 export function StudentAnswerForm(props: {
   readonly locale: Locale;
-  readonly token: string;
+  /** The student's link token; null for a student whose pass (a cookie) lets them in. */
+  readonly token: string | null;
   readonly assignmentId: string;
   readonly questions: readonly StudentQuestion[];
 }) {
   const t = createTranslator(props.locale);
-  const [state, action] = useActionState(submitAnswersAction, initial);
+  const [state, action] = useActionState(
+    props.token === null ? submitPassAnswersAction : submitAnswersAction,
+    initial,
+  );
   if (state.submitted === true) {
     return (
       <p role="status" className="notice">
@@ -83,7 +91,11 @@ export function StudentAnswerForm(props: {
   return (
     <form action={action} className="stack" aria-label={t('student.submit')}>
       <Hidden
-        values={{ locale: props.locale, token: props.token, assignmentId: props.assignmentId }}
+        values={{
+          locale: props.locale,
+          ...(props.token === null ? {} : { token: props.token }),
+          assignmentId: props.assignmentId,
+        }}
       />
       <FormAlert
         message={state.errors === undefined ? undefined : Object.values(state.errors).join(' ')}

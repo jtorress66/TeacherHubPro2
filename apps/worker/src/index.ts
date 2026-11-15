@@ -1,5 +1,11 @@
 import { setTimeout as sleep } from 'node:timers/promises';
-import { parseDatabaseConfig, parseLlmConfig, parseMailConfig, parseTtsConfig } from './config.ts';
+import {
+  parseDatabaseConfig,
+  parseLlmConfig,
+  parseLtiConfig,
+  parseMailConfig,
+  parseTtsConfig,
+} from './config.ts';
 import { createJobRunner } from './container.ts';
 import { runWorkerLoop } from './worker-loop.ts';
 
@@ -8,15 +14,16 @@ const database = parseDatabaseConfig(process.env);
 const llm = parseLlmConfig(process.env);
 const tts = parseTtsConfig(process.env);
 const mail = parseMailConfig(process.env);
-for (const config of [database, llm, tts, mail]) {
+const lti = parseLtiConfig(process.env);
+for (const config of [database, llm, tts, mail, lti]) {
   if (!config.ok) {
     process.stderr.write(`${config.error}\n`);
     process.exit(1);
   }
 }
-if (!database.ok || !llm.ok || !tts.ok || !mail.ok) process.exit(1);
+if (!database.ok || !llm.ok || !tts.ok || !mail.ok || !lti.ok) process.exit(1);
 
-const runner = createJobRunner(database.value, llm.value, tts.value, mail.value);
+const runner = createJobRunner(database.value, llm.value, tts.value, mail.value, lti.value);
 let stopping = false;
 for (const signal of ['SIGTERM', 'SIGINT'] as const) {
   process.on(signal, () => {

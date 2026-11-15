@@ -28,6 +28,7 @@ import {
   aSubscription,
   aUser,
   attendanceLookupContract,
+  ltiPlacementRepositoryContract,
   classRepositoryContract,
   deletableContract,
   assignmentLookupContract,
@@ -125,6 +126,13 @@ withParents(parentsFor.accounts, () => {
     platforms: repos.ltiPlatforms,
     nonces: repos.ltiNonces,
     userLinks: repos.ltiUserLinks,
+  }));
+});
+
+withParents(parentsFor.accounts, () => {
+  ltiPlacementRepositoryContract('Postgres', () => ({
+    platforms: repos.ltiPlatforms,
+    placements: repos.ltiPlacements,
   }));
 });
 

@@ -60,6 +60,9 @@ export const ptAppB = {
       'Este PDF não tem texto para ler (pode ser uma digitalização). Tente um PDF exportado de um documento.',
     failed_pdf_unreadable:
       'Não foi possível abrir este PDF. Verifique se ele não está protegido por senha.',
+    failed_course_system_refused:
+      'O seu sistema de cursos não deixou o TeacherHubPro enviar notas para este curso. Peça à equipe de TI da sua escola que ative o Assignment and Grade Services (AGS) para o TeacherHubPro.',
+    failed_course_system_unavailable: 'O seu sistema de cursos não respondeu. Tente novamente.',
     tryAgain: 'Tentar novamente',
     open: 'Abrir o rascunho',
     subject_math: 'Matemática',
@@ -621,9 +624,26 @@ export const ptAppB = {
       'Este sistema de cursos pertence a outra escola, por isso não pode ser vinculado a esta conta. Entre com a conta que a sua escola usa.',
     problem_failed:
       'Algo deu errado ao abrir o TeacherHubPro a partir do seu curso. Volte e tente de novo. Se continuar acontecendo, peça à equipe de TI da sua escola para verificar a configuração do TeacherHubPro.',
-    studentTitle: 'Ainda não disponível para alunos',
+    studentTitle: 'Ainda não há nada para abrir aqui',
     studentText:
-      'Os alunos ainda não podem abrir o TeacherHubPro a partir do sistema de cursos. O seu professor vai compartilhar as tarefas com você.',
+      'Abra a tarefa ou o jogo que seu professor adicionou ao seu curso. Se não encontrar, pergunte ao seu professor.',
+    askTeacherTitle: 'Fale com seu professor',
+    askTeacherText:
+      'Peça ao seu professor para atualizar a lista da turma no TeacherHubPro. Depois, abra isto de novo pelo seu curso.',
+    sendGradesTitle: 'Enviar notas para o seu curso',
+    sendGradesIntro:
+      'Só são enviadas as notas que você confirmou, como pontuações no diário de notas do curso. Enviar de novo as atualiza.',
+    sendGrades: 'Enviar notas para {course}',
+    sendingGrades: 'Enviando notas para o seu curso…',
+    gradesSentTitle: 'Notas enviadas para {course}',
+    gradesSentCount: 'Enviadas: {count}',
+    gradesNotConfirmed: 'Ainda não confirmadas: {count}',
+    gradesNotLinked: 'Não vinculados ao curso: {count}',
+    gradesFailed: 'Não aceitas pelo sistema de cursos: {count}',
+    gradesNotLinkedHint:
+      'Os alunos ainda não vinculados entram quando você importa a lista da turma do seu sistema de cursos, na página da turma.',
+    toolValuesGrades:
+      'Para que os professores possam enviar as notas confirmadas ao diário de notas dos seus cursos, ative também o Assignment and Grade Services (AGS) para o TeacherHubPro.',
     toolValuesRosters:
       'Para que os professores possam importar suas listas de turma, ative também o serviço Names and Role Provisioning (NRPS) do sistema de cursos para o TeacherHubPro.',
     importRoster: 'Importar alunos do seu sistema de cursos',

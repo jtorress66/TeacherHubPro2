@@ -62,6 +62,10 @@ export const deAppB = {
       'Dieses PDF enthält keinen lesbaren Text (vielleicht ist es ein Scan). Versuchen Sie ein PDF, das aus einem Dokument exportiert wurde.',
     failed_pdf_unreadable:
       'Dieses PDF konnte nicht geöffnet werden. Prüfen Sie, ob es passwortgeschützt ist.',
+    failed_course_system_refused:
+      'Ihr Kurssystem hat TeacherHubPro nicht erlaubt, Noten an diesen Kurs zu senden. Bitten Sie das IT-Team Ihrer Schule, Assignment and Grade Services (AGS) für TeacherHubPro einzuschalten.',
+    failed_course_system_unavailable:
+      'Ihr Kurssystem hat nicht geantwortet. Bitte versuchen Sie es erneut.',
     tryAgain: 'Erneut versuchen',
     open: 'Entwurf öffnen',
     subject_math: 'Mathematik',
@@ -632,9 +636,26 @@ export const deAppB = {
       'Dieses Kurssystem gehört zu einer anderen Schule und kann daher nicht mit diesem Konto verknüpft werden. Melden Sie sich mit dem Konto an, das Ihre Schule nutzt.',
     problem_failed:
       'Beim Öffnen von TeacherHubPro aus Ihrem Kurs ist etwas schiefgelaufen. Gehen Sie zurück und versuchen Sie es erneut. Wenn es wieder passiert, bitten Sie das IT-Team Ihrer Schule, die Einrichtung von TeacherHubPro zu prüfen.',
-    studentTitle: 'Für Schülerinnen und Schüler noch nicht verfügbar',
+    studentTitle: 'Hier gibt es noch nichts zu öffnen',
     studentText:
-      'Schülerinnen und Schüler können TeacherHubPro noch nicht aus dem Kurssystem öffnen. Deine Lehrkraft teilt deine Aufgaben mit dir.',
+      'Öffne die Aufgabe oder das Spiel, das deine Lehrkraft deinem Kurs hinzugefügt hat. Wenn du es nicht findest, frag deine Lehrkraft.',
+    askTeacherTitle: 'Frag deine Lehrkraft',
+    askTeacherText:
+      'Bitte deine Lehrkraft, die Klassenliste in TeacherHubPro zu aktualisieren. Öffne das hier dann noch einmal aus deinem Kurs.',
+    sendGradesTitle: 'Noten an Ihren Kurs senden',
+    sendGradesIntro:
+      'Es werden nur Noten gesendet, die Sie bestätigt haben, als Punkte im Notenbuch des Kurses. Erneutes Senden aktualisiert sie.',
+    sendGrades: 'Noten an {course} senden',
+    sendingGrades: 'Noten werden an Ihren Kurs gesendet…',
+    gradesSentTitle: 'Noten an {course} gesendet',
+    gradesSentCount: 'Gesendet: {count}',
+    gradesNotConfirmed: 'Noch nicht bestätigt: {count}',
+    gradesNotLinked: 'Nicht mit dem Kurs verknüpft: {count}',
+    gradesFailed: 'Vom Kurssystem nicht angenommen: {count}',
+    gradesNotLinkedHint:
+      'Noch nicht verknüpfte Schülerinnen und Schüler kommen hinzu, wenn Sie die Klassenliste auf der Seite der Klasse aus Ihrem Kurssystem importieren.',
+    toolValuesGrades:
+      'Damit Lehrkräfte bestätigte Noten an das Notenbuch ihrer Kurse senden können, schalten Sie auch Assignment and Grade Services (AGS) für TeacherHubPro ein.',
     toolValuesRosters:
       'Damit Lehrkräfte ihre Klassenlisten importieren können, aktivieren Sie im Kurssystem außerdem den Dienst „Names and Role Provisioning“ (NRPS) für TeacherHubPro.',
     importRoster: 'Schülerinnen und Schüler aus Ihrem Kurssystem importieren',

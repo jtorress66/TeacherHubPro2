@@ -4,7 +4,10 @@ export const jobStatuses = ['queued', 'running', 'completed', 'failed'] as const
 
 export type JobStatus = (typeof jobStatuses)[number];
 
-/** Long AI work (generation, PDF parsing, grading, prep batches) runs as a stored job. */
+/**
+ * Long work (AI generation, PDF parsing, grading, prep batches, sending grades to a course system)
+ * runs as a stored job.
+ */
 export interface Job {
   readonly id: JobId;
   readonly schoolId: SchoolId;
@@ -29,6 +32,8 @@ export const jobFailures = [
   'failed',
   'pdf_no_text',
   'pdf_unreadable',
+  'course_system_refused',
+  'course_system_unavailable',
 ] as const;
 
 export type JobFailure = (typeof jobFailures)[number];

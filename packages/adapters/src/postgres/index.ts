@@ -11,6 +11,7 @@ import type {
   CalendarFeedRepository,
   LtiCourseRepository,
   LtiNonceRepository,
+  LtiPlacementRepository,
   LtiPlatformRepository,
   LtiStudentLinkRepository,
   LtiUserLinkRepository,
@@ -68,6 +69,7 @@ import { PostgresCalendarFeedRepository } from './repositories/postgres-calendar
 import {
   PostgresLtiCourseRepository,
   PostgresLtiNonceRepository,
+  PostgresLtiPlacementRepository,
   PostgresLtiPlatformRepository,
   PostgresLtiStudentLinkRepository,
   PostgresLtiUserLinkRepository,
@@ -169,6 +171,7 @@ export interface PostgresRepositories {
   readonly ltiUserLinks: LtiUserLinkRepository;
   readonly ltiCourses: LtiCourseRepository;
   readonly ltiStudentLinks: LtiStudentLinkRepository;
+  readonly ltiPlacements: LtiPlacementRepository;
   readonly microsoftConnections: MicrosoftConnectionRepository;
   readonly formsExports: FormsExportRepository;
   readonly studentNotes: StudentNoteRepository;
@@ -232,6 +235,7 @@ export function createPostgresRepositories(db: Kysely<Database>): PostgresReposi
     ltiUserLinks: new PostgresLtiUserLinkRepository(db),
     ltiCourses: new PostgresLtiCourseRepository(db),
     ltiStudentLinks: new PostgresLtiStudentLinkRepository(db),
+    ltiPlacements: new PostgresLtiPlacementRepository(db),
     microsoftConnections: new PostgresMicrosoftConnectionRepository(db),
     formsExports: new PostgresFormsExportRepository(db),
     studentNotes: new PostgresStudentNoteRepository(db),

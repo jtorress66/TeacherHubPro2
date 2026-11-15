@@ -253,6 +253,28 @@ describe('ListApprovals', () => {
       );
     });
 
+    it('names grades sent to a course by the assignment’s title', async () => {
+      const world = await withItems(schoolA);
+      await recordApproval(world, {
+        actor: ana,
+        action: 'grades_sent_to_course',
+        schoolId: schoolA,
+        targetId: 'assignment-1',
+        classId: science.id,
+        count: 3,
+      });
+
+      const listed = await new ListApprovals(world).execute({
+        actor: admin,
+        schoolId: schoolA,
+        filter: { action: 'grades_sent_to_course' },
+      });
+
+      expect(listed.ok && listed.value.rows.map((row) => [row.event.count, row.item])).toEqual([
+        [3, { kind: 'title', text: 'Fractions quiz' }],
+      ]);
+    });
+
     it("reads a prep batch only as its approving teacher's", async () => {
       const world = await withItems(schoolA);
       await world.prepBatches.save({ ...aPrepBatch('batch-7'), teacherId: ben.id });
