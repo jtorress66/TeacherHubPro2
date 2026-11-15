@@ -19,6 +19,7 @@ import {
 } from '../app/_lib/admin-actions.ts';
 import { Field, FormAlert, Submit } from './forms.tsx';
 import { Hidden, Select, type Option } from './form-fields.tsx';
+import { prefill } from '../server/form-values.ts';
 
 const initial: AdminFormState = {};
 
@@ -49,11 +50,13 @@ export function RoleForm(props: {
 }) {
   const t = createTranslator(props.locale);
   const [state, action] = useActionState(changeUserRoleAction, initial);
+  const sent = prefill(state.values);
   return (
     <form
       action={action}
       className="inline-form"
       aria-label={t('admin.roleFor', { name: props.name })}
+      key={sent.key}
     >
       <Hidden
         values={{
@@ -65,7 +68,7 @@ export function RoleForm(props: {
       <label className="visually-hidden" htmlFor={`role-${props.userId}`}>
         {t('admin.roleFor', { name: props.name })}
       </label>
-      <select id={`role-${props.userId}`} name="role" defaultValue={props.role}>
+      <select id={`role-${props.userId}`} name="role" defaultValue={sent.text('role', props.role)}>
         {roleOptions(props.locale, props.roles).map((option) => (
           <option key={option.id} value={option.id}>
             {option.name}
@@ -118,8 +121,14 @@ export function TransferForm(props: {
 }) {
   const t = createTranslator(props.locale);
   const [state, action] = useActionState(transferClassesAction, initial);
+  const sent = prefill(state.values);
   return (
-    <form action={action} className="stack" aria-label={t('admin.transfer')} key={state.version}>
+    <form
+      action={action}
+      className="stack"
+      aria-label={t('admin.transfer')}
+      key={`${String(state.version ?? 0)}-${sent.key}`}
+    >
       <Hidden
         values={{
           locale: props.locale,
@@ -138,12 +147,14 @@ export function TransferForm(props: {
           name="fromUserId"
           label={t('admin.transferFrom')}
           options={props.teachers}
+          defaultValue={sent.text('fromUserId')}
         />
         <Select
           id="transfer-to"
           name="toUserId"
           label={t('admin.transferTo')}
           options={props.teachers}
+          defaultValue={sent.text('toUserId')}
         />
       </div>
       <Submit label={t('admin.transfer')} />
@@ -173,8 +184,9 @@ export function SchoolDetailsForm(props: {
   );
   const errors = state.errors ?? {};
   const label = editing ? t('superAdmin.saveSchool') : t('superAdmin.createSchool');
+  const sent = prefill(state.values);
   return (
-    <form action={action} className="stack" noValidate aria-label={label}>
+    <form action={action} className="stack" noValidate aria-label={label} key={sent.key}>
       <Hidden
         values={{
           locale: props.locale,
@@ -187,7 +199,7 @@ export function SchoolDetailsForm(props: {
         id={editing ? 'school-name' : 'new-school-name'}
         name="name"
         label={t('superAdmin.schoolName')}
-        defaultValue={props.school?.name}
+        defaultValue={sent.text('name', props.school?.name)}
         error={errors.name}
         required
       />
@@ -196,14 +208,14 @@ export function SchoolDetailsForm(props: {
           id={editing ? 'school-address' : 'new-school-address'}
           name="address"
           label={t('superAdmin.address')}
-          defaultValue={props.school?.address}
+          defaultValue={sent.text('address', props.school?.address)}
           error={errors.address}
         />
         <Field
           id={editing ? 'school-phone' : 'new-school-phone'}
           name="phone"
           label={t('superAdmin.phone')}
-          defaultValue={props.school?.phone}
+          defaultValue={sent.text('phone', props.school?.phone)}
           error={errors.phone}
         />
         <Field
@@ -211,7 +223,7 @@ export function SchoolDetailsForm(props: {
           name="email"
           type="email"
           label={t('superAdmin.schoolEmail')}
-          defaultValue={props.school?.email}
+          defaultValue={sent.text('email', props.school?.email)}
           error={errors.email}
         />
       </div>
@@ -223,7 +235,7 @@ export function SchoolDetailsForm(props: {
           id: format,
           name: t(`settings.planFormat_${format}`),
         }))}
-        defaultValue={props.school?.planFormat}
+        defaultValue={sent.text('planFormat', props.school?.planFormat)}
         error={errors.planFormat}
       />
       <Submit label={label} />
@@ -272,13 +284,14 @@ export function NewUserForm(props: { readonly locale: Locale; readonly schoolId:
   const t = createTranslator(props.locale);
   const [state, action] = useActionState(createUserAction, initial);
   const errors = state.errors ?? {};
+  const sent = prefill(state.values);
   return (
     <form
       action={action}
       className="stack"
       noValidate
       aria-label={t('superAdmin.newUser')}
-      key={state.version}
+      key={`${String(state.version ?? 0)}-${sent.key}`}
     >
       <Hidden values={{ locale: props.locale, schoolId: props.schoolId }} />
       <FormAlert message={alertOf(state, ['name', 'email'])} />
@@ -294,6 +307,7 @@ export function NewUserForm(props: { readonly locale: Locale; readonly schoolId:
           id="new-user-name"
           name="name"
           label={t('admin.name')}
+          defaultValue={sent.text('name')}
           error={errors.name}
           required
         />
@@ -302,6 +316,7 @@ export function NewUserForm(props: { readonly locale: Locale; readonly schoolId:
           name="email"
           type="email"
           label={t('admin.email')}
+          defaultValue={sent.text('email')}
           error={errors.email}
           required
         />
@@ -310,14 +325,14 @@ export function NewUserForm(props: { readonly locale: Locale; readonly schoolId:
           name="role"
           label={t('admin.role')}
           options={roleOptions(props.locale, ['teacher', 'school_admin', 'super_admin'])}
-          defaultValue="teacher"
+          defaultValue={sent.text('role', 'teacher')}
         />
         <Select
           id="new-user-language"
           name="language"
           label={t('superAdmin.language')}
           options={locales.map((l) => ({ id: l, name: localeInfo[l].nativeName }))}
-          defaultValue={props.locale}
+          defaultValue={sent.text('language', props.locale)}
         />
       </div>
       <Submit label={t('superAdmin.createUser')} />
@@ -340,12 +355,14 @@ export function EditUserForm(props: {
   const [state, action] = useActionState(updateUserAction, initial);
   const errors = state.errors ?? {};
   const { user } = props;
+  const sent = prefill(state.values);
   return (
     <form
       action={action}
       className="stack"
       noValidate
       aria-label={t('superAdmin.editUser', { name: user.name })}
+      key={sent.key}
     >
       <Hidden values={{ locale: props.locale, userId: user.id, currentSchoolId: user.schoolId }} />
       <FormAlert message={alertOf(state, ['name', 'email'])} />
@@ -354,7 +371,7 @@ export function EditUserForm(props: {
           id="edit-user-name"
           name="name"
           label={t('admin.name')}
-          defaultValue={user.name}
+          defaultValue={sent.text('name', user.name)}
           error={errors.name}
           required
         />
@@ -363,7 +380,7 @@ export function EditUserForm(props: {
           name="email"
           type="email"
           label={t('admin.email')}
-          defaultValue={user.email}
+          defaultValue={sent.text('email', user.email)}
           error={errors.email}
           required
         />
@@ -372,14 +389,14 @@ export function EditUserForm(props: {
           name="role"
           label={t('admin.role')}
           options={roleOptions(props.locale, ['teacher', 'school_admin', 'super_admin'])}
-          defaultValue={user.role}
+          defaultValue={sent.text('role', user.role)}
         />
         <Select
           id="edit-user-school"
           name="schoolId"
           label={t('superAdmin.school')}
           options={props.schools}
-          defaultValue={user.schoolId}
+          defaultValue={sent.text('schoolId', user.schoolId)}
         />
       </div>
       <Submit label={t('superAdmin.saveUser')} />
@@ -400,8 +417,15 @@ function ImportForm(props: {
   );
   const label = teachers ? t('superAdmin.importTeachers') : t('superAdmin.importStudents');
   const id = teachers ? 'import-teachers' : 'import-students';
+  const sent = prefill(state.values);
+  const target = teachers ? 'schoolId' : 'classRef';
   return (
-    <form action={action} className="stack" aria-label={label} key={state.version}>
+    <form
+      action={action}
+      className="stack"
+      aria-label={label}
+      key={`${String(state.version ?? 0)}-${sent.key}`}
+    >
       <Hidden values={{ locale: props.locale }} />
       {state.rowErrors === undefined ? null : (
         <ul role="alert" className="alert">
@@ -417,9 +441,10 @@ function ImportForm(props: {
       />
       <Select
         id={`${id}-target`}
-        name={teachers ? 'schoolId' : 'classRef'}
+        name={target}
         label={teachers ? t('superAdmin.school') : t('superAdmin.class')}
         options={props.targets}
+        defaultValue={sent.text(target)}
       />
       <div className="field">
         <label htmlFor={`${id}-file`}>{t('superAdmin.file')}</label>

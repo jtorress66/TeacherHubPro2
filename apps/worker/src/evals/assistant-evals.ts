@@ -11,7 +11,10 @@ import { createContentRequest, type ContentRequestInput } from '@thp/domain';
 import type { LlmClient } from '@thp/ports';
 import { problemOf, Recording, type CaseResult, type EvalReport } from './eval-report.ts';
 
-/** Fixed cases: every content type, every language, and a subject with no Common Core codes. */
+/**
+ * Fixed cases: every content type, every language, a subject with no Common Core codes, and a
+ * 75-question quiz the writer writes in three parts.
+ */
 export const assistantCases: readonly (ContentRequestInput & { readonly name: string })[] = [
   {
     name: 'worksheet math 4 (en)',
@@ -79,6 +82,15 @@ export const assistantCases: readonly (ContentRequestInput & { readonly name: st
     topic: 'Life cycle of a butterfly',
     language: 'en',
   },
+  {
+    name: 'long quiz science 6, 75 questions in parts (en)',
+    type: 'quiz',
+    subject: 'science',
+    grade: '6',
+    topic: 'Weather and the water cycle',
+    questionCount: 75,
+    language: 'en',
+  },
 ];
 
 export type AssistantReport = EvalReport<ContentMetric>;
@@ -99,7 +111,7 @@ export async function runAssistantEvals(
       scores: scoreContent(
         request.value,
         content.ok ? content.value : null,
-        recording.lastReply.text,
+        recording.replies.join('\n'),
       ),
       problem: problemOf(content, () => reviewContent(recording.lastReply)),
     });

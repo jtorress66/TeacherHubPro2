@@ -10,6 +10,7 @@ import {
   type ProtectionState,
 } from '../app/_lib/protection-actions.ts';
 import { Field, FormAlert, Submit } from './forms.tsx';
+import { prefill } from '../server/form-values.ts';
 
 const initial: ProtectionState = {};
 
@@ -50,10 +51,11 @@ export function AccountStatusForm(props: {
 export function BlockDomainForm({ locale }: { readonly locale: Locale }) {
   const t = createTranslator(locale);
   const [state, action] = useActionState(blockDomainAction, initial);
+  const sent = prefill(state.values);
   return (
     <div className="stack">
       <form
-        key={state.version ?? 0}
+        key={`${String(state.version ?? 0)}-${sent.key}`}
         action={action}
         className="stack"
         noValidate
@@ -61,7 +63,13 @@ export function BlockDomainForm({ locale }: { readonly locale: Locale }) {
       >
         <input type="hidden" name="locale" value={locale} />
         <FormAlert message={state.errors?.form} />
-        <Field label={t('superAdmin.domain')} name="domain" error={state.errors?.domain} required />
+        <Field
+          label={t('superAdmin.domain')}
+          name="domain"
+          defaultValue={sent.text('domain')}
+          error={state.errors?.domain}
+          required
+        />
         <Submit label={t('superAdmin.blockDomain')} />
       </form>
       {state.blocked === undefined ? null : (

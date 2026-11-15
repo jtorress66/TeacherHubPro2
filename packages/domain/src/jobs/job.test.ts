@@ -16,13 +16,16 @@ const job = (status: Job['status']): Job => ({
   createdAt,
   startedAt: null,
   finishedAt: null,
+  progress: null,
 });
 const after = (ms: number) => new Date(createdAt.getTime() + ms);
 
 describe('jobs', () => {
-  it('are stale only when unfinished more than 5 minutes after creation', () => {
-    expect(isStale(job('queued'), after(5 * 60_000))).toBe(false);
-    expect(isStale(job('running'), after(5 * 60_000 + 1))).toBe(true);
+  it('are stale only when unfinished more than 15 minutes after creation', () => {
+    // A 100-question quiz is written in four parts in a row, so a job has 15 minutes.
+    expect(isStale(job('queued'), after(15 * 60_000))).toBe(false);
+    expect(isStale(job('running'), after(10 * 60_000))).toBe(false);
+    expect(isStale(job('running'), after(15 * 60_000 + 1))).toBe(true);
     expect(isStale(job('completed'), after(60 * 60_000))).toBe(false);
     expect(isStale(job('failed'), after(60 * 60_000))).toBe(false);
   });
@@ -33,7 +36,7 @@ describe('jobs', () => {
   });
 
   it('read as timed out once stale, and unchanged before', () => {
-    const now = after(6 * 60_000);
+    const now = after(16 * 60_000);
     expect(jobAsSeen(job('running'), now)).toMatchObject({
       status: 'failed',
       error: 'timed_out',
@@ -44,6 +47,6 @@ describe('jobs', () => {
   });
 
   it('gives the cut-off for the sweep', () => {
-    expect(staleBefore(after(5 * 60_000))).toEqual(createdAt);
+    expect(staleBefore(after(15 * 60_000))).toEqual(createdAt);
   });
 });

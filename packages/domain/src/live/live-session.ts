@@ -6,7 +6,12 @@ import {
   type InvalidTransition,
   type TransitionTable,
 } from '../shared/state-machine.ts';
-import { invalid, type ValidationError } from '../shared/validation.ts';
+import {
+  invalid,
+  isWholeNumberIn,
+  outOfRange,
+  type ValidationError,
+} from '../shared/validation.ts';
 
 /** Live: the whole class answers each question together. Self-paced: each student plays alone. */
 export const liveKinds = ['live', 'self_paced'] as const;
@@ -59,12 +64,8 @@ export function createLiveSession(input: LiveSessionInput): Result<LiveSession, 
   if (!/^\d{6}$/u.test(input.pin)) return invalid('pin', 'invalid_format');
   if (input.questionCount < 1) return invalid('questionCount', 'too_short');
   const seconds = input.questionSeconds;
-  if (
-    !Number.isInteger(seconds) ||
-    seconds < questionSecondsRange.min ||
-    seconds > questionSecondsRange.max
-  ) {
-    return invalid('questionSeconds', 'out_of_range');
+  if (!isWholeNumberIn(seconds, questionSecondsRange)) {
+    return outOfRange('questionSeconds', questionSecondsRange);
   }
   return ok({
     ...input,

@@ -101,6 +101,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0034_job_progress',
           '0033_lti_grades',
           '0032_one_sign_in',
           '0031_approval_log',
@@ -176,6 +177,7 @@ describe('migrations', () => {
           '0031_approval_log',
           '0032_one_sign_in',
           '0033_lti_grades',
+          '0034_job_progress',
         ],
       },
     });

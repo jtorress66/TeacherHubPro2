@@ -1,7 +1,15 @@
 import { standardSubjectOf, standardsFor, type ContentRequest } from '@thp/domain';
 import { detectLanguage } from '../drafting/language.ts';
+import { normalisedStem, numberedSections } from './quiz-parts.ts';
 
-export const contentMetrics = ['structure', 'language', 'validCodes', 'questionCount'] as const;
+export const contentMetrics = [
+  'structure',
+  'language',
+  'validCodes',
+  'questionCount',
+  'numbering',
+  'uniqueQuestions',
+] as const;
 export type ContentMetric = (typeof contentMetrics)[number];
 export type ContentScores = Readonly<Record<ContentMetric, number>>;
 
@@ -36,7 +44,16 @@ export function scoreContent(
   );
   const validCodes =
     cited.length === 0 ? 1 : cited.filter((code) => official.has(code)).length / cited.length;
-  if (content === null) return { structure: 0, language: 0, validCodes, questionCount: 0 };
+  if (content === null) {
+    return {
+      structure: 0,
+      language: 0,
+      validCodes,
+      questionCount: 0,
+      numbering: 0,
+      uniqueQuestions: 0,
+    };
+  }
   const questionsMatch =
     request.questionCount === null || countQuestions(content) === request.questionCount;
   return {
@@ -44,5 +61,29 @@ export function scoreContent(
     language: detectLanguage(content) === request.language ? 1 : 0,
     validCodes,
     questionCount: questionsMatch ? 1 : 0,
+    ...quizShape(content, request.questionCount),
+  };
+}
+
+const oneTo = (count: number) => Array.from({ length: count }, (_, i) => String(i + 1)).join();
+
+/**
+ * For a quiz: questions numbered 1 to the last, then one answer key with the same numbers
+ * (numbering), and no question asked twice (uniqueQuestions). Other content scores 1.
+ */
+function quizShape(
+  content: string,
+  count: number | null,
+): { numbering: number; uniqueQuestions: number } {
+  if (count === null) return { numbering: 1, uniqueQuestions: 1 };
+  const [questions = { numbers: [], stems: [] }, ...answerKeys] = numberedSections(content);
+  const expected = oneTo(questions.numbers.length);
+  // One answer key with the same numbers: two keys would join as "1,2|1,2".
+  const keys = answerKeys.map((key) => key.numbers.join()).join('|');
+  const stems = questions.stems.map(normalisedStem);
+  return {
+    numbering:
+      expected !== '' && questions.numbers.join() === expected && keys === expected ? 1 : 0,
+    uniqueQuestions: new Set(stems).size === stems.length ? 1 : 0,
   };
 }

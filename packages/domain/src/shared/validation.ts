@@ -11,13 +11,29 @@ export type ValidationCode =
   | 'duplicate'
   | 'invalid_order';
 
+/** The smallest and largest whole number a field accepts. */
+export interface NumberRange {
+  readonly min: number;
+  readonly max: number;
+}
+
 export interface ValidationError {
   readonly field: string;
   readonly code: ValidationCode;
+  /** For a number outside its range: the range, so the message can name it. */
+  readonly range?: NumberRange;
 }
 
 export const invalid = (field: string, code: ValidationCode): Err<ValidationError> =>
   err({ field, code });
+
+/** A number outside the range it must be in; the error carries the range. */
+export const outOfRange = (field: string, range: NumberRange): Err<ValidationError> =>
+  err({ field, code: 'out_of_range', range: { min: range.min, max: range.max } });
+
+/** Whether a value is a whole number inside the range. */
+export const isWholeNumberIn = (value: number, range: NumberRange): boolean =>
+  Number.isInteger(value) && value >= range.min && value <= range.max;
 
 /** The longest a short text (a name, a title, a theme) may be. */
 export const maxShortTextLength = 200;

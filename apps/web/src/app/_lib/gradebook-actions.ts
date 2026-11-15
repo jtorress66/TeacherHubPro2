@@ -4,8 +4,9 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import type { AssignmentId, ClassId, StudentId } from '@thp/domain';
 import { createTranslator, isLocale, type Locale } from '@thp/i18n';
+import { submittedValues, type SubmittedValues } from '../../server/form-values.ts';
 import { getAppContainer } from '../../container.ts';
-import { formErrors } from '../../server/error-messages.ts';
+import { rejectedForm } from '../../server/error-messages.ts';
 import {
   parseAssignmentForm,
   parseCategoryForm,
@@ -16,6 +17,8 @@ import { record } from './activity.ts';
 import { requireUser } from './auth.ts';
 
 export interface GradebookFormState {
+  /** What the teacher sent, when it was refused, so the form shows it again. */
+  readonly values?: SubmittedValues;
   readonly errors?: Readonly<Record<string, string>>;
   readonly saved?: boolean;
   /** Changes after each success so the form can clear itself. */
@@ -63,7 +66,7 @@ export async function addCategoryAction(
     classId: form.classId as ClassId,
     details: form.details,
   });
-  if (!result.ok) return { errors: formErrors(result.error, form.locale) };
+  if (!result.ok) return rejectedForm(result.error, form.locale, data);
   refresh(form.locale, form.classId);
   return done(state);
 }
@@ -80,7 +83,7 @@ export async function updateCategoryAction(
     text(data, 'intent') === 'delete'
       ? await app.deleteGradeCategory.execute(input)
       : await app.updateGradeCategory.execute({ ...input, details: form.details });
-  if (!result.ok) return { errors: formErrors(result.error, form.locale) };
+  if (!result.ok) return rejectedForm(result.error, form.locale, data);
   refresh(form.locale, form.classId);
   return done(state);
 }
@@ -120,7 +123,8 @@ export async function saveAssignmentAction(
           ...input,
           assignmentId: form.assignmentId as AssignmentId,
         });
-  if (!result.ok) return { errors: gradeEntryMessages(result.error, form.locale) };
+  if (!result.ok)
+    return { errors: gradeEntryMessages(result.error, form.locale), values: submittedValues(data) };
   refresh(form.locale, form.classId);
   const created =
     form.assignmentId === '' ? { id: result.value.id, title: result.value.title } : null;
@@ -145,7 +149,11 @@ export async function saveGradesAction(
   data: FormData,
 ): Promise<GradebookFormState> {
   const form = parseGradeForm(data);
-  if (!form.ok) return { errors: gradeFieldMessages(form.error, localeOf(data)) };
+  if (!form.ok)
+    return {
+      errors: gradeFieldMessages(form.error, localeOf(data)),
+      values: submittedValues(data),
+    };
   const { locale, classId, assignmentId, rows } = form.value;
   const { user } = await requireUser(locale);
   const result = await getAppContainer().saveGrades.execute({
@@ -154,7 +162,8 @@ export async function saveGradesAction(
     assignmentId: assignmentId as AssignmentId,
     rows,
   });
-  if (!result.ok) return { errors: gradeEntryMessages(result.error, locale) };
+  if (!result.ok)
+    return { errors: gradeEntryMessages(result.error, locale), values: submittedValues(data) };
   await record(user, 'grades_saved', assignmentId);
   refresh(locale, classId);
   return done(state);
@@ -173,7 +182,8 @@ export async function saveCommentAction(
     studentId: text(data, 'studentId') as StudentId,
     text: text(data, 'comment'),
   });
-  if (!result.ok) return { errors: gradeEntryMessages(result.error, locale) };
+  if (!result.ok)
+    return { errors: gradeEntryMessages(result.error, locale), values: submittedValues(data) };
   refresh(locale, classId);
   return done(state);
 }
@@ -187,7 +197,7 @@ export async function uploadLogoAction(
   const file = data.get('logo');
   const bytes = file instanceof File ? new Uint8Array(await file.arrayBuffer()) : new Uint8Array();
   const result = await getAppContainer().uploadSchoolLogo.execute({ actor: user, bytes });
-  if (!result.ok) return { errors: formErrors(result.error, locale) };
+  if (!result.ok) return rejectedForm(result.error, locale, data);
   revalidatePath(`/${locale}/app/settings`);
   return done(state);
 }

@@ -121,6 +121,68 @@ for (const locale of ['es', 'en'] as const satisfies readonly Locale[]) {
     await expect(questions.nth(1)).toHaveAttribute('start', '2');
     await expect(questions.nth(2)).toHaveAttribute('start', '3');
   });
+
+  test(`a refused question count keeps every choice and names the range; a long quiz is written in parts (${locale})`, async ({
+    page,
+  }) => {
+    const other = locale === 'en' ? 'es' : 'en';
+    await signUp(page, locale);
+    await page.getByRole('link', { name: t('nav.assistant'), exact: true }).click();
+    const form = page.getByRole('form', { name: t('assistant.title') });
+    await form.getByLabel(t('assistant.type')).selectOption('quiz');
+    await form.getByLabel(t('assistant.subject')).selectOption('science');
+    await form.getByLabel(t('assistant.grade')).selectOption('6');
+    await form.getByLabel(t('assistant.topic')).fill('The water cycle');
+    await form.getByLabel(t('assistant.difficulty')).selectOption('hard');
+    await form.getByLabel(t('assistant.language')).selectOption(other);
+    await form.getByLabel(t('assistant.instructions')).fill('Use local rivers');
+    await form.getByLabel(t('esl.label')).check();
+    const count = form.getByLabel(t('assistant.questionCount'));
+    await expect(count).toHaveAttribute('max', '100');
+    await count.fill('101');
+    await form.getByRole('button', { name: t('assistant.submit') }).click();
+
+    await expect(form.getByText(t('errors.outOfRangeBetween', { min: 1, max: 100 }))).toBeVisible();
+    await expect(form.getByLabel(t('assistant.type'))).toHaveValue('quiz');
+    await expect(form.getByLabel(t('assistant.subject'))).toHaveValue('science');
+    await expect(form.getByLabel(t('assistant.grade'))).toHaveValue('6');
+    await expect(form.getByLabel(t('assistant.topic'))).toHaveValue('The water cycle');
+    await expect(form.getByLabel(t('assistant.difficulty'))).toHaveValue('hard');
+    await expect(form.getByLabel(t('assistant.language'))).toHaveValue(other);
+    await expect(form.getByLabel(t('assistant.instructions'))).toHaveValue('Use local rivers');
+    await expect(form.getByLabel(t('esl.label'))).toBeChecked();
+    await expect(count).toHaveValue('101');
+
+    await count.fill('30');
+    await form.getByRole('button', { name: t('assistant.submit') }).click();
+    await expect(page).toHaveURL(/\/assistant\/[^/]+$/, { timeout: 60_000 });
+    await expect(page).not.toHaveURL(/\/jobs\//);
+    const article = page.locator('article.generated');
+    // Parts 1–25 and 26–30, merged: one quiz numbered on to 30 with one answer key.
+    await expect(article.locator('ol[start="26"]')).toHaveCount(1);
+    await expect(article.locator('ol[start="30"]')).toHaveCount(1);
+    await expect(article.locator('ol[start="31"]')).toHaveCount(0);
+  });
+
+  test(`a refused slide count keeps the slide request and names the range (${locale})`, async ({
+    page,
+  }) => {
+    await signUp(page, locale);
+    await page.getByRole('link', { name: t('nav.presentations'), exact: true }).click();
+    await page.getByRole('link', { name: t('presentations.generate') }).click();
+    const form = page.getByRole('form', { name: t('presentations.generate') });
+    await form.getByLabel(t('assistant.topic'), { exact: true }).fill('Volcanoes');
+    await form.getByLabel(t('assistant.subject')).selectOption('science');
+    await form.getByLabel(t('presentations.theme')).selectOption('forest');
+    await form.getByLabel(t('presentations.slideCount')).fill('13');
+    await form.getByRole('button', { name: t('presentations.draftSubmit') }).click();
+
+    await expect(form.getByText(t('errors.outOfRangeBetween', { min: 3, max: 12 }))).toBeVisible();
+    await expect(form.getByLabel(t('assistant.topic'), { exact: true })).toHaveValue('Volcanoes');
+    await expect(form.getByLabel(t('assistant.subject'))).toHaveValue('science');
+    await expect(form.getByLabel(t('presentations.theme'))).toHaveValue('forest');
+    await expect(form.getByLabel(t('presentations.slideCount'))).toHaveValue('13');
+  });
 }
 
 test('slides can be reordered, duplicated and removed before saving', async ({ page }) => {

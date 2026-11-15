@@ -1,14 +1,14 @@
 import type { JobId } from '@thp/domain';
 import { isLocale } from '@thp/i18n';
 import { getAppContainer } from '../../../../container.ts';
-import { draftFailureMessage } from '../../../../server/planner-messages.ts';
+import { jobStatusReply } from '../../../../server/job-status.ts';
 import { requireUser } from '../../../_lib/auth.ts';
 
 export const dynamic = 'force-dynamic';
 
 /**
  * A job's status for its owner to poll. Reading never changes the job, so the client may repeat
- * the request freely; anyone else's job is a 404. Only the status and a safe message are sent.
+ * the request freely; anyone else's job is a 404. Only the status, progress and a safe message are sent.
  */
 export async function GET(
   request: Request,
@@ -21,9 +21,5 @@ export async function GET(
   const job = await getAppContainer().getJob.execute({ actor: user, jobId: jobId as JobId });
   const headers = { 'Cache-Control': 'private, no-store' };
   if (!job.ok) return Response.json({ error: 'not_found' }, { status: 404, headers });
-  const { status, error } = job.value;
-  return Response.json(
-    status === 'failed' ? { status, message: draftFailureMessage(error, locale) } : { status },
-    { headers },
-  );
+  return Response.json(jobStatusReply(job.value, locale), { headers });
 }

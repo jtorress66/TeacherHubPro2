@@ -83,6 +83,7 @@ describe('RunNextJob', () => {
       complete: (id, result) => world.jobs.complete(id, result),
       fail: (id, error) => world.jobs.fail(id, error),
       failStale: (before, error) => world.jobs.failStale(before, error),
+      reportProgress: (id, progress) => world.jobs.reportProgress(id, progress),
       findForOwner: (schoolId, ownerId, id) => world.jobs.findForOwner(schoolId, ownerId, id),
     };
 
@@ -94,10 +95,10 @@ describe('RunNextJob', () => {
 });
 
 describe('SweepStaleJobs', () => {
-  it('fails jobs left unfinished for more than 5 minutes', async () => {
+  it('fails jobs left unfinished for more than 15 minutes', async () => {
     const world = makeWorld();
     const job = await enqueue(world);
-    world.clock.advanceBy(5 * 60_000);
+    world.clock.advanceBy(15 * 60_000);
     expect(await new SweepStaleJobs(world).execute()).toBe(0);
 
     world.clock.advanceBy(1);
@@ -119,7 +120,7 @@ describe('GetJob', () => {
   it('shows a job past its time limit as timed out before the sweep stores it', async () => {
     const world = makeWorld();
     const job = await enqueue(world);
-    world.clock.advanceBy(6 * 60_000);
+    world.clock.advanceBy(16 * 60_000);
 
     const seen = await new GetJob(world).execute({ actor: owner, jobId: job.id });
     expect(seen.ok && seen.value).toMatchObject({ status: 'failed', error: 'timed_out' });

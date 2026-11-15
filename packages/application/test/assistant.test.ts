@@ -126,6 +126,51 @@ describe('AI assistant', () => {
     ]);
   });
 
+  it('shows the owner which part of a long quiz is being written', async () => {
+    const world = makeWorld();
+    const actor = await teacher(world);
+    const job = valueOf(
+      await new RequestGeneration(world).execute({
+        actor,
+        ...worksheetInput,
+        type: 'quiz',
+        questionCount: 60,
+      }),
+    );
+    const seen: unknown[] = [];
+    const writer = new FakeContentWriter(ok('# Quiz\n\n1. ___'), [
+      { from: 1, to: 25, total: 60 },
+      { from: 26, to: 50, total: 60 },
+    ]);
+    writer.onReport = async () => {
+      seen.push((await world.jobs.findForOwner(actor.schoolId, actor.id, job.id))?.progress);
+    };
+
+    await runJobs(world, new GenerationHandler({ ...world, writer }));
+
+    expect(seen).toEqual([
+      { from: 1, to: 25, total: 60 },
+      { from: 26, to: 50, total: 60 },
+    ]);
+    expect(writer.requests[0]?.questionCount).toBe(60);
+  });
+
+  it('refuses a quiz of more than 100 questions', async () => {
+    const world = makeWorld();
+    const actor = await teacher(world);
+    expect(
+      await new RequestGeneration(world).execute({
+        actor,
+        ...worksheetInput,
+        type: 'quiz',
+        questionCount: 101,
+      }),
+    ).toEqual({
+      ok: false,
+      error: { field: 'questionCount', code: 'out_of_range', range: { min: 1, max: 100 } },
+    });
+  });
+
   it('fails the job with the writer’s safe code', async () => {
     const world = makeWorld();
     const actor = await teacher(world);

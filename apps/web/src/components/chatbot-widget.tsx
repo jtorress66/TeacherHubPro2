@@ -5,6 +5,7 @@ import { visitorInterests, visitorRoles } from '@thp/domain';
 import { createTranslator, type Locale } from '@thp/i18n';
 import { captureLeadAction, type LeadFormState } from '../app/_lib/marketing-actions.ts';
 import { Field, FormAlert, Submit } from './forms.tsx';
+import { prefill } from '../server/form-values.ts';
 import { Hidden } from './form-fields.tsx';
 
 interface Turn {
@@ -44,8 +45,14 @@ function LeadForm(props: {
       </p>
     );
   }
+  const sent = prefill(state.values);
   return (
-    <form action={action} className="stack m-chat-lead" aria-label={t('marketing.chat.leadOpen')}>
+    <form
+      action={action}
+      className="stack m-chat-lead"
+      aria-label={t('marketing.chat.leadOpen')}
+      key={sent.key}
+    >
       <Hidden
         values={{
           locale: props.locale,
@@ -60,6 +67,7 @@ function LeadForm(props: {
         id="chat-lead-name"
         name="name"
         label={t('marketing.contactPage.name')}
+        defaultValue={sent.text('name')}
         error={state.errors?.name}
         required
       />
@@ -68,6 +76,7 @@ function LeadForm(props: {
         name="email"
         type="email"
         label={t('marketing.contactPage.email')}
+        defaultValue={sent.text('email')}
         error={state.errors?.email}
         required
       />
@@ -75,6 +84,7 @@ function LeadForm(props: {
         id="chat-lead-organization"
         name="organization"
         label={t('marketing.contactPage.organization')}
+        defaultValue={sent.text('organization')}
       />
       <p className="hint">{t('marketing.contactPage.consent')}</p>
       <Submit label={t('marketing.contactPage.send')} />

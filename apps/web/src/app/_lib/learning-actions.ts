@@ -6,11 +6,14 @@ import { z } from 'zod';
 import type { ClassId, LearningPathId, PathDraft, StudentId } from '@thp/domain';
 import type { CheckResult } from '@thp/application';
 import { isLocale, type Locale } from '@thp/i18n';
+import type { SubmittedValues } from '../../server/form-values.ts';
 import { getAppContainer } from '../../container.ts';
-import { formErrors } from '../../server/error-messages.ts';
+import { formErrors, rejectedForm } from '../../server/error-messages.ts';
 import { requireUser } from './auth.ts';
 
 export interface LearningFormState {
+  /** What the teacher sent, when it was refused, so the form shows it again. */
+  readonly values?: SubmittedValues;
   readonly errors?: Readonly<Record<string, string>>;
   readonly saved?: boolean;
 }
@@ -48,7 +51,7 @@ export async function requestLearningPathsAction(
     esl: data.get('esl') === 'on',
     ...(lessons === '' ? {} : { lessonCount: Number(lessons) }),
   });
-  if (!jobs.ok) return { errors: formErrors(jobs.error, locale) };
+  if (!jobs.ok) return rejectedForm(jobs.error, locale, data);
   const ids = jobs.value.map((job) => job.id).join(',');
   redirect(`${learningPath(locale)}?class=${encodeURIComponent(classId)}&jobs=${ids}`);
 }

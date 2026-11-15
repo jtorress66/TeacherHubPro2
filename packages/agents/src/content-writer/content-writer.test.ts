@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { ContentRequestInput } from '@thp/domain';
+import { maxGenerationLength, type ContentRequestInput } from '@thp/domain';
 import { FakeLlmClient, aContentRequest } from '@thp/testing';
 import { ContentWriter } from './content-writer.ts';
 import { reviewContent } from './content-review.ts';
@@ -113,7 +113,7 @@ describe('reviewContent', () => {
     [{ text: 'x', stopReason: 'max_tokens' as const }, /cut off/],
     [{ text: '   ', stopReason: 'end' as const }, /empty/],
     [{ text: 'No heading here', stopReason: 'end' as const }, /# heading/],
-    [{ text: `# T\n\n${'x'.repeat(40_001)}`, stopReason: 'end' as const }, /too long/],
+    [{ text: `# T\n\n${'x'.repeat(maxGenerationLength + 1)}`, stopReason: 'end' as const }, /too long/],
   ])('rejects %o', (reply, problem) => {
     const result = reviewContent(reply);
     expect(result.ok).toBe(false);

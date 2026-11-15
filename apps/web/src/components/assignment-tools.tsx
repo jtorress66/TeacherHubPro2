@@ -23,6 +23,7 @@ import {
 import { Field, FormAlert, Submit } from './forms.tsx';
 import { Hidden, Select, TextArea, type Option } from './form-fields.tsx';
 import { ScheduleFields } from './schedule-fields.tsx';
+import { prefill } from '../server/form-values.ts';
 
 const initial: AssignmentFormState = {};
 
@@ -203,8 +204,9 @@ export function ShareToClassroomForm(
   const t = createTranslator(props.locale);
   const to: Destination = destinations[props.destination ?? 'classroom'];
   const [state, action] = useActionState(to.share, initial);
+  const sent = prefill(state.values);
   return (
-    <form action={action} className="stack" aria-label={t(to.keys.share)}>
+    <form action={action} className="stack" aria-label={t(to.keys.share)} key={sent.key}>
       <Hidden values={hidden(props)} />
       <FormAlert message={allErrors(state)} />
       {state.url === undefined ? null : (
@@ -217,6 +219,7 @@ export function ShareToClassroomForm(
         name={to.field}
         label={t(to.keys.target)}
         options={props.courses}
+        defaultValue={sent.text(to.field)}
       />
       <p className="hint">{t(to.keys.shareNote)}</p>
       <Submit label={t(to.keys.share)} />
@@ -234,8 +237,9 @@ export function ImportRosterForm(props: {
   const t = createTranslator(props.locale);
   const to: RosterSource = rosterSources[props.destination ?? 'classroom'];
   const [state, action] = useActionState(to.importRoster, initial);
+  const sent = prefill(state.values);
   return (
-    <form action={action} className="stack" aria-label={t(to.keys.importRoster)}>
+    <form action={action} className="stack" aria-label={t(to.keys.importRoster)} key={sent.key}>
       <Hidden values={{ locale: props.locale, classId: props.classId }} />
       <FormAlert message={allErrors(state)} />
       {state.message === undefined ? null : (
@@ -248,6 +252,7 @@ export function ImportRosterForm(props: {
         name={to.field}
         label={t(to.keys.target)}
         options={props.courses}
+        defaultValue={sent.text(to.field)}
       />
       <Submit label={t(to.keys.importRoster)} />
     </form>
@@ -284,11 +289,13 @@ export function ReviewForm(
   const t = createTranslator(props.locale);
   const [state, action] = useActionState(gradeSubmissionAction, initial);
   const id = (field: string) => `${props.submissionId}-${field}`;
+  const sent = prefill(state.values);
   return (
     <form
       action={action}
       className="stack"
       aria-label={`${t('grading.score')} ${props.studentName}`}
+      key={sent.key}
     >
       <Hidden values={{ ...hidden(props), submissionId: props.submissionId }} />
       <FormAlert message={allErrors(state)} />
@@ -304,12 +311,12 @@ export function ReviewForm(
             min={0}
             max={props.maxPoints}
             step="0.5"
-            defaultValue={props.score ?? ''}
+            defaultValue={sent.text('score', props.score) ?? ''}
           />
         </div>
         <div className="field">
           <label htmlFor={id('comment')}>{t('grading.comment')}</label>
-          <input id={id('comment')} name="comment" />
+          <input id={id('comment')} name="comment" defaultValue={sent.text('comment')} />
         </div>
       </div>
       <div className="button-row">
@@ -459,8 +466,14 @@ export function PostWordForm(props: {
   const [state, action] = useActionState(to.postWord, initial);
   const errors = state.errors ?? {};
   const id = (name: string) => `${to.idPrefix}word-post-${name}`;
+  const sent = prefill(state.values);
   return (
-    <form action={action} className="stack" aria-label={t(to.keys.wordSubmit)} key={state.version}>
+    <form
+      action={action}
+      className="stack"
+      aria-label={t(to.keys.wordSubmit)}
+      key={`${String(state.version ?? 0)}-${sent.key}`}
+    >
       <Hidden values={{ locale: props.locale }} />
       <FormAlert message={errors.form} />
       {state.url === undefined ? null : (
@@ -482,12 +495,14 @@ export function PostWordForm(props: {
         name={to.field}
         label={t(to.keys.target)}
         options={props.courses}
+        defaultValue={sent.text(to.field)}
         error={errors[to.field]}
       />
       <Field
         id={id('title')}
         name="title"
         label={t('wordPost.name')}
+        defaultValue={sent.text('title')}
         error={errors.title}
         required
       />
@@ -495,6 +510,7 @@ export function PostWordForm(props: {
         id={id('instructions')}
         name="instructions"
         label={t('wordPost.instructions')}
+        defaultValue={sent.text('instructions')}
         error={errors.instructions}
       />
       <Field
@@ -502,12 +518,14 @@ export function PostWordForm(props: {
         name="dueDate"
         type="date"
         label={t('wordPost.dueDate')}
+        defaultValue={sent.text('dueDate')}
         error={errors.dueDate}
       />
       <ScheduleFields
         locale={props.locale}
         idPrefix={`${to.idPrefix}word-post`}
         error={errors.scheduledAt}
+        sent={sent}
       />
       <FileField
         id={id('file')}

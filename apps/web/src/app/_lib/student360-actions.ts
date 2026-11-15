@@ -4,12 +4,15 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import type { ClassId, StudentId, StudentNoteId } from '@thp/domain';
 import { isLocale, type Locale } from '@thp/i18n';
+import type { SubmittedValues } from '../../server/form-values.ts';
 import { getAppContainer } from '../../container.ts';
-import { formErrors } from '../../server/error-messages.ts';
+import { rejectedForm } from '../../server/error-messages.ts';
 import { requireUser } from './auth.ts';
 import { teacherTimeZone } from './time-zone.ts';
 
 export interface Student360FormState {
+  /** What the teacher sent, when it was refused, so the form shows it again. */
+  readonly values?: SubmittedValues;
   readonly errors?: Readonly<Record<string, string>>;
   /** Changes after each success so the form can clear itself. */
   readonly version?: number;
@@ -47,7 +50,7 @@ export async function addStudentNoteAction(
     ...ref,
     text: text(data, 'text'),
   });
-  if (!added.ok) return { errors: formErrors(added.error, locale) };
+  if (!added.ok) return rejectedForm(added.error, locale, data);
   revalidatePath(path);
   return { version: (state.version ?? 0) + 1 };
 }
@@ -71,6 +74,6 @@ export async function requestStudentInsightAction(
     ...ref,
     timeZone: await teacherTimeZone(),
   });
-  if (!job.ok) return { errors: formErrors(job.error, locale) };
+  if (!job.ok) return rejectedForm(job.error, locale, data);
   redirect(`${path}?job=${job.value.id}`);
 }

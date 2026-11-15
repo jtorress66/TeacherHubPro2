@@ -1133,6 +1133,9 @@ export const es: Messages = {
     instructions: 'Instrucciones adicionales (opcional)',
     submit: 'Escribirlo',
     working: 'Escribiendo… Suele tardar menos de un minuto.',
+    writingQuestions: 'Escribiendo las preguntas {from}–{to} de {total}…',
+    questionCountHint:
+      'De {min} a {max}. Las pruebas de más de {part} preguntas se escriben por partes y pueden tardar unos minutos.',
     open: 'Abrirlo',
     history: 'Tu historial',
     historyEmpty: 'Nada todavía. Lo que crees aparece aquí.',
@@ -2270,6 +2273,7 @@ export const es: Messages = {
     required: 'Este campo es obligatorio.',
     invalid_format: 'Revisa este valor.',
     out_of_range: 'Este valor está fuera de rango.',
+    outOfRangeBetween: 'Elige un número del {min} al {max}.',
     too_short: 'Es demasiado corto.',
     too_long: 'Es demasiado largo.',
     too_large: 'El archivo es demasiado grande.',

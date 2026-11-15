@@ -6,8 +6,9 @@ import { z } from 'zod';
 import type { GameId } from '@thp/domain';
 import type { GameRound, RoundResult } from '@thp/application';
 import { createTranslator, isLocale, type Locale } from '@thp/i18n';
+import { submittedValues, type SubmittedValues } from '../../server/form-values.ts';
 import { getAppContainer } from '../../container.ts';
-import { formErrors } from '../../server/error-messages.ts';
+import { rejectedForm } from '../../server/error-messages.ts';
 import {
   gameFormErrors,
   parseConfirmScores,
@@ -19,6 +20,8 @@ import { requireUser } from './auth.ts';
 import { passFor } from './lti-pass.ts';
 
 export interface GameFormState {
+  /** What the teacher sent, when it was refused, so the form shows it again. */
+  readonly values?: SubmittedValues;
   readonly errors?: Readonly<Record<string, string>>;
   readonly saved?: boolean;
   readonly message?: string;
@@ -51,7 +54,8 @@ export async function createGameAction(
   const { locale, input } = parseGameForm(data);
   const { user } = await requireUser(locale);
   const game = await getAppContainer().createGame.execute({ actor: user, ...input });
-  if (!game.ok) return { errors: gameFormErrors(game.error, locale) };
+  if (!game.ok)
+    return { errors: gameFormErrors(game.error, locale), values: submittedValues(data) };
   redirect(`${gamesPath(locale)}/${game.value.id}`);
 }
 
@@ -63,7 +67,8 @@ export async function updateGameAction(
   const { user } = await requireUser(locale);
   const gameId = gameIdOf(data);
   const game = await getAppContainer().updateGame.execute({ actor: user, gameId, changes: input });
-  if (!game.ok) return { errors: gameFormErrors(game.error, locale) };
+  if (!game.ok)
+    return { errors: gameFormErrors(game.error, locale), values: submittedValues(data) };
   revalidatePath(`${gamesPath(locale)}/${gameId}`);
   return done(state, createTranslator(locale)('games.saved'));
 }
@@ -83,7 +88,7 @@ export async function requestGameDraftAction(
   const { locale, mode, input } = parseGameDraftForm(data);
   const { user } = await requireUser(locale);
   const job = await getAppContainer().requestGameDraft.execute({ actor: user, ...input });
-  if (!job.ok) return { errors: formErrors(job.error, locale) };
+  if (!job.ok) return rejectedForm(job.error, locale, data);
   redirect(`${gamesPath(locale)}/jobs/${job.value.id}?mode=${encodeURIComponent(mode)}`);
 }
 
@@ -99,7 +104,7 @@ export async function saveGameGradingAction(
     gameId,
     ...parseGradingForm(data),
   });
-  if (!saved.ok) return { errors: formErrors(saved.error, locale) };
+  if (!saved.ok) return rejectedForm(saved.error, locale, data);
   revalidatePath(`${gamesPath(locale)}/${gameId}`);
   return done(state, createTranslator(locale)('games.saved'));
 }
@@ -116,7 +121,7 @@ export async function confirmGameGradesAction(
     gameId,
     scores: parseConfirmScores(data),
   });
-  if (!confirmed.ok) return { errors: formErrors(confirmed.error, locale) };
+  if (!confirmed.ok) return rejectedForm(confirmed.error, locale, data);
   revalidatePath(`${gamesPath(locale)}/${gameId}`);
   return done(state, createTranslator(locale)('games.gradesConfirmed'));
 }

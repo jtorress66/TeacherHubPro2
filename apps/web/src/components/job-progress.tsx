@@ -2,12 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import type { Locale } from '@thp/i18n';
+import { createTranslator, type Locale, type MessageKey } from '@thp/i18n';
+import type { JobStatusReply } from '../server/job-status.ts';
 
-export interface JobStatusReply {
-  readonly status: 'queued' | 'running' | 'completed' | 'failed';
-  readonly message?: string;
-}
+export type { JobStatusReply };
 
 /** Polls a job's status for its owner; reading never changes the job. */
 export function useJobStatus(
@@ -55,6 +53,8 @@ export function JobProgress(props: {
     readonly open: string;
   };
   readonly intervalMs?: number;
+  /** Shown instead of `working` while the job reports progress; takes {from}, {to}, {total}. */
+  readonly progressKey?: MessageKey;
 }) {
   const router = useRouter();
   const reply = useJobStatus(props.jobId, props.locale, props.intervalMs);
@@ -85,6 +85,8 @@ export function JobProgress(props: {
     <p role="status" className="notice" aria-live="polite">
       {status === 'completed' && doneHref !== undefined ? (
         <a href={doneHref}>{labels.open}</a>
+      ) : reply?.progress !== undefined && props.progressKey !== undefined ? (
+        createTranslator(props.locale)(props.progressKey, { ...reply.progress })
       ) : (
         labels.working
       )}

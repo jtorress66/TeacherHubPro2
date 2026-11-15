@@ -4,8 +4,9 @@ import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { createTranslator, isLocale, type Locale } from '@thp/i18n';
+import { submittedValues, type SubmittedValues } from '../../server/form-values.ts';
 import { getAppContainer } from '../../container.ts';
-import { formErrors } from '../../server/error-messages.ts';
+import { rejectedForm } from '../../server/error-messages.ts';
 import {
   logInForm,
   parseForm,
@@ -32,15 +33,18 @@ import { record } from './activity.ts';
 import { callerAddress, throttle } from './limits.ts';
 
 export interface FormState {
+  /** What the teacher sent, when it was refused, so the form shows it again. */
+  readonly values?: SubmittedValues;
   readonly errors?: Readonly<Record<string, string>>;
   readonly saved?: boolean;
   /** The account is suspended: the form adds a link to the contact page. */
   readonly suspended?: boolean;
 }
 
-const fieldMessages = (errors: FieldErrors, locale: Locale): FormState => {
+const fieldMessages = (errors: FieldErrors, locale: Locale, data: FormData): FormState => {
   const t = createTranslator(locale);
   return {
+    values: submittedValues(data),
     errors: Object.fromEntries(
       Object.entries(errors).map(([field, code]) => [field, t(`errors.${code}`)]),
     ),
@@ -54,38 +58,38 @@ const localeOf = (data: FormData): Locale => {
 
 export async function signUpAction(_state: FormState, data: FormData): Promise<FormState> {
   const form = parseForm(signUpForm, data);
-  if (!form.ok) return fieldMessages(form.error, localeOf(data));
+  if (!form.ok) return fieldMessages(form.error, localeOf(data), data);
   const { locale, ...fields } = form.value;
   const limited = await throttle([['signUp', await callerAddress()]]);
-  if (limited !== null) return { errors: formErrors(limited, locale) };
+  if (limited !== null) return rejectedForm(limited, locale, data);
   const result = await getAppContainer().signUp.execute({
     ...fields,
     language: locale,
     defaultSchoolName: createTranslator(locale)('defaults.schoolName'),
     userAgent: (await signInBrowser()).userAgent,
   });
-  if (!result.ok) return { errors: formErrors(result.error, locale) };
+  if (!result.ok) return rejectedForm(result.error, locale, data);
   await setSessionCookie(result.value.sessionToken);
   redirect(`/${locale}/app`);
 }
 
 export async function logInAction(_state: FormState, data: FormData): Promise<FormState> {
   const form = parseForm(logInForm, data);
-  if (!form.ok) return fieldMessages(form.error, localeOf(data));
+  if (!form.ok) return fieldMessages(form.error, localeOf(data), data);
   const { locale, ...credentials } = form.value;
   const limited = await throttle([
     ['logInEmail', credentials.email],
     ['logInAddress', await callerAddress()],
   ]);
-  if (limited !== null) return { errors: formErrors(limited, locale) };
+  if (limited !== null) return rejectedForm(limited, locale, data);
   const result = await getAppContainer().logIn.execute({
     ...credentials,
     browser: await signInBrowser(),
   });
   if (!result.ok) {
-    const errors = formErrors(result.error, locale);
+    const { errors, values } = rejectedForm(result.error, locale, data);
     const suspended = 'code' in result.error && result.error.code === 'account_suspended';
-    return suspended ? { errors, suspended } : { errors };
+    return suspended ? { errors, values, suspended } : { errors, values };
   }
   // A course system launch waiting to be linked comes back to its linking page.
   const next = afterLogInPath(locale, (await cookies()).has(LTI_LINK_COOKIE));
@@ -137,14 +141,14 @@ export async function logOutAction(data: FormData): Promise<void> {
 
 export async function updateProfileAction(_state: FormState, data: FormData): Promise<FormState> {
   const form = parseForm(profileForm, data);
-  if (!form.ok) return fieldMessages(form.error, localeOf(data));
+  if (!form.ok) return fieldMessages(form.error, localeOf(data), data);
   const { user } = await requireUser(form.value.locale);
   const result = await getAppContainer().updateProfile.execute({
     actor: user,
     name: form.value.name,
     language: form.value.language,
   });
-  if (!result.ok) return { errors: formErrors(result.error, form.value.locale) };
+  if (!result.ok) return rejectedForm(result.error, form.value.locale, data);
   // A new language shows the app in that language straight away.
   if (result.value.language !== form.value.locale)
     redirect(`/${result.value.language}/app/settings`);
@@ -153,7 +157,7 @@ export async function updateProfileAction(_state: FormState, data: FormData): Pr
 
 export async function updateSchoolAction(_state: FormState, data: FormData): Promise<FormState> {
   const form = parseForm(schoolForm, data);
-  if (!form.ok) return fieldMessages(form.error, localeOf(data));
+  if (!form.ok) return fieldMessages(form.error, localeOf(data), data);
   const { locale, planFormat, ...details } = form.value;
   const { user, school } = await requireUser(locale);
   const result = await getAppContainer().updateSchoolDetails.execute({
@@ -161,7 +165,7 @@ export async function updateSchoolAction(_state: FormState, data: FormData): Pro
     schoolId: school.id,
     details: planFormat === undefined ? details : { ...details, planFormat },
   });
-  if (!result.ok) return { errors: formErrors(result.error, locale) };
+  if (!result.ok) return rejectedForm(result.error, locale, data);
   await record(user, 'school_updated', school.id);
   // The school name shows in the app header and drives the setup checklist.
   revalidatePath(`/${locale}/app`, 'layout');
@@ -170,7 +174,7 @@ export async function updateSchoolAction(_state: FormState, data: FormData): Pro
 
 export async function upgradeAction(_state: FormState, data: FormData): Promise<FormState> {
   const form = parseForm(upgradeForm, data);
-  if (!form.ok) return fieldMessages(form.error, localeOf(data));
+  if (!form.ok) return fieldMessages(form.error, localeOf(data), data);
   const { locale, plan, quantity } = form.value;
   const { user } = await requireUser(locale, { needsAccess: false });
   const result = await getAppContainer().startCheckout.execute({
@@ -179,7 +183,7 @@ export async function upgradeAction(_state: FormState, data: FormData): Promise<
     quantity,
     locale,
   });
-  if (!result.ok) return { errors: formErrors(result.error, locale) };
+  if (!result.ok) return rejectedForm(result.error, locale, data);
   redirect(result.value.url);
 }
 

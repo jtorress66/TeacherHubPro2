@@ -143,7 +143,10 @@ describe('StartPrepBatch', () => {
     ).toEqual({ ok: false, error: { field: 'quizCategoryId', code: 'not_allowed' } });
     expect(
       await new StartPrepBatch(world).execute({ actor, request: { ...input, days: 9 } }),
-    ).toEqual({ ok: false, error: { field: 'days', code: 'out_of_range' } });
+    ).toEqual({
+      ok: false,
+      error: { field: 'days', code: 'out_of_range', range: { min: 1, max: 5 } },
+    });
     advanceDays(world, 60);
     expect(await new StartPrepBatch(world).execute({ actor, request: input })).toEqual({
       ok: false,

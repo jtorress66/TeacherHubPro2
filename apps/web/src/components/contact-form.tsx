@@ -5,6 +5,7 @@ import { visitorInterests, visitorRoles } from '@thp/domain';
 import { createTranslator, type Locale } from '@thp/i18n';
 import { captureLeadAction, type LeadFormState } from '../app/_lib/marketing-actions.ts';
 import { Field, FormAlert, Submit } from './forms.tsx';
+import { prefill } from '../server/form-values.ts';
 import { Hidden, Select, TextArea } from './form-fields.tsx';
 
 const initial: LeadFormState = {};
@@ -27,12 +28,14 @@ export function ContactForm({
     );
   }
   const errors = state.errors ?? {};
+  const sent = prefill(state.values);
   return (
     <form
       action={action}
       className="stack card"
       noValidate
       aria-label={t('marketing.contactPage.title')}
+      key={sent.key}
     >
       <Hidden values={{ locale, source: 'contact', page: `/${locale}/contact` }} />
       <FormAlert message={errors.form} />
@@ -41,6 +44,7 @@ export function ContactForm({
           id="contact-name"
           name="name"
           label={t('marketing.contactPage.name')}
+          defaultValue={sent.text('name')}
           error={errors.name}
           required
         />
@@ -49,6 +53,7 @@ export function ContactForm({
           name="email"
           type="email"
           label={t('marketing.contactPage.email')}
+          defaultValue={sent.text('email')}
           error={errors.email}
           required
         />
@@ -58,12 +63,14 @@ export function ContactForm({
           id="contact-organization"
           name="organization"
           label={t('marketing.contactPage.organization')}
+          defaultValue={sent.text('organization')}
           error={errors.organization}
         />
         <Field
           id="contact-phone"
           name="phone"
           label={t('marketing.contactPage.phone')}
+          defaultValue={sent.text('phone')}
           error={errors.phone}
         />
       </div>
@@ -73,14 +80,14 @@ export function ContactForm({
           name="role"
           label={t('marketing.contactPage.role')}
           options={visitorRoles.map((r) => ({ id: r, name: t(`marketing.roles.${r}`) }))}
-          defaultValue="teacher"
+          defaultValue={sent.text('role', 'teacher')}
         />
         <Select
           id="contact-interest"
           name="interest"
           label={t('marketing.contactPage.interest')}
           options={visitorInterests.map((i) => ({ id: i, name: t(`marketing.interests.${i}`) }))}
-          defaultValue={message === undefined ? 'features' : 'school'}
+          defaultValue={sent.text('interest', message === undefined ? 'features' : 'school')}
         />
       </div>
       <TextArea
@@ -88,7 +95,7 @@ export function ContactForm({
         name="message"
         label={t('marketing.contactPage.message')}
         error={errors.message}
-        defaultValue={message}
+        defaultValue={sent.text('message', message)}
         rows={5}
       />
       <p className="hint">{t('marketing.contactPage.consent')}</p>

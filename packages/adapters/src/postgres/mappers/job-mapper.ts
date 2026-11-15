@@ -16,4 +16,8 @@ export const jobFromRow = (row: Selectable<JobsTable>): Job => ({
   createdAt: row.created_at,
   startedAt: row.started_at,
   finishedAt: row.finished_at,
+  progress:
+    row.progress_from === null || row.progress_to === null || row.progress_total === null
+      ? null
+      : { from: row.progress_from, to: row.progress_to, total: row.progress_total },
 });

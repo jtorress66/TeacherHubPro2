@@ -131,6 +131,9 @@ export const deAppB = {
     instructions: 'Zusätzliche Hinweise (optional)',
     submit: 'Erstellen',
     working: 'Wird geschrieben … Das dauert meist weniger als eine Minute.',
+    writingQuestions: 'Fragen {from}–{to} von {total} werden geschrieben …',
+    questionCountHint:
+      'Von {min} bis {max}. Tests mit mehr als {part} Fragen werden in Teilen geschrieben und können einige Minuten dauern.',
     open: 'Öffnen',
     history: 'Ihr Verlauf',
     historyEmpty: 'Noch nichts. Was Sie erstellen, erscheint hier.',
@@ -1281,6 +1284,7 @@ export const deAppB = {
     required: 'Dieses Feld ist erforderlich.',
     invalid_format: 'Bitte prüfen Sie diesen Wert.',
     out_of_range: 'Dieser Wert liegt außerhalb des zulässigen Bereichs.',
+    outOfRangeBetween: 'Wählen Sie eine Zahl von {min} bis {max}.',
     too_short: 'Das ist zu kurz.',
     too_long: 'Das ist zu lang.',
     too_large: 'Diese Datei ist zu groß.',

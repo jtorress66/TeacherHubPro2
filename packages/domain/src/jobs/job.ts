@@ -4,6 +4,13 @@ export const jobStatuses = ['queued', 'running', 'completed', 'failed'] as const
 
 export type JobStatus = (typeof jobStatuses)[number];
 
+/** How far a long job has got: it is working on items `from` to `to` of `total`. */
+export interface JobProgress {
+  readonly from: number;
+  readonly to: number;
+  readonly total: number;
+}
+
 /**
  * Long work (AI generation, PDF parsing, grading, prep batches, sending grades to a course system)
  * runs as a stored job.
@@ -21,6 +28,8 @@ export interface Job {
   readonly createdAt: Date;
   readonly startedAt: Date | null;
   readonly finishedAt: Date | null;
+  /** Set by jobs that run in steps, while they run; null otherwise. */
+  readonly progress: JobProgress | null;
 }
 
 /** Safe reasons shown to the user; raw errors are never stored. */
@@ -38,8 +47,11 @@ export const jobFailures = [
 
 export type JobFailure = (typeof jobFailures)[number];
 
-/** A job not finished this long after it was created has failed. */
-export const jobTimeoutMs = 5 * 60 * 1000;
+/**
+ * A job not finished this long after it was created has failed. Long enough for a 100-question
+ * quiz, written in four parts in a row.
+ */
+export const jobTimeoutMs = 15 * 60 * 1000;
 
 export const isFinished = (job: Job): boolean =>
   job.status === 'completed' || job.status === 'failed';

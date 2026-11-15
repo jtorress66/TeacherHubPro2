@@ -1119,6 +1119,9 @@ export const en = {
     instructions: 'Additional instructions (optional)',
     submit: 'Write it',
     working: 'Writing… This usually takes under a minute.',
+    writingQuestions: 'Writing questions {from}–{to} of {total}…',
+    questionCountHint:
+      'From {min} to {max}. Tests of more than {part} questions are written in parts and can take a few minutes.',
     open: 'Open it',
     history: 'Your history',
     historyEmpty: 'Nothing yet. What you make appears here.',
@@ -2244,6 +2247,7 @@ export const en = {
     required: 'This field is required.',
     invalid_format: 'Please check this value.',
     out_of_range: 'This value is out of range.',
+    outOfRangeBetween: 'Choose a number from {min} to {max}.',
     too_short: 'This is too short.',
     too_long: 'This is too long.',
     too_large: 'This file is too large.',

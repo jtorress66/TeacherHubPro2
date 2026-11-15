@@ -14,6 +14,7 @@ import {
 import { gameModeChoices, kindForMode } from '../server/game-forms.ts';
 import { Field, FormAlert, Submit } from './forms.tsx';
 import { Hidden, Select, type Option } from './form-fields.tsx';
+import { prefill, type Prefill } from '../server/form-values.ts';
 
 const initial: GameFormState = {};
 const option = (id: string, name: string): Option => ({ id, name });
@@ -77,13 +78,40 @@ export function GameEditor(props: {
   readonly gameId?: string;
   readonly label?: string;
 }) {
-  const t = createTranslator(props.locale);
   const [state, action] = useActionState(
     props.gameId === undefined ? createGameAction : updateGameAction,
     initial,
   );
+  const sent = prefill(state.values);
+  return (
+    <EditorForm
+      {...props}
+      key={sent.key}
+      action={action}
+      errors={state.errors}
+      message={state.message}
+      values={{
+        title: sent.text('title', props.values.title) ?? '',
+        mode: sent.text('mode', props.values.mode) ?? props.values.mode,
+        content: sent.text('content', props.values.content) ?? '',
+        classId: sent.text('classId', props.values.classId) ?? null,
+        language: sent.text('language', props.values.language) ?? props.values.language,
+      }}
+    />
+  );
+}
+
+function EditorForm(
+  props: Omit<Parameters<typeof GameEditor>[0], 'values'> & {
+    readonly values: GameEditorValues;
+    readonly action: (data: FormData) => void;
+    readonly errors: GameFormState['errors'];
+    readonly message: GameFormState['message'];
+  },
+) {
+  const t = createTranslator(props.locale);
+  const { action, errors } = props;
   const [mode, setMode] = useState(props.values.mode);
-  const errors = state.errors;
   const kind = kindForMode(mode);
   return (
     <form
@@ -94,9 +122,9 @@ export function GameEditor(props: {
     >
       <Hidden values={{ locale: props.locale, gameId: props.gameId ?? '' }} />
       <FormAlert message={errors?.form} />
-      {state.message ? (
+      {props.message ? (
         <p role="status" className="notice">
-          {state.message}
+          {props.message}
         </p>
       ) : null}
       <Field
@@ -160,11 +188,22 @@ export function GameDraftForm(props: {
   readonly mode?: string;
   readonly topic?: string;
 }) {
-  const t = createTranslator(props.locale);
   const [state, action] = useActionState(requestGameDraftAction, initial);
-  const [mode, setMode] = useState(props.mode ?? 'quiz');
+  const sent = prefill(state.values);
+  return <DraftForm {...props} key={sent.key} action={action} errors={state.errors} sent={sent} />;
+}
+
+function DraftForm(
+  props: Parameters<typeof GameDraftForm>[0] & {
+    readonly action: (data: FormData) => void;
+    readonly errors: GameFormState['errors'];
+    readonly sent: Prefill;
+  },
+) {
+  const t = createTranslator(props.locale);
+  const { action, errors, sent } = props;
+  const [mode, setMode] = useState(sent.text('mode', props.mode ?? 'quiz') ?? 'quiz');
   const range = gameCountRange(kindForMode(mode));
-  const errors = state.errors;
   const label = props.gameId === undefined ? t('games.aiTitle') : t('games.freshTitle');
   return (
     <form action={action} className="stack" noValidate aria-label={label}>
@@ -181,7 +220,7 @@ export function GameDraftForm(props: {
           name="subject"
           label={t('games.subject')}
           options={assistantSubjects.map((s) => option(s, t(`assistant.subject_${s}`)))}
-          defaultValue="science"
+          defaultValue={sent.text('subject', 'science')}
           error={errors?.subject}
         />
         <Select
@@ -189,7 +228,7 @@ export function GameDraftForm(props: {
           name="grade"
           label={t('games.grade')}
           options={gradeLevels.map((g) => option(g, g === 'K' ? t('drafts.grade_K') : g))}
-          defaultValue="4"
+          defaultValue={sent.text('grade', '4')}
           error={errors?.grade}
         />
       </div>
@@ -198,7 +237,7 @@ export function GameDraftForm(props: {
           id="draft-topic"
           name="topic"
           label={t('games.topic')}
-          defaultValue={props.topic}
+          defaultValue={sent.text('topic', props.topic)}
           error={errors?.topic}
           required
         />
@@ -207,11 +246,15 @@ export function GameDraftForm(props: {
           name="count"
           type="number"
           min={range.min}
+          max={range.max}
           label={t('games.count')}
-          defaultValue={range.default}
+          defaultValue={sent.text('count', range.default)}
           error={errors?.count}
         />
-        <LanguageSelect locale={props.locale} value={props.locale} />
+        <LanguageSelect
+          locale={props.locale}
+          value={sent.text('language', props.locale) ?? props.locale}
+        />
       </div>
       <Submit label={t('games.generate')} />
     </form>
@@ -232,8 +275,15 @@ export function GradingForm(props: {
   const t = createTranslator(props.locale);
   const [state, action] = useActionState(saveGameGradingAction, initial);
   const errors = state.errors;
+  const sent = prefill(state.values);
   return (
-    <form action={action} className="stack" noValidate aria-label={t('games.gradingTitle')}>
+    <form
+      action={action}
+      className="stack"
+      noValidate
+      aria-label={t('games.gradingTitle')}
+      key={sent.key}
+    >
       <Hidden values={{ locale: props.locale, gameId: props.gameId }} />
       <FormAlert message={errors?.form ?? errors?.classId} />
       {state.message ? (
@@ -242,7 +292,11 @@ export function GradingForm(props: {
         </p>
       ) : null}
       <label className="checkbox">
-        <input type="checkbox" name="countAsGrade" defaultChecked={props.grading.countAsGrade} />{' '}
+        <input
+          type="checkbox"
+          name="countAsGrade"
+          defaultChecked={sent.checked('countAsGrade', props.grading.countAsGrade)}
+        />{' '}
         {t('games.countAsGrade')}
       </label>
       <div className="field-row">
@@ -251,7 +305,7 @@ export function GradingForm(props: {
           name="method"
           label={t('games.method')}
           options={gradeMethods.map((m) => option(m, t(`games.method_${m}`)))}
-          defaultValue={props.grading.method}
+          defaultValue={sent.text('method', props.grading.method)}
           error={errors?.method}
         />
         <Field
@@ -260,7 +314,7 @@ export function GradingForm(props: {
           type="number"
           min={1}
           label={t('games.points')}
-          defaultValue={props.grading.points}
+          defaultValue={sent.text('points', props.grading.points)}
           error={errors?.points}
         />
         <Select
@@ -269,7 +323,7 @@ export function GradingForm(props: {
           label={t('games.category')}
           options={props.categories}
           empty={t('gamePlay.choose')}
-          defaultValue={props.grading.categoryId}
+          defaultValue={sent.text('categoryId', props.grading.categoryId)}
           error={errors?.categoryId}
         />
       </div>
@@ -298,8 +352,9 @@ export function ResultsForm(props: {
 }) {
   const t = createTranslator(props.locale);
   const [state, action] = useActionState(confirmGameGradesAction, initial);
+  const sent = prefill(state.values);
   return (
-    <form action={action} className="stack" aria-label={t('games.results')}>
+    <form action={action} className="stack" aria-label={t('games.results')} key={sent.key}>
       <Hidden values={{ locale: props.locale, gameId: props.gameId }} />
       <FormAlert message={state.errors?.form ?? state.errors?.score} />
       {state.message ? (
@@ -335,7 +390,7 @@ export function ResultsForm(props: {
                     min={0}
                     name={`score:${row.studentId}`}
                     aria-label={t('games.scoreFor', { name: row.name })}
-                    defaultValue={row.draftScore ?? ''}
+                    defaultValue={sent.text(`score:${row.studentId}`, row.draftScore) ?? ''}
                   />
                 </td>
               ) : null}

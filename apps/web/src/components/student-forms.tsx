@@ -10,6 +10,7 @@ import {
 } from '../app/_lib/student-actions.ts';
 import { FormAlert, Submit } from './forms.tsx';
 import { Hidden } from './form-fields.tsx';
+import { prefill, type Prefill } from '../server/form-values.ts';
 
 const initial: StudentFormState = {};
 
@@ -17,9 +18,11 @@ const initial: StudentFormState = {};
 function Answer({
   locale,
   question,
+  sent,
 }: {
   readonly locale: Locale;
   readonly question: StudentQuestion;
+  readonly sent: Prefill;
 }) {
   const t = createTranslator(locale);
   const name = `q.${question.id}`;
@@ -35,7 +38,13 @@ function Answer({
       <div className="choices" role="radiogroup" aria-label={question.prompt}>
         {choices.map(([value, label]) => (
           <label key={value} className="checkbox">
-            <input type="radio" name={name} value={value} /> {label}
+            <input
+              type="radio"
+              name={name}
+              value={value}
+              defaultChecked={sent.text(name) === value}
+            />{' '}
+            {label}
           </label>
         ))}
       </div>
@@ -47,7 +56,11 @@ function Answer({
         {question.lefts.map((left) => (
           <div key={left} className="field">
             <label htmlFor={`${question.id}-${left}`}>{left}</label>
-            <select id={`${question.id}-${left}`} name={`m.${question.id}.${left}`} defaultValue="">
+            <select
+              id={`${question.id}-${left}`}
+              name={`m.${question.id}.${left}`}
+              defaultValue={sent.text(`m.${question.id}.${left}`, '')}
+            >
               <option value="">{t('student.choose')}</option>
               {question.rights.map((right) => (
                 <option key={right} value={right}>
@@ -62,9 +75,19 @@ function Answer({
   }
   const long = question.type === 'essay' || question.type === 'short_answer';
   return long ? (
-    <textarea name={name} rows={question.type === 'essay' ? 8 : 3} aria-label={question.prompt} />
+    <textarea
+      name={name}
+      rows={question.type === 'essay' ? 8 : 3}
+      aria-label={question.prompt}
+      defaultValue={sent.text(name)}
+    />
   ) : (
-    <input name={name} aria-label={question.prompt} autoComplete="off" />
+    <input
+      name={name}
+      aria-label={question.prompt}
+      autoComplete="off"
+      defaultValue={sent.text(name)}
+    />
   );
 }
 
@@ -88,8 +111,9 @@ export function StudentAnswerForm(props: {
       </p>
     );
   }
+  const sent = prefill(state.values);
   return (
-    <form action={action} className="stack" aria-label={t('student.submit')}>
+    <form action={action} className="stack" aria-label={t('student.submit')} key={sent.key}>
       <Hidden
         values={{
           locale: props.locale,
@@ -112,7 +136,7 @@ export function StudentAnswerForm(props: {
                 {t('student.questionPoints', { points: question.points })}
               </span>
             </p>
-            <Answer locale={props.locale} question={question} />
+            <Answer locale={props.locale} question={question} sent={sent} />
           </li>
         ))}
       </ol>

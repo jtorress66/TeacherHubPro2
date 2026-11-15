@@ -6,6 +6,7 @@ import { createTranslator, type Locale } from '@thp/i18n';
 import { startLiveSessionAction, type LiveFormState } from '../../app/_lib/live-actions.ts';
 import { Field, FormAlert, Submit } from '../forms.tsx';
 import { Hidden, Select, type Option } from '../form-fields.tsx';
+import { prefill } from '../../server/form-values.ts';
 
 const initial: LiveFormState = {};
 
@@ -19,8 +20,15 @@ export function StartLiveForm(props: {
   const t = createTranslator(props.locale);
   const [state, action] = useActionState(startLiveSessionAction, initial);
   const errors = state.errors;
+  const sent = prefill(state.values);
   return (
-    <form action={action} className="stack" noValidate aria-label={t('live.startTitle')}>
+    <form
+      action={action}
+      className="stack"
+      noValidate
+      aria-label={t('live.startTitle')}
+      key={sent.key}
+    >
       <Hidden values={{ locale: props.locale }} />
       <FormAlert message={errors?.form ?? errors?.mode ?? errors?.kind} />
       <div className="field-row">
@@ -29,21 +37,26 @@ export function StartLiveForm(props: {
           name="gameId"
           label={t('live.game')}
           options={props.games}
-          defaultValue={props.gameId ?? props.games[0]?.id}
+          defaultValue={sent.text('gameId', props.gameId ?? props.games[0]?.id)}
         />
         <Select
           id="live-class"
           name="classId"
           label={t('live.class')}
           options={props.classes}
-          defaultValue={props.classes[0]?.id}
+          defaultValue={sent.text('classId', props.classes[0]?.id)}
         />
       </div>
       <fieldset className="checks">
         <legend>{t('live.kind')}</legend>
         {(['live', 'self_paced'] as const).map((kind) => (
           <label key={kind} className="checkbox">
-            <input type="radio" name="kind" value={kind} defaultChecked={kind === 'live'} />{' '}
+            <input
+              type="radio"
+              name="kind"
+              value={kind}
+              defaultChecked={sent.text('kind', 'live') === kind}
+            />{' '}
             {t(`live.kind_${kind}`)}
           </label>
         ))}
@@ -53,8 +66,9 @@ export function StartLiveForm(props: {
         name="questionSeconds"
         type="number"
         min={questionSecondsRange.min}
+        max={questionSecondsRange.max}
         label={t('live.seconds')}
-        defaultValue={questionSecondsRange.default}
+        defaultValue={sent.text('questionSeconds', questionSecondsRange.default)}
         error={errors?.questionSeconds}
       />
       <Submit label={t('live.start')} />

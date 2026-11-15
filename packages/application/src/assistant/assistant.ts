@@ -17,6 +17,7 @@ import type {
   Clock,
   ContentWriter,
   IdGenerator,
+  JobProgressReporter,
   JobQueue,
   SubscriptionRepository,
 } from '@thp/ports';
@@ -72,13 +73,16 @@ export class GenerationHandler implements JobHandler {
       readonly generations: AiGenerationRepository;
       readonly ids: IdGenerator;
       readonly clock: Clock;
+      readonly jobs: JobProgressReporter;
     },
   ) {}
 
   async handle(job: Job): Promise<Result<GenerationJobResult, { readonly code: JobFailure }>> {
     const request = createContentRequest(job.payload as ContentRequestInput);
     if (!request.ok) return err({ code: 'failed' });
-    const content = await this.deps.writer.write(request.value);
+    const content = await this.deps.writer.write(request.value, (progress) =>
+      this.deps.jobs.reportProgress(job.id, progress),
+    );
     if (!content.ok) return content;
     const generation = createGeneration({
       id: this.deps.ids.next() as GenerationId,

@@ -9,6 +9,7 @@ import {
 } from '../../app/_lib/learning-actions.ts';
 import { Field, FormAlert, Submit } from '../forms.tsx';
 import { EslSwitch, Hidden, Select, type Option } from '../form-fields.tsx';
+import { prefill } from '../../server/form-values.ts';
 
 const initial: LearningFormState = {};
 const option = (id: string, name: string): Option => ({ id, name });
@@ -24,24 +25,31 @@ export function DraftPathForm(props: {
   const [state, action] = useActionState(requestLearningPathsAction, initial);
   const errors = state.errors;
   const grade = gradeLevels.find((g) => g === props.grade) ?? '4';
+  const sent = prefill(state.values);
   return (
-    <form action={action} className="stack" noValidate aria-label={t('learning.draftTitle')}>
+    <form
+      action={action}
+      className="stack"
+      noValidate
+      aria-label={t('learning.draftTitle')}
+      key={sent.key}
+    >
       <Hidden values={{ locale: props.locale, classId: props.classId }} />
-      <FormAlert message={errors?.form ?? errors?.studentId ?? errors?.lessonCount} />
+      <FormAlert message={errors?.form ?? errors?.studentId} />
       <div className="field-row">
         <Select
           id="learning-student"
           name="studentId"
           label={t('learning.student')}
           options={[option('', t('learning.wholeClass')), ...props.students]}
-          defaultValue=""
+          defaultValue={sent.text('studentId', '')}
         />
         <Select
           id="learning-subject"
           name="subject"
           label={t('learning.subject')}
           options={assistantSubjects.map((s) => option(s, t(`assistant.subject_${s}`)))}
-          defaultValue="math"
+          defaultValue={sent.text('subject', 'math')}
           error={errors?.subject}
         />
         <Select
@@ -49,7 +57,7 @@ export function DraftPathForm(props: {
           name="grade"
           label={t('learning.grade')}
           options={gradeLevels.map((g) => option(g, g === 'K' ? t('drafts.grade_K') : g))}
-          defaultValue={grade}
+          defaultValue={sent.text('grade', grade)}
           error={errors?.grade}
         />
       </div>
@@ -58,6 +66,7 @@ export function DraftPathForm(props: {
         name="topic"
         label={t('learning.topic')}
         hint={t('learning.topicHint')}
+        defaultValue={sent.text('topic')}
         error={errors?.topic}
       />
       <div className="field-row">
@@ -66,18 +75,24 @@ export function DraftPathForm(props: {
           name="lessonCount"
           type="number"
           min={lessonCountRange.min}
+          max={lessonCountRange.max}
           label={t('learning.lessonCount')}
-          defaultValue={lessonCountRange.default}
+          defaultValue={sent.text('lessonCount', lessonCountRange.default)}
+          error={errors?.lessonCount}
         />
         <Select
           id="learning-language"
           name="language"
           label={t('learning.language')}
           options={locales.map((l) => option(l, localeInfo[l].nativeName))}
-          defaultValue={props.locale}
+          defaultValue={sent.text('language', props.locale)}
         />
       </div>
-      <EslSwitch label={t('esl.label')} help={t('esl.learningHelp')} />
+      <EslSwitch
+        label={t('esl.label')}
+        help={t('esl.learningHelp')}
+        defaultChecked={sent.checked('esl')}
+      />
       <Submit label={t('learning.draft')} />
     </form>
   );

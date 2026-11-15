@@ -1,6 +1,13 @@
 import { isLanguage, type Language } from '../shared/language.ts';
 import { ok, type Result } from '../shared/result.ts';
-import { invalid, optionalText, requiredText, type ValidationError } from '../shared/validation.ts';
+import {
+  invalid,
+  isWholeNumberIn,
+  optionalText,
+  outOfRange,
+  requiredText,
+  type ValidationError,
+} from '../shared/validation.ts';
 import {
   isGradeLevel,
   standardSubjects,
@@ -38,7 +45,9 @@ const typeOptions: Readonly<Record<ContentType, { duration: boolean; questions: 
   worksheet: { duration: false, questions: false },
 };
 
-export const questionCountRange = { min: 1, max: 30, default: 10 } as const;
+export const questionCountRange = { min: 1, max: 100, default: 10 } as const;
+/** A quiz with more questions than this is written in parts of this many questions. */
+export const questionPartSize = 25;
 export const contentMinutesRange = { min: 10, max: 180, default: 45 } as const;
 
 /** What a teacher asks the assistant for. It holds no class or student data. */
@@ -92,9 +101,7 @@ function option(
 ): Result<number | null, ValidationError> {
   if (!used) return ok(null);
   const chosen = value ?? range.default;
-  return Number.isInteger(chosen) && chosen >= range.min && chosen <= range.max
-    ? ok(chosen)
-    : invalid(field, 'out_of_range');
+  return isWholeNumberIn(chosen, range) ? ok(chosen) : outOfRange(field, range);
 }
 
 export function createContentRequest(

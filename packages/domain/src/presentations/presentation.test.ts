@@ -204,8 +204,6 @@ describe('createPresentationRequest', () => {
   });
 
   it.each([
-    [{ slideCount: 2 }, 'slideCount', 'out_of_range'],
-    [{ slideCount: 13 }, 'slideCount', 'out_of_range'],
     [{ topic: '' }, 'topic', 'required'],
     [{ subject: 'astrology' }, 'subject', 'not_allowed'],
     [{ grade: 'X' }, 'grade', 'not_allowed'],
@@ -221,5 +219,20 @@ describe('createPresentationRequest', () => {
         ...overrides,
       }),
     ).toEqual({ ok: false, error: { field, code } });
+  });
+
+  it.each([2, 13, 4.5])('refuses %s slides and names the number allowed', (slideCount) => {
+    expect(
+      createPresentationRequest({
+        topic: 'Volcanoes',
+        subject: 'science',
+        grade: '5',
+        language: 'es',
+        slideCount,
+      }),
+    ).toEqual({
+      ok: false,
+      error: { field: 'slideCount', code: 'out_of_range', range: { min: 3, max: 12 } },
+    });
   });
 });

@@ -10,10 +10,13 @@ import {
   attendanceErrorMessage,
   attendanceFieldMessages,
 } from '../../server/attendance-messages.ts';
+import { submittedValues, type SubmittedValues } from '../../server/form-values.ts';
 import { requireUser } from './auth.ts';
 
 export interface AttendanceFormState {
   readonly errors?: Readonly<Record<string, string>>;
+  /** What the teacher sent, when it was refused, so the sheet shows it again. */
+  readonly values?: SubmittedValues;
   readonly done?: 'saved' | 'submitted';
 }
 
@@ -42,13 +45,23 @@ export async function saveAttendanceAction(
   data: FormData,
 ): Promise<AttendanceFormState> {
   const form = parseAttendanceForm(data);
-  if (!form.ok) return { errors: attendanceFieldMessages(form.error, localeOf(data)) };
+  if (!form.ok) {
+    return {
+      errors: attendanceFieldMessages(form.error, localeOf(data)),
+      values: submittedValues(data),
+    };
+  }
   const { locale, classId, date, intent, marks } = form.value;
   const { user } = await requireUser(locale);
   const app = getAppContainer();
   const useCase = intent === 'submit' ? app.submitAttendance : app.saveAttendance;
   const result = await useCase.execute({ actor: user, classId: classId as ClassId, date, marks });
-  if (!result.ok) return { errors: { form: attendanceErrorMessage(result.error, locale) } };
+  if (!result.ok) {
+    return {
+      errors: { form: attendanceErrorMessage(result.error, locale) },
+      values: submittedValues(data),
+    };
+  }
   refresh(locale, classId);
   return { done: intent === 'submit' ? 'submitted' : 'saved' };
 }

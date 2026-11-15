@@ -1,4 +1,11 @@
-import { isFinished, type Job, type JobId, type SchoolId, type UserId } from '@thp/domain';
+import {
+  isFinished,
+  type Job,
+  type JobId,
+  type JobProgress,
+  type SchoolId,
+  type UserId,
+} from '@thp/domain';
 import type { Clock, IdGenerator, JobQueue, NewJob } from '@thp/ports';
 
 export class InMemoryJobQueue implements JobQueue {
@@ -20,6 +27,7 @@ export class InMemoryJobQueue implements JobQueue {
       createdAt: this.clock.now(),
       startedAt: null,
       finishedAt: null,
+      progress: null,
     };
     this.jobs.push(queued);
     return Promise.resolve(queued);
@@ -44,6 +52,12 @@ export class InMemoryJobQueue implements JobQueue {
 
   fail(id: JobId, error: string): Promise<void> {
     this.update(id, { status: 'failed', error, finishedAt: this.clock.now() });
+    return Promise.resolve();
+  }
+
+  reportProgress(id: JobId, progress: JobProgress): Promise<void> {
+    const job = this.jobs.find((j) => j.id === id);
+    if (job?.status === 'running') this.update(id, { progress });
     return Promise.resolve();
   }
 

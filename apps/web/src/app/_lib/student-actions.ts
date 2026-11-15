@@ -3,13 +3,16 @@
 import { revalidatePath } from 'next/cache';
 import type { AssignmentId } from '@thp/domain';
 import { isLocale, type Locale } from '@thp/i18n';
+import type { SubmittedValues } from '../../server/form-values.ts';
 import { getAppContainer } from '../../container.ts';
 import { parseAnswersForm } from '../../server/assignment-forms.ts';
-import { formErrors } from '../../server/error-messages.ts';
+import { rejectedForm } from '../../server/error-messages.ts';
 import { throttle } from './limits.ts';
 import { passFor } from './lti-pass.ts';
 
 export interface StudentFormState {
+  /** What the teacher sent, when it was refused, so the form shows it again. */
+  readonly values?: SubmittedValues;
   readonly errors?: Readonly<Record<string, string>>;
   readonly submitted?: boolean;
 }
@@ -32,13 +35,13 @@ export async function submitAnswersAction(
   const token = text(data, 'token');
   const assignmentId = text(data, 'assignmentId');
   const limited = await throttle([['linkSubmit', token]]);
-  if (limited !== null) return { errors: formErrors(limited, locale) };
+  if (limited !== null) return rejectedForm(limited, locale, data);
   const submitted = await getAppContainer().submitAnswers.execute({
     token,
     assignmentId: assignmentId as AssignmentId,
     answers: parseAnswersForm(data),
   });
-  if (!submitted.ok) return { errors: formErrors(submitted.error, locale) };
+  if (!submitted.ok) return rejectedForm(submitted.error, locale, data);
   revalidatePath(`/${locale}/s/${token}`, 'layout');
   return { submitted: true };
 }
@@ -56,13 +59,13 @@ export async function submitPassAnswersAction(
   const assignmentId = text(data, 'assignmentId') as AssignmentId;
   const pass = await passFor({ kind: 'assignment', id: assignmentId });
   const limited = await throttle([['linkSubmit', pass === '' ? null : pass]]);
-  if (limited !== null) return { errors: formErrors(limited, locale) };
+  if (limited !== null) return rejectedForm(limited, locale, data);
   const submitted = await getAppContainer().submitAnswers.execute({
     pass,
     assignmentId,
     answers: parseAnswersForm(data),
   });
-  if (!submitted.ok) return { errors: formErrors(submitted.error, locale) };
+  if (!submitted.ok) return rejectedForm(submitted.error, locale, data);
   revalidatePath(`/${locale}/lti/assignments/${assignmentId}`);
   return { submitted: true };
 }

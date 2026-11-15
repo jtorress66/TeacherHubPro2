@@ -180,15 +180,20 @@ describe('AI draft requests', () => {
     [{ grade: '13' }, 'grade', 'not_allowed'],
     [{ topic: ' ' }, 'topic', 'required'],
     [{ difficulty: 'extreme' }, 'difficulty', 'not_allowed'],
-    [{ durationMinutes: 10 }, 'durationMinutes', 'out_of_range'],
-    [{ durationMinutes: 241 }, 'durationMinutes', 'out_of_range'],
-    [{ durationMinutes: 45.5 }, 'durationMinutes', 'out_of_range'],
     [{ language: 'ru' }, 'language', 'not_allowed'],
     [{ instructions: 'x'.repeat(1001) }, 'instructions', 'too_long'],
     [{ start: 'next week' }, 'start', 'invalid_format'],
     [{ start: '2026-09-08' }, 'start', 'not_allowed'],
   ])('refuses %o', (change, field, code) => {
     expect(errorOf(createDraftRequest({ ...request, ...change }))).toEqual({ field, code });
+  });
+
+  it.each([10, 241, 45.5])('refuses a %s-minute class and names the minutes allowed', (minutes) => {
+    expect(errorOf(createDraftRequest({ ...request, durationMinutes: minutes }))).toEqual({
+      field: 'durationMinutes',
+      code: 'out_of_range',
+      range: { min: 15, max: 240 },
+    });
   });
 
   it('turns a weekly draft into week 1 of a new plan', () => {

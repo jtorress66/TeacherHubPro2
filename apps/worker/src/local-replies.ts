@@ -23,10 +23,12 @@ const promptOf = (request: LlmRequest) => request.messages[0]?.content ?? '';
 
 function contentReply(request: LlmRequest): string {
   const prompt = promptOf(request);
+  const part = /questions (\d+) to (\d+) and their answer key/.exec(prompt);
+  if (part !== null) return quizPartReply(Number(part[1]), Number(part[2]));
   const count = Number(/exactly (\d+) questions/.exec(prompt)?.[1] ?? 0);
   const questions = Array.from(
     { length: count },
-    (_, i) => `${String(i + 1)}. Question ___?\n\na) Yes\nb) No\n`,
+    (_, i) => `${String(i + 1)}. Question ${String(i + 1)} ___?\n\na) Yes\nb) No\n`,
   );
   return [
     '# Local draft',
@@ -43,6 +45,21 @@ function contentReply(request: LlmRequest): string {
     '## Answer key',
     '',
     '1. True',
+  ].join('\n');
+}
+
+/** One part of a long quiz: questions from–to, then their answers with the same numbers. */
+function quizPartReply(from: number, to: number): string {
+  const numbers = Array.from({ length: to - from + 1 }, (_, i) => from + i);
+  return [
+    '# Local draft',
+    '',
+    '## Questions',
+    '',
+    ...numbers.map((n) => `${String(n)}. Question ${String(n)} ___?\n\na) Yes\nb) No\n`),
+    '## Answer key',
+    '',
+    ...numbers.map((n) => `${String(n)}. a) Yes`),
   ].join('\n');
 }
 

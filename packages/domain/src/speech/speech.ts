@@ -1,11 +1,11 @@
 import { isLanguage, type Language } from '../shared/language.ts';
 import { ok, type Result } from '../shared/result.ts';
 import { invalid, type ValidationError } from '../shared/validation.ts';
-import { maxGenerationLength } from '../assistant/generation.ts';
 
 /** Text-to-speech services take a few thousand characters per call. */
 export const maxSpeechPartLength = 4000;
-export const maxSpeechTextLength = maxGenerationLength;
+/** The most read aloud at once; kept apart from draft length so voice costs do not grow. */
+export const maxSpeechTextLength = 40_000;
 
 /** Text to read aloud, already split into parts the voice service accepts. */
 export interface SpeechRequest {

@@ -4,12 +4,15 @@ import type { DraftError, LlmClient, LlmRequest, LlmResponse } from '@thp/ports'
 /** Keeps the model's last reply, so a scorecard can see what the agent cleaned up or refused. */
 export class Recording implements LlmClient {
   lastReply: LlmResponse = { text: '', stopReason: 'end' };
+  /** Every reply's text, in order: an agent may ask several times (a long quiz in parts). */
+  readonly replies: string[] = [];
 
   constructor(private readonly inner: LlmClient) {}
 
   async complete(request: LlmRequest) {
     const reply = await this.inner.complete(request);
     this.lastReply = reply.ok ? reply.value : { text: '', stopReason: 'end' };
+    this.replies.push(this.lastReply.text);
     return reply;
   }
 }

@@ -78,7 +78,19 @@ describe('the local stand-in replies', () => {
     const questions = content.split('## Answer key')[0]?.match(/^\d+\. /gm) ?? [];
     expect(questions).toHaveLength(4);
     // Like a real quiz, answer choices come between the numbered questions.
-    expect(content).toContain('2. Question ___?\n\na) Yes\nb) No');
+    expect(content).toContain('2. Question 2 ___?\n\na) Yes\nb) No');
+  });
+
+  it('writes a long quiz in parts, numbered 1 to the last with one answer key', async () => {
+    const content = unwrap(
+      await new ContentWriter(local()).write(aContentRequest({ type: 'quiz', questionCount: 60 })),
+    );
+    const [questions = '', answers = ''] = content.split('## Answer key');
+    expect(questions.match(/^\d+\. /gm)).toHaveLength(60);
+    expect(answers.match(/^\d+\. /gm)?.map((line) => Number.parseInt(line, 10))).toEqual(
+      Array.from({ length: 60 }, (_, i) => i + 1),
+    );
+    expect(content.match(/^## Answer key/gm)).toHaveLength(1);
   });
 
   it('drafts the number of slides asked for, starting with a title slide', async () => {

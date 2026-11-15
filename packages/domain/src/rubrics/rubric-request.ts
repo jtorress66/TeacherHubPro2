@@ -2,7 +2,14 @@ import { assistantSubjects, type AssistantSubject } from '../assistant/content-r
 import { maxInstructionsLength } from '../lesson-plans/plan-draft.ts';
 import { isLanguage, type Language } from '../shared/language.ts';
 import { ok, type Result } from '../shared/result.ts';
-import { invalid, optionalText, requiredText, type ValidationError } from '../shared/validation.ts';
+import {
+  invalid,
+  isWholeNumberIn,
+  optionalText,
+  outOfRange,
+  requiredText,
+  type ValidationError,
+} from '../shared/validation.ts';
 import { isGradeLevel, type GradeLevel } from '../standards/common-core.ts';
 import {
   maxRubricTitleLength,
@@ -51,9 +58,7 @@ function count(
   range: { min: number; max: number; default: number },
 ): Result<number, ValidationError> {
   const chosen = value ?? range.default;
-  return Number.isInteger(chosen) && chosen >= range.min && chosen <= range.max
-    ? ok(chosen)
-    : invalid(field, 'out_of_range');
+  return isWholeNumberIn(chosen, range) ? ok(chosen) : outOfRange(field, range);
 }
 
 export function createRubricRequest(
