@@ -2,13 +2,15 @@ import {
   createLtiPlatform,
   err,
   ok,
+  type AuditAction,
+  type AuditEventId,
   type LtiPlatform,
   type LtiPlatformId,
   type Result,
   type SchoolId,
   type User,
 } from '@thp/domain';
-import type { Clock, IdGenerator, LtiPlatformRepository } from '@thp/ports';
+import type { AuditLog, Clock, IdGenerator, LtiPlatformRepository } from '@thp/ports';
 import { adminSchool } from '../admin/admin-access.ts';
 import { fail, type UseCaseError } from '../errors.ts';
 
@@ -24,18 +26,40 @@ export interface LtiPlatformDetails {
   readonly jwksUrl: string;
 }
 
-interface RegisterDeps {
+interface ChangeDeps {
   readonly ltiPlatforms: LtiPlatformRepository;
+  readonly auditLog: AuditLog;
   readonly ids: IdGenerator;
   readonly clock: Clock;
 }
 
+/** A line in the school's activity log: who added or removed which course system, and when. */
+async function logChange(
+  deps: ChangeDeps,
+  actor: User,
+  action: AuditAction,
+  platform: LtiPlatform,
+): Promise<void> {
+  await deps.auditLog.record({
+    id: deps.ids.next() as AuditEventId,
+    schoolId: platform.schoolId,
+    actorId: actor.id,
+    action,
+    targetId: platform.id,
+    at: deps.clock.now(),
+    review: null,
+    count: null,
+    classId: null,
+  });
+}
+
 /**
  * Registers a course system for the admin's school (any school for a super admin). An issuer and
- * client ID pair belongs to one school only, so a launch always knows its school.
+ * client ID pair belongs to one school only, so a launch always knows its school. The school's
+ * activity log notes it.
  */
 export class RegisterLtiPlatform {
-  constructor(private readonly deps: RegisterDeps) {}
+  constructor(private readonly deps: ChangeDeps) {}
 
   async execute(input: {
     readonly actor: User;
@@ -56,6 +80,7 @@ export class RegisterLtiPlatform {
     );
     if (taken.length > 0) return err({ field: 'clientId', code: 'duplicate' });
     await this.deps.ltiPlatforms.save(platform.value);
+    await logChange(this.deps, input.actor, 'lti_platform_added', platform.value);
     return ok(platform.value);
   }
 }
@@ -74,9 +99,12 @@ export class ListLtiPlatforms {
   }
 }
 
-/** Removes a course system: its launches stop working and its account links are forgotten. */
+/**
+ * Removes a course system: its launches stop working and its account links, courses and
+ * placements are forgotten. The school's activity log notes it.
+ */
 export class RemoveLtiPlatform {
-  constructor(private readonly deps: { readonly ltiPlatforms: LtiPlatformRepository }) {}
+  constructor(private readonly deps: ChangeDeps) {}
 
   async execute(input: {
     readonly actor: User;
@@ -88,6 +116,7 @@ export class RemoveLtiPlatform {
     const platform = await this.deps.ltiPlatforms.findById(school.value, input.platformId);
     if (platform === null) return fail('not_found');
     await this.deps.ltiPlatforms.delete(school.value, platform.id);
+    await logChange(this.deps, input.actor, 'lti_platform_removed', platform);
     return ok(true);
   }
 }

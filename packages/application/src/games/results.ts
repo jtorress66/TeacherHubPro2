@@ -25,7 +25,7 @@ import type {
   GradeRepository,
   StudentRepository,
 } from '@thp/ports';
-import type { LinkDeps } from '../assignments/student-portal.ts';
+import type { LinkDeps, StudentKey } from '../assignments/student-portal.ts';
 import { fail, type UseCaseError } from '../errors.ts';
 import { findEditableClass } from '../gradebook/gradebook-access.ts';
 import { recordApproval, type ApprovalLogDeps } from '../security/approvals.ts';
@@ -65,11 +65,10 @@ export class GetGameLeaderboard {
     },
   ) {}
 
-  async execute(input: {
-    readonly token: string;
-    readonly gameId: GameId;
-  }): Promise<Result<readonly StudentLeaderboardRow[], UseCaseError>> {
-    const found = await linkGame(this.deps, input.token, input.gameId);
+  async execute(
+    input: StudentKey & { readonly gameId: GameId },
+  ): Promise<Result<readonly StudentLeaderboardRow[], UseCaseError>> {
+    const found = await linkGame(this.deps, input, input.gameId);
     if (!found.ok) return found;
     const { holder, game } = found.value;
     const { plays, roster } = await rosterPlays(this.deps, game);

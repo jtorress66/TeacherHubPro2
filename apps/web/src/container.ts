@@ -50,6 +50,7 @@ import {
   HttpLtiMembershipsClient,
   JoseLtiTokenVerifier,
   LocalLtiPlatform,
+  localLtiSealKey,
   PostgresToolKeyStore,
   remoteKeySet,
 } from '@thp/adapters';
@@ -140,6 +141,8 @@ import {
   ImportLtiRoster,
   ListPlaceableContent,
   PlaceLtiContent,
+  ListLtiGradeTargets,
+  StartLtiGradeSend,
   StartCanvaConnect,
   FinishCanvaConnect,
   DisconnectCanva,
@@ -367,6 +370,9 @@ export interface LtiFeature {
   /** Deep Linking: what a teacher may add to a course, and adding it. */
   readonly listPlaceable: ListPlaceableContent;
   readonly place: PlaceLtiContent;
+  /** Grades: the courses an assignment can send its grades to, and starting a send (a job). */
+  readonly gradeTargets: ListLtiGradeTargets;
+  readonly sendGrades: StartLtiGradeSend;
   /** TeacherHubPro's public signing keys, for course systems. */
   readonly toolKeys: ToolKeyStore;
   /** The pretend course system (LTI_PROVIDER=local only); null otherwise. */
@@ -745,11 +751,10 @@ function ltiFor(config: LtiConfig, appUrl: string) {
       jwksUrl: `${appUrl}/api/test-lms/jwks`,
       tokenUrl: `${appUrl}/api/test-lms/token`,
       membershipsUrl: `${appUrl}/api/test-lms/memberships`,
+      lineItemsUrl: `${appUrl}/api/test-lms/lineitems`,
     });
     return {
-      cipher: new AesGcmCipher(
-        createHash('sha256').update('teacherhubpro-local-lti').digest('base64'),
-      ),
+      cipher: new AesGcmCipher(localLtiSealKey()),
       ltiTokenVerifier: new JoseLtiTokenVerifier(testLms.keyResolver(remoteKeySet)),
       testLms,
     };
@@ -982,6 +987,8 @@ export function createAppContainer(
             importRoster: new ImportLtiRoster(ltiDeps),
             listPlaceable: new ListPlaceableContent(ltiDeps),
             place: new PlaceLtiContent(ltiDeps),
+            gradeTargets: new ListLtiGradeTargets(ltiDeps),
+            sendGrades: new StartLtiGradeSend(ltiDeps),
             toolKeys: ltiDeps.toolKeys,
             testLms: ltiDeps.testLms,
           },

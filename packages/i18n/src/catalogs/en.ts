@@ -270,12 +270,15 @@ export const en = {
     action_game_grades_approved: 'Approved a game’s grades',
     action_prep_approved: 'Approved a weekly prep',
     action_learning_path_assigned: 'Assigned a learning path',
+    action_grades_sent_to_course: 'Sent grades to a course system',
+    action_lti_platform_added: 'Added a course system',
+    action_lti_platform_removed: 'Removed a course system',
     seeApprovals: 'See all approvals',
   },
   approvals: {
     title: 'Approvals',
     intro:
-      'Each time AI work reaches students or families, a teacher approves it first: AI-suggested grades, game grades, weekly prep and learning paths. This page shows who approved what, when and for which class. It never shows student names, grades or messages.',
+      'Each time AI work reaches students or families, a teacher approves it first: AI-suggested grades, game grades, weekly prep and learning paths. Sending confirmed grades to a course system is logged here too. This page shows who approved what, when and for which class. It never shows student names, grades or messages.',
     before: 'Approvals made before this log was added are not listed.',
     ownOnly: 'You see your own approvals. School admins see everyone’s.',
     empty: 'No approvals match these filters.',
@@ -286,6 +289,7 @@ export const en = {
     type_game_grades_approved: 'Game grades',
     type_prep_approved: 'Weekly prep',
     type_learning_path_assigned: 'Learning paths',
+    type_grades_sent_to_course: 'Grades sent to a course',
     fromDate: 'From',
     toDate: 'To',
     teacher: 'Teacher',
@@ -300,6 +304,7 @@ export const en = {
     changed: 'changed by the teacher',
     familyEmails: 'family emails sent: {count}',
     grades: 'grades saved: {count}',
+    gradesSent: 'grades sent: {count}',
     limit: 'Showing the latest {count}. Narrow the dates to see older approvals.',
     item: 'Item',
     week: 'Week of {date}',
@@ -1047,6 +1052,9 @@ export const en = {
     failed_pdf_no_text:
       'This PDF has no text to read (it may be a scan). Try a PDF exported from a document.',
     failed_pdf_unreadable: 'This PDF could not be opened. Check that it is not password-protected.',
+    failed_course_system_refused:
+      'Your course system didn’t let TeacherHubPro send grades to this course. Ask your school’s IT team to turn on Assignment and Grade Services (AGS) for TeacherHubPro.',
+    failed_course_system_unavailable: 'Your course system did not respond. Please try again.',
     tryAgain: 'Try again',
     open: 'Open the draft',
     subject_math: 'Mathematics',
@@ -1599,9 +1607,26 @@ export const en = {
       'This course system belongs to another school, so it can’t be linked to this account. Log in with the account your school uses.',
     problem_failed:
       'Something went wrong while opening TeacherHubPro from your course. Go back and try again. If it keeps happening, ask your school’s IT team to check the TeacherHubPro setup.',
-    studentTitle: 'Not available for students yet',
+    studentTitle: 'Nothing to open here yet',
     studentText:
-      'Students can’t open TeacherHubPro from the course system yet. Your teacher will share your assignments with you.',
+      'Open the assignment or game your teacher added to your course. If you can’t find it, ask your teacher.',
+    askTeacherTitle: 'Ask your teacher',
+    askTeacherText:
+      'Ask your teacher to update the class list in TeacherHubPro. Then open this from your course again.',
+    sendGradesTitle: 'Send grades to your course',
+    sendGradesIntro:
+      'Only grades you confirmed are sent, as scores in the course’s gradebook. Sending again updates them.',
+    sendGrades: 'Send grades to {course}',
+    sendingGrades: 'Sending grades to your course…',
+    gradesSentTitle: 'Grades sent to {course}',
+    gradesSentCount: '{count} sent',
+    gradesNotConfirmed: '{count} not confirmed yet',
+    gradesNotLinked: '{count} not linked to the course',
+    gradesFailed: '{count} not accepted by the course system',
+    gradesNotLinkedHint:
+      'Students who aren’t linked yet join when you import the class list from your course system on the class page.',
+    toolValuesGrades:
+      'So teachers can send confirmed grades to their courses’ gradebooks, also turn on Assignment and Grade Services (AGS) for TeacherHubPro.',
     toolValuesRosters:
       'So teachers can import their class lists, also turn on the course system’s Names and Role Provisioning service (NRPS) for TeacherHubPro.',
     importRoster: 'Import students from your course system',

@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import type { AssignmentId } from '@thp/domain';
 import { createTranslator } from '@thp/i18n';
-import { StudentAnswerForm } from '../../../../../components/student-forms.tsx';
+import { StudentAssignment } from '../../../../../components/student-assignment.tsx';
 import { getAppContainer } from '../../../../../container.ts';
 import { localeFrom, type LocaleParams } from '../../../locale-param.ts';
 
@@ -35,52 +35,18 @@ export default async function StudentAssignmentPage(props: Props) {
       </main>
     );
   }
-  const { assignment, questions, attachments, submission } = found.value;
-  const day = new Intl.DateTimeFormat(locale, { dateStyle: 'medium' });
 
   return (
     <main className="student-page stack">
       <p>
         <Link href={`/${locale}/s/${token}`}>← {t('student.back')}</Link>
       </p>
-      <h1>{assignment.title}</h1>
-      {assignment.instructions === null ? null : <p>{assignment.instructions}</p>}
-      {attachments.length === 0 ? null : (
-        <section className="stack" aria-labelledby="files-heading">
-          <h2 id="files-heading">{t('student.files')}</h2>
-          <ul className="list">
-            {attachments.map((file) => (
-              <li key={file.id}>
-                <a href={`/api/s/${token}/attachments/${file.id}`}>{file.name}</a>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-      {submission === null ? (
-        questions.length === 0 ? null : (
-          <StudentAnswerForm
-            locale={locale}
-            token={token}
-            assignmentId={assignment.id}
-            questions={questions}
-          />
-        )
-      ) : (
-        <div className="stack">
-          <p role="status" className="notice">
-            {t('student.submitted', { date: day.format(submission.submittedAt) })}
-          </p>
-          {submission.late ? <p className="muted">{t('student.late')}</p> : null}
-          {submission.finalScore === null ? null : (
-            <p>
-              <strong>
-                {t('student.grade', { score: submission.finalScore, max: submission.maxPoints })}
-              </strong>
-            </p>
-          )}
-        </div>
-      )}
+      <StudentAssignment
+        locale={locale}
+        view={found.value}
+        token={token}
+        fileHref={(fileId) => `/api/s/${token}/attachments/${fileId}`}
+      />
     </main>
   );
 }

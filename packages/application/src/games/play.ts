@@ -15,7 +15,13 @@ import {
   type RoundView,
 } from '@thp/domain';
 import type { GamePlayRepository, GameRepository, IdGenerator, SeedSource } from '@thp/ports';
-import { openLink, type Holder, type LinkDeps } from '../assignments/student-portal.ts';
+import {
+  mayOpen,
+  openStudent,
+  type Holder,
+  type LinkDeps,
+  type StudentKey,
+} from '../assignments/student-portal.ts';
 import { fail, type UseCaseError } from '../errors.ts';
 import { findOwnGame, type GameRef } from './game-access.ts';
 
@@ -101,16 +107,18 @@ interface StudentGameDeps extends LinkDeps {
   readonly gameModes: GameModeRegistry;
 }
 
-/** A game shared with the link's class; anything else is simply not found. */
+/** A game shared with the student's class (the pass's game, for a pass); else not found. */
 export async function linkGame(
   deps: StudentGameDeps,
-  token: string,
+  key: StudentKey,
   gameId: GameId,
 ): Promise<Result<{ holder: Holder; game: Game }, UseCaseError>> {
-  const holder = await openLink(deps, token);
+  const holder = await openStudent(deps, key);
   if (!holder.ok) return holder;
-  const game = await deps.games.findById(holder.value.link.schoolId, gameId);
-  if (game?.classId !== holder.value.link.classId) return fail('not_found');
+  if (!mayOpen(holder.value, { kind: 'game', id: gameId })) return fail('not_found');
+  const { student } = holder.value;
+  const game = await deps.games.findById(student.schoolId, gameId);
+  if (game?.classId !== student.classId) return fail('not_found');
   return ok({ holder: holder.value, game });
 }
 
@@ -118,12 +126,10 @@ export async function linkGame(
 export class StartGameRound {
   constructor(private readonly deps: StudentGameDeps & { readonly seeds: SeedSource }) {}
 
-  async execute(input: {
-    readonly token: string;
-    readonly gameId: GameId;
-    readonly mode?: string;
-  }): Promise<Result<GameRound, UseCaseError>> {
-    const found = await linkGame(this.deps, input.token, input.gameId);
+  async execute(
+    input: StudentKey & { readonly gameId: GameId; readonly mode?: string },
+  ): Promise<Result<GameRound, UseCaseError>> {
+    const found = await linkGame(this.deps, input, input.gameId);
     if (!found.ok) return found;
     return roundOf(found.value.game, this.deps.gameModes, input.mode, this.deps.seeds.next());
   }
@@ -139,9 +145,9 @@ export class FinishGameRound {
   ) {}
 
   async execute(
-    input: FinishInput & { readonly token: string; readonly durationMs: number },
+    input: FinishInput & StudentKey & { readonly durationMs: number },
   ): Promise<Result<RoundResult, UseCaseError>> {
-    const found = await linkGame(this.deps, input.token, input.gameId);
+    const found = await linkGame(this.deps, input, input.gameId);
     if (!found.ok) return found;
     const { holder, game } = found.value;
     const scored = scoreOf(game, this.deps.gameModes, input);
@@ -150,7 +156,7 @@ export class FinishGameRound {
       id: this.deps.ids.next() as GamePlayId,
       schoolId: game.schoolId,
       gameId: game.id,
-      classId: holder.link.classId,
+      classId: holder.student.classId,
       studentId: holder.student.id,
       mode: scored.value.mode,
       seed: input.seed,

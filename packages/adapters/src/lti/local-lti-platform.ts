@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import {
   createLocalJWKSet,
   exportJWK,
@@ -7,9 +8,10 @@ import {
   type CryptoKey,
   type JWTVerifyGetKey,
 } from 'jose';
-import { ltiClaim, ltiMessageType, ltiRoles } from '@thp/domain';
+import { ltiAgsScope, ltiClaim, ltiMessageType, ltiRoles } from '@thp/domain';
 import type { Clock, PublicJwk } from '@thp/ports';
 import type { KeySetResolver } from './jose-lti-token-verifier.ts';
+import { LocalLtiGradebook } from './local-lti-gradebook.ts';
 
 const kid = 'test-lms';
 const membership = 'http://purl.imsglobal.org/vocab/lis/v2/membership';
@@ -17,6 +19,12 @@ const learnerRole = `${membership}#Learner`;
 const systemClock: Clock = { now: () => new Date() };
 const membershipsScope =
   'https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly';
+/** The scopes its token address grants: the class list, and the gradebook's columns and scores. */
+const grantableScopes: ReadonlySet<string> = new Set([
+  membershipsScope,
+  ltiAgsScope.lineItem,
+  ltiAgsScope.score,
+]);
 /** The audience of the access tokens it grants: its own services. */
 const servicesAudience = 'test-lms-services';
 const course = { id: 'test-course', label: 'TEST', title: 'Test course' } as const;
@@ -95,6 +103,12 @@ export interface LocalPlacedLink {
   readonly custom: Readonly<Record<string, string>>;
 }
 
+/** Every scope asked for is one it grants. */
+function grantable(scope: string): boolean {
+  const scopes = scope.split(' ').filter((item) => item !== '');
+  return scopes.length > 0 && scopes.every((item) => grantableScopes.has(item));
+}
+
 const isRecord = (value: unknown): value is Readonly<Record<string, unknown>> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 
@@ -127,6 +141,10 @@ export class LocalLtiPlatform {
   readonly tokenUrl: string | null;
   /** Its class list address, offered in launches; none without one. */
   readonly membershipsUrl: string | null;
+  /** Its gradebook's line items address, offered in launches; none without one. */
+  readonly lineItemsUrl: string | null;
+  /** The test course's gradebook, kept in memory for as long as the process runs. */
+  readonly gradebook: LocalLtiGradebook | null;
   private readonly clock: Clock;
   private keys: Promise<Keys> | undefined;
 
@@ -135,13 +153,21 @@ export class LocalLtiPlatform {
     readonly jwksUrl: string;
     readonly tokenUrl?: string;
     readonly membershipsUrl?: string;
+    readonly lineItemsUrl?: string;
     readonly clock?: Clock;
   }) {
     this.issuer = config.issuer;
     this.jwksUrl = config.jwksUrl;
     this.tokenUrl = config.tokenUrl ?? null;
     this.membershipsUrl = config.membershipsUrl ?? null;
+    this.lineItemsUrl = config.lineItemsUrl ?? null;
     this.clock = config.clock ?? systemClock;
+    this.gradebook =
+      this.lineItemsUrl === null
+        ? null
+        : new LocalLtiGradebook(this.lineItemsUrl, (authorization, scope) =>
+            this.serviceClient(authorization, scope),
+          );
   }
 
   async publicKeySet(): Promise<{ readonly keys: readonly PublicJwk[] }> {
@@ -204,6 +230,14 @@ export class LocalLtiPlatform {
               service_versions: ['2.0'],
             },
           }),
+      ...(this.lineItemsUrl === null
+        ? {}
+        : {
+            [ltiClaim.gradeService]: {
+              scope: [ltiAgsScope.lineItem, ltiAgsScope.score],
+              lineitems: this.lineItemsUrl,
+            },
+          }),
       ...(launch.locale === undefined
         ? {}
         : { [ltiClaim.launchPresentation]: { locale: launch.locale } }),
@@ -211,9 +245,10 @@ export class LocalLtiPlatform {
   }
 
   /**
-   * Answers a client credentials request for the class list: the tool's client assertion must be
-   * signed by one of the tool's published keys, addressed to this token address, and current.
-   * Returns an access token, or null when refused.
+   * Answers a client credentials request for its services (the class list, the gradebook): the
+   * scopes must all be ones it grants, and the tool's client assertion must be signed by one of the
+   * tool's published keys, addressed to this token address, and current. Returns an access token
+   * for those scopes, or null when refused.
    */
   async grantServiceToken(
     request: ServiceTokenRequest,
@@ -224,7 +259,8 @@ export class LocalLtiPlatform {
       request.grantType !== 'client_credentials' ||
       request.clientAssertionType !== 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer' ||
       request.clientAssertion === null ||
-      !(request.scope ?? '').split(' ').includes(membershipsScope)
+      request.scope === null ||
+      !grantable(request.scope)
     ) {
       return null;
     }
@@ -240,7 +276,7 @@ export class LocalLtiPlatform {
         iss: this.issuer,
         aud: servicesAudience,
         sub: payload.iss,
-        scope: membershipsScope,
+        scope: request.scope,
         iat: seconds,
         exp: seconds + 300,
       });
@@ -251,8 +287,18 @@ export class LocalLtiPlatform {
 
   /** The test course's class list, for a request carrying an access token it granted. */
   async classList(authorization: string | null): Promise<LocalClassList | null> {
+    if (this.membershipsUrl === null) return null;
+    if ((await this.serviceClient(authorization, membershipsScope)) === null) return null;
+    return { id: this.membershipsUrl, context: course, members: classList };
+  }
+
+  /**
+   * The client an access token it granted was for, when the token carries the scope; null for
+   * anything else.
+   */
+  private async serviceClient(authorization: string | null, scope: string): Promise<string | null> {
     const token = /^Bearer (\S+)$/u.exec(authorization ?? '')?.[1];
-    if (token === undefined || this.membershipsUrl === null) return null;
+    if (token === undefined) return null;
     try {
       const { payload } = await jwtVerify(token, await this.ownKeys(), {
         algorithms: ['RS256'],
@@ -260,11 +306,11 @@ export class LocalLtiPlatform {
         audience: servicesAudience,
         currentDate: this.clock.now(),
       });
-      if (payload.scope !== membershipsScope) return null;
+      const scopes = typeof payload.scope === 'string' ? payload.scope.split(' ') : [];
+      return scopes.includes(scope) && typeof payload.sub === 'string' ? payload.sub : null;
     } catch {
       return null;
     }
-    return { id: this.membershipsUrl, context: course, members: classList };
   }
 
   /**
@@ -310,3 +356,10 @@ export class LocalLtiPlatform {
     return this.keys;
   }
 }
+
+/**
+ * The fixed key that seals the tool's signing key with the pretend course system (development and
+ * tests only), shared by the web app and the worker so both sign with the same tool key.
+ */
+export const localLtiSealKey = (): string =>
+  createHash('sha256').update('teacherhubpro-local-lti').digest('base64');

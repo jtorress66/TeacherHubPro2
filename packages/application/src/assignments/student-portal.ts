@@ -11,9 +11,9 @@ import {
   type AssignmentId,
   type AttachmentId,
   type LocalDate,
+  type LtiPlacedItem,
   type Result,
   type Student,
-  type StudentLink,
   type StudentQuestion,
   type SubmissionId,
 } from '@thp/domain';
@@ -29,17 +29,21 @@ import type {
   StudentLinkRepository,
   StudentRepository,
   SubmissionRepository,
+  TicketSigner,
   TokenHasher,
 } from '@thp/ports';
 import { fail, submissionFailure, type UseCaseError } from '../errors.ts';
+import { readStudentPass } from './student-pass.ts';
 
 // The pages a student opens from their personal link. Students have no accounts: the link's
-// token is the key, and everything it opens is limited to that student and their class.
+// token is the key, and everything it opens is limited to that student and their class. A student
+// who opened one item from their course system holds a pass instead, which opens only that item.
 
 export interface LinkDeps {
   readonly studentLinks: StudentLinkRepository;
   readonly tokenHasher: TokenHasher;
   readonly students: StudentRepository;
+  readonly ticketSigner: TicketSigner;
   readonly clock: Clock;
 }
 
@@ -51,10 +55,14 @@ interface PortalDeps extends LinkDeps {
   readonly submissions: SubmissionRepository;
 }
 
+/** The student behind a link or a pass, and the one item a pass opens (null for a link). */
 export interface Holder {
-  readonly link: StudentLink;
   readonly student: Student;
+  readonly only: LtiPlacedItem | null;
 }
+
+/** How a student gets in: their personal link's token, or a pass for one item. */
+export type StudentKey = { readonly token: string } | { readonly pass: string };
 
 /** The student behind a working link; anything else is simply not found. */
 export async function openLink(
@@ -64,8 +72,22 @@ export async function openLink(
   const link = await deps.studentLinks.findByTokenHash(await deps.tokenHasher.hash(token));
   if (link === null || !isUsable(link, deps.clock.now())) return fail('not_found');
   const student = await deps.students.findById(link.schoolId, link.studentId);
-  return student?.classId === link.classId ? ok({ link, student }) : fail('not_found');
+  return student?.classId === link.classId ? ok({ student, only: null }) : fail('not_found');
 }
+
+/** The student behind a working link or pass; anything else is simply not found. */
+export async function openStudent(
+  deps: LinkDeps,
+  key: StudentKey,
+): Promise<Result<Holder, UseCaseError>> {
+  if ('token' in key) return openLink(deps, key.token);
+  const pass = await readStudentPass(deps, key.pass);
+  return pass === null ? fail('not_found') : ok({ student: pass.student, only: pass.item });
+}
+
+/** Whether the holder may open this item: any of their class's with a link, one with a pass. */
+export const mayOpen = (holder: Holder, item: LtiPlacedItem): boolean =>
+  holder.only === null || (holder.only.kind === item.kind && holder.only.id === item.id);
 
 /** Ready for students: it has questions or files to open. */
 export async function isReady(
@@ -81,8 +103,9 @@ async function classAssignment(
   holder: Holder,
   assignmentId: AssignmentId,
 ): Promise<Result<Assignment, UseCaseError>> {
-  const assignment = await deps.assignments.findById(holder.link.schoolId, assignmentId);
-  if (assignment?.classId !== holder.link.classId) return fail('not_found');
+  if (!mayOpen(holder, { kind: 'assignment', id: assignmentId })) return fail('not_found');
+  const assignment = await deps.assignments.findById(holder.student.schoolId, assignmentId);
+  if (assignment?.classId !== holder.student.classId) return fail('not_found');
   return (await isReady(deps, assignment)) ? ok(assignment) : fail('not_found');
 }
 
@@ -117,7 +140,8 @@ export class OpenStudentLink {
   async execute(input: { readonly token: string }): Promise<Result<StudentPortal, UseCaseError>> {
     const holder = await openLink(this.deps, input.token);
     if (!holder.ok) return holder;
-    const { link, student } = holder.value;
+    const { student } = holder.value;
+    const link = { schoolId: student.schoolId, classId: student.classId };
     const cls = await this.deps.classes.findById(link.schoolId, link.classId);
     const school = await this.deps.schools.findById(link.schoolId);
     if (cls === null || school === null) return fail('not_found');
@@ -183,11 +207,10 @@ export interface StudentAssignmentView {
 export class GetStudentAssignment {
   constructor(private readonly deps: PortalDeps) {}
 
-  async execute(input: {
-    readonly token: string;
-    readonly assignmentId: AssignmentId;
-  }): Promise<Result<StudentAssignmentView, UseCaseError>> {
-    const holder = await openLink(this.deps, input.token);
+  async execute(
+    input: StudentKey & { readonly assignmentId: AssignmentId },
+  ): Promise<Result<StudentAssignmentView, UseCaseError>> {
+    const holder = await openStudent(this.deps, input);
     if (!holder.ok) return holder;
     const found = await classAssignment(this.deps, holder.value, input.assignmentId);
     if (!found.ok) return found;
@@ -229,12 +252,13 @@ export class GetStudentAssignment {
 export class SubmitAnswers {
   constructor(private readonly deps: PortalDeps & { readonly ids: IdGenerator }) {}
 
-  async execute(input: {
-    readonly token: string;
-    readonly assignmentId: AssignmentId;
-    readonly answers: Readonly<Record<string, string>>;
-  }): Promise<Result<{ readonly submittedAt: Date; readonly late: boolean }, UseCaseError>> {
-    const holder = await openLink(this.deps, input.token);
+  async execute(
+    input: StudentKey & {
+      readonly assignmentId: AssignmentId;
+      readonly answers: Readonly<Record<string, string>>;
+    },
+  ): Promise<Result<{ readonly submittedAt: Date; readonly late: boolean }, UseCaseError>> {
+    const holder = await openStudent(this.deps, input);
     if (!holder.ok) return holder;
     const found = await classAssignment(this.deps, holder.value, input.assignmentId);
     if (!found.ok) return found;
@@ -262,14 +286,13 @@ export class SubmitAnswers {
 export class GetStudentAttachment {
   constructor(private readonly deps: PortalDeps & { readonly files: FileStore }) {}
 
-  async execute(input: {
-    readonly token: string;
-    readonly attachmentId: AttachmentId;
-  }): Promise<Result<{ name: string; contentType: string; bytes: Uint8Array }, UseCaseError>> {
-    const holder = await openLink(this.deps, input.token);
+  async execute(
+    input: StudentKey & { readonly attachmentId: AttachmentId },
+  ): Promise<Result<{ name: string; contentType: string; bytes: Uint8Array }, UseCaseError>> {
+    const holder = await openStudent(this.deps, input);
     if (!holder.ok) return holder;
     const attachment = await this.deps.attachments.findById(
-      holder.value.link.schoolId,
+      holder.value.student.schoolId,
       input.attachmentId,
     );
     if (attachment === null) return fail('not_found');

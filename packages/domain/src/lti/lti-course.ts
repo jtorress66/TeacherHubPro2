@@ -14,6 +14,10 @@ export interface LtiCourse {
   readonly title: string;
   /** Where its class list can be read; null when the course system did not offer it. */
   readonly membershipsUrl: string | null;
+  /** Where its gradebook's line items are; null when the course system did not offer them. */
+  readonly lineItemsUrl: string | null;
+  /** The gradebook scopes (Assignment and Grade Services) the course system granted. */
+  readonly gradeScopes: readonly string[];
   readonly lastLaunchedAt: Date;
 }
 
@@ -22,7 +26,7 @@ const maxTitleLength = 200;
 /** What a launch says about its course. */
 export type LtiCourseSource = Pick<
   LtiLaunch,
-  'platformId' | 'contextId' | 'contextTitle' | 'membershipsUrl'
+  'platformId' | 'contextId' | 'contextTitle' | 'membershipsUrl' | 'gradeService'
 >;
 
 /** The course a teacher's launch came from; null for a launch outside a course. */
@@ -39,6 +43,8 @@ export function ltiCourseOf(
     contextId: launch.contextId,
     title: (launch.contextTitle ?? launch.contextId).slice(0, maxTitleLength),
     membershipsUrl: launch.membershipsUrl,
+    lineItemsUrl: launch.gradeService?.lineItemsUrl ?? null,
+    gradeScopes: launch.gradeService?.scopes ?? [],
     lastLaunchedAt: now,
   };
 }

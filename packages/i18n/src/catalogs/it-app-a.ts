@@ -276,12 +276,15 @@ export const itAppA = {
     action_game_grades_approved: 'Ha approvato i voti di un gioco',
     action_prep_approved: 'Ha approvato una preparazione settimanale',
     action_learning_path_assigned: 'Ha assegnato un percorso di apprendimento',
+    action_grades_sent_to_course: 'Ha inviato i voti a una piattaforma dei corsi',
+    action_lti_platform_added: 'Ha aggiunto una piattaforma dei corsi',
+    action_lti_platform_removed: 'Ha rimosso una piattaforma dei corsi',
     seeApprovals: 'Vedi tutte le approvazioni',
   },
   approvals: {
     title: 'Approvazioni',
     intro:
-      'Ogni volta che un lavoro dell’IA raggiunge studenti o famiglie, un docente lo approva prima: voti suggeriti dall’IA, voti dei giochi, preparazione settimanale e percorsi di apprendimento. Questa pagina mostra chi ha approvato cosa, quando e per quale classe. Non mostra mai nomi degli studenti, voti o messaggi.',
+      'Ogni volta che un lavoro dell’IA raggiunge studenti o famiglie, un docente lo approva prima: voti suggeriti dall’IA, voti dei giochi, preparazione settimanale e percorsi di apprendimento. Anche l’invio dei voti confermati a una piattaforma di corsi viene registrato qui. Questa pagina mostra chi ha approvato cosa, quando e per quale classe. Non mostra mai nomi degli studenti, voti o messaggi.',
     before: 'Le approvazioni fatte prima dell’introduzione di questo registro non sono elencate.',
     ownOnly: 'Vedi le tue approvazioni. Gli amministratori della scuola vedono quelle di tutti.',
     empty: 'Nessuna approvazione corrisponde a questi filtri.',
@@ -292,6 +295,7 @@ export const itAppA = {
     type_game_grades_approved: 'Voti dei giochi',
     type_prep_approved: 'Preparazione settimanale',
     type_learning_path_assigned: 'Percorsi di apprendimento',
+    type_grades_sent_to_course: 'Voti inviati a un corso',
     fromDate: 'Dal',
     toDate: 'Al',
     teacher: 'Docente',
@@ -306,6 +310,7 @@ export const itAppA = {
     changed: 'modificato dal docente',
     familyEmails: 'email alle famiglie inviate: {count}',
     grades: 'voti salvati: {count}',
+    gradesSent: 'voti inviati: {count}',
     limit:
       'Sono mostrate le {count} più recenti. Restringi le date per vedere approvazioni precedenti.',
     item: 'Elemento',

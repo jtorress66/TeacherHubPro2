@@ -20,6 +20,7 @@ import type {
   ClassRepository,
   Clock,
   GameRepository,
+  LtiPlacementRepository,
   LtiPlatformRepository,
   LtiUserLinkRepository,
   RandomTokenGenerator,
@@ -110,6 +111,7 @@ export function issuePlaceTicket(
       returnUrl,
       acceptMultiple: String(acceptMultiple),
       ...(data === null ? {} : { data }),
+      ...(launch.contextId === null ? {} : { contextId: launch.contextId }),
     },
     new Date(now.getTime() + ltiPlaceTicketLifetimeMs),
   );
@@ -123,6 +125,8 @@ interface PlaceTicket {
   readonly returnUrl: string;
   readonly acceptMultiple: boolean;
   readonly data: string | null;
+  /** The course the items go to; null for a request from outside a course. */
+  readonly contextId: string | null;
 }
 
 function readPlaceTicket(deps: LtiPlaceDeps, ticket: string): PlaceTicket | null {
@@ -146,6 +150,7 @@ function readPlaceTicket(deps: LtiPlaceDeps, ticket: string): PlaceTicket | null
     returnUrl,
     acceptMultiple: payload.acceptMultiple === 'true',
     data: payload.data ?? null,
+    contextId: payload.contextId ?? null,
   };
 }
 
@@ -226,13 +231,14 @@ export class ListPlaceableContent {
 }
 
 /** The signed answer the browser posts back to the course system. */
-export interface LtiPlacement {
+export interface LtiDeepLinkingAnswer {
   readonly returnUrl: string;
   /** The deep linking response, signed with the tool's key. */
   readonly jwt: string;
 }
 
 export type PlaceLtiContentDeps = ListPlaceableContentDeps & {
+  readonly ltiPlacements: LtiPlacementRepository;
   readonly tokens: RandomTokenGenerator;
   readonly toolSigner: ToolJwtSigner;
   readonly appUrl: string;
@@ -242,7 +248,8 @@ const keyOf = (item: LtiPlacedItem) => `${item.kind}:${item.id}`;
 
 /**
  * Answers a deep linking request with the chosen items: at least one, several only when the course
- * system takes several, and each one the picker offered the teacher (ready, and theirs).
+ * system takes several, and each one the picker offered the teacher (ready, and theirs). Each is
+ * remembered in the course, so its students can open it and its grades can go there.
  */
 export class PlaceLtiContent {
   constructor(private readonly deps: PlaceLtiContentDeps) {}
@@ -251,7 +258,7 @@ export class PlaceLtiContent {
     readonly actor: User;
     readonly ticket: string;
     readonly items: readonly LtiPlacedItem[];
-  }): Promise<Result<LtiPlacement, LtiError>> {
+  }): Promise<Result<LtiDeepLinkingAnswer, LtiError>> {
     const { actor } = input;
     const opened = await openPlacement(this.deps, actor, input.ticket);
     if (!opened.ok) return opened;
@@ -271,6 +278,19 @@ export class PlaceLtiContent {
       if (title === undefined) return refuse('not_placeable');
       content.push({ title, item });
     }
+    const now = this.deps.clock.now();
+    if (place.contextId !== null) {
+      for (const { item } of content) {
+        await this.deps.ltiPlacements.save({
+          platformId: platform.id,
+          contextId: place.contextId,
+          item,
+          schoolId: actor.schoolId,
+          teacherId: actor.id,
+          placedAt: now,
+        });
+      }
+    }
     const claims = deepLinkingResponse({
       platform,
       deploymentId: place.deploymentId,
@@ -278,7 +298,7 @@ export class PlaceLtiContent {
       items: content,
       launchUrl: `${this.deps.appUrl}/api/lti/launch`,
       nonce: this.deps.tokens.generate(),
-      now: this.deps.clock.now(),
+      now,
     });
     return ok({ returnUrl: place.returnUrl, jwt: await this.deps.toolSigner.sign(claims) });
   }

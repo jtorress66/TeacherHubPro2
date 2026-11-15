@@ -91,6 +91,10 @@ const resolvers: Readonly<Record<ApprovalAction, ItemResolver>> = {
       ),
     );
   },
+  grades_sent_to_course: async (deps, schoolId, events) => {
+    const assignments = await deps.assignments.findByIds(schoolId, targetIds<AssignmentId>(events));
+    return new Map(assignments.map((a) => [a.id, title(a.title)]));
+  },
   learning_path_assigned: async (deps, schoolId, events) => {
     const paths = await deps.learningPaths.findByIds(schoolId, targetIds<LearningPathId>(events));
     return new Map(paths.map((path) => [path.id, { kind: 'subject', subject: path.subject }]));

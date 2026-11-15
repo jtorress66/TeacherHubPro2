@@ -60,6 +60,9 @@ export const itAppB = {
       'Questo PDF non contiene testo leggibile (potrebbe essere una scansione). Provi con un PDF esportato da un documento.',
     failed_pdf_unreadable:
       'Non è stato possibile aprire questo PDF. Verifichi che non sia protetto da password.',
+    failed_course_system_refused:
+      'La tua piattaforma dei corsi non ha permesso a TeacherHubPro di inviare i voti a questo corso. Chiedi al team informatico della tua scuola di attivare Assignment and Grade Services (AGS) per TeacherHubPro.',
+    failed_course_system_unavailable: 'La tua piattaforma dei corsi non ha risposto. Riprova.',
     tryAgain: 'Riprova',
     open: 'Apri la bozza',
     subject_math: 'Matematica',
@@ -622,9 +625,26 @@ export const itAppB = {
       'Questa piattaforma dei corsi appartiene a un’altra scuola, quindi non può essere collegata a questo account. Accedi con l’account che usa la tua scuola.',
     problem_failed:
       'Qualcosa è andato storto durante l’apertura di TeacherHubPro dal tuo corso. Torna indietro e riprova. Se continua a succedere, chiedi al team IT della tua scuola di controllare la configurazione di TeacherHubPro.',
-    studentTitle: 'Non ancora disponibile per gli studenti',
+    studentTitle: 'Qui non c’è ancora niente da aprire',
     studentText:
-      'Gli studenti non possono ancora aprire TeacherHubPro dalla piattaforma dei corsi. Il tuo docente condividerà i compiti con te.',
+      'Apri il compito o il gioco che il tuo insegnante ha aggiunto al tuo corso. Se non lo trovi, chiedi al tuo insegnante.',
+    askTeacherTitle: 'Chiedi al tuo insegnante',
+    askTeacherText:
+      'Chiedi al tuo insegnante di aggiornare l’elenco della classe in TeacherHubPro. Poi apri di nuovo questo dal tuo corso.',
+    sendGradesTitle: 'Invia i voti al tuo corso',
+    sendGradesIntro:
+      'Vengono inviati solo i voti che hai confermato, come punteggi nel registro dei voti del corso. Inviandoli di nuovo si aggiornano.',
+    sendGrades: 'Invia i voti a {course}',
+    sendingGrades: 'Invio dei voti al tuo corso…',
+    gradesSentTitle: 'Voti inviati a {course}',
+    gradesSentCount: 'Inviati: {count}',
+    gradesNotConfirmed: 'Non ancora confermati: {count}',
+    gradesNotLinked: 'Non collegati al corso: {count}',
+    gradesFailed: 'Non accettati dalla piattaforma dei corsi: {count}',
+    gradesNotLinkedHint:
+      'Gli studenti non ancora collegati si aggiungono quando importi l’elenco della classe dalla tua piattaforma dei corsi, nella pagina della classe.',
+    toolValuesGrades:
+      'Perché gli insegnanti possano inviare i voti confermati al registro dei voti dei loro corsi, attiva anche Assignment and Grade Services (AGS) per TeacherHubPro.',
     toolValuesRosters:
       'Perché i docenti possano importare i loro elenchi di classe, attiva anche il servizio Names and Role Provisioning (NRPS) della piattaforma per TeacherHubPro.',
     importRoster: 'Importa gli studenti dalla tua piattaforma dei corsi',

@@ -8,6 +8,7 @@ import {
   type LtiDeepLinkingSettings,
   type LtiPlacedItem,
 } from './lti-deep-linking.ts';
+import { gradeServiceOf, type LtiGradeService } from './lti-grades.ts';
 import { isSecureAddress, type LtiPlatform } from './lti-platform.ts';
 
 const lis = 'http://purl.imsglobal.org/vocab/lis/v2';
@@ -45,6 +46,8 @@ export interface LtiLaunch {
   readonly locale: string | null;
   /** Where the course's class list can be read (Names and Role Provisioning), when offered. */
   readonly membershipsUrl: string | null;
+  /** The course's gradebook (Assignment and Grade Services), when offered. */
+  readonly gradeService: LtiGradeService | null;
   /** The assignment or game a placed link opens, when the launched link is one. */
   readonly placedItem: LtiPlacedItem | null;
   /** What a deep linking request asks for; null for a resource link launch. */
@@ -183,6 +186,7 @@ export function checkLaunch(
     givenName: text(claims.given_name),
     locale: field(claims[ltiClaim.launchPresentation], 'locale'),
     membershipsUrl: membershipsUrlOf(claims[ltiClaim.namesRoleService]),
+    gradeService: gradeServiceOf(claims[ltiClaim.gradeService]),
     placedItem: placedItemOf(claims[ltiClaim.custom]),
     deepLinking: deepLinking.value,
     expiresAt: new Date(Number(claims.exp) * 1000),

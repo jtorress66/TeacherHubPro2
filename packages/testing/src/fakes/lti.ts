@@ -1,11 +1,25 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import { err, ok, type LtiPlatform, type LtiPlatformId, type Result } from '@thp/domain';
-import type { ClassId, LtiCourse, SchoolId, StudentId, UserId } from '@thp/domain';
+import type {
+  ClassId,
+  LtiCourse,
+  LtiPlacedItem,
+  LtiPlacement,
+  LtiScore,
+  SchoolId,
+  StudentId,
+  UserId,
+} from '@thp/domain';
 import type {
   LtiCourseRepository,
+  LtiGradesClient,
+  LtiGradesError,
+  LtiGradesRequest,
+  LtiGradesSent,
   LtiMembershipsClient,
   LtiMembershipsError,
   LtiNonceRepository,
+  LtiPlacementRepository,
   LtiPlatformRepository,
   LtiStudentLink,
   LtiStudentLinkRepository,
@@ -254,6 +268,20 @@ export class InMemoryLtiStudentLinkRepository implements LtiStudentLinkRepositor
     if ((await this.students.findById(schoolId, studentId)) === null) return;
     this.rows.set(JSON.stringify([platformId, studentId]), { platformId, subject, studentId });
   }
+
+  async listStudentIds(
+    schoolId: SchoolId,
+    platformId: LtiPlatformId,
+    subject: string,
+  ): Promise<readonly StudentId[]> {
+    if (!this.platforms.has(platformId)) return [];
+    const ids: StudentId[] = [];
+    for (const row of this.rows.values()) {
+      if (row.platformId !== platformId || row.subject !== subject) continue;
+      if ((await this.students.findById(schoolId, row.studentId)) !== null) ids.push(row.studentId);
+    }
+    return ids;
+  }
 }
 
 /** A course system's class lists, by address, or a refusal for every list. */
@@ -279,5 +307,106 @@ export class FakeLtiMemberships implements LtiMembershipsClient {
     if (this.failure !== null) return Promise.resolve(err(this.failure));
     const members = this.lists.get(membershipsUrl);
     return Promise.resolve(members === undefined ? err('unavailable') : ok(members));
+  }
+}
+
+/** Placements, forgotten with their course system. */
+export class InMemoryLtiPlacementRepository implements LtiPlacementRepository {
+  private readonly rows = new Map<string, LtiPlacement>();
+
+  constructor(private readonly platforms: InMemoryLtiPlatformRepository) {}
+
+  save(placement: LtiPlacement): Promise<void> {
+    const key = placementKey(placement.platformId, placement.contextId, placement.item);
+    const known = this.rows.get(key);
+    if (known === undefined) this.rows.set(key, placement);
+    return Promise.resolve();
+  }
+
+  listForItem(schoolId: SchoolId, item: LtiPlacedItem): Promise<readonly LtiPlacement[]> {
+    return Promise.resolve(
+      [...this.rows.values()]
+        .filter(
+          (row) =>
+            row.schoolId === schoolId &&
+            row.item.kind === item.kind &&
+            row.item.id === item.id &&
+            this.platforms.has(row.platformId),
+        )
+        .sort((a, b) => a.placedAt.getTime() - b.placedAt.getTime()),
+    );
+  }
+
+  find(
+    schoolId: SchoolId,
+    platformId: LtiPlatformId,
+    contextId: string,
+    item: LtiPlacedItem,
+  ): Promise<LtiPlacement | null> {
+    const row = this.rows.get(placementKey(platformId, contextId, item));
+    const found = row?.schoolId === schoolId && this.platforms.has(platformId);
+    return Promise.resolve(found ? row : null);
+  }
+}
+
+const placementKey = (platformId: LtiPlatformId, contextId: string, item: LtiPlacedItem) =>
+  JSON.stringify([platformId, contextId, item.kind, item.id]);
+
+/** One course gradebook: its columns by resource id, and the latest score of each user. */
+interface FakeGradebook {
+  readonly lineItems: Map<string, { readonly resourceId: string; readonly scoreMaximum: number }>;
+  readonly scores: Map<string, LtiScore>;
+}
+
+/** Course gradebooks by line items address; or a refusal for every send. */
+export class FakeLtiGrades implements LtiGradesClient {
+  private readonly books = new Map<string, FakeGradebook>();
+  private failure: LtiGradesError | null = null;
+  /** The users whose score the course system refuses. */
+  private readonly refusedUsers = new Set<string>();
+  /** Each send, in order. */
+  readonly calls: { readonly platform: LtiPlatform; readonly request: LtiGradesRequest }[] = [];
+
+  failWith(failure: LtiGradesError | null): void {
+    this.failure = failure;
+  }
+
+  refuseScoreOf(userId: string): void {
+    this.refusedUsers.add(userId);
+  }
+
+  gradebook(lineItemsUrl: string): {
+    readonly lineItems: readonly { readonly resourceId: string; readonly scoreMaximum: number }[];
+    readonly scores: readonly LtiScore[];
+  } {
+    const book = this.books.get(lineItemsUrl);
+    return {
+      lineItems: book === undefined ? [] : [...book.lineItems.values()],
+      scores: book === undefined ? [] : [...book.scores.values()],
+    };
+  }
+
+  sendScores(
+    platform: LtiPlatform,
+    request: LtiGradesRequest,
+  ): Promise<Result<LtiGradesSent, LtiGradesError>> {
+    this.calls.push({ platform, request });
+    if (this.failure !== null) return Promise.resolve(err(this.failure));
+    if (request.scores.length === 0) return Promise.resolve(ok({ sent: 0, failed: 0 }));
+    const book = this.books.get(request.lineItemsUrl) ?? {
+      lineItems: new Map(),
+      scores: new Map(),
+    };
+    this.books.set(request.lineItemsUrl, book);
+    const { resourceId, scoreMaximum } = request.lineItem;
+    if (!book.lineItems.has(resourceId))
+      book.lineItems.set(resourceId, { resourceId, scoreMaximum });
+    let sent = 0;
+    for (const score of request.scores) {
+      if (this.refusedUsers.has(score.userId)) continue;
+      book.scores.set(score.userId, score);
+      sent += 1;
+    }
+    return Promise.resolve(ok({ sent, failed: request.scores.length - sent }));
   }
 }

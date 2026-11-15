@@ -1,5 +1,9 @@
 import type { SchoolId, StudentId } from '@thp/domain';
 import {
+  ltiGradesClientContract,
+  ltiPlacementRepositoryContract,
+} from '../contracts/lti-grades.contract.ts';
+import {
   ltiMembershipsClientContract,
   ltiRepositoryContract,
   ltiRosterRepositoryContract,
@@ -9,12 +13,14 @@ import {
 } from '../contracts/lti.contract.ts';
 import { anLtiPlatform, aStudent } from '../fixtures.ts';
 import {
+  FakeLtiGrades,
   FakeLtiMemberships,
   FakeLtiTokens,
   FakeLtiTokenVerifier,
   FakeToolKeyStore,
   InMemoryLtiCourseRepository,
   InMemoryLtiNonceRepository,
+  InMemoryLtiPlacementRepository,
   InMemoryLtiPlatformRepository,
   InMemoryLtiStudentLinkRepository,
   InMemoryLtiUserLinkRepository,
@@ -59,4 +65,21 @@ ltiMembershipsClientContract('FakeLtiMemberships', (setup) => {
   client.setMembers(membershipsUrl, setup.members);
   client.failWith(setup.refusal ?? null);
   return { client, platform: anLtiPlatform(), membershipsUrl };
+});
+
+ltiPlacementRepositoryContract('In-memory', () => {
+  const platforms = new InMemoryLtiPlatformRepository();
+  return { platforms, placements: new InMemoryLtiPlacementRepository(platforms) };
+});
+
+ltiGradesClientContract('FakeLtiGrades', (setup) => {
+  const client = new FakeLtiGrades();
+  const lineItemsUrl = 'https://lms.example.edu/courses/1/line_items';
+  client.failWith(setup.refusal ?? null);
+  return {
+    client,
+    platform: anLtiPlatform(),
+    lineItemsUrl,
+    gradebook: () => Promise.resolve(client.gradebook(lineItemsUrl)),
+  };
 });

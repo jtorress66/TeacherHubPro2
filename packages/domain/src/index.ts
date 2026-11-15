@@ -139,3 +139,5 @@ export * from './lti/lti-deep-linking.ts';
 export * from './lti/lti-launch.ts';
 export * from './lti/lti-course.ts';
 export * from './lti/lti-membership.ts';
+export * from './lti/lti-grades.ts';
+export * from './lti/lti-placement.ts';

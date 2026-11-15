@@ -1,6 +1,10 @@
 import type {
   ClassId,
   LtiCourse,
+  LtiNewLineItem,
+  LtiPlacedItem,
+  LtiPlacement,
+  LtiScore,
   LtiPlatform,
   LtiPlatformId,
   Result,
@@ -107,6 +111,26 @@ export interface LtiStudentLinkRepository {
     subject: string,
     studentId: StudentId,
   ): Promise<void>;
+  /** The students of this school a course system user is (one per class they were imported to). */
+  listStudentIds(
+    schoolId: SchoolId,
+    platformId: LtiPlatformId,
+    subject: string,
+  ): Promise<readonly StudentId[]>;
+}
+
+/** The assignments and games teachers placed in courses (deep linking). */
+export interface LtiPlacementRepository {
+  /** Remembers the placement; placing the same item in the same course again keeps one. */
+  save(placement: LtiPlacement): Promise<void>;
+  /** The courses this school's item is placed in, oldest first. */
+  listForItem(schoolId: SchoolId, item: LtiPlacedItem): Promise<readonly LtiPlacement[]>;
+  find(
+    schoolId: SchoolId,
+    platformId: LtiPlatformId,
+    contextId: string,
+    item: LtiPlacedItem,
+  ): Promise<LtiPlacement | null>;
 }
 
 /** Why a course system would not hand over a class list. */
@@ -119,4 +143,30 @@ export interface LtiMembershipsClient {
     platform: LtiPlatform,
     membershipsUrl: string,
   ): Promise<Result<readonly unknown[], LtiMembershipsError>>;
+}
+
+/** Why a course system's gradebook would not take grades. */
+export type LtiGradesError = 'not_allowed' | 'unavailable';
+
+/** What to send to one course's gradebook: the assignment's column and its scores. */
+export interface LtiGradesRequest {
+  /** The course's line items (gradebook columns). */
+  readonly lineItemsUrl: string;
+  /** The column for the assignment, found by its `resourceId` or made when missing. */
+  readonly lineItem: LtiNewLineItem;
+  readonly scores: readonly LtiScore[];
+}
+
+export interface LtiGradesSent {
+  readonly sent: number;
+  /** Scores the course system refused or could not take (the others went in). */
+  readonly failed: number;
+}
+
+/** Sends scores to a course's gradebook over Assignment and Grade Services. */
+export interface LtiGradesClient {
+  sendScores(
+    platform: LtiPlatform,
+    request: LtiGradesRequest,
+  ): Promise<Result<LtiGradesSent, LtiGradesError>>;
 }

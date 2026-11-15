@@ -275,12 +275,15 @@ export const frAppA = {
     action_game_grades_approved: 'A approuvé les notes d’un jeu',
     action_prep_approved: 'A approuvé une préparation hebdomadaire',
     action_learning_path_assigned: 'A attribué un parcours d’apprentissage',
+    action_grades_sent_to_course: 'A envoyé des notes à une plateforme de cours',
+    action_lti_platform_added: 'A ajouté une plateforme de cours',
+    action_lti_platform_removed: 'A retiré une plateforme de cours',
     seeApprovals: 'Voir toutes les approbations',
   },
   approvals: {
     title: 'Approbations',
     intro:
-      'Chaque fois qu’un travail de l’IA parvient aux élèves ou aux familles, un enseignant l’approuve d’abord : notes suggérées par l’IA, notes de jeux, préparation hebdomadaire et parcours d’apprentissage. Cette page indique qui a approuvé quoi, quand et pour quelle classe. Elle n’affiche jamais le nom des élèves, les notes ni les messages.',
+      'Chaque fois qu’un travail de l’IA parvient aux élèves ou aux familles, un enseignant l’approuve d’abord : notes suggérées par l’IA, notes de jeux, préparation hebdomadaire et parcours d’apprentissage. L’envoi des notes confirmées vers une plateforme de cours est aussi enregistré ici. Cette page indique qui a approuvé quoi, quand et pour quelle classe. Elle n’affiche jamais le nom des élèves, les notes ni les messages.',
     before: 'Les approbations faites avant la création de ce journal ne sont pas listées.',
     ownOnly:
       'Vous voyez vos propres approbations. Les administrateurs de l’école voient celles de tous.',
@@ -292,6 +295,7 @@ export const frAppA = {
     type_game_grades_approved: 'Notes de jeux',
     type_prep_approved: 'Préparation hebdomadaire',
     type_learning_path_assigned: 'Parcours d’apprentissage',
+    type_grades_sent_to_course: 'Notes envoyées à un cours',
     fromDate: 'Du',
     toDate: 'Au',
     teacher: 'Enseignant',
@@ -306,6 +310,7 @@ export const frAppA = {
     changed: 'modifiée par l’enseignant',
     familyEmails: 'e-mails aux familles envoyés : {count}',
     grades: 'notes enregistrées : {count}',
+    gradesSent: 'notes envoyées : {count}',
     limit:
       'Affichage des {count} plus récentes. Réduisez la période pour voir les approbations plus anciennes.',
     item: 'Élément',

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   parseDatabaseConfig,
   parseLlmConfig,
+  parseLtiConfig,
   parseMailConfig,
   parseStripeConfig,
   parseTtsConfig,
@@ -156,6 +157,44 @@ describe('parseMailConfig', () => {
       error: 'RESEND_API_KEY and MAIL_FROM are required when MAIL_PROVIDER is "resend".',
     });
     expect(parseMailConfig({ ...base, MAIL_PROVIDER: 'pigeon' }).ok).toBe(false);
+  });
+});
+
+describe('parseLtiConfig', () => {
+  const key = Buffer.alloc(32, 7).toString('base64');
+
+  it('keeps sending grades to course systems off unless LTI_PROVIDER turns it on', () => {
+    expect(parseLtiConfig({})).toEqual({ ok: true, value: { provider: 'off' } });
+    expect(parseLtiConfig({ LTI_PROVIDER: ' Off ' })).toEqual({
+      ok: true,
+      value: { provider: 'off' },
+    });
+  });
+
+  it('sends to the pretend course system in development and tests only', () => {
+    expect(parseLtiConfig({ LTI_PROVIDER: 'local' })).toEqual({
+      ok: true,
+      value: { provider: 'local' },
+    });
+    expect(parseLtiConfig({ LTI_PROVIDER: 'local', APP_ENV: 'production' })).toEqual({
+      ok: false,
+      error: 'LTI_PROVIDER=local is only allowed when APP_ENV is development or test.',
+    });
+  });
+
+  it('signs with the tool key sealed by TOKEN_ENCRYPTION_KEY when on', () => {
+    expect(parseLtiConfig({ LTI_PROVIDER: 'on', TOKEN_ENCRYPTION_KEY: key })).toEqual({
+      ok: true,
+      value: { provider: 'on', encryptionKey: key },
+    });
+    expect(parseLtiConfig({ LTI_PROVIDER: 'on', TOKEN_ENCRYPTION_KEY: 'short' })).toEqual({
+      ok: false,
+      error: 'TOKEN_ENCRYPTION_KEY must be 32 random bytes, base64 encoded.',
+    });
+    expect(parseLtiConfig({ LTI_PROVIDER: 'canvas' })).toEqual({
+      ok: false,
+      error: 'LTI_PROVIDER must be off, local or on.',
+    });
   });
 });
 

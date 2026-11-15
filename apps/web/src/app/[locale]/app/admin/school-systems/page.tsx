@@ -41,6 +41,7 @@ export default async function SchoolSystemsPage(props: LocaleParams) {
         <p className="hint">{t('lti.toolValuesHint')}</p>
         <p className="hint">{t('lti.toolValuesRosters')}</p>
         <p className="hint">{t('lti.toolValuesDeepLinking')}</p>
+        <p className="hint">{t('lti.toolValuesGrades')}</p>
         {copyable.map((item) => (
           <CopyValue key={item.id} locale={locale} {...item} />
         ))}

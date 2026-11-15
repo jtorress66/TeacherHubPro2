@@ -1,7 +1,11 @@
 import { sql, type Kysely, type Selectable } from 'kysely';
 import type {
+  AssignmentId,
   ClassId,
+  GameId,
   LtiCourse,
+  LtiPlacedItem,
+  LtiPlacement,
   LtiPlatform,
   LtiPlatformId,
   SchoolId,
@@ -11,12 +15,18 @@ import type {
 import type {
   LtiCourseRepository,
   LtiNonceRepository,
+  LtiPlacementRepository,
   LtiPlatformRepository,
   LtiStudentLink,
   LtiStudentLinkRepository,
   LtiUserLinkRepository,
 } from '@thp/ports';
-import type { Database, LtiCoursesTable, LtiPlatformsTable } from '../schema.ts';
+import type {
+  Database,
+  LtiCoursesTable,
+  LtiPlacementsTable,
+  LtiPlatformsTable,
+} from '../schema.ts';
 
 const fromRow = (row: Selectable<LtiPlatformsTable>): LtiPlatform => ({
   id: row.id as LtiPlatformId,
@@ -149,6 +159,8 @@ const courseFromRow = (row: Selectable<LtiCoursesTable>): LtiCourse => ({
   contextId: row.context_id,
   title: row.title,
   membershipsUrl: row.memberships_url,
+  lineItemsUrl: row.lineitems_url,
+  gradeScopes: row.grade_scopes,
   lastLaunchedAt: row.last_launched_at,
 });
 
@@ -159,6 +171,8 @@ export class PostgresLtiCourseRepository implements LtiCourseRepository {
     const changes = {
       title: course.title,
       memberships_url: course.membershipsUrl,
+      lineitems_url: course.lineItemsUrl,
+      grade_scopes: [...course.gradeScopes],
       last_launched_at: course.lastLaunchedAt,
     };
     await this.db
@@ -254,5 +268,90 @@ export class PostgresLtiStudentLinkRepository implements LtiStudentLinkRepositor
         conflict.columns(['platform_id', 'student_id']).doUpdateSet({ subject }),
       )
       .execute();
+  }
+
+  async listStudentIds(
+    schoolId: SchoolId,
+    platformId: LtiPlatformId,
+    subject: string,
+  ): Promise<readonly StudentId[]> {
+    const rows = await this.db
+      .selectFrom('lti_student_links')
+      .innerJoin('students', 'students.id', 'lti_student_links.student_id')
+      .select('lti_student_links.student_id')
+      .where('students.school_id', '=', schoolId)
+      .where('lti_student_links.platform_id', '=', platformId)
+      .where('lti_student_links.subject', '=', subject)
+      .orderBy('lti_student_links.student_id')
+      .execute();
+    return rows.map((row) => row.student_id as StudentId);
+  }
+}
+
+const placedItemOfRow = (row: Selectable<LtiPlacementsTable>): LtiPlacedItem =>
+  row.kind === 'game'
+    ? { kind: 'game', id: row.item_id as GameId }
+    : { kind: 'assignment', id: row.item_id as AssignmentId };
+
+const placementFromRow = (row: Selectable<LtiPlacementsTable>): LtiPlacement => ({
+  platformId: row.platform_id as LtiPlatformId,
+  contextId: row.context_id,
+  item: placedItemOfRow(row),
+  schoolId: row.school_id as SchoolId,
+  teacherId: row.teacher_id as UserId,
+  placedAt: row.placed_at,
+});
+
+/** Placements, each kept once per course; the first teacher and time stay. */
+export class PostgresLtiPlacementRepository implements LtiPlacementRepository {
+  constructor(private readonly db: Kysely<Database>) {}
+
+  async save(placement: LtiPlacement): Promise<void> {
+    await this.db
+      .insertInto('lti_placements')
+      .values({
+        platform_id: placement.platformId,
+        context_id: placement.contextId,
+        kind: placement.item.kind,
+        item_id: placement.item.id,
+        school_id: placement.schoolId,
+        teacher_id: placement.teacherId,
+        placed_at: placement.placedAt,
+      })
+      .onConflict((conflict) =>
+        conflict.columns(['platform_id', 'context_id', 'kind', 'item_id']).doNothing(),
+      )
+      .execute();
+  }
+
+  async listForItem(schoolId: SchoolId, item: LtiPlacedItem): Promise<readonly LtiPlacement[]> {
+    const rows = await this.db
+      .selectFrom('lti_placements')
+      .selectAll()
+      .where('school_id', '=', schoolId)
+      .where('kind', '=', item.kind)
+      .where('item_id', '=', item.id)
+      .orderBy('placed_at')
+      .orderBy('context_id')
+      .execute();
+    return rows.map(placementFromRow);
+  }
+
+  async find(
+    schoolId: SchoolId,
+    platformId: LtiPlatformId,
+    contextId: string,
+    item: LtiPlacedItem,
+  ): Promise<LtiPlacement | null> {
+    const row = await this.db
+      .selectFrom('lti_placements')
+      .selectAll()
+      .where('school_id', '=', schoolId)
+      .where('platform_id', '=', platformId)
+      .where('context_id', '=', contextId)
+      .where('kind', '=', item.kind)
+      .where('item_id', '=', item.id)
+      .executeTakeFirst();
+    return row === undefined ? null : placementFromRow(row);
   }
 }

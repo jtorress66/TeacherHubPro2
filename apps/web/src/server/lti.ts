@@ -237,3 +237,47 @@ export function readLtiCourseOption(
   const [platformId, contextId] = parsed.data;
   return { platformId: platformId as LtiPlatformId, contextId };
 }
+
+/**
+ * The cookie holding a student's pass for one placed item (two hours): one per item, so a student
+ * with two items open in two tabs keeps both. Read on our own pages after the launch, so Lax.
+ */
+export const ltiPassCookie = (item: LtiPlacedItem): string =>
+  `thp_lti_pass_${item.kind === 'assignment' ? 'a' : 'g'}_${item.id}`;
+
+export const ltiPassCookieOptions = (appUrl: string) => ({
+  httpOnly: true,
+  secure: secureFor(appUrl),
+  sameSite: 'lax' as const,
+  path: '/',
+  maxAge: 7200,
+});
+
+/** The page a student's pass opens: their placed assignment or game. */
+export const ltiStudentItemPath = (locale: Locale, item: LtiPlacedItem): string =>
+  item.kind === 'game'
+    ? `/${locale}/lti/games/${item.id}`
+    : `/${locale}/lti/assignments/${item.id}`;
+
+const gradeSendResult = z.object({
+  course: z.string(),
+  sent: z.number().int().nonnegative(),
+  notConfirmed: z.number().int().nonnegative(),
+  notLinked: z.number().int().nonnegative(),
+  failed: z.number().int().nonnegative(),
+});
+
+export type GradeSendSummary = z.infer<typeof gradeSendResult>;
+
+/** What a finished grade send reports; null for anything else. */
+export function readGradeSendResult(value: unknown): GradeSendSummary | null {
+  const parsed = gradeSendResult.safeParse(value);
+  return parsed.success ? parsed.data : null;
+}
+
+/** Where a grade send started from may lead back to: a page of the teacher's own app only. */
+export function gradeSendReturnPath(locale: Locale, value: unknown): string {
+  const fallback = `/${locale}/app`;
+  if (typeof value !== 'string' || !value.startsWith(`/${locale}/app/`)) return fallback;
+  return /^[\w/-]+$/u.test(value) ? value : fallback;
+}

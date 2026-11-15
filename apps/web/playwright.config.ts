@@ -69,6 +69,8 @@ export default defineConfig({
         TTS_PROVIDER: 'local',
         MAIL_PROVIDER: 'local',
         APP_URL: appUrl,
+        // Sends grades to the pretend course system, signing with the web app's tool key.
+        LTI_PROVIDER: 'local',
       },
     },
   ],

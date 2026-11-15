@@ -15,6 +15,8 @@ export const ltiClaim = {
   custom: `${claimBase}/custom`,
   /** Names and Role Provisioning Services: where the course's class list can be read. */
   namesRoleService: 'https://purl.imsglobal.org/spec/lti-nrps/claim/namesroleservice',
+  /** Assignment and Grade Services: the course's gradebook addresses and granted scopes. */
+  gradeService: 'https://purl.imsglobal.org/spec/lti-ags/claim/endpoint',
   /** Deep Linking: where to send the chosen items, and which kinds and how many it accepts. */
   deepLinkingSettings: `${deepLinkingBase}/deep_linking_settings`,
   /** Deep Linking: the items a teacher chose, in the response. */

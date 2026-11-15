@@ -5,9 +5,9 @@ import { MarketingShell } from '../../../../components/marketing-shell.tsx';
 import { ToolCard, ToolFilter, ToolRequest, ToolText } from '../../../../components/tool-card.tsx';
 import {
   comingSoon,
+  onRequest,
   toolGroupFrom,
   toolsIn,
-  type ToolId,
 } from '../../../../server/connected-tools.ts';
 import { marketingMetadata } from '../../../../server/marketing-metadata.ts';
 import { localeFrom, type LocaleParams } from '../../locale-param.ts';
@@ -21,10 +21,10 @@ export async function generateMetadata(props: LocaleParams): Promise<Metadata> {
   );
 }
 
-/** Teams needs the school's IT to approve it, so it is turned on for schools that ask. */
-const onRequest: ReadonlySet<ToolId> = new Set<ToolId>(['teams']);
-
-/** The services the app works with today, plus the school systems that are coming. */
+/**
+ * The services the app works with today: Teams and the school systems (Canvas, Schoology, Moodle,
+ * Brightspace) are turned on for schools that ask; Clever is coming.
+ */
 export default async function IntegrationsPage(
   props: LocaleParams & { readonly searchParams: Promise<{ group?: string }> },
 ) {

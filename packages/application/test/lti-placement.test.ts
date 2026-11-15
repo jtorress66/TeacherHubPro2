@@ -90,8 +90,12 @@ async function teacherWithContent(world: LtiWorld) {
 }
 
 /** The ticket of a linked teacher's "Add content" launch. */
-async function placeTicket(world: LtiWorld, settings: Record<string, unknown> = {}) {
-  const outcome = valueOf(await launch(world, deepLinking(settings)));
+async function placeTicket(
+  world: LtiWorld,
+  settings: Record<string, unknown> = {},
+  claims: Record<string, unknown> = {},
+) {
+  const outcome = valueOf(await launch(world, { ...deepLinking(settings), ...claims }));
   if (outcome.kind !== 'pickContent') throw new Error(outcome.kind);
   return outcome.ticket;
 }
@@ -167,6 +171,51 @@ describe('ListPlaceableContent', () => {
 });
 
 describe('PlaceLtiContent', () => {
+  it('remembers each chosen item in the course it was added to', async () => {
+    const world = ltiWorld();
+    const { teacher, platform } = await teacherWithContent(world);
+    const ticket = await placeTicket(world, {}, { [ltiClaim.context]: { id: 'course-9' } });
+
+    valueOf(
+      await new PlaceLtiContent(world).execute({
+        actor: teacher,
+        ticket,
+        items: [assignment('quiz'), game('planets')],
+      }),
+    );
+
+    const placedIn = async (item: LtiPlacedItem) =>
+      world.ltiPlacements.listForItem(teacher.schoolId, item);
+    expect(await placedIn(assignment('quiz'))).toEqual([
+      {
+        platformId: platform.id,
+        contextId: 'course-9',
+        item: assignment('quiz'),
+        schoolId: teacher.schoolId,
+        teacherId: teacher.id,
+        placedAt: world.clock.now(),
+      },
+    ]);
+    expect(await placedIn(game('planets'))).toHaveLength(1);
+    expect(await placedIn(assignment('worksheet'))).toEqual([]);
+  });
+
+  it('remembers nothing for a request from outside a course', async () => {
+    const world = ltiWorld();
+    const { teacher } = await teacherWithContent(world);
+    const ticket = await placeTicket(world);
+
+    valueOf(
+      await new PlaceLtiContent(world).execute({
+        actor: teacher,
+        ticket,
+        items: [assignment('quiz')],
+      }),
+    );
+
+    expect(await world.ltiPlacements.listForItem(teacher.schoolId, assignment('quiz'))).toEqual([]);
+  });
+
   it('answers the course system with the chosen items, signed by the tool', async () => {
     const world = ltiWorld();
     const { teacher } = await teacherWithContent(world);
@@ -398,12 +447,12 @@ describe('CompleteLtiLaunch with content placed in a course', () => {
     }
   });
 
-  it('still shows students the not-yet page for a placed item', async () => {
+  it('asks a student the course system has not linked to see their teacher', async () => {
     const world = ltiWorld();
     await teacherWithContent(world);
 
     expect(valueOf(await launch(world, { ...learner, ...opening(assignment('quiz')) })).kind).toBe(
-      'learnerNotYet',
+      'learnerNotOnList',
     );
   });
 

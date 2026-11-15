@@ -270,7 +270,9 @@ export {
   type StudentPortal,
   type StudentAssignmentView,
   type StudentAssignmentStatus,
+  type StudentKey,
 } from './assignments/student-portal.ts';
+export { studentPassLifetimeMs } from './assignments/student-pass.ts';
 export {
   ListSubmissions,
   RequestAiGrading,
@@ -551,7 +553,7 @@ export {
   PlaceLtiContent,
   type ListPlaceableContentDeps,
   type LtiItemTarget,
-  type LtiPlacement,
+  type LtiDeepLinkingAnswer,
   type PlaceableContent,
   type PlaceableItem,
   type PlaceLtiContentDeps,
@@ -562,3 +564,13 @@ export {
   type ImportLtiRosterDeps,
   type LtiRosterImport,
 } from './lti/lti-roster.ts';
+export type { LtiLearnerOutcome } from './lti/lti-students.ts';
+export {
+  ListLtiGradeTargets,
+  LtiGradeSendHandler,
+  ltiGradeSendJobKind,
+  StartLtiGradeSend,
+  type LtiGradeSendDeps,
+  type LtiGradeSendResult,
+  type LtiGradeTarget,
+} from './lti/lti-grades.ts';

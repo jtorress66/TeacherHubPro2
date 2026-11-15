@@ -3,6 +3,11 @@ import type { LtiErrorCode } from '@thp/application';
 import type { AssignmentId, ClassId, GameId, LtiPlatformId, SchoolId } from '@thp/domain';
 import {
   afterLinkPath,
+  gradeSendReturnPath,
+  ltiPassCookie,
+  ltiPassCookieOptions,
+  ltiStudentItemPath,
+  readGradeSendResult,
   afterLogInPath,
   decodeLtiLogin,
   encodeLtiLogin,
@@ -221,6 +226,53 @@ describe('ltiCourseOption and readLtiCourseOption', () => {
       Buffer.from('{"a":1}').toString('base64url'),
     ]) {
       expect(readLtiCourseOption(value)).toBeNull();
+    }
+  });
+});
+
+describe('student passes', () => {
+  const quiz = { kind: 'assignment', id: 'quiz-1' as AssignmentId } as const;
+  const planets = { kind: 'game', id: 'planets' as GameId } as const;
+
+  it('keeps one pass cookie per item, readable only by the server, for two hours', () => {
+    expect(ltiPassCookie(quiz)).toBe('thp_lti_pass_a_quiz-1');
+    expect(ltiPassCookie(planets)).toBe('thp_lti_pass_g_planets');
+    expect(ltiPassCookieOptions('https://app.teacherhub.test')).toEqual({
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 7200,
+    });
+    expect(ltiPassCookieOptions('http://localhost:3100').secure).toBe(false);
+  });
+
+  it('opens the student page of the item', () => {
+    expect(ltiStudentItemPath('es', quiz)).toBe('/es/lti/assignments/quiz-1');
+    expect(ltiStudentItemPath('en', planets)).toBe('/en/lti/games/planets');
+  });
+});
+
+describe('grade sends', () => {
+  it('reads what a finished send reports, and nothing else', () => {
+    const result = { course: 'Science 5', sent: 1, notConfirmed: 2, notLinked: 0, failed: 0 };
+    expect(readGradeSendResult(result)).toEqual(result);
+    expect(readGradeSendResult({ ...result, sent: -1 })).toBeNull();
+    expect(readGradeSendResult(null)).toBeNull();
+  });
+
+  it('leads back only to a page of the app', () => {
+    expect(gradeSendReturnPath('en', '/en/app/classes/c1/assignments/a1')).toBe(
+      '/en/app/classes/c1/assignments/a1',
+    );
+    for (const bad of [
+      'https://evil.example/en/app/x',
+      '/es/app/x',
+      '/en/app/x?y=1',
+      '//evil',
+      7,
+    ]) {
+      expect(gradeSendReturnPath('en', bad)).toBe('/en/app');
     }
   });
 });

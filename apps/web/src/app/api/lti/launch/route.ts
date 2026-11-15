@@ -16,8 +16,11 @@ import {
   LTI_LOGIN_COOKIE,
   LTI_PLACE_COOKIE,
   ltiLinkCookieOptions,
+  ltiPassCookie,
+  ltiPassCookieOptions,
   ltiPlaceCookieOptions,
   ltiProblemFor,
+  ltiStudentItemPath,
 } from '../../../../server/lti.ts';
 
 export const dynamic = 'force-dynamic';
@@ -40,6 +43,15 @@ function signedInPath(outcome: SignedInOutcome): string {
 function landing(appUrl: string, outcome: LtiLaunchOutcome): NextResponse {
   if (outcome.kind === 'learnerNotYet') {
     return NextResponse.redirect(`${appUrl}/${localeFromLti(outcome.locale)}/lti/student`, 303);
+  }
+  if (outcome.kind === 'learnerNotOnList') {
+    return NextResponse.redirect(`${appUrl}/${localeFromLti(outcome.locale)}/lti/ask-teacher`, 303);
+  }
+  if (outcome.kind === 'studentItem') {
+    const path = ltiStudentItemPath(localeFromLti(outcome.locale), outcome.item);
+    const response = NextResponse.redirect(`${appUrl}${path}`, 303);
+    response.cookies.set(ltiPassCookie(outcome.item), outcome.pass, ltiPassCookieOptions(appUrl));
+    return response;
   }
   if (outcome.kind === 'needsLink') {
     const locale = localeFromLti(outcome.locale);
@@ -79,8 +91,9 @@ function landing(appUrl: string, outcome: LtiLaunchOutcome): NextResponse {
 /**
  * The course system posts the launch here (form_post: id_token and state). The state must match
  * the login's cookie; the token is checked, then the teacher is signed in (and sent on to choose
- * content to add, or to the placed item they opened), asked to link their account, or (a student)
- * told it is not available yet. Tokens are never logged.
+ * content to add, or to the placed item they opened), or asked to link their account. A student
+ * opening a placed item gets a pass for it in a cookie, or is asked to see their teacher; a student
+ * opening TeacherHubPro itself is told there is nothing for them there yet. Tokens are never logged.
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const app = getAppContainer();

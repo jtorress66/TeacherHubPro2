@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { createTranslator } from '@thp/i18n';
 import {
   comingSoon,
-  comingSoonWith,
+  onRequest,
   ltiTools,
   toolFrom,
   toolGroupFrom,
@@ -32,18 +32,28 @@ describe('connected tools', () => {
       'forms',
       'slides',
     ]);
-    expect(toolsIn('schoolSystems').every((tool) => comingSoon.has(tool.id))).toBe(true);
+    expect(toolsIn('schoolSystems').map((tool) => tool.id)).toEqual([
+      'canvas',
+      'schoology',
+      'moodle',
+      'brightspace',
+      'clever',
+    ]);
   });
 
-  it('lists the school systems that are not built yet as coming soon, and nothing else', () => {
-    expect([...comingSoon].sort()).toEqual(
-      ['brightspace', 'canvas', 'clever', 'moodle', 'schoology'].sort(),
-    );
+  it('lists only Clever as coming soon', () => {
+    expect([...comingSoon]).toEqual(['clever']);
   });
 
-  it('takes the LTI school systems off the coming-soon list only while LTI is on', () => {
-    expect(comingSoonWith(false)).toBe(comingSoon);
-    expect([...comingSoonWith(true)]).toEqual(['clever']);
+  it('offers Teams and the LTI school systems on request, never as self-serve or coming soon', () => {
+    expect([...onRequest].sort()).toEqual([
+      'brightspace',
+      'canvas',
+      'moodle',
+      'schoology',
+      'teams',
+    ]);
+    expect([...onRequest].some((id) => comingSoon.has(id))).toBe(false);
     expect([...ltiTools].sort()).toEqual(['brightspace', 'canvas', 'moodle', 'schoology']);
     expect([...ltiTools].every((id) => toolsIn('schoolSystems').some((t) => t.id === id))).toBe(
       true,

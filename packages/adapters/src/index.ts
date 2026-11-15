@@ -75,8 +75,15 @@ export {
 } from './lti/jose-lti-token-verifier.ts';
 export {
   LocalLtiPlatform,
+  localLtiSealKey,
   type LocalClassList,
   type LocalLaunch,
   type ServiceTokenRequest,
 } from './lti/local-lti-platform.ts';
 export { HttpLtiMembershipsClient } from './lti/http-lti-memberships-client.ts';
+export { HttpLtiGradesClient } from './lti/http-lti-grades-client.ts';
+export {
+  LocalLtiGradebook,
+  type LocalAnswer,
+  type LocalGradebookView,
+} from './lti/local-lti-gradebook.ts';

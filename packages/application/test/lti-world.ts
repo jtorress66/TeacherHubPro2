@@ -1,11 +1,14 @@
 import { ltiClaim, ltiRoles, type User } from '@thp/domain';
 import {
+  FakeLtiGrades,
   FakeLtiTokens,
   FakeLtiTokenVerifier,
   FakeToolKeyStore,
   InMemoryLtiCourseRepository,
   InMemoryLtiNonceRepository,
+  InMemoryLtiPlacementRepository,
   InMemoryLtiPlatformRepository,
+  InMemoryLtiStudentLinkRepository,
   InMemoryLtiUserLinkRepository,
 } from '@thp/testing';
 import {
@@ -44,6 +47,9 @@ export function ltiWorld() {
     ltiNonces: new InMemoryLtiNonceRepository(),
     ltiUserLinks: new InMemoryLtiUserLinkRepository(ltiPlatforms),
     ltiCourses: new InMemoryLtiCourseRepository(ltiPlatforms),
+    ltiStudentLinks: new InMemoryLtiStudentLinkRepository(ltiPlatforms, world.students),
+    ltiPlacements: new InMemoryLtiPlacementRepository(ltiPlatforms),
+    ltiGrades: new FakeLtiGrades(),
     ltiTokenVerifier: new FakeLtiTokenVerifier([tokens], () => world.clock.now()),
     toolSigner: new FakeToolKeyStore(),
   };

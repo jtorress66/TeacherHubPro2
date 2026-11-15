@@ -333,7 +333,20 @@ export interface LtiCoursesTable {
   school_id: string;
   title: string;
   memberships_url: string | null;
+  lineitems_url: string | null;
+  grade_scopes: ColumnType<string[], string[] | undefined, string[]>;
   last_launched_at: Date;
+}
+
+/** Where a teacher placed an assignment or game in a course (deep linking). */
+export interface LtiPlacementsTable {
+  platform_id: string;
+  context_id: string;
+  kind: 'assignment' | 'game';
+  item_id: string;
+  school_id: string;
+  teacher_id: string;
+  placed_at: Date;
 }
 
 /** Which roster student a course system learner is (an id only, never an email). */
@@ -689,6 +702,7 @@ export interface Database {
   tool_keys: ToolKeysTable;
   lti_courses: LtiCoursesTable;
   lti_student_links: LtiStudentLinksTable;
+  lti_placements: LtiPlacementsTable;
   microsoft_connections: MicrosoftConnectionsTable;
   forms_exports: FormsExportsTable;
   student_notes: StudentNotesTable;

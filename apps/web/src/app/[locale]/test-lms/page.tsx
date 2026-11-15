@@ -24,8 +24,8 @@ const safe = (value: string | undefined): string | null =>
  * A pretend course system (LTI_PROVIDER=local, development and tests only): the values a school
  * admin registers, and buttons that launch TeacherHubPro as a teacher or a student, the way
  * Canvas or Moodle would. A teacher can also add TeacherHubPro content (deep linking); the links
- * placed come back in the address, each with buttons to open it. Developer tooling, so it is not
- * translated.
+ * placed come back in the address, each with buttons to open it, and the scores TeacherHubPro sent
+ * show in its gradebook (kept in memory). Developer tooling, so it is not translated.
  */
 export default async function TestLmsPage(
   props: LocaleParams & {
@@ -56,6 +56,7 @@ export default async function TestLmsPage(
     ['Keyset URL', testLms.jwksUrl],
   ] as const;
   const placed = readTestLmsPlaced(search.placed);
+  const gradebook = testLms.gradebook?.view(clientId) ?? { lineItems: [] };
   const plain: TestLmsMessage = { locale, deepLinking: false, custom: null };
   const launch = (role: TestLmsRole, label: string, message: TestLmsMessage = plain) => (
     <form method="post" action="/api/lti/login">
@@ -116,6 +117,29 @@ export default async function TestLmsPage(
             </li>
           ))}
         </ul>
+      </section>
+      <section className="card stack" aria-labelledby="test-lms-gradebook">
+        <h2 id="test-lms-gradebook">Gradebook</h2>
+        {gradebook.lineItems.length === 0 ? <p>No grades yet.</p> : null}
+        {gradebook.lineItems.map((item) => (
+          <table key={item.id} className="table" aria-label={item.label}>
+            <caption>{item.label}</caption>
+            <thead>
+              <tr>
+                <th scope="col">User</th>
+                <th scope="col">Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              {item.scores.map((score) => (
+                <tr key={score.userId}>
+                  <td>{score.userId}</td>
+                  <td>{`${String(score.scoreGiven)}/${String(score.scoreMaximum)}`}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ))}
       </section>
     </main>
   );
