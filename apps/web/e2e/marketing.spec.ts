@@ -157,12 +157,11 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
       .click();
     await expect(tool('Canvas')).toContainText(t('connectedTools.onRequest'));
     await expect(tool('Moodle')).toContainText(t('connectedTools.onRequest'));
-    await expect(tool('Moodle')).not.toContainText(t('connectedTools.comingSoon'));
     await expect(
       tool('Moodle').getByRole('link', { name: t('connectedTools.askAbout', { tool: 'Moodle' }) }),
     ).toHaveAttribute('href', `/${locale}/contact?tool=moodle`);
     await expect(tool(t('connectedTools.tool.clever.name'))).toContainText(
-      t('connectedTools.comingSoon'),
+      t('connectedTools.onRequest'),
     );
     await expect(tool(t('connectedTools.tool.canva.name'))).toHaveCount(0);
     await page.goto(`/${locale}/use-cases/schools`);

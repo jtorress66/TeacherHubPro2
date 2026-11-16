@@ -12,7 +12,6 @@ import { ToolCard, ToolFilter, ToolRequest, ToolText } from '../../../../compone
 import { getAppContainer } from '../../../../container.ts';
 import { isAdminOf } from '@thp/domain';
 import {
-  comingSoon,
   ltiTools,
   toolGroupFrom,
   toolsIn,
@@ -66,10 +65,7 @@ export default async function ConnectedToolsPage(
       {body}
     </ToolCard>
   );
-  const onRequest = (tool: Tool) =>
-    plain(tool, <ToolRequest locale={locale} id={tool.id} status="onRequest" />);
-  const notBuilt = (tool: Tool) =>
-    plain(tool, <ToolRequest locale={locale} id={tool.id} status="comingSoon" />);
+  const onRequest = (tool: Tool) => plain(tool, <ToolRequest locale={locale} id={tool.id} />);
   const viaClassroom = (tool: Tool) =>
     plain(
       tool,
@@ -92,7 +88,7 @@ export default async function ConnectedToolsPage(
         </>
       ) : (
         <>
-          <ToolRequest locale={locale} id={tool.id} status="onRequest" />
+          <ToolRequest locale={locale} id={tool.id} />
           {app.lti !== null && isAdminOf(user, user.schoolId) ? (
             <p>
               <a href={`/${locale}/app/admin/school-systems`}>{t('connectedTools.ltiAdminLink')}</a>
@@ -155,9 +151,7 @@ export default async function ConnectedToolsPage(
       <p className="muted">{t('connectedTools.intro')}</p>
       <ToolFilter locale={locale} path={`/${locale}/app/integrations`} current={group} />
       <div className="settings-grid">
-        {toolsIn(group).map((tool) =>
-          comingSoon.has(tool.id) ? notBuilt(tool) : (cards[tool.id] ?? notBuilt)(tool),
-        )}
+        {toolsIn(group).map((tool) => (cards[tool.id] ?? onRequest)(tool))}
       </div>
     </section>
   );

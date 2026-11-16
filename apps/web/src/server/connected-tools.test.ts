@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createTranslator } from '@thp/i18n';
 import {
-  comingSoon,
   onRequest,
   ltiTools,
   toolFrom,
@@ -41,19 +40,15 @@ describe('connected tools', () => {
     ]);
   });
 
-  it('lists only Clever as coming soon', () => {
-    expect([...comingSoon]).toEqual(['clever']);
-  });
-
-  it('offers Teams and the LTI school systems on request, never as self-serve or coming soon', () => {
+  it('offers Teams, Clever and the LTI school systems on request, never as self-serve', () => {
     expect([...onRequest].sort()).toEqual([
       'brightspace',
       'canvas',
+      'clever',
       'moodle',
       'schoology',
       'teams',
     ]);
-    expect([...onRequest].some((id) => comingSoon.has(id))).toBe(false);
     expect([...ltiTools].sort()).toEqual(['brightspace', 'canvas', 'moodle', 'schoology']);
     expect([...ltiTools].every((id) => toolsIn('schoolSystems').some((t) => t.id === id))).toBe(
       true,

@@ -473,10 +473,7 @@ export const frAppB = {
     intro: 'Connectez TeacherHubPro aux outils que vous et votre école utilisez déjà.',
     filter: 'Afficher les outils',
     all: 'Tous',
-    comingSoon: 'Bientôt disponible',
     onRequest: 'Disponible sur demande',
-    comingSoonText:
-      'Votre école l’utilise ? Dites-le-nous pour que nous sachions qu’il est demandé.',
     onRequestText: 'Nous l’activons pour les écoles qui le demandent.',
     ltiSetUp: 'Votre école l’a configuré : ouvrez TeacherHubPro depuis votre cours.',
     ltiSetUpBadge: 'Configuré',

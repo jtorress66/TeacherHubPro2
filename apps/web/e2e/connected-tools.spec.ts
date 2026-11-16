@@ -46,7 +46,7 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     await filter.getByRole('link', { name: t('connectedTools.group.schoolSystems') }).click();
     await expect(page.getByRole('region', card(t('classroom.title')))).toHaveCount(0);
     const clever = page.getByRole('region', card(t('connectedTools.tool.clever.name')));
-    await expect(clever).toContainText(t('connectedTools.comingSoon'));
+    await expect(clever).toContainText(t('connectedTools.onRequest'));
     // School systems that launch over LTI (on in tests) can be asked for; this school has none.
     await expect(page.getByRole('region', card('Canvas'))).toContainText(
       t('connectedTools.onRequest'),

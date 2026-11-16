@@ -23,9 +23,6 @@ export const tools = [
 export type Tool = (typeof tools)[number];
 export type ToolId = Tool['id'];
 
-/** Not built yet: listed so a school can tell us it needs one. */
-export const comingSoon: ReadonlySet<ToolId> = new Set<ToolId>(['clever']);
-
 /**
  * The school systems that work with TeacherHubPro over LTI 1.3 (launches, class lists, adding
  * content and sending grades): built, and turned on for schools that ask.
@@ -37,8 +34,11 @@ export const ltiTools: ReadonlySet<ToolId> = new Set<ToolId>([
   'brightspace',
 ]);
 
-/** Built, and turned on for schools that ask: Teams (its IT approves it) and the LTI systems. */
-export const onRequest: ReadonlySet<ToolId> = new Set<ToolId>(['teams', ...ltiTools]);
+/**
+ * Turned on for schools that ask: Teams (its IT approves it), the LTI systems, and Clever (built
+ * when the first school asks). Nothing is ever shown as "coming soon".
+ */
+export const onRequest: ReadonlySet<ToolId> = new Set<ToolId>(['teams', 'clever', ...ltiTools]);
 
 const isOneOf = <T extends string>(options: readonly T[], value: unknown): value is T =>
   typeof value === 'string' && (options as readonly string[]).includes(value);

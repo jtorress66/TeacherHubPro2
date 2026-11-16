@@ -478,10 +478,7 @@ export const deAppB = {
     intro: 'Verbinden Sie TeacherHubPro mit den Tools, die Sie und Ihre Schule bereits nutzen.',
     filter: 'Tools anzeigen',
     all: 'Alle',
-    comingSoon: 'Demnächst',
     onRequest: 'Auf Anfrage verfügbar',
-    comingSoonText:
-      'Nutzt Ihre Schule es? Sagen Sie es uns, damit wir wissen, dass es gebraucht wird.',
     onRequestText: 'Wir schalten es für Schulen frei, die danach fragen.',
     ltiSetUp: 'Ihre Schule hat es eingerichtet: Öffnen Sie TeacherHubPro aus Ihrem Kurs.',
     ltiSetUpBadge: 'Eingerichtet',

@@ -149,7 +149,7 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     );
     await expect(
       teacher.getByRole('region', { name: t('connectedTools.tool.clever.name'), exact: true }),
-    ).toContainText(t('connectedTools.comingSoon'));
+    ).toContainText(t('connectedTools.onRequest'));
 
     // A launch from the same browser signs them straight in.
     await launch(teacher, locale, `client=${clientId}`, 'Launch as teacher');

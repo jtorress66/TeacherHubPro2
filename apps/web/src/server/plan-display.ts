@@ -45,3 +45,9 @@ export function planBadge(
     ? t('plans.seats', { plan: name, count: subscription.quantity })
     : name;
 }
+
+/** How much less the yearly plan costs than twelve months of the monthly one, in whole percent. */
+export function yearlySavingPercent(): number {
+  const monthly = planCatalog.individual_monthly.priceCents * 12;
+  return Math.floor((1 - planCatalog.individual_yearly.priceCents / monthly) * 100);
+}
