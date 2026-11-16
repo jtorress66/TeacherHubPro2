@@ -116,8 +116,13 @@ export const mailTemplatesFor = (appUrl: string): MailTemplates => emailTemplate
 
 function mailerFor(config: MailConfig, db: ReturnType<typeof createDatabase>): Mailer {
   return config.provider === 'resend'
-    ? loggedMailer(new ResendMailer({ apiKey: config.apiKey, from: config.from }), (line) =>
-        process.stdout.write(line),
+    ? loggedMailer(
+        new ResendMailer({
+          apiKey: config.apiKey,
+          from: config.from,
+          ...(config.replyTo === undefined ? {} : { replyTo: config.replyTo }),
+        }),
+        (line) => process.stdout.write(line),
       )
     : new LocalMailer(db);
 }

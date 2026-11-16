@@ -78,6 +78,20 @@ describe('parseWebConfig', () => {
     expect(blank.ok && blank.value.superAdminSetupKey).toBeNull();
   });
 
+  it('adds a valid reply-to address to Resend mail, and ignores one that is not an email', () => {
+    const resend = {
+      ...production,
+      MAIL_PROVIDER: 'resend',
+      RESEND_API_KEY: 're_xxx',
+      MAIL_FROM: 'TeacherHubPro <hello@teacherhubpro.com>',
+    };
+    expect(parseWebConfig({ ...resend, MAIL_REPLY_TO: 'team@teacherhubpro.com' })).toMatchObject({
+      value: { mail: { replyTo: 'team@teacherhubpro.com' } },
+    });
+    const bad = parseWebConfig({ ...resend, MAIL_REPLY_TO: 'not-an-email' });
+    expect(bad.ok && 'replyTo' in bad.value.mail).toBe(false);
+  });
+
   it('sends mail with Resend when set up; without it, production mail reaches no one', () => {
     expect(
       parseWebConfig({

@@ -5,6 +5,8 @@ export interface ResendConfig {
   readonly apiKey: string;
   /** The verified sender, e.g. "TeacherHubPro <hello@example.com>". */
   readonly from: string;
+  /** Where replies go, when they should not go to the sender. */
+  readonly replyTo?: string;
   readonly baseURL?: string;
 }
 
@@ -51,6 +53,7 @@ export class ResendMailer implements Mailer {
         },
         body: JSON.stringify({
           from: this.config.from,
+          ...(this.config.replyTo === undefined ? {} : { reply_to: this.config.replyTo }),
           to: [message.to],
           subject: message.subject,
           html: message.html,

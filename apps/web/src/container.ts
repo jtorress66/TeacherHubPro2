@@ -829,7 +829,11 @@ export function createAppContainer(
     mailer:
       config.mail.provider === 'resend'
         ? loggedMailer(
-            new ResendMailer({ apiKey: config.mail.apiKey, from: config.mail.from }),
+            new ResendMailer({
+              apiKey: config.mail.apiKey,
+              from: config.mail.from,
+              ...(config.mail.replyTo === undefined ? {} : { replyTo: config.mail.replyTo }),
+            }),
             (line) => process.stdout.write(line),
           )
         : localMailer,
