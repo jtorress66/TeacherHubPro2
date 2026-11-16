@@ -125,6 +125,22 @@ describe('parseMailConfig', () => {
     });
   });
 
+  it('adds a valid reply-to address, and ignores one that is not an email', () => {
+    const resend = {
+      ...base,
+      MAIL_PROVIDER: 'resend',
+      RESEND_API_KEY: 're_x',
+      MAIL_FROM: 'TeacherHubPro <hello@teacherhubpro.com>',
+    };
+    expect(parseMailConfig({ ...resend, MAIL_REPLY_TO: ' team@teacherhubpro.com ' })).toMatchObject(
+      {
+        value: { replyTo: 'team@teacherhubpro.com' },
+      },
+    );
+    const bad = parseMailConfig({ ...resend, MAIL_REPLY_TO: 'not-an-email' });
+    expect(bad.ok && 'replyTo' in bad.value).toBe(false);
+  });
+
   it('sends real mail through Resend with a key and a sender', () => {
     expect(
       parseMailConfig({

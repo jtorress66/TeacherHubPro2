@@ -68,6 +68,24 @@ describe('ResendMailer', () => {
     });
   });
 
+  it('sends replies to the reply-to address when one is set', async () => {
+    let body: unknown;
+    server.use(
+      http.post(endpoint, async ({ request }) => {
+        body = await request.json();
+        return HttpResponse.json({ id: 'email-124' });
+      }),
+    );
+    const replying = new ResendMailer({
+      apiKey: 're_test',
+      from: 'TeacherHubPro <hello@teacherhub.test>',
+      replyTo: 'teacher@teacherhub.test',
+      baseURL,
+    });
+    expect((await replying.send(message)).ok).toBe(true);
+    expect(body).toMatchObject({ reply_to: 'teacher@teacherhub.test' });
+  });
+
   it("keeps Resend's reason for a refusal, with email addresses blanked out", async () => {
     server.use(
       http.post(endpoint, () =>

@@ -93,8 +93,16 @@ export interface WebConfig {
  */
 export type MailConfig = (
   | { readonly provider: 'local' }
-  | { readonly provider: 'resend'; readonly apiKey: string; readonly from: string }
+  | {
+      readonly provider: 'resend';
+      readonly apiKey: string;
+      readonly from: string;
+      /** Where replies go (MAIL_REPLY_TO), when it is a valid email. */
+      readonly replyTo?: string;
+    }
 ) & { readonly delivers: boolean };
+
+const isEmail = (address: string): boolean => /^[^\s@]+@[^\s@]+\.[^\s@]+$/u.test(address);
 
 function mailFrom(
   env: Readonly<Record<string, string | undefined>>,
@@ -109,7 +117,14 @@ function mailFrom(
   if (apiKey === '' || from === '') {
     return err('RESEND_API_KEY and MAIL_FROM are required when MAIL_PROVIDER is resend');
   }
-  return ok({ provider, apiKey, from, delivers: true });
+  const replyTo = env.MAIL_REPLY_TO?.trim() ?? '';
+  return ok({
+    provider,
+    apiKey,
+    from,
+    ...(isEmail(replyTo) ? { replyTo } : {}),
+    delivers: true,
+  });
 }
 
 const required = (name: string) => ({ error: `${name} is required` });
@@ -324,7 +339,7 @@ function ltiFrom(
 /** The team address for high-priority leads, when it is a valid email; otherwise none. */
 const leadsNotifyFrom = (env: Readonly<Record<string, string | undefined>>): string | null => {
   const address = env.LEADS_NOTIFY_EMAIL?.trim() ?? '';
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/u.test(address) ? address : null;
+  return isEmail(address) ? address : null;
 };
 
 /** The first super admin setup key; blank means the setup page is off. */

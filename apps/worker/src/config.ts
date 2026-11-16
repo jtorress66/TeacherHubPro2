@@ -90,7 +90,13 @@ export function parseTtsConfig(
 
 export type MailConfig = (
   | { readonly provider: 'local' }
-  | { readonly provider: 'resend'; readonly apiKey: string; readonly from: string }
+  | {
+      readonly provider: 'resend';
+      readonly apiKey: string;
+      readonly from: string;
+      /** Where replies go (MAIL_REPLY_TO), when it is a valid email. */
+      readonly replyTo?: string;
+    }
 ) & {
   /** The site address, for links in emails (empty when not set: then nothing is sent). */
   readonly appUrl: string;
@@ -122,7 +128,9 @@ export function parseMailConfig(
   if (apiKey === '' || from === '') {
     return err('RESEND_API_KEY and MAIL_FROM are required when MAIL_PROVIDER is "resend".');
   }
-  return ok({ provider, apiKey, from, appUrl, delivers: true });
+  const replyTo = env.MAIL_REPLY_TO?.trim() ?? '';
+  const replies = /^[^\s@]+@[^\s@]+\.[^\s@]+$/u.test(replyTo) ? { replyTo } : {};
+  return ok({ provider, apiKey, from, ...replies, appUrl, delivers: true });
 }
 
 /** For the start-up log: the address links in emails use, so a stale APP_URL shows at once. */
