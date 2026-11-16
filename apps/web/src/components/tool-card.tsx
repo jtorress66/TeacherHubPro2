@@ -27,19 +27,15 @@ export function ToolText({ locale, id }: { readonly locale: Locale; readonly id:
   return <p className="muted">{createTranslator(locale)(`connectedTools.tool.${id}.text`)}</p>;
 }
 
-/** For a tool that is switched off or not built yet: say so, and let a school ask for it. */
-export function ToolRequest(props: {
-  readonly locale: Locale;
-  readonly id: ToolId;
-  readonly status: 'comingSoon' | 'onRequest';
-}) {
+/** For a tool that is turned on when a school asks: say so, and let a school ask for it. */
+export function ToolRequest(props: { readonly locale: Locale; readonly id: ToolId }) {
   const t = createTranslator(props.locale);
   return (
     <>
       <p>
-        <span className="badge tool-status">{t(`connectedTools.${props.status}`)}</span>
+        <span className="badge tool-status">{t('connectedTools.onRequest')}</span>
       </p>
-      <p className="hint">{t(`connectedTools.${props.status}Text`)}</p>
+      <p className="hint">{t('connectedTools.onRequestText')}</p>
       <p>
         <a href={`/${props.locale}/contact?tool=${props.id}`}>
           {t('connectedTools.askAbout', { tool: t(`connectedTools.tool.${props.id}.name`) })}

@@ -1,12 +1,12 @@
 import Link from 'next/link';
 import { planIds, trialDays } from '@thp/domain';
 import { createTranslator, type Locale } from '@thp/i18n';
-import { planName, planPrice } from '../server/plan-display.ts';
+import { planName, planPrice, yearlySavingPercent } from '../server/plan-display.ts';
 import { useCaseSlugs } from '../server/marketing-pages.ts';
 import { MarketingArt, type ArtName } from './marketing-art.tsx';
 
 /** The features the site shows as cards, each with a page to read more. */
-const featureCards: readonly { key: ArtName; href: string }[] = [
+export const featureCards: readonly { key: ArtName; href: string }[] = [
   { key: 'lesson_planner', href: '/features/lesson-planning' },
   { key: 'ai_assistant', href: '/features/ai-tools' },
   { key: 'presentations', href: '/features/presentations' },
@@ -21,7 +21,7 @@ const featureCards: readonly { key: ArtName; href: string }[] = [
   { key: 'schools', href: '/enterprise' },
 ];
 
-type FeatureKey =
+export type FeatureKey =
   | 'lesson_planner'
   | 'ai_assistant'
   | 'presentations'
@@ -83,13 +83,37 @@ export function UseCaseCards({ locale }: { readonly locale: Locale }) {
   );
 }
 
-/** Every plan with its catalog price: the only prices the site states. */
-export function PlanCards({ locale, full }: { readonly locale: Locale; readonly full: boolean }) {
+/**
+ * Every plan with its catalog price: the only prices the site states. `saving` marks the yearly
+ * plan with how much less it costs than paying monthly.
+ */
+export function PlanCards({
+  locale,
+  full,
+  saving = false,
+}: {
+  readonly locale: Locale;
+  readonly full: boolean;
+  readonly saving?: boolean;
+}) {
   const t = createTranslator(locale);
   return (
     <ul className="m-grid m-grid-4" aria-label={t('marketing.nav.pricing')}>
       {planIds.map((id) => (
-        <li key={id} className="card m-card m-plan" data-testid={`plan-${id}`}>
+        <li
+          key={id}
+          className={
+            saving && id === 'individual_yearly'
+              ? 'card m-card m-plan featured'
+              : 'card m-card m-plan'
+          }
+          data-testid={`plan-${id}`}
+        >
+          {saving && id === 'individual_yearly' ? (
+            <span className="m-plan-tag">
+              {t('marketing.home.save', { percent: yearlySavingPercent() })}
+            </span>
+          ) : null}
           <h3>{planName(id, locale)}</h3>
           <p className="m-price">{planPrice(id, locale)}</p>
           {full && (id === 'school' || id === 'district') ? (

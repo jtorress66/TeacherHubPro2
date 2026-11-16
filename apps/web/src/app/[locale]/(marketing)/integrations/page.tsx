@@ -3,12 +3,7 @@ import { createTranslator } from '@thp/i18n';
 import { PageIntro, TrialCta } from '../../../../components/marketing-sections.tsx';
 import { MarketingShell } from '../../../../components/marketing-shell.tsx';
 import { ToolCard, ToolFilter, ToolRequest, ToolText } from '../../../../components/tool-card.tsx';
-import {
-  comingSoon,
-  onRequest,
-  toolGroupFrom,
-  toolsIn,
-} from '../../../../server/connected-tools.ts';
+import { onRequest, toolGroupFrom, toolsIn } from '../../../../server/connected-tools.ts';
 import { marketingMetadata } from '../../../../server/marketing-metadata.ts';
 import { localeFrom, type LocaleParams } from '../../locale-param.ts';
 
@@ -49,13 +44,7 @@ export default async function IntegrationsPage(
               group={tool.group}
             >
               <ToolText locale={locale} id={tool.id} />
-              {comingSoon.has(tool.id) || onRequest.has(tool.id) ? (
-                <ToolRequest
-                  locale={locale}
-                  id={tool.id}
-                  status={comingSoon.has(tool.id) ? 'comingSoon' : 'onRequest'}
-                />
-              ) : null}
+              {onRequest.has(tool.id) ? <ToolRequest locale={locale} id={tool.id} /> : null}
             </ToolCard>
           ))}
         </div>

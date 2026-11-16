@@ -5,6 +5,7 @@ import {
   planBadge,
   planPrice as rawPlanPrice,
   totalPrice as rawTotalPrice,
+  yearlySavingPercent,
 } from './plan-display.ts';
 
 /** Intl puts a non-breaking space between amount and currency in some languages. */
@@ -70,5 +71,12 @@ describe('planBadge', () => {
 
   it('shows nothing for a school without a subscription', () => {
     expect(planBadge(null, { hasAccess: false, trialDaysLeft: null, owner: false }, 'en')).toBe('');
+  });
+});
+
+describe('yearlySavingPercent', () => {
+  it('compares the yearly plan with twelve months of the monthly plan, rounded down', () => {
+    // $79.00 a year against 12 × $9.99 = $119.88: 34% less.
+    expect(yearlySavingPercent()).toBe(34);
   });
 });
