@@ -1,5 +1,6 @@
 import { setTimeout as sleep } from 'node:timers/promises';
 import {
+  emailLinksLine,
   parseDatabaseConfig,
   parseLlmConfig,
   parseLtiConfig,
@@ -34,6 +35,7 @@ for (const signal of ['SIGTERM', 'SIGINT'] as const) {
 process.stdout.write(
   `Worker started (${llm.value.provider} model, ${tts.value.provider} voice, ${mail.value.provider} mail).\n`,
 );
+process.stdout.write(`${emailLinksLine(mail.value)}\n`);
 process.stdout.write(`${await checkClaudeKey(llm.value)}\n`);
 await runWorkerLoop({
   runNext: () => runner.runNext.execute(),

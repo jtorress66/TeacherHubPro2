@@ -125,6 +125,12 @@ export function parseMailConfig(
   return ok({ provider, apiKey, from, appUrl, delivers: true });
 }
 
+/** For the start-up log: the address links in emails use, so a stale APP_URL shows at once. */
+export const emailLinksLine = (mail: MailConfig): string =>
+  mail.appUrl === ''
+    ? 'Email links: APP_URL is not set, so no email is sent.'
+    : `Email links use ${mail.appUrl}`;
+
 export type LtiConfig =
   | { readonly provider: 'off' }
   | { readonly provider: 'local' }
