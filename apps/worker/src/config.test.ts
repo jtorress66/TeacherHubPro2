@@ -6,6 +6,7 @@ import {
   parseMailConfig,
   parseStripeConfig,
   parseTtsConfig,
+  emailLinksLine,
 } from './config.ts';
 
 describe('parseDatabaseConfig', () => {
@@ -157,6 +158,20 @@ describe('parseMailConfig', () => {
       error: 'RESEND_API_KEY and MAIL_FROM are required when MAIL_PROVIDER is "resend".',
     });
     expect(parseMailConfig({ ...base, MAIL_PROVIDER: 'pigeon' }).ok).toBe(false);
+  });
+});
+
+describe('emailLinksLine', () => {
+  it('names the address email links use, for the start-up log', () => {
+    expect(
+      emailLinksLine({ provider: 'local', appUrl: 'https://teacherhubpro.com', delivers: true }),
+    ).toBe('Email links use https://teacherhubpro.com');
+  });
+
+  it('says so when no address is set', () => {
+    expect(emailLinksLine({ provider: 'local', appUrl: '', delivers: false })).toBe(
+      'Email links: APP_URL is not set, so no email is sent.',
+    );
   });
 });
 
