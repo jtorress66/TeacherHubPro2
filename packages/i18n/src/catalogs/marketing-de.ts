@@ -10,6 +10,7 @@ export const marketingDe: MarketingMessages = {
       features: 'Funktionen',
       useCases: 'Anwendungsfälle',
       pricing: 'Preise',
+      freeTools: 'Kostenlose Tools',
       contact: 'Kontakt',
       logIn: 'Anmelden',
       startTrial: 'Kostenlos testen',
@@ -80,6 +81,76 @@ export const marketingDe: MarketingMessages = {
       ctaTitle: 'Probieren Sie es mit Ihren eigenen Klassen aus',
       ctaText:
         'Richten Sie in wenigen Minuten eine Klasse ein und lassen Sie die KI Ihre nächste Woche entwerfen.',
+    },
+    freeTools: {
+      metaTitle: 'Kostenlose Lehrer-Tools: Notenrechner, Gruppengenerator und Bewertungsraster',
+      metaDescription:
+        'Kostenlose Tools für Lehrkräfte, ohne Anmeldung: ein Rechner für gewichtete Noten, ein Zufallsgruppen-Generator mit Namensauswahl und ein druckbares Bewertungsraster.',
+      title: 'Kostenlose Tools für Lehrkräfte',
+      intro: 'Sofort nutzbar, ohne Konto.',
+      open: 'Öffnen',
+      privacy:
+        'Alles bleibt auf Ihrem Computer: Nichts, was Sie hier eingeben, wird an uns gesendet oder gespeichert.',
+      more: 'Weitere kostenlose Tools',
+      gradeName: 'Notenrechner',
+      gradeMetaTitle: 'Kostenloser Rechner für gewichtete Noten',
+      gradeMetaDescription:
+        'Berechnen Sie eine gewichtete Endnote aus Kategorien und Punkten, mit Buchstabennote und GPA. Kostenlos, ohne Anmeldung.',
+      gradeSummary: 'Gewichtete Kategorien rein; Endprozent, Buchstabennote und GPA raus.',
+      gradeIntro:
+        'Fügen Sie jede Kategorie mit ihrem Gewicht hinzu und tippen Sie die Punkte ein. Die Endnote aktualisiert sich beim Tippen.',
+      category: 'Kategorie {n}',
+      name: 'Name',
+      weight: 'Gewicht (%)',
+      scores: 'Punkte',
+      scoresHint: 'Eine pro Zeile, z. B. 18/20, 85 oder 92%.',
+      unread: '{count} konnten nicht gelesen werden und zählen nicht.',
+      addCategory: 'Kategorie hinzufügen',
+      removeCategory: 'Kategorie entfernen',
+      result: 'Endnote',
+      average: 'Durchschnitt: {percent}%',
+      noScores: 'Noch keine Punkte',
+      letter: 'Buchstabennote',
+      gpa: 'GPA (4,0-Skala)',
+      empty: 'Tippen Sie Punkte ein, um die Note zu sehen.',
+      weightWarning:
+        'Die Gewichte ergeben {total}%, nicht 100%, daher zählt jede Kategorie im Verhältnis zu ihrem Gewicht.',
+      gradeCta:
+        'Das Notenbuch von TeacherHubPro rechnet das für jeden Schüler beim Eintragen aus und füllt die Zeugnisse.',
+      groupName: 'Zufallsgruppen-Generator',
+      groupMetaTitle: 'Kostenloser Zufallsgruppen-Generator und Namensauswahl',
+      groupMetaDescription:
+        'Fügen Sie Ihre Klassenliste ein, um Zufallsgruppen zu bilden oder einen Schüler zufällig auszuwählen. Kostenlos, ohne Anmeldung, und die Namen verlassen nie Ihren Computer.',
+      groupSummary: 'Klassenliste einfügen, dann Zufallsgruppen bilden oder einen Namen ziehen.',
+      groupIntro:
+        'Fügen Sie die Namen ein, wählen Sie die Aufteilung und drücken Sie den Knopf. Erneut drücken für neue Gruppen.',
+      names: 'Namen',
+      namesHint: 'Einer pro Zeile oder durch Kommas getrennt.',
+      namesCount: '{count} Namen',
+      splitBy: 'Aufteilen nach',
+      byCount: 'Anzahl der Gruppen',
+      bySize: 'Personen pro Gruppe',
+      howMany: 'Wie viele',
+      make: 'Gruppen bilden',
+      group: 'Gruppe {n}',
+      pick: 'Namen ziehen',
+      picked: 'Gezogen: {name}',
+      groupCta:
+        'In TeacherHubPro sind Ihre Klassenlisten schon da: für Anwesenheit, Noten und Live-Spiele.',
+      rubricName: 'Bewertungsraster erstellen',
+      rubricMetaTitle: 'Kostenloser Rubrik-Generator: Bewertungsraster erstellen und drucken',
+      rubricMetaDescription:
+        'Erstellen Sie ein Bewertungsraster mit eigenen Kriterien und Stufen und drucken oder kopieren Sie es. Kostenlos, ohne Anmeldung.',
+      rubricSummary: 'Kriterien und Stufen in einem Raster zum Drucken oder Kopieren.',
+      rubricIntro:
+        'Benennen Sie Kriterien und Stufen, beschreiben Sie jedes Feld und drucken oder kopieren Sie dann das Raster.',
+      rubricTitle: 'Titel des Rasters',
+      rubricTitleDefault: 'Mein Bewertungsraster',
+      print: 'Drucken',
+      copy: 'Als Text kopieren',
+      copied: 'Kopiert.',
+      rubricCta:
+        'TeacherHubPro entwirft Bewertungsraster mit KI, speichert sie und nutzt sie beim Bewerten von Aufsätzen.',
     },
     home: {
       seeItWork: 'In Aktion ansehen',

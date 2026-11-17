@@ -10,6 +10,7 @@ export const marketingFr: MarketingMessages = {
       features: 'Fonctionnalités',
       useCases: "Cas d'usage",
       pricing: 'Tarifs',
+      freeTools: 'Outils gratuits',
       contact: 'Contact',
       logIn: 'Se connecter',
       startTrial: 'Essai gratuit',
@@ -81,6 +82,79 @@ export const marketingFr: MarketingMessages = {
       ctaTitle: 'Essayez-la avec vos propres classes',
       ctaText:
         "Créez une classe en quelques minutes et laissez l'IA préparer un brouillon de votre semaine prochaine.",
+    },
+    freeTools: {
+      metaTitle:
+        'Outils gratuits pour enseignants : calculateur de notes, groupes et grilles d’évaluation',
+      metaDescription:
+        'Outils gratuits pour enseignants, sans inscription : calculateur de moyenne pondérée, générateur de groupes aléatoires et tirage de noms, et créateur de grilles d’évaluation à imprimer.',
+      title: 'Outils gratuits pour enseignants',
+      intro: 'Utilisez-les tout de suite, sans compte.',
+      open: 'Ouvrir',
+      privacy:
+        'Tout reste sur votre ordinateur : rien de ce que vous saisissez ici ne nous est envoyé ni enregistré.',
+      more: 'Plus d’outils gratuits',
+      gradeName: 'Calculateur de notes',
+      gradeMetaTitle: 'Calculateur de moyenne pondérée gratuit pour enseignants',
+      gradeMetaDescription:
+        'Calculez une moyenne finale pondérée à partir de catégories et de notes, avec la lettre et le GPA. Gratuit, sans inscription.',
+      gradeSummary:
+        'Des catégories pondérées en entrée ; le pourcentage final, la lettre et le GPA en sortie.',
+      gradeIntro:
+        'Ajoutez chaque catégorie avec son poids et saisissez les notes. La note finale se met à jour pendant la saisie.',
+      category: 'Catégorie {n}',
+      name: 'Nom',
+      weight: 'Poids (%)',
+      scores: 'Notes',
+      scoresHint: 'Une par ligne, comme 18/20, 85 ou 92%.',
+      unread: '{count} n’ont pas pu être lues et sont ignorées.',
+      addCategory: 'Ajouter une catégorie',
+      removeCategory: 'Supprimer la catégorie',
+      result: 'Note finale',
+      average: 'Moyenne : {percent}%',
+      noScores: 'Pas encore de notes',
+      letter: 'Lettre',
+      gpa: 'GPA (échelle de 4,0)',
+      empty: 'Saisissez des notes pour voir le résultat.',
+      weightWarning:
+        'Les poids font {total}%, et non 100%, donc chaque catégorie compte en proportion de son poids.',
+      gradeCta:
+        'Le carnet de notes de TeacherHubPro fait ce calcul pour chaque élève au fil de la saisie, et remplit les bulletins.',
+      groupName: 'Générateur de groupes aléatoires',
+      groupMetaTitle: 'Générateur de groupes aléatoires et tirage de noms gratuit',
+      groupMetaDescription:
+        'Collez votre liste de classe pour former des groupes au hasard ou tirer un élève au sort. Gratuit, sans inscription, et les noms ne quittent jamais votre ordinateur.',
+      groupSummary:
+        'Collez une liste de classe, puis formez des groupes au hasard ou tirez un nom.',
+      groupIntro:
+        'Collez les noms, choisissez comment les répartir et appuyez sur le bouton. Appuyez de nouveau pour d’autres groupes.',
+      names: 'Noms',
+      namesHint: 'Un par ligne, ou séparés par des virgules.',
+      namesCount: '{count} noms',
+      splitBy: 'Répartir par',
+      byCount: 'Nombre de groupes',
+      bySize: 'Personnes par groupe',
+      howMany: 'Combien',
+      make: 'Former les groupes',
+      group: 'Groupe {n}',
+      pick: 'Tirer un nom',
+      picked: 'Tiré au sort : {name}',
+      groupCta:
+        'Dans TeacherHubPro, vos listes de classe sont déjà là pour les présences, les notes et les jeux en direct.',
+      rubricName: 'Créateur de grilles d’évaluation',
+      rubricMetaTitle: 'Créateur de grilles d’évaluation gratuit : créez et imprimez une grille',
+      rubricMetaDescription:
+        'Créez une grille d’évaluation avec vos propres critères et niveaux, puis imprimez-la ou copiez-la. Gratuit, sans inscription.',
+      rubricSummary: 'Des critères et des niveaux dans une grille à imprimer ou copier.',
+      rubricIntro:
+        'Nommez vos critères et vos niveaux, décrivez chaque case, puis imprimez ou copiez la grille.',
+      rubricTitle: 'Titre de la grille',
+      rubricTitleDefault: 'Ma grille',
+      print: 'Imprimer',
+      copy: 'Copier en texte',
+      copied: 'Copié.',
+      rubricCta:
+        'TeacherHubPro rédige des grilles avec l’IA, les enregistre et s’en sert pour corriger les rédactions.',
     },
     home: {
       seeItWork: 'Voir en action',

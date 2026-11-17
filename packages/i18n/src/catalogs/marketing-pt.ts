@@ -10,6 +10,7 @@ export const marketingPt: MarketingMessages = {
       features: 'Recursos',
       useCases: 'Casos de uso',
       pricing: 'Preços',
+      freeTools: 'Ferramentas grátis',
       contact: 'Contato',
       logIn: 'Entrar',
       startTrial: 'Começar teste grátis',
@@ -78,6 +79,75 @@ export const marketingPt: MarketingMessages = {
       ctaTitle: 'Experimente com suas próprias turmas',
       ctaText:
         'Configure uma turma em minutos e deixe a IA fazer o rascunho da sua próxima semana.',
+    },
+    freeTools: {
+      metaTitle: 'Ferramentas grátis para professores: calculadora de notas, grupos e rubricas',
+      metaDescription:
+        'Ferramentas grátis para professores, sem cadastro: calculadora de média ponderada, gerador de grupos aleatórios e sorteio de nomes, e criador de rubricas para imprimir.',
+      title: 'Ferramentas grátis para professores',
+      intro: 'Use agora mesmo, sem criar conta.',
+      open: 'Abrir',
+      privacy:
+        'Tudo fica no seu computador: nada do que você digita aqui é enviado para nós ou salvo.',
+      more: 'Mais ferramentas grátis',
+      gradeName: 'Calculadora de notas',
+      gradeMetaTitle: 'Calculadora de média ponderada grátis para professores',
+      gradeMetaDescription:
+        'Calcule a nota final ponderada a partir de categorias e notas, com o conceito em letra e o GPA. Grátis, sem cadastro.',
+      gradeSummary: 'Categorias com pesos na entrada; percentual final, letra e GPA na saída.',
+      gradeIntro:
+        'Adicione cada categoria com seu peso e digite as notas. A nota final é atualizada enquanto você digita.',
+      category: 'Categoria {n}',
+      name: 'Nome',
+      weight: 'Peso (%)',
+      scores: 'Notas',
+      scoresHint: 'Uma por linha, como 18/20, 85 ou 92%.',
+      unread: '{count} não puderam ser lidas e ficaram de fora.',
+      addCategory: 'Adicionar categoria',
+      removeCategory: 'Remover categoria',
+      result: 'Nota final',
+      average: 'Média: {percent}%',
+      noScores: 'Ainda sem notas',
+      letter: 'Letra',
+      gpa: 'GPA (escala de 4,0)',
+      empty: 'Digite algumas notas para ver o resultado.',
+      weightWarning:
+        'Os pesos somam {total}%, não 100%, então cada categoria conta na proporção do seu peso.',
+      gradeCta:
+        'O diário de notas do TeacherHubPro faz esse cálculo para cada aluno enquanto você lança as notas, e preenche os boletins.',
+      groupName: 'Gerador de grupos aleatórios',
+      groupMetaTitle: 'Gerador de grupos aleatórios e sorteio de nomes grátis',
+      groupMetaDescription:
+        'Cole a lista da turma para formar grupos aleatórios ou sortear um aluno. Grátis, sem cadastro, e os nomes nunca saem do seu computador.',
+      groupSummary: 'Cole uma lista da turma e forme grupos aleatórios ou sorteie um nome.',
+      groupIntro:
+        'Cole os nomes, escolha como dividir e aperte o botão. Aperte de novo para novos grupos.',
+      names: 'Nomes',
+      namesHint: 'Um por linha, ou separados por vírgulas.',
+      namesCount: '{count} nomes',
+      splitBy: 'Dividir por',
+      byCount: 'Número de grupos',
+      bySize: 'Pessoas por grupo',
+      howMany: 'Quantos',
+      make: 'Formar grupos',
+      group: 'Grupo {n}',
+      pick: 'Sortear um nome',
+      picked: 'Sorteado: {name}',
+      groupCta:
+        'No TeacherHubPro suas listas de turma já estão lá para frequência, notas e jogos ao vivo.',
+      rubricName: 'Criador de rubricas',
+      rubricMetaTitle: 'Criador de rubricas grátis: monte e imprima uma rubrica',
+      rubricMetaDescription:
+        'Monte uma rubrica com seus próprios critérios e níveis, depois imprima ou copie. Grátis, sem cadastro.',
+      rubricSummary: 'Critérios e níveis em uma tabela para imprimir ou copiar.',
+      rubricIntro:
+        'Dê nome aos critérios e níveis, descreva cada quadro e depois imprima ou copie a rubrica.',
+      rubricTitle: 'Título da rubrica',
+      rubricTitleDefault: 'Minha rubrica',
+      print: 'Imprimir',
+      copy: 'Copiar como texto',
+      copied: 'Copiado.',
+      rubricCta: 'O TeacherHubPro cria rubricas com IA, salva e usa na correção de redações.',
     },
     home: {
       seeItWork: 'Veja funcionando',
