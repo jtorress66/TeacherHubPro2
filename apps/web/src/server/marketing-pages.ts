@@ -12,6 +12,10 @@ export const featureSlugs = [
 ] as const;
 export type FeatureSlug = (typeof featureSlugs)[number];
 
+/** The free tools anyone can use without an account; nothing typed into them is sent or saved. */
+export const freeToolSlugs = ['grade-calculator', 'group-maker', 'rubric-maker'] as const;
+export type FreeToolSlug = (typeof freeToolSlugs)[number];
+
 export const useCaseSlugs = ['classroom-teachers', 'homeschool', 'tutors', 'schools'] as const;
 export type UseCaseSlug = (typeof useCaseSlugs)[number];
 
@@ -50,6 +54,7 @@ const oneOf =
 
 export const isFeatureSlug = oneOf(featureSlugs);
 export const isUseCaseSlug = oneOf(useCaseSlugs);
+export const isFreeToolSlug = oneOf(freeToolSlugs);
 export const isLegalSlug = oneOf(legalSlugs);
 
 const staticPaths = [
@@ -62,6 +67,7 @@ const staticPaths = [
   '/enterprise',
   '/contact',
   '/help',
+  '/free-tools',
 ];
 
 /** Every public page's path after the language, e.g. "/pricing" ("" is the home page). */
@@ -69,6 +75,7 @@ export const marketingPaths = (): string[] => [
   ...staticPaths,
   ...featureSlugs.map((slug) => `/features/${slug}`),
   ...useCaseSlugs.map((slug) => `/use-cases/${slug}`),
+  ...freeToolSlugs.map((slug) => `/free-tools/${slug}`),
   ...legalSlugs.map((slug) => `/${slug}`),
 ];
 

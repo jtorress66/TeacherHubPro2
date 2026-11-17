@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { locales } from '@thp/i18n';
 import {
   featureSlugs,
+  freeToolSlugs,
   isFeatureSlug,
   isLegalSlug,
   isUseCaseSlug,
@@ -16,6 +17,10 @@ import {
 const site = 'https://teacherhubpro.com';
 
 describe('the marketing pages', () => {
+  it('knows its free tools', () => {
+    expect(freeToolSlugs).toEqual(['grade-calculator', 'group-maker', 'rubric-maker']);
+  });
+
   it('knows its feature, use-case and legal slugs', () => {
     expect(featureSlugs).toEqual([
       'lesson-planning',
@@ -38,6 +43,14 @@ describe('the marketing pages', () => {
     expect(paths).toContain('');
     expect(paths).toContain('/pricing');
     expect(paths).toContain('/features/attendance');
+    expect(paths).toEqual(
+      expect.arrayContaining([
+        '/free-tools',
+        '/free-tools/grade-calculator',
+        '/free-tools/group-maker',
+        '/free-tools/rubric-maker',
+      ]),
+    );
     expect(paths).toContain('/use-cases/schools');
     expect(paths).toContain('/ai-governance');
     expect(paths).not.toContain('/homeschool');

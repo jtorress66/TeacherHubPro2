@@ -21,6 +21,7 @@ import {
 import { Field, FormAlert, Submit } from './forms.tsx';
 import { EslSwitch, Hidden, Select, TextArea, type Option } from './form-fields.tsx';
 import { prefill, type Prefill } from '../server/form-values.ts';
+import { RubricGrid } from './rubric-grid.tsx';
 
 const initial: RubricFormState = {};
 const option = (id: string, name: string): Option => ({ id, name });
@@ -203,9 +204,6 @@ export function KeepRubricDraftForm(props: { readonly locale: Locale; readonly j
   );
 }
 
-const resize = (list: readonly string[], length: number) =>
-  Array.from({ length }, (_, index) => list[index] ?? '');
-
 /** The grid: level names and points across the top, one row per criterion. */
 export function RubricEditor(props: { readonly locale: Locale; readonly rubric: Rubric }) {
   const t = createTranslator(props.locale);
@@ -214,51 +212,6 @@ export function RubricEditor(props: { readonly locale: Locale; readonly rubric: 
   const [levels, setLevels] = useState<RubricLevel[]>([...props.rubric.levels]);
   const [criteria, setCriteria] = useState<RubricCriterion[]>([...props.rubric.criteria]);
   const errors = state.errors;
-
-  const setLevel = (index: number, change: Partial<RubricLevel>) => {
-    setLevels(levels.map((level, i) => (i === index ? { ...level, ...change } : level)));
-  };
-  const setCriterion = (index: number, change: Partial<RubricCriterion>) => {
-    setCriteria(criteria.map((row, i) => (i === index ? { ...row, ...change } : row)));
-  };
-  const setCell = (row: number, column: number, value: string) => {
-    setCriterion(row, {
-      descriptors: (criteria[row]?.descriptors ?? []).map((cell, i) =>
-        i === column ? value : cell,
-      ),
-    });
-  };
-  const addLevel = () => {
-    const lowest = levels.at(-1)?.points ?? 1;
-    setLevels([
-      ...levels,
-      {
-        label: t('rubrics.levelName', { points: Math.max(lowest - 1, 0) }),
-        points: Math.max(lowest - 1, 0),
-      },
-    ]);
-    setCriteria(
-      criteria.map((row) => ({ ...row, descriptors: resize(row.descriptors, levels.length + 1) })),
-    );
-  };
-  const removeLevel = (index: number) => {
-    setLevels(levels.filter((_, i) => i !== index));
-    setCriteria(
-      criteria.map((row) => ({
-        ...row,
-        descriptors: row.descriptors.filter((_, i) => i !== index),
-      })),
-    );
-  };
-  const addCriterion = () => {
-    setCriteria([
-      ...criteria,
-      {
-        name: t('rubrics.criterionName', { position: criteria.length + 1 }),
-        descriptors: resize([], levels.length),
-      },
-    ]);
-  };
 
   return (
     <form action={action} className="stack" noValidate aria-label={t('rubrics.editor')}>
@@ -292,99 +245,13 @@ export function RubricEditor(props: { readonly locale: Locale; readonly rubric: 
           sent={sent}
         />
       </div>
-      <div className="table-scroll">
-        <table className="rubric-grid">
-          <thead>
-            <tr>
-              <th scope="col">{t('rubrics.criterion')}</th>
-              {levels.map((level, column) => (
-                <th scope="col" key={column}>
-                  <input
-                    aria-label={t('rubrics.levelLabel', { n: column + 1 })}
-                    value={level.label}
-                    onChange={(event) => {
-                      setLevel(column, { label: event.target.value });
-                    }}
-                  />
-                  <input
-                    type="number"
-                    min={0}
-                    aria-label={t('rubrics.levelPoints', { n: column + 1 })}
-                    value={level.points}
-                    onChange={(event) => {
-                      setLevel(column, { points: Number(event.target.value) });
-                    }}
-                  />
-                  {levels.length > rubricLevelRange.min ? (
-                    <button
-                      type="button"
-                      className="link-button"
-                      onClick={() => {
-                        removeLevel(column);
-                      }}
-                    >
-                      {t('rubrics.removeLevel')}
-                    </button>
-                  ) : null}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {criteria.map((row, rowIndex) => (
-              <tr key={rowIndex}>
-                <th scope="row">
-                  <input
-                    aria-label={t('rubrics.criterionLabel', { n: rowIndex + 1 })}
-                    value={row.name}
-                    onChange={(event) => {
-                      setCriterion(rowIndex, { name: event.target.value });
-                    }}
-                  />
-                  {criteria.length > rubricCriteriaRange.min ? (
-                    <button
-                      type="button"
-                      className="link-button"
-                      onClick={() => {
-                        setCriteria(criteria.filter((_, i) => i !== rowIndex));
-                      }}
-                    >
-                      {t('rubrics.removeCriterion')}
-                    </button>
-                  ) : null}
-                </th>
-                {levels.map((_, column) => (
-                  <td key={column}>
-                    <textarea
-                      rows={3}
-                      aria-label={t('rubrics.cell', {
-                        criterion: row.name,
-                        level: levels[column]?.label ?? '',
-                      })}
-                      value={row.descriptors[column] ?? ''}
-                      onChange={(event) => {
-                        setCell(rowIndex, column, event.target.value);
-                      }}
-                    />
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <p className="actions">
-        {criteria.length < rubricCriteriaRange.max ? (
-          <button type="button" className="button secondary" onClick={addCriterion}>
-            {t('rubrics.addCriterion')}
-          </button>
-        ) : null}
-        {levels.length < rubricLevelRange.max ? (
-          <button type="button" className="button secondary" onClick={addLevel}>
-            {t('rubrics.addLevel')}
-          </button>
-        ) : null}
-      </p>
+      <RubricGrid
+        locale={props.locale}
+        levels={levels}
+        criteria={criteria}
+        onLevels={setLevels}
+        onCriteria={setCriteria}
+      />
       <Submit label={t('rubrics.save')} />
     </form>
   );

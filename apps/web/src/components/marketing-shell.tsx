@@ -27,6 +27,7 @@ export function MarketingShell(props: {
           <Link href={`${base}/features`}>{t('marketing.nav.features')}</Link>
           <Link href={`${base}/use-cases`}>{t('marketing.nav.useCases')}</Link>
           <Link href={`${base}/pricing`}>{t('marketing.nav.pricing')}</Link>
+          <Link href={`${base}/free-tools`}>{t('marketing.nav.freeTools')}</Link>
           <Link href={`${base}/contact`}>{t('marketing.nav.contact')}</Link>
         </nav>
         <p className="m-header-actions">
@@ -77,6 +78,9 @@ export function MarketingShell(props: {
             </li>
             <li>
               <Link href={`${base}/pricing`}>{t('marketing.nav.pricing')}</Link>
+            </li>
+            <li>
+              <Link href={`${base}/free-tools`}>{t('marketing.nav.freeTools')}</Link>
             </li>
           </ul>
         </nav>

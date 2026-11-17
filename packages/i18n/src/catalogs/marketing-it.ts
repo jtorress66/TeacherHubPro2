@@ -10,6 +10,7 @@ export const marketingIt: MarketingMessages = {
       features: 'Funzionalità',
       useCases: "Casi d'uso",
       pricing: 'Prezzi',
+      freeTools: 'Strumenti gratuiti',
       contact: 'Contatti',
       logIn: 'Accedi',
       startTrial: 'Prova gratuita',
@@ -79,6 +80,76 @@ export const marketingIt: MarketingMessages = {
       ctaTitle: 'La provi con le Sue classi',
       ctaText:
         "Configuri una classe in pochi minuti e lasci che l'IA prepari la bozza della Sua prossima settimana.",
+    },
+    freeTools: {
+      metaTitle: 'Strumenti gratuiti per insegnanti: calcolatore di voti, gruppi e rubriche',
+      metaDescription:
+        'Strumenti gratuiti per insegnanti, senza registrazione: calcolatore della media ponderata, generatore di gruppi casuali ed estrazione di nomi, e creatore di rubriche da stampare.',
+      title: 'Strumenti gratuiti per insegnanti',
+      intro: 'Usali subito, senza account.',
+      open: 'Apri',
+      privacy:
+        'Tutto resta sul tuo computer: niente di ciò che scrivi qui viene inviato a noi o salvato.',
+      more: 'Altri strumenti gratuiti',
+      gradeName: 'Calcolatore di voti',
+      gradeMetaTitle: 'Calcolatore della media ponderata gratuito per insegnanti',
+      gradeMetaDescription:
+        'Calcola il voto finale ponderato da categorie e punteggi, con il voto in lettere e il GPA. Gratis, senza registrazione.',
+      gradeSummary:
+        'Categorie con il loro peso in entrata; percentuale finale, lettera e GPA in uscita.',
+      gradeIntro:
+        'Aggiungi ogni categoria con il suo peso e scrivi i punteggi. Il voto finale si aggiorna mentre scrivi.',
+      category: 'Categoria {n}',
+      name: 'Nome',
+      weight: 'Peso (%)',
+      scores: 'Punteggi',
+      scoresHint: 'Uno per riga, come 18/20, 85 o 92%.',
+      unread: '{count} non sono leggibili e sono esclusi.',
+      addCategory: 'Aggiungi categoria',
+      removeCategory: 'Rimuovi categoria',
+      result: 'Voto finale',
+      average: 'Media: {percent}%',
+      noScores: 'Ancora nessun punteggio',
+      letter: 'Lettera',
+      gpa: 'GPA (scala 4,0)',
+      empty: 'Scrivi qualche punteggio per vedere il voto.',
+      weightWarning:
+        'I pesi sommano {total}%, non 100%, quindi ogni categoria conta in proporzione al suo peso.',
+      gradeCta:
+        'Il registro dei voti di TeacherHubPro fa questo calcolo per ogni studente mentre inserisci i voti, e compila le pagelle.',
+      groupName: 'Generatore di gruppi casuali',
+      groupMetaTitle: 'Generatore di gruppi casuali ed estrazione di nomi gratuito',
+      groupMetaDescription:
+        'Incolla l’elenco della classe per formare gruppi casuali o estrarre uno studente a caso. Gratis, senza registrazione, e i nomi non lasciano mai il tuo computer.',
+      groupSummary: 'Incolla un elenco della classe, poi forma gruppi casuali o estrai un nome.',
+      groupIntro:
+        'Incolla i nomi, scegli come dividerli e premi il pulsante. Premilo di nuovo per nuovi gruppi.',
+      names: 'Nomi',
+      namesHint: 'Uno per riga, o separati da virgole.',
+      namesCount: '{count} nomi',
+      splitBy: 'Dividi per',
+      byCount: 'Numero di gruppi',
+      bySize: 'Persone per gruppo',
+      howMany: 'Quanti',
+      make: 'Forma i gruppi',
+      group: 'Gruppo {n}',
+      pick: 'Estrai un nome',
+      picked: 'Estratto: {name}',
+      groupCta:
+        'In TeacherHubPro gli elenchi delle tue classi sono già pronti per presenze, voti e giochi dal vivo.',
+      rubricName: 'Creatore di rubriche',
+      rubricMetaTitle: 'Creatore di rubriche gratuito: crea e stampa una rubrica',
+      rubricMetaDescription:
+        'Crea una rubrica di valutazione con criteri e livelli tuoi, poi stampala o copiala. Gratis, senza registrazione.',
+      rubricSummary: 'Criteri e livelli in una griglia da stampare o copiare.',
+      rubricIntro:
+        'Dai un nome a criteri e livelli, descrivi ogni casella, poi stampa o copia la rubrica.',
+      rubricTitle: 'Titolo della rubrica',
+      rubricTitleDefault: 'La mia rubrica',
+      print: 'Stampa',
+      copy: 'Copia come testo',
+      copied: 'Copiato.',
+      rubricCta: 'TeacherHubPro scrive rubriche con l’IA, le salva e le usa per valutare i temi.',
     },
     home: {
       seeItWork: 'Guardalo all’opera',
