@@ -10,8 +10,10 @@ import { rejectedForm } from '../../server/error-messages.ts';
 import { parseForm, type FieldErrors } from '../../server/forms.ts';
 import { importErrorMessages } from '../../server/import-messages.ts';
 import { classForm, semesterForm, studentForm, toClassChanges } from '../../server/roster-forms.ts';
+import { sampleText } from '../../server/sample-text.ts';
 import { record } from './activity.ts';
 import { requireUser } from './auth.ts';
+import { teacherTimeZone } from './time-zone.ts';
 
 export interface RosterFormState {
   /** What the teacher sent, when it was refused, so the form shows it again. */
@@ -88,6 +90,31 @@ export async function archiveClassAction(data: FormData): Promise<void> {
     actor: user,
     classId: text(data, 'classId') as ClassId,
   });
+  redirect(`/${locale}/app/classes`);
+}
+
+/** One click: a class of made-up students to try every feature on. */
+export async function addSampleClassAction(data: FormData): Promise<void> {
+  const locale = localeOf(data);
+  const { user } = await requireUser(locale);
+  const cls = await getAppContainer().createSampleClass.execute({
+    actor: user,
+    text: sampleText(locale),
+    timeZone: await teacherTimeZone(),
+  });
+  revalidatePath(`/${locale}/app`);
+  revalidatePath(`/${locale}/app/classes`);
+  redirect(classPage(locale, cls.id));
+}
+
+export async function removeSampleClassAction(data: FormData): Promise<void> {
+  const locale = localeOf(data);
+  const { user } = await requireUser(locale);
+  await getAppContainer().removeSampleClass.execute({
+    actor: user,
+    classId: text(data, 'classId') as ClassId,
+  });
+  revalidatePath(`/${locale}/app`);
   redirect(`/${locale}/app/classes`);
 }
 

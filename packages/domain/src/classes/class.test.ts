@@ -22,7 +22,12 @@ describe('createClass', () => {
       semesterId: null,
       schedule: null,
       archivedAt: null,
+      sample: false,
     });
+  });
+
+  it('marks the sample class a new teacher starts with', () => {
+    expect(valueOf(createClass({ ...base, sample: true })).sample).toBe(true);
   });
 
   it('keeps the details and the schedule', () => {
@@ -166,6 +171,11 @@ describe('updateClass', () => {
     expect(
       errorOf(updateClass(cls, { name: 'A', schedule: { startTime: '10:00', endTime: '09:00' } })),
     ).toEqual({ field: 'endTime', code: 'invalid_order' });
+  });
+
+  it('keeps the sample class a sample', () => {
+    const sample = valueOf(createClass({ ...base, sample: true }));
+    expect(valueOf(updateClass(sample, { name: 'Fractions' })).sample).toBe(true);
   });
 
   it('keeps an archived class archived', () => {

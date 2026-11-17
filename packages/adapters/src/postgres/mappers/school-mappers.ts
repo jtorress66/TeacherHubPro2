@@ -112,6 +112,7 @@ export const classMapper: RowMapper<Class, ClassesTable> = {
     start_time: cls.schedule?.startTime ?? null,
     end_time: cls.schedule?.endTime ?? null,
     archived_at: cls.archivedAt,
+    sample: cls.sample,
   }),
   fromRow: (row) => ({
     id: row.id as ClassId,
@@ -134,6 +135,7 @@ export const classMapper: RowMapper<Class, ClassesTable> = {
             days: weekdayList(readJson(row.schedule_days), 'classes.schedule_days'),
           },
     archivedAt: row.archived_at,
+    sample: row.sample,
   }),
 };
 

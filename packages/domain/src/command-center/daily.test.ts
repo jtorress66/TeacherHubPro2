@@ -47,6 +47,7 @@ const aClass = (
           days: schedule.days ?? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
         },
   archivedAt: null,
+  sample: false,
 });
 
 describe('weekdayOf', () => {

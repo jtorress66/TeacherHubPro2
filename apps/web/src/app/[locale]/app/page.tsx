@@ -3,6 +3,7 @@ import Link from 'next/link';
 import type { RecommendationKind } from '@thp/domain';
 import { createTranslator } from '@thp/i18n';
 import { OnboardingChecklist } from '../../../components/onboarding-checklist.tsx';
+import { SampleClassOffer } from '../../../components/sample-class-offer.tsx';
 import { WelcomeTour } from '../../../components/welcome-tour.tsx';
 import { getAppContainer } from '../../../container.ts';
 import { formatDate, planName } from '../../../server/lesson-plan-display.ts';
@@ -38,6 +39,9 @@ export default async function DashboardPage(props: LocaleParams) {
     actor: user,
     timeZone: await teacherTimeZone(),
   });
+  const ownClasses = (await app.listClasses.execute({ actor: user })).filter(
+    (cls) => cls.teacherId === user.id,
+  );
   const base = `/${locale}`;
 
   return (
@@ -64,6 +68,7 @@ export default async function DashboardPage(props: LocaleParams) {
         ) : null}
       </p>
       <OnboardingChecklist locale={locale} state={onboarding} />
+      {ownClasses.length === 0 ? <SampleClassOffer locale={locale} /> : null}
       <WelcomeTour locale={locale} />
       {readyPrep === 0 ? null : (
         <p className="card prep-ready" data-testid="prep-ready">

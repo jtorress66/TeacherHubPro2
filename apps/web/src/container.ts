@@ -256,6 +256,8 @@ import {
   AddStandardCategories,
   AddStudent,
   ArchiveClass,
+  CreateSampleClass,
+  RemoveSampleClass,
   CreateAssignment,
   DeleteAssignment,
   DeleteGradeCategory,
@@ -564,6 +566,8 @@ export interface AppContainer {
   readonly updateClass: UpdateClass;
   readonly archiveClass: ArchiveClass;
   readonly restoreClass: RestoreClass;
+  readonly createSampleClass: CreateSampleClass;
+  readonly removeSampleClass: RemoveSampleClass;
   readonly getClass: GetClass;
   readonly listClasses: ListClasses;
   readonly addStudent: AddStudent;
@@ -1083,6 +1087,8 @@ export function createAppContainer(
     updateClass: new UpdateClass(deps),
     archiveClass: new ArchiveClass(deps),
     restoreClass: new RestoreClass(deps),
+    createSampleClass: new CreateSampleClass(deps),
+    removeSampleClass: new RemoveSampleClass(deps),
     getClass: new GetClass(deps),
     listClasses: new ListClasses(deps),
     addStudent: new AddStudent(deps),

@@ -24,6 +24,7 @@ export * from './schools/school-logo.ts';
 export * from './users/user.ts';
 export * from './users/roles.ts';
 export * from './onboarding/onboarding.ts';
+export * from './onboarding/sample-class.ts';
 export * from './classes/class.ts';
 export * from './classes/schedule.ts';
 export * from './students/student.ts';

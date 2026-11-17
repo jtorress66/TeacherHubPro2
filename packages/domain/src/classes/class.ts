@@ -16,6 +16,8 @@ export interface Class {
   readonly schedule: Schedule | null;
   /** When the class was archived (hidden but kept, with its roster); null while in use. */
   readonly archivedAt: Date | null;
+  /** The made-up class a new teacher starts with, to try every feature on. */
+  readonly sample: boolean;
 }
 
 export interface ClassInput {
@@ -29,6 +31,7 @@ export interface ClassInput {
   readonly schoolYear?: string | null;
   readonly semesterId?: SemesterId | null;
   readonly schedule?: ScheduleInput | null;
+  readonly sample?: boolean;
 }
 
 type OptionalField = 'subject' | 'grade' | 'section' | 'schoolYear';
@@ -66,10 +69,11 @@ export function createClass(input: ClassInput): Result<Class, ValidationError> {
     semesterId: input.semesterId ?? null,
     schedule,
     archivedAt: null,
+    sample: input.sample ?? false,
   });
 }
 
-export type ClassChanges = Omit<ClassInput, 'id' | 'schoolId' | 'teacherId'>;
+export type ClassChanges = Omit<ClassInput, 'id' | 'schoolId' | 'teacherId' | 'sample'>;
 
 /** Replaces the editable fields with the same rules as creating a class. */
 export function updateClass(cls: Class, changes: ClassChanges): Result<Class, ValidationError> {
@@ -79,7 +83,9 @@ export function updateClass(cls: Class, changes: ClassChanges): Result<Class, Va
     schoolId: cls.schoolId,
     teacherId: cls.teacherId,
   });
-  return updated.ok ? ok({ ...updated.value, archivedAt: cls.archivedAt }) : updated;
+  return updated.ok
+    ? ok({ ...updated.value, archivedAt: cls.archivedAt, sample: cls.sample })
+    : updated;
 }
 
 /** Hides the class from everyday lists while keeping it and its roster. */

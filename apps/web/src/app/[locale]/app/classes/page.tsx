@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { createTranslator } from '@thp/i18n';
 import { ClassForm } from '../../../../components/roster-forms.tsx';
+import { SampleClassOffer } from '../../../../components/sample-class-offer.tsx';
 import { getAppContainer } from '../../../../container.ts';
 import { scheduleSummary } from '../../../../server/schedule-summary.ts';
 import { requireUser } from '../../../_lib/auth.ts';
@@ -23,10 +24,14 @@ export default async function ClassesPage(
     app.listClasses.execute({ actor: user, includeArchived: showArchived }),
     app.listSemesters.execute({ actor: user }),
   ]);
+  const hasSample = classes.some(
+    (cls) => cls.sample && cls.archivedAt === null && cls.teacherId === user.id,
+  );
 
   return (
     <section className="stack">
       <h1>{t('classes.title')}</h1>
+      {hasSample ? null : <SampleClassOffer locale={locale} />}
       <section className="card stack" aria-labelledby="new-class-heading">
         <h2 id="new-class-heading">{t('classes.newClass')}</h2>
         <ClassForm locale={locale} semesters={semesters} />
@@ -43,6 +48,7 @@ export default async function ClassesPage(
           {classes.map((cls) => (
             <li key={cls.id} className="card">
               <Link href={`/${locale}/app/classes/${cls.id}`}>{cls.name}</Link>
+              {cls.sample ? <span className="badge">{t('sample.badge')}</span> : null}
               {cls.archivedAt ? <span className="badge">{t('classes.archivedBadge')}</span> : null}
               <p className="muted">{scheduleSummary(cls.schedule, locale)}</p>
             </li>

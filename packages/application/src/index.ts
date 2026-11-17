@@ -89,6 +89,11 @@ export {
   type OnboardingState,
 } from './onboarding/onboarding-use-cases.ts';
 export {
+  CreateSampleClass,
+  RemoveSampleClass,
+  type SampleText,
+} from './onboarding/sample-class.ts';
+export {
   GetAttendanceSheet,
   ListAttendanceDays,
   ReopenAttendance,
