@@ -38,7 +38,9 @@ export const firstClassItem: OnboardingItem = {
   labelKey: 'onboarding.firstClass',
   route: '/app/classes',
   isDone: async ({ user, school, classes }) =>
-    (await classes.listByTeacher(school.id, user.id, { includeArchived: true })).length > 0,
+    (await classes.listByTeacher(school.id, user.id, { includeArchived: true })).some(
+      (cls) => !cls.sample,
+    ),
 };
 
 export const defaultOnboardingItems: readonly OnboardingItem[] = [schoolInfoItem, firstClassItem];

@@ -17,6 +17,7 @@ import { requireUser } from '../../../../_lib/auth.ts';
 import {
   archiveClassAction,
   deleteStudentAction,
+  removeSampleClassAction,
   restoreClassAction,
 } from '../../../../_lib/roster-actions.ts';
 import { localeFrom, type LocaleParams } from '../../../locale-param.ts';
@@ -57,7 +58,9 @@ export default async function ClassPage(props: Props) {
       <p>
         <Link href={`/${locale}/app/classes`}>← {t('classes.back')}</Link>
       </p>
-      <h1>{cls.name}</h1>
+      <h1>
+        {cls.name} {cls.sample ? <span className="badge">{t('sample.badge')}</span> : null}
+      </h1>
       <p className="muted" data-testid="class-schedule">
         {scheduleSummary(cls.schedule, locale)}
       </p>
@@ -92,13 +95,28 @@ export default async function ClassPage(props: Props) {
           {t('classes.archivedNotice')}
         </p>
       ) : null}
-      <form action={archived ? restoreClassAction : archiveClassAction}>
-        <input type="hidden" name="locale" value={locale} />
-        <input type="hidden" name="classId" value={cls.id} />
-        <button type="submit" className="button secondary">
-          {archived ? t('classes.restore') : t('classes.archive')}
-        </button>
-      </form>
+      {cls.sample && !archived ? (
+        <>
+          <p className="notice" data-testid="sample-notice">
+            {t('sample.notice')}
+          </p>
+          <form action={removeSampleClassAction}>
+            <input type="hidden" name="locale" value={locale} />
+            <input type="hidden" name="classId" value={cls.id} />
+            <button type="submit" className="button secondary">
+              {t('sample.remove')}
+            </button>
+          </form>
+        </>
+      ) : (
+        <form action={archived ? restoreClassAction : archiveClassAction}>
+          <input type="hidden" name="locale" value={locale} />
+          <input type="hidden" name="classId" value={cls.id} />
+          <button type="submit" className="button secondary">
+            {archived ? t('classes.restore') : t('classes.archive')}
+          </button>
+        </form>
+      )}
 
       <section className="stack" aria-labelledby="roster-heading">
         <h2 id="roster-heading">

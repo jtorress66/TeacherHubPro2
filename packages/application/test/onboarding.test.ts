@@ -1,12 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import {
   CreateClass,
+  CreateSampleClass,
   DismissOnboarding,
   GetOnboarding,
   UpdateSchoolDetails,
   defaultOnboardingItems,
   type OnboardingItem,
 } from '../src/index.ts';
+import { sampleText } from './sample-text.ts';
 import { makeWorld, signedUp, type World } from './world.ts';
 
 const onboarding = (world: World, items: readonly OnboardingItem[] = defaultOnboardingItems) =>
@@ -70,6 +72,15 @@ describe('GetOnboarding', () => {
     expect((await world.users.findById(user.schoolId, user.id))?.onboardingStatus).toBe(
       'completed',
     );
+  });
+
+  it('does not count the sample class as the first class', async () => {
+    const world = makeWorld();
+    const { user, school } = await signedUp(world);
+    await new CreateSampleClass(world).execute({ actor: user, text: sampleText, timeZone: 'UTC' });
+
+    const state = await onboarding(world).execute({ actor: user, school });
+    expect(state.items.find((item) => item.id === 'first_class')?.done).toBe(false);
   });
 
   it('stays hidden once dismissed', async () => {

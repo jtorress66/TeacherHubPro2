@@ -40,6 +40,15 @@ export function classRepositoryContract(name: string, make: () => ClassRepositor
       expect(await classes.findById(schoolA, archived.id)).toEqual(archived);
     });
 
+    it('keeps the sample marker', async () => {
+      const classes = make();
+      await classes.save(cls('sample', { sample: true }));
+      await classes.save(cls('real'));
+
+      expect((await classes.findById(schoolA, 'sample' as ClassId))?.sample).toBe(true);
+      expect((await classes.findById(schoolA, 'real' as ClassId))?.sample).toBe(false);
+    });
+
     it("lists every class of a school for its admins, never another school's", async () => {
       const classes = make();
       await classes.save(cls('a1'));

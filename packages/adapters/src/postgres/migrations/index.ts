@@ -33,6 +33,7 @@ import * as approvalLog from './0031_approval_log.ts';
 import * as oneSignIn from './0032_one_sign_in.ts';
 import * as ltiGrades from './0033_lti_grades.ts';
 import * as jobProgress from './0034_job_progress.ts';
+import * as sampleClasses from './0035_sample_classes.ts';
 
 /** Ordered list of migrations, bundled with the code (no filesystem lookups at runtime). */
 const migrations: Readonly<Record<string, Migration>> = {
@@ -70,6 +71,7 @@ const migrations: Readonly<Record<string, Migration>> = {
   '0032_one_sign_in': oneSignIn,
   '0033_lti_grades': ltiGrades,
   '0034_job_progress': jobProgress,
+  '0035_sample_classes': sampleClasses,
 };
 
 export const migrationProvider: MigrationProvider = {
