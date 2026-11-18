@@ -212,6 +212,29 @@ describe('ConfirmSignIn (Continue here)', () => {
     });
   });
 
+  it('works once: the same ticket cannot sign in again', async () => {
+    const world = makeWorld();
+    const { user } = await signedUpOnPhone(world);
+    const ticket = ticketOf(await stepOf(logIn(world)));
+    const confirm = () => new ConfirmSignIn(world).execute({ ticket, userAgent: firefoxOnLinux });
+    const first = valueOf(await confirm());
+
+    expect(await confirm()).toEqual({ ok: false, error: { code: 'sign_in_expired' } });
+    expect(await activeHashes(world, user.id)).toEqual([await hashOf(world, first.sessionToken)]);
+  });
+
+  it('is not used up by showing the question first, or by a refusal', async () => {
+    const world = makeWorld();
+    const { user } = await signedUpOnPhone(world);
+    const ticket = ticketOf(await stepOf(logIn(world)));
+    await new DescribeSignInConfirmation(world).execute({ ticket });
+    await world.users.save({ ...user, suspendedAt: world.clock.now() });
+    await new ConfirmSignIn(world).execute({ ticket, userAgent: null });
+    await world.users.save({ ...user, suspendedAt: null });
+
+    expect((await new ConfirmSignIn(world).execute({ ticket, userAgent: null })).ok).toBe(true);
+  });
+
   it('lasts five minutes', () => {
     expect(signInConfirmTicketLifetimeMs).toBe(5 * minute);
   });
@@ -345,6 +368,20 @@ describe('ResumeSignIn (asked again where the browser’s own cookie can be read
     );
 
     expect(step).toMatchObject({ kind: 'confirm', otherDevice: { browser: 'safari' } });
+  });
+
+  it('works once: the same ticket cannot be resumed again', async () => {
+    const world = makeWorld();
+    const { sessionToken: phone } = await signedUpOnPhone(world);
+    const ticket = ticketOf(await stepOf(logIn(world)));
+    const resume = () =>
+      new ResumeSignIn(world).execute({
+        ticket,
+        browser: { sessionToken: phone, userAgent: safariOnIphone },
+      });
+
+    expect((await resume()).ok).toBe(true);
+    expect(await resume()).toEqual({ ok: false, error: { code: 'sign_in_expired' } });
   });
 
   it('refuses an expired ticket, and a suspended account', async () => {

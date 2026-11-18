@@ -423,6 +423,11 @@ export interface RubricsTable {
   updated_at: Date;
 }
 
+export interface UsedTicketsTable {
+  ticket_id: string;
+  expires_at: Date;
+}
+
 export interface RateLimitsTable {
   key: string;
   window_start: Date;
@@ -717,6 +722,7 @@ export interface Database {
   blocked_domains: BlockedDomainsTable;
   leads: LeadsTable;
   rate_limits: RateLimitsTable;
+  used_tickets: UsedTicketsTable;
   audit_events: AuditEventsTable;
   rubrics: RubricsTable;
   chat_sessions: ChatSessionsTable;

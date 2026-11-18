@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { AuditAction, AuditEvent, AuditEventId, ClassId, SchoolId, UserId } from '@thp/domain';
-import type { ApprovalLogReader, AuditLog, RateLimiter } from '@thp/ports';
+import type { ApprovalLogReader, AuditLog, RateLimiter, UsedTicketRepository } from '@thp/ports';
 
 export function rateLimiterContract(name: string, make: () => RateLimiter): void {
   describe(`${name} (RateLimiter contract)`, () => {
@@ -28,6 +28,26 @@ export function rateLimiterContract(name: string, make: () => RateLimiter): void
       const later = new Date(at.getTime() + 60_000);
 
       expect(await limiter.hit({ key: 'k', ...rule, at: later })).toBe(true);
+    });
+  });
+}
+
+export function usedTicketRepositoryContract(name: string, make: () => UsedTicketRepository): void {
+  describe(`${name} (UsedTicketRepository contract)`, () => {
+    const expiresAt = new Date(Date.now() + 5 * 60_000);
+
+    it('lets a ticket be used once', async () => {
+      const tickets = make();
+
+      expect(await tickets.claim('ticket-1', expiresAt)).toBe(true);
+      expect(await tickets.claim('ticket-1', expiresAt)).toBe(false);
+    });
+
+    it('counts each ticket on its own', async () => {
+      const tickets = make();
+      await tickets.claim('ticket-2', expiresAt);
+
+      expect(await tickets.claim('ticket-3', expiresAt)).toBe(true);
     });
   });
 }

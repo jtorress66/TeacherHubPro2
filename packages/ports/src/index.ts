@@ -45,6 +45,7 @@ export type * from './admin/admin-directories.ts';
 export type * from './marketing/marketing.ts';
 export type * from './ai/chatbot-writer.ts';
 export type { RateLimiter } from './security/rate-limiter.ts';
+export type { UsedTicketRepository } from './security/used-tickets.ts';
 export type { AuditLog } from './audit/audit-log.ts';
 export type { ApprovalFilter, ApprovalLogReader } from './audit/approval-log-reader.ts';
 export type * from './lti/lti.ts';
