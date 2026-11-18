@@ -53,6 +53,7 @@ describe('the marketing pages', () => {
     );
     expect(paths).toContain('/use-cases/schools');
     expect(paths).toContain('/ai-governance');
+    expect(paths).toContain('/school-privacy');
     expect(paths).not.toContain('/homeschool');
   });
 });
@@ -126,6 +127,35 @@ describe('legalSections', () => {
         const titles = Object.keys(page).filter((key) => /^s\d+Title$/u.test(key));
         expect(titles, `${language} ${slug}`).toHaveLength(count);
       }
+    }
+  });
+});
+
+describe('the school privacy page', () => {
+  it('states the agreement, where data is kept, the breach notice and the privacy email', async () => {
+    const { catalogs } = await import('@thp/i18n');
+    const text = Object.values(catalogs.en.legal.schoolPrivacy).join(' ');
+    expect(text).toContain('National Data Privacy Agreement');
+    expect(text).toContain('Virginia, USA');
+    expect(text).toContain('72 hours');
+    expect(text).toContain('privacy@teacherhubpro.com');
+    for (const provider of [
+      'Render',
+      'Stripe',
+      'Anthropic',
+      'OpenAI',
+      'Google',
+      'Canva',
+      'Microsoft',
+    ]) {
+      expect(text).toContain(provider);
+    }
+  });
+
+  it('is pointed to from the trust center in every language', async () => {
+    const { catalogs, locales } = await import('@thp/i18n');
+    for (const locale of locales) {
+      expect(catalogs[locale].legal.trust.s5Text, locale).toContain('privacy@teacherhubpro.com');
     }
   });
 });

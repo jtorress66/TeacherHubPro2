@@ -871,7 +871,33 @@ export const marketingDe: MarketingMessages = {
         'Die KI entwirft nur, erhält nur, was eine Aufgabe braucht, und wird auf erfundene Fakten geprüft. Siehe die Seite zur KI-Governance.',
       s5Title: 'Vereinbarungen',
       s5Text:
-        'Sie brauchen einen Auftragsverarbeitungsvertrag oder haben eine Sicherheitsfrage für Ihre Schule? Schreiben Sie uns über die Kontaktseite.',
+        'Sie brauchen eine Datenschutzvereinbarung für Schülerdaten oder haben eine Sicherheitsfrage für Ihre Schule? Lesen Sie die Seite Datenschutz für Schulen oder schreiben Sie an privacy@teacherhubpro.com.',
+    },
+    schoolPrivacy: {
+      title: 'Datenschutz für Schulen',
+      description:
+        'Die Datenschutzvereinbarung für Schülerdaten, wo Daten gespeichert werden, unsere Dienstleister und was am Vertragsende geschieht.',
+      s1Title: 'Die Vereinbarung',
+      s1Text:
+        'Schulen und Schulbezirke können mit uns das National Data Privacy Agreement (NDPA) des Student Data Privacy Consortium unterzeichnen, die Standardvereinbarung, die viele US-Schulbezirke bereits nutzen. Wenn Ihr Schulbezirk eine eigene Vereinbarung hat, schicken Sie sie uns, und wir prüfen sie. Schreiben Sie an privacy@teacherhubpro.com, um zu beginnen.',
+      s2Title: 'Wo Daten gespeichert werden',
+      s2Text:
+        'Alle Daten, auch hochgeladene Dateien, werden in einer Datenbank in Virginia, USA, gespeichert, die unser Hosting-Anbieter Render betreibt.',
+      s3Title: 'Dienstleister',
+      s3Text:
+        'Render hostet die App und die Datenbank. Stripe wickelt Zahlungen ab und erhält die Rechnungsdaten der Kontoinhaberin oder des Kontoinhabers, nie Schülerdaten. Ein E-Mail-Dienst versendet Konto-E-Mails und die Nachrichten, die Lehrkräfte an Familien senden. Anthropic (Claude) erstellt KI-Entwürfe und erhält nur die Felder, die die jeweilige Aufgabe braucht. OpenAI erzeugt die Vorlese-Audios aus dem vorgelesenen Text. Google, Canva und Microsoft erhalten Daten nur, wenn eine Lehrkraft sie verbindet, wie in der Datenschutzerklärung beschrieben.',
+      s4Title: 'Was wir über Schülerinnen und Schüler speichern',
+      s4Text:
+        'Nur, was Lehrkräfte und Schulen eingeben: Namen, eine optionale Schülernummer, eine optionale E-Mail der Eltern, optionale Fördermaßnahmen sowie die zugehörigen Arbeiten, Noten, Anwesenheiten und Notizen. Schülerinnen und Schüler haben keine Konten und geben uns nichts direkt. Wir verkaufen Schülerdaten nie und nutzen sie nie für Werbung.',
+      s5Title: 'Am Vertragsende',
+      s5Text:
+        'Auf Anfrage geben wir Ihnen die Daten Ihrer Schule als Dateien zurück, löschen sie danach aus dem Dienst und bestätigen das schriftlich.',
+      s6Title: 'Wenn etwas schiefgeht',
+      s6Text:
+        'Wenn eine Sicherheitsverletzung die Daten Ihrer Schule betrifft, informieren wir Sie innerhalb von 72 Stunden nach der Entdeckung: was passiert ist, welche Daten betroffen sind und was wir dagegen tun.',
+      s7Title: 'Kontakt',
+      s7Text:
+        'Fragen zum Datenschutz, Vereinbarungen und Datenanfragen: privacy@teacherhubpro.com.',
     },
   },
 };
