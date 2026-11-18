@@ -177,6 +177,12 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     await page.getByRole('link', { name: t('legal.privacy.title') }).click();
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(t('legal.privacy.title'));
     expect(await axe(page)).toEqual([]);
+    await page.getByRole('link', { name: t('legal.schoolPrivacy.title') }).click();
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+      t('legal.schoolPrivacy.title'),
+    );
+    await expect(page.getByText('privacy@teacherhubpro.com').first()).toBeVisible();
+    expect(await axe(page)).toEqual([]);
 
     // The contact form becomes a lead.
     await nav.getByRole('link', { name: t('marketing.nav.contact') }).click();

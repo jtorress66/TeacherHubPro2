@@ -862,7 +862,32 @@ export const marketingIt: MarketingMessages = {
         "L'IA si limita a preparare bozze, riceve solo ciò che serve a un compito e viene controllata contro i fatti inventati. Consulti la pagina sulla governance dell'IA.",
       s5Title: 'Accordi',
       s5Text:
-        'Le serve un accordo sul trattamento dei dati o ha una domanda sulla sicurezza per la Sua scuola? Ci scriva dalla pagina dei contatti.',
+        'Le serve un accordo sulla privacy dei dati degli studenti o ha una domanda sulla sicurezza per la Sua scuola? Veda la pagina Privacy per le scuole o scriva a privacy@teacherhubpro.com.',
+    },
+    schoolPrivacy: {
+      title: 'Privacy per le scuole',
+      description:
+        'L’accordo sulla privacy dei dati degli studenti, dove sono conservati i dati, i nostri fornitori di servizi e cosa succede alla fine di un contratto.',
+      s1Title: 'L’accordo',
+      s1Text:
+        'Scuole e distretti possono firmare con noi il National Data Privacy Agreement (NDPA) dello Student Data Privacy Consortium, l’accordo standard che molti distretti statunitensi usano già. Se il Suo distretto ha un proprio accordo, ce lo invii e lo esamineremo. Scriva a privacy@teacherhubpro.com per iniziare.',
+      s2Title: 'Dove sono conservati i dati',
+      s2Text:
+        'Tutti i dati, compresi i file caricati, sono conservati in un database in Virginia, Stati Uniti, gestito dal nostro fornitore di hosting, Render.',
+      s3Title: 'Fornitori di servizi',
+      s3Text:
+        'Render ospita l’app e il database. Stripe gestisce i pagamenti e riceve i dati di fatturazione del titolare dell’account, mai dati degli studenti. Un servizio email invia le email dell’account e i messaggi che gli insegnanti scelgono di inviare alle famiglie. Anthropic (Claude) prepara le bozze IA e riceve solo i campi necessari a ogni attività. OpenAI crea l’audio di lettura ad alta voce dal testo letto. Google, Canva e Microsoft ricevono dati solo quando un insegnante li collega, come descritto nell’informativa sulla privacy.',
+      s4Title: 'Cosa conserviamo sugli studenti',
+      s4Text:
+        'Solo ciò che inseriscono insegnanti e scuole: nomi, un numero di matricola facoltativo, un’email dei genitori facoltativa, adattamenti facoltativi, e i lavori, i voti, le presenze e le note collegati. Gli studenti non hanno account e non ci forniscono nulla direttamente. Non vendiamo mai i dati degli studenti né li usiamo per la pubblicità.',
+      s5Title: 'Alla fine di un contratto',
+      s5Text:
+        'Su richiesta Le restituiamo i dati della Sua scuola in file, poi li eliminiamo dal servizio e lo confermiamo per iscritto.',
+      s6Title: 'Se qualcosa va storto',
+      s6Text:
+        'Se una violazione della sicurezza riguarda i dati della Sua scuola, La avvisiamo entro 72 ore dalla scoperta: cosa è successo, quali dati sono coinvolti e cosa stiamo facendo.',
+      s7Title: 'Contatti',
+      s7Text: 'Domande sulla privacy, accordi e richieste di dati: privacy@teacherhubpro.com.',
     },
   },
 };

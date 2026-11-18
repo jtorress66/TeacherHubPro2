@@ -852,7 +852,32 @@ export const marketingPt: MarketingMessages = {
         'A IA apenas faz rascunhos, recebe só o que uma tarefa precisa e é verificada contra fatos inventados. Veja a página de governança da IA.',
       s5Title: 'Acordos',
       s5Text:
-        'Precisa de um acordo de tratamento de dados ou tem uma dúvida de segurança para sua escola? Escreva para nós pela página de contato.',
+        'Precisa de um acordo de privacidade de dados de alunos ou tem uma dúvida de segurança para sua escola? Veja a página Privacidade para escolas ou escreva para privacy@teacherhubpro.com.',
+    },
+    schoolPrivacy: {
+      title: 'Privacidade para escolas',
+      description:
+        'O acordo de privacidade de dados de alunos, onde os dados ficam guardados, nossos prestadores de serviços e o que acontece quando um contrato termina.',
+      s1Title: 'O acordo',
+      s1Text:
+        'Escolas e distritos podem assinar conosco o National Data Privacy Agreement (NDPA) do Student Data Privacy Consortium, o acordo padrão que muitos distritos dos EUA já usam. Se o seu distrito tiver um acordo próprio, envie-o e nós o analisaremos. Escreva para privacy@teacherhubpro.com para começar.',
+      s2Title: 'Onde os dados ficam guardados',
+      s2Text:
+        'Todos os dados, incluindo os arquivos enviados, ficam guardados em um banco de dados na Virgínia, EUA, operado pelo nosso provedor de hospedagem, Render.',
+      s3Title: 'Prestadores de serviços',
+      s3Text:
+        'A Render hospeda o aplicativo e o banco de dados. A Stripe processa os pagamentos e recebe os dados de cobrança do titular da conta, nunca dados de alunos. Um provedor de e-mail envia os e-mails da conta e as mensagens que os professores decidem enviar às famílias. A Anthropic (Claude) prepara os rascunhos de IA e recebe apenas os campos de que cada tarefa precisa. A OpenAI gera o áudio de leitura em voz alta a partir do texto lido. Google, Canva e Microsoft recebem dados somente quando um professor os conecta, como descreve a política de privacidade.',
+      s4Title: 'O que guardamos sobre os alunos',
+      s4Text:
+        'Apenas o que professores e escolas inserem: nomes, um número de aluno opcional, um e-mail dos pais opcional, adaptações opcionais, e os trabalhos, notas, frequência e observações que os acompanham. Os alunos não têm contas e não nos fornecem nada diretamente. Nunca vendemos dados de alunos nem os usamos para publicidade.',
+      s5Title: 'Quando um contrato termina',
+      s5Text:
+        'Peça e nós devolvemos os dados da sua escola em arquivos, depois os excluímos do serviço e confirmamos por escrito.',
+      s6Title: 'Se algo der errado',
+      s6Text:
+        'Se uma violação de segurança afetar os dados da sua escola, avisamos você em até 72 horas após descobri-la: o que aconteceu, quais dados foram envolvidos e o que estamos fazendo a respeito.',
+      s7Title: 'Contato',
+      s7Text: 'Dúvidas sobre privacidade, acordos e pedidos de dados: privacy@teacherhubpro.com.',
     },
   },
 };

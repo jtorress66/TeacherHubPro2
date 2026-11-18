@@ -30,6 +30,7 @@ export const legalPages = {
   coppa: 'coppa',
   'ai-governance': 'aiGovernance',
   trust: 'trust',
+  'school-privacy': 'schoolPrivacy',
 } as const;
 export type LegalSlug = keyof typeof legalPages;
 
@@ -44,6 +45,7 @@ export const legalSections: Readonly<Record<LegalSlug, number>> = {
   coppa: 3,
   'ai-governance': 5,
   trust: 5,
+  'school-privacy': 7,
 };
 export const legalSlugs = Object.keys(legalPages) as LegalSlug[];
 

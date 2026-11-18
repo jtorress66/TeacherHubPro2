@@ -857,7 +857,33 @@ export const marketingEs: MarketingMessages = {
         'La IA solo prepara borradores, recibe solo lo que una tarea necesita y se comprueba contra datos inventados. Vea la página de gobernanza de la IA.',
       s5Title: 'Acuerdos',
       s5Text:
-        '¿Necesita un acuerdo de tratamiento de datos o tiene una pregunta de seguridad para su escuela? Escríbanos desde la página de contacto.',
+        '¿Necesita un acuerdo de privacidad de datos estudiantiles o tiene una pregunta de seguridad para su escuela? Vea la página Privacidad para escuelas o escriba a privacy@teacherhubpro.com.',
+    },
+    schoolPrivacy: {
+      title: 'Privacidad para escuelas',
+      description:
+        'El acuerdo de privacidad de datos estudiantiles, dónde se guardan los datos, nuestros proveedores de servicios y qué pasa cuando termina un contrato.',
+      s1Title: 'El acuerdo',
+      s1Text:
+        'Las escuelas y los distritos pueden firmar con nosotros el National Data Privacy Agreement (NDPA) del Student Data Privacy Consortium, el acuerdo estándar que ya usan muchos distritos de EE. UU. Si su distrito tiene su propio acuerdo, envíenoslo y lo revisaremos. Escriba a privacy@teacherhubpro.com para empezar.',
+      s2Title: 'Dónde se guardan los datos',
+      s2Text:
+        'Todos los datos, incluidos los archivos subidos, se guardan en una base de datos en Virginia, EE. UU., gestionada por nuestro proveedor de alojamiento, Render.',
+      s3Title: 'Proveedores de servicios',
+      s3Text:
+        'Render aloja la aplicación y la base de datos. Stripe procesa los pagos y recibe los datos de facturación del titular de la cuenta, nunca datos de estudiantes. Un proveedor de correo envía los correos de la cuenta y los mensajes que los maestros deciden enviar a las familias. Anthropic (Claude) prepara los borradores de IA y recibe solo los campos que necesita cada tarea. OpenAI genera el audio de lectura en voz alta a partir del texto que se lee. Google, Canva y Microsoft reciben datos solo cuando un maestro los conecta, como describe la política de privacidad.',
+      s4Title: 'Qué guardamos sobre los estudiantes',
+      s4Text:
+        'Solo lo que ingresan los maestros y las escuelas: nombres, un número de estudiante opcional, un correo de los padres opcional, adaptaciones opcionales, y los trabajos, calificaciones, asistencia y notas que los acompañan. Los estudiantes no tienen cuentas y no nos dan nada directamente. Nunca vendemos datos de estudiantes ni los usamos para publicidad.',
+      s5Title: 'Cuando termina un contrato',
+      s5Text:
+        'Pídanoslo y le devolvemos los datos de su escuela en archivos, luego los borramos del servicio y se lo confirmamos por escrito.',
+      s6Title: 'Si algo sale mal',
+      s6Text:
+        'Si una brecha de seguridad afecta los datos de su escuela, se lo comunicamos en un plazo de 72 horas desde que la descubrimos: qué pasó, qué datos estuvieron involucrados y qué estamos haciendo al respecto.',
+      s7Title: 'Contacto',
+      s7Text:
+        'Preguntas de privacidad, acuerdos y solicitudes de datos: privacy@teacherhubpro.com.',
     },
   },
 };
