@@ -699,12 +699,23 @@ export const marketingEn = {
       s4Title: 'Who we share it with',
       s4Text:
         'Service providers that run the app: our hosting and database provider, Stripe for payments, an email provider for messages, Anthropic (Claude) for AI drafts, OpenAI for read-aloud audio, Google when a teacher connects Google Classroom, Canva when a teacher connects Canva (only the presentation or worksheet the teacher opens there, never student data), and Microsoft when a teacher connects Microsoft (only the files the teacher saves to OneDrive, never student data). Each receives only what its task needs.',
-      s5Title: 'How it is protected',
+      s5Title: 'Where data is kept',
       s5Text:
-        'Passwords are stored as one-way hashes. Session, student, family and password links are random and stored only as hashes. Google Classroom, Canva and Microsoft tokens are encrypted. Every record belongs to one school and is reachable only by that school’s users. A teacher’s calendar link is also random and stored only as a hash: it shows only plan titles and assignment titles with their dates, never student information, and the teacher can replace it or turn it off in Settings.',
-      s6Title: 'Keeping and deleting data',
+        'All data, including uploaded files, is stored in one database in Virginia, USA, run by our hosting provider, Render.',
+      s6Title: 'How it is protected',
       s6Text:
-        'Data stays while the account is active. Uploaded PDFs are deleted once they are read. Website chats are deleted after 30 days. To ask for a copy or deletion of your data, write to us from the contact page.',
+        'Passwords are stored as one-way hashes. Session, student, family and password links are random and stored only as hashes. Google Classroom, Canva and Microsoft tokens are encrypted. Every record belongs to one school and is reachable only by that school’s users. A teacher’s calendar link is also random and stored only as a hash: it shows only plan titles and assignment titles with their dates, never student information, and the teacher can replace it or turn it off in Settings.',
+      s7Title: 'Keeping and deleting data',
+      s7Text:
+        'Data stays while the account is active. Uploaded PDFs are deleted once they are read. Website chats are deleted after 30 days. To ask for a copy or deletion of your data, write to privacy@teacherhubpro.com. When a school’s contract ends, we return its data as files on request, then delete it from the service and confirm in writing.',
+      s8Title: 'If something goes wrong',
+      s8Text:
+        'If a security breach affects your school’s data, we tell you within 72 hours of finding it: what happened, what data was involved and what we are doing about it.',
+      s9Title: 'For schools and districts',
+      s9Text:
+        'Schools and districts can sign the Student Data Privacy Consortium’s National Data Privacy Agreement (NDPA) with us, the standard agreement many US districts already use. If your district has its own agreement, send it and we will review it. Write to privacy@teacherhubpro.com to start.',
+      s10Title: 'Contact',
+      s10Text: 'Privacy questions, agreements and data requests: privacy@teacherhubpro.com.',
     },
     terms: {
       title: 'Terms of use',
@@ -824,32 +835,7 @@ export const marketingEn = {
         'AI only drafts, gets only what a task needs, and is checked against invented facts. See the AI governance page.',
       s5Title: 'Agreements',
       s5Text:
-        'Need a student data privacy agreement or have a security question for your school? See the Privacy for schools page, or write to privacy@teacherhubpro.com.',
-    },
-    schoolPrivacy: {
-      title: 'Privacy for schools',
-      description:
-        'The student data privacy agreement, where data is kept, our service providers and what happens when a contract ends.',
-      s1Title: 'The agreement',
-      s1Text:
-        'Schools and districts can sign the Student Data Privacy Consortium’s National Data Privacy Agreement (NDPA) with us, the standard agreement many US districts already use. If your district has its own agreement, send it and we will review it. Write to privacy@teacherhubpro.com to start.',
-      s2Title: 'Where data is kept',
-      s2Text:
-        'All data, including uploaded files, is stored in one database in Virginia, USA, run by our hosting provider, Render.',
-      s3Title: 'Service providers',
-      s3Text:
-        'Render hosts the app and the database. Stripe handles payments and gets the account holder’s billing details, never student data. An email provider sends account emails and the messages teachers choose to send families. Anthropic (Claude) makes AI drafts and gets only the fields each task needs. OpenAI makes read-aloud audio from the text being read. Google, Canva and Microsoft get data only when a teacher connects them, as the privacy policy describes.',
-      s4Title: 'What we keep about students',
-      s4Text:
-        'Only what teachers and schools enter: names, an optional student number, an optional parent email, optional accommodations, and the class work, grades, attendance and notes that go with them. Students have no accounts and give us nothing directly. We never sell student data or use it for advertising.',
-      s5Title: 'When a contract ends',
-      s5Text:
-        'Ask us and we return your school’s data as files, then delete it from the service and confirm in writing.',
-      s6Title: 'If something goes wrong',
-      s6Text:
-        'If a security breach affects your school’s data, we tell you within 72 hours of finding it: what happened, what data was involved and what we are doing about it.',
-      s7Title: 'Contact',
-      s7Text: 'Privacy questions, agreements and data requests: privacy@teacherhubpro.com.',
+        'Need a student data privacy agreement or have a security question for your school? See the privacy policy, or write to privacy@teacherhubpro.com.',
     },
   },
 } as const;

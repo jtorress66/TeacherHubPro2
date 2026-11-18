@@ -756,12 +756,24 @@ export const marketingFr: MarketingMessages = {
       s4Title: 'Avec qui nous les partageons',
       s4Text:
         "Les prestataires qui font fonctionner l'application : notre hébergeur et fournisseur de base de données, Stripe pour les paiements, un fournisseur d'e-mail pour les messages, Anthropic (Claude) pour les brouillons de l'IA, OpenAI pour l'audio de lecture à voix haute, Google lorsqu'un enseignant connecte Google Classroom, Canva lorsqu'un enseignant connecte Canva (uniquement la présentation ou la fiche qu'il y ouvre, jamais de données d'élèves), et Microsoft lorsqu'un enseignant connecte Microsoft (uniquement les fichiers qu'il enregistre dans OneDrive, jamais de données d'élèves). Chacun ne reçoit que ce dont sa tâche a besoin.",
-      s5Title: 'Comment elles sont protégées',
+      s5Title: 'Où sont conservées les données',
       s5Text:
-        "Les mots de passe sont stockés sous forme de hachages à sens unique. Les liens de session, d'élève, de famille et de mot de passe sont aléatoires et stockés uniquement sous forme de hachages. Les jetons Google Classroom, Canva et Microsoft sont chiffrés. Chaque donnée appartient à une seule école et n'est accessible qu'aux utilisateurs de cette école. Le lien de calendrier d'un enseignant est lui aussi aléatoire et stocké uniquement sous forme de hachage : il ne montre que les titres des plans et des devoirs avec leurs dates, jamais d'informations sur les élèves, et l'enseignant peut le remplacer ou le désactiver dans les Paramètres.",
-      s6Title: 'Conservation et suppression des données',
+        'Toutes les données, y compris les fichiers envoyés, sont conservées dans une base de données en Virginie, aux États-Unis, gérée par notre hébergeur, Render.',
+      s6Title: 'Comment elles sont protégées',
       s6Text:
-        'Les données sont conservées tant que le compte est actif. Les PDF téléversés sont supprimés une fois lus. Les conversations du chat du site sont supprimées après 30 jours. Pour demander une copie ou la suppression de vos données, écrivez-nous depuis la page de contact.',
+        "Les mots de passe sont stockés sous forme de hachages à sens unique. Les liens de session, d'élève, de famille et de mot de passe sont aléatoires et stockés uniquement sous forme de hachages. Les jetons Google Classroom, Canva et Microsoft sont chiffrés. Chaque donnée appartient à une seule école et n'est accessible qu'aux utilisateurs de cette école. Le lien de calendrier d'un enseignant est lui aussi aléatoire et stocké uniquement sous forme de hachage : il ne montre que les titres des plans et des devoirs avec leurs dates, jamais d'informations sur les élèves, et l'enseignant peut le remplacer ou le désactiver dans les Paramètres.",
+      s7Title: 'Conservation et suppression des données',
+      s7Text:
+        'Les données sont conservées tant que le compte est actif. Les PDF envoyés sont supprimés dès qu’ils ont été lus. Les conversations du site sont supprimées après 30 jours. Pour demander une copie ou la suppression de vos données, écrivez à privacy@teacherhubpro.com. À la fin du contrat d’une école, nous lui rendons ses données sous forme de fichiers sur demande, puis nous les supprimons du service et le confirmons par écrit.',
+      s8Title: 'En cas de problème',
+      s8Text:
+        'Si une faille de sécurité touche les données de votre école, nous vous prévenons dans les 72 heures suivant sa découverte : ce qui s’est passé, quelles données sont concernées et ce que nous faisons.',
+      s9Title: 'Pour les écoles et les districts',
+      s9Text:
+        'Les écoles et les districts peuvent signer avec nous le National Data Privacy Agreement (NDPA) du Student Data Privacy Consortium, l’accord standard que de nombreux districts américains utilisent déjà. Si votre district a son propre accord, envoyez-le-nous et nous l’examinerons. Écrivez à privacy@teacherhubpro.com pour commencer.',
+      s10Title: 'Contact',
+      s10Text:
+        'Questions de confidentialité, accords et demandes de données : privacy@teacherhubpro.com.',
     },
     terms: {
       title: "Conditions d'utilisation",
@@ -886,33 +898,7 @@ export const marketingFr: MarketingMessages = {
         "L'IA ne fait que proposer des brouillons, ne reçoit que ce dont une tâche a besoin, et est contrôlée pour éviter les faits inventés. Consultez la page sur la gouvernance de l'IA.",
       s5Title: 'Accords',
       s5Text:
-        'Besoin d’un accord de confidentialité des données des élèves ou d’une réponse à une question de sécurité pour votre école ? Consultez la page Confidentialité pour les écoles, ou écrivez à privacy@teacherhubpro.com.',
-    },
-    schoolPrivacy: {
-      title: 'Confidentialité pour les écoles',
-      description:
-        'L’accord de confidentialité des données des élèves, où les données sont conservées, nos prestataires et ce qui se passe à la fin d’un contrat.',
-      s1Title: 'L’accord',
-      s1Text:
-        'Les écoles et les districts peuvent signer avec nous le National Data Privacy Agreement (NDPA) du Student Data Privacy Consortium, l’accord standard que de nombreux districts américains utilisent déjà. Si votre district a son propre accord, envoyez-le-nous et nous l’examinerons. Écrivez à privacy@teacherhubpro.com pour commencer.',
-      s2Title: 'Où sont conservées les données',
-      s2Text:
-        'Toutes les données, y compris les fichiers envoyés, sont conservées dans une base de données en Virginie, aux États-Unis, gérée par notre hébergeur, Render.',
-      s3Title: 'Prestataires',
-      s3Text:
-        'Render héberge l’application et la base de données. Stripe traite les paiements et reçoit les informations de facturation du titulaire du compte, jamais de données d’élèves. Un service d’e-mail envoie les e-mails du compte et les messages que les enseignants choisissent d’envoyer aux familles. Anthropic (Claude) prépare les brouillons d’IA et ne reçoit que les champs nécessaires à chaque tâche. OpenAI produit l’audio de lecture à voix haute à partir du texte lu. Google, Canva et Microsoft ne reçoivent des données que lorsqu’un enseignant les connecte, comme le décrit la politique de confidentialité.',
-      s4Title: 'Ce que nous conservons sur les élèves',
-      s4Text:
-        'Uniquement ce que saisissent les enseignants et les écoles : les noms, un numéro d’élève facultatif, un e-mail de parent facultatif, des aménagements facultatifs, ainsi que les travaux, notes, présences et remarques associés. Les élèves n’ont pas de compte et ne nous donnent rien directement. Nous ne vendons jamais les données des élèves et ne les utilisons jamais pour de la publicité.',
-      s5Title: 'À la fin d’un contrat',
-      s5Text:
-        'Demandez-le-nous : nous vous rendons les données de votre école sous forme de fichiers, puis nous les supprimons du service et vous le confirmons par écrit.',
-      s6Title: 'En cas de problème',
-      s6Text:
-        'Si une faille de sécurité touche les données de votre école, nous vous prévenons dans les 72 heures suivant sa découverte : ce qui s’est passé, quelles données sont concernées et ce que nous faisons.',
-      s7Title: 'Contact',
-      s7Text:
-        'Questions de confidentialité, accords et demandes de données : privacy@teacherhubpro.com.',
+        'Besoin d’un accord de confidentialité des données des élèves ou d’une réponse à une question de sécurité pour votre école ? Consultez la politique de confidentialité, ou écrivez à privacy@teacherhubpro.com.',
     },
   },
 };

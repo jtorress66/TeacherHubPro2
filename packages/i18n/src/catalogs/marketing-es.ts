@@ -730,12 +730,24 @@ export const marketingEs: MarketingMessages = {
       s4Title: 'Con quién lo compartimos',
       s4Text:
         'Con los proveedores que hacen funcionar la app: nuestro proveedor de alojamiento y base de datos, Stripe para los pagos, un proveedor de correo, Anthropic (Claude) para los borradores de IA, OpenAI para el audio de lectura en voz alta, Google cuando un maestro conecta Google Classroom, Canva cuando un maestro conecta Canva (solo la presentación u hoja de trabajo que abre allí, nunca datos de estudiantes), y Microsoft cuando un maestro conecta Microsoft (solo los archivos que guarda en OneDrive, nunca datos de estudiantes). Cada uno recibe solo lo que su tarea necesita.',
-      s5Title: 'Cómo se protege',
+      s5Title: 'Dónde se guardan los datos',
       s5Text:
-        'Las contraseñas se guardan como hash de un solo sentido. Los enlaces de sesión, de estudiantes, de familias y de contraseña son aleatorios y se guardan solo como hash. Los tokens de Google Classroom, de Canva y de Microsoft se cifran. Cada registro pertenece a una escuela y solo lo pueden ver los usuarios de esa escuela. El enlace de calendario de un maestro también es aleatorio y se guarda solo como hash: muestra únicamente los títulos de los planes y de las tareas con sus fechas, nunca información de los estudiantes, y el maestro puede reemplazarlo o desactivarlo en Configuración.',
-      s6Title: 'Conservación y eliminación',
+        'Todos los datos, incluidos los archivos subidos, se guardan en una base de datos en Virginia, EE. UU., gestionada por nuestro proveedor de alojamiento, Render.',
+      s6Title: 'Cómo se protege',
       s6Text:
-        'Los datos se conservan mientras la cuenta esté activa. Los PDF subidos se eliminan una vez leídos. Los chats del sitio se eliminan a los 30 días. Para pedir una copia o la eliminación de sus datos, escríbanos desde la página de contacto.',
+        'Las contraseñas se guardan como hash de un solo sentido. Los enlaces de sesión, de estudiantes, de familias y de contraseña son aleatorios y se guardan solo como hash. Los tokens de Google Classroom, de Canva y de Microsoft se cifran. Cada registro pertenece a una escuela y solo lo pueden ver los usuarios de esa escuela. El enlace de calendario de un maestro también es aleatorio y se guarda solo como hash: muestra únicamente los títulos de los planes y de las tareas con sus fechas, nunca información de los estudiantes, y el maestro puede reemplazarlo o desactivarlo en Configuración.',
+      s7Title: 'Conservación y eliminación',
+      s7Text:
+        'Los datos se conservan mientras la cuenta esté activa. Los PDF subidos se borran en cuanto se leen. Los chats del sitio web se borran a los 30 días. Para pedir una copia o el borrado de sus datos, escriba a privacy@teacherhubpro.com. Cuando termina el contrato de una escuela, si lo pide le devolvemos sus datos en archivos, luego los borramos del servicio y se lo confirmamos por escrito.',
+      s8Title: 'Si algo sale mal',
+      s8Text:
+        'Si una brecha de seguridad afecta los datos de su escuela, se lo comunicamos en un plazo de 72 horas desde que la descubrimos: qué pasó, qué datos estuvieron involucrados y qué estamos haciendo al respecto.',
+      s9Title: 'Para escuelas y distritos',
+      s9Text:
+        'Las escuelas y los distritos pueden firmar con nosotros el National Data Privacy Agreement (NDPA) del Student Data Privacy Consortium, el acuerdo estándar que ya usan muchos distritos de EE. UU. Si su distrito tiene su propio acuerdo, envíenoslo y lo revisaremos. Escriba a privacy@teacherhubpro.com para empezar.',
+      s10Title: 'Contacto',
+      s10Text:
+        'Preguntas de privacidad, acuerdos y solicitudes de datos: privacy@teacherhubpro.com.',
     },
     terms: {
       title: 'Términos de uso',
@@ -857,33 +869,7 @@ export const marketingEs: MarketingMessages = {
         'La IA solo prepara borradores, recibe solo lo que una tarea necesita y se comprueba contra datos inventados. Vea la página de gobernanza de la IA.',
       s5Title: 'Acuerdos',
       s5Text:
-        '¿Necesita un acuerdo de privacidad de datos estudiantiles o tiene una pregunta de seguridad para su escuela? Vea la página Privacidad para escuelas o escriba a privacy@teacherhubpro.com.',
-    },
-    schoolPrivacy: {
-      title: 'Privacidad para escuelas',
-      description:
-        'El acuerdo de privacidad de datos estudiantiles, dónde se guardan los datos, nuestros proveedores de servicios y qué pasa cuando termina un contrato.',
-      s1Title: 'El acuerdo',
-      s1Text:
-        'Las escuelas y los distritos pueden firmar con nosotros el National Data Privacy Agreement (NDPA) del Student Data Privacy Consortium, el acuerdo estándar que ya usan muchos distritos de EE. UU. Si su distrito tiene su propio acuerdo, envíenoslo y lo revisaremos. Escriba a privacy@teacherhubpro.com para empezar.',
-      s2Title: 'Dónde se guardan los datos',
-      s2Text:
-        'Todos los datos, incluidos los archivos subidos, se guardan en una base de datos en Virginia, EE. UU., gestionada por nuestro proveedor de alojamiento, Render.',
-      s3Title: 'Proveedores de servicios',
-      s3Text:
-        'Render aloja la aplicación y la base de datos. Stripe procesa los pagos y recibe los datos de facturación del titular de la cuenta, nunca datos de estudiantes. Un proveedor de correo envía los correos de la cuenta y los mensajes que los maestros deciden enviar a las familias. Anthropic (Claude) prepara los borradores de IA y recibe solo los campos que necesita cada tarea. OpenAI genera el audio de lectura en voz alta a partir del texto que se lee. Google, Canva y Microsoft reciben datos solo cuando un maestro los conecta, como describe la política de privacidad.',
-      s4Title: 'Qué guardamos sobre los estudiantes',
-      s4Text:
-        'Solo lo que ingresan los maestros y las escuelas: nombres, un número de estudiante opcional, un correo de los padres opcional, adaptaciones opcionales, y los trabajos, calificaciones, asistencia y notas que los acompañan. Los estudiantes no tienen cuentas y no nos dan nada directamente. Nunca vendemos datos de estudiantes ni los usamos para publicidad.',
-      s5Title: 'Cuando termina un contrato',
-      s5Text:
-        'Pídanoslo y le devolvemos los datos de su escuela en archivos, luego los borramos del servicio y se lo confirmamos por escrito.',
-      s6Title: 'Si algo sale mal',
-      s6Text:
-        'Si una brecha de seguridad afecta los datos de su escuela, se lo comunicamos en un plazo de 72 horas desde que la descubrimos: qué pasó, qué datos estuvieron involucrados y qué estamos haciendo al respecto.',
-      s7Title: 'Contacto',
-      s7Text:
-        'Preguntas de privacidad, acuerdos y solicitudes de datos: privacy@teacherhubpro.com.',
+        '¿Necesita un acuerdo de privacidad de datos estudiantiles o tiene una pregunta de seguridad para su escuela? Vea la política de privacidad o escriba a privacy@teacherhubpro.com.',
     },
   },
 };

@@ -643,12 +643,23 @@ export const marketingZh: MarketingMessages = {
       s4Title: '我们与谁共享',
       s4Text:
         '运行本应用的服务提供商：我们的托管和数据库提供商、用于付款的 Stripe、用于发送消息的电子邮件提供商、用于 AI 草稿的 Anthropic（Claude）、用于朗读音频的 OpenAI，在教师连接 Google Classroom 时的 Google，在教师连接 Canva 时的 Canva（仅限教师在其中打开的演示文稿或练习单，绝不包含学生数据），以及在教师连接 Microsoft 时的 Microsoft（仅限教师保存到 OneDrive 的文件，绝不包含学生数据）。每家提供商只会收到其任务所需的信息。',
-      s5Title: '如何保护',
+      s5Title: '数据存放位置',
       s5Text:
-        '密码以单向哈希形式存储。会话、学生、家庭和密码链接是随机生成的，仅以哈希形式存储。Google Classroom、Canva 和 Microsoft 令牌经过加密。每条记录都只属于一所学校，只有该校的用户才能访问。教师的日历链接同样是随机生成的，仅以哈希形式存储：它只显示计划标题和作业标题及其日期，绝不包含学生信息，教师可以在设置中替换或关闭它。',
-      s6Title: '数据的保留和删除',
+        '所有数据（包括上传的文件）都存放在美国弗吉尼亚州（Virginia, USA）的一个数据库中，由我们的托管服务商 Render 运营。',
+      s6Title: '如何保护',
       s6Text:
-        '账户处于活动状态期间，数据会一直保留。上传的 PDF 在读取后即被删除。网站聊天记录在 30 天后删除。如需获取您数据的副本或要求删除数据，请通过联系页面写信给我们。',
+        '密码以单向哈希形式存储。会话、学生、家庭和密码链接是随机生成的，仅以哈希形式存储。Google Classroom、Canva 和 Microsoft 令牌经过加密。每条记录都只属于一所学校，只有该校的用户才能访问。教师的日历链接同样是随机生成的，仅以哈希形式存储：它只显示计划标题和作业标题及其日期，绝不包含学生信息，教师可以在设置中替换或关闭它。',
+      s7Title: '数据的保留和删除',
+      s7Text:
+        '账户有效期间，数据会一直保留。上传的 PDF 读取后即被删除。网站聊天记录在 30 天后删除。如需获取数据副本或删除数据，请写信至 privacy@teacherhubpro.com。学校合同结束时，我们会应要求以文件形式归还其数据，然后从服务中删除并以书面形式确认。',
+      s8Title: '如果出现问题',
+      s8Text:
+        '如果安全事件影响到贵校的数据，我们会在发现后 72 小时内通知您：发生了什么、涉及哪些数据，以及我们正在采取的措施。',
+      s9Title: '面向学校和学区',
+      s9Text:
+        '学校和学区可以与我们签署 Student Data Privacy Consortium 的 National Data Privacy Agreement（NDPA），这是许多美国学区已在使用的标准协议。如果您的学区有自己的协议，请发给我们，我们会进行审阅。请写信至 privacy@teacherhubpro.com 开始。',
+      s10Title: '联系方式',
+      s10Text: '隐私问题、协议和数据请求：privacy@teacherhubpro.com。',
     },
     terms: {
       title: '使用条款',
@@ -761,31 +772,7 @@ export const marketingZh: MarketingMessages = {
         'AI 只负责起草，只获得任务所需的信息，并会接受检查以防止编造事实。请参阅 AI 治理页面。',
       s5Title: '协议',
       s5Text:
-        '需要学生数据隐私协议，或者对您的学校有安全方面的问题？请查看“学校隐私”页面，或写信至 privacy@teacherhubpro.com。',
-    },
-    schoolPrivacy: {
-      title: '学校隐私',
-      description: '学生数据隐私协议、数据存放位置、我们的服务提供商，以及合同结束时会发生什么。',
-      s1Title: '协议',
-      s1Text:
-        '学校和学区可以与我们签署 Student Data Privacy Consortium 的 National Data Privacy Agreement（NDPA），这是许多美国学区已在使用的标准协议。如果您的学区有自己的协议，请发给我们，我们会进行审阅。请写信至 privacy@teacherhubpro.com 开始。',
-      s2Title: '数据存放位置',
-      s2Text:
-        '所有数据（包括上传的文件）都存放在美国弗吉尼亚州（Virginia, USA）的一个数据库中，由我们的托管服务商 Render 运营。',
-      s3Title: '服务提供商',
-      s3Text:
-        'Render 托管应用和数据库。Stripe 处理付款，只接收账户持有人的账单信息，从不接收学生数据。一家电子邮件服务商发送账户邮件以及教师选择发给家庭的消息。Anthropic（Claude）生成 AI 草稿，只接收每项任务所需的字段。OpenAI 根据要朗读的文本生成朗读音频。Google、Canva 和 Microsoft 只有在教师连接它们时才会接收数据，详见隐私政策。',
-      s4Title: '我们保存哪些学生信息',
-      s4Text:
-        '只保存教师和学校录入的内容：姓名、可选的学号、可选的家长邮箱、可选的学习便利措施，以及相关的作业、成绩、出勤和备注。学生没有账户，也不会直接向我们提供任何信息。我们从不出售学生数据，也从不将其用于广告。',
-      s5Title: '合同结束时',
-      s5Text:
-        '只要您提出要求，我们会以文件形式归还贵校的数据，然后从服务中删除这些数据，并以书面形式确认。',
-      s6Title: '如果出现问题',
-      s6Text:
-        '如果安全事件影响到贵校的数据，我们会在发现后 72 小时内通知您：发生了什么、涉及哪些数据，以及我们正在采取的措施。',
-      s7Title: '联系方式',
-      s7Text: '隐私问题、协议和数据请求：privacy@teacherhubpro.com。',
+        '需要学生数据隐私协议，或者对您的学校有安全方面的问题？请查看隐私政策，或写信至 privacy@teacherhubpro.com。',
     },
   },
 };
