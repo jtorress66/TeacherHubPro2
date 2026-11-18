@@ -42,6 +42,7 @@ export {
   HandleBillingWebhook,
   type HandleBillingWebhookDeps,
 } from './billing/handle-billing-webhook.ts';
+export { GetInvitePage, RewardReferrer, type InvitePage } from './referrals/referrals.ts';
 export { SchoolManagementPolicy } from './policies/school-management.ts';
 export { canManageClass } from './policies/class-access.ts';
 export {

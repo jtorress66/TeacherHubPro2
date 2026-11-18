@@ -13,6 +13,7 @@ import type {
   BillingEvent,
   BillingEventError,
   BillingEvents,
+  BillingRewards,
   CheckoutRequest,
   CheckoutSession,
   CheckoutSessions,
@@ -112,6 +113,8 @@ export class LocalCheckoutSimulator {
       planId: purchase.planId,
       quantity: purchase.quantity,
       currentPeriodEnd: periodEnd,
+      // The test checkout takes the money at once: there is no trial to wait for.
+      paid: true,
     });
     const response = await this.fetchFn(new URL('/api/billing/webhook', this.appUrl).toString(), {
       method: 'POST',
@@ -122,5 +125,12 @@ export class LocalCheckoutSimulator {
       body: payload,
     });
     return response.ok ? ok(null) : err('webhook_rejected');
+  }
+}
+
+/** The stand-in has no real charges to move; the free month is recorded on our side only. */
+export class LocalBillingRewards implements BillingRewards {
+  delayNextCharge(): Promise<Result<null, BillingError>> {
+    return Promise.resolve(ok(null));
   }
 }

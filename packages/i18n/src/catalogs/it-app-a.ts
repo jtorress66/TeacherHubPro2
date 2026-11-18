@@ -39,6 +39,7 @@ export const itAppA = {
     learning: 'Percorsi di apprendimento',
     semesters: 'Semestri',
     billing: 'Piani e fatturazione',
+    invite: 'Invita un collega',
     settings: 'Impostazioni',
     connectedTools: 'Strumenti collegati',
     approvals: 'Approvazioni',
@@ -504,6 +505,27 @@ export const itAppA = {
     schoolInfo: 'Aggiunga i dati della Sua scuola',
     firstClass: 'Crei la Sua prima classe',
     dismiss: 'Nascondi questa lista',
+  },
+  invite: {
+    title: 'Invita un collega',
+    intro:
+      'Conosci un insegnante a cui piacerebbe TeacherHubPro? Condividi il tuo link. Quando si iscrive ed effettua il primo pagamento, ricevi un mese gratis.',
+    linkLabel: 'Il tuo link di invito',
+    shareEmail: 'Condividi via email',
+    emailSubject: 'Prova TeacherHubPro con me',
+    emailBody:
+      'Uso TeacherHubPro per piani di lezione, valutazioni e altro. Puoi provarlo gratis per 7 giorni: {link}',
+    joined: 'Colleghi iscritti: {count}',
+    freeMonths: 'Mesi gratis guadagnati: {count}',
+    limitReached:
+      'Hai guadagnato {max} mesi gratis negli ultimi 12 mesi, il massimo per un anno. Grazie per aver condiviso!',
+    howTitle: 'Come funziona',
+    rule1: 'Il tuo collega si iscrive con il tuo link, via email o con Google.',
+    rule2:
+      'Quando effettua il primo pagamento, ricevi un mese gratis: 30 giorni di prova in più, oppure il tuo prossimo addebito slitta di 30 giorni.',
+    rule3: 'Puoi guadagnare fino a {max} mesi gratis all’anno.',
+    rule4: 'Non inviamo mai email ai tuoi colleghi. Il link lo condividi tu.',
+    privacy: 'Questa pagina mostra solo numeri, mai i nomi dei tuoi colleghi.',
   },
   sample: {
     tryTitle: 'Provalo con una classe di esempio',

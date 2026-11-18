@@ -1,0 +1,8 @@
+{
+  "id": "sub_x",
+  "object": "subscription",
+  "status": "trialing",
+  "trial_end": 1799971200,
+  "metadata": {},
+  "items": { "object": "list", "data": [] }
+}

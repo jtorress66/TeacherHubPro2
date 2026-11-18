@@ -18,10 +18,12 @@ import {
 import type {
   Clock,
   IdGenerator,
+  ReferralRepository,
   SchoolRepository,
   SubscriptionRepository,
   UserRepository,
 } from '@thp/ports';
+import { recordReferral } from '../referrals/referrals.ts';
 
 export interface AccountCreatorDeps {
   readonly users: UserRepository;
@@ -29,6 +31,7 @@ export interface AccountCreatorDeps {
   readonly subscriptions: SubscriptionRepository;
   readonly ids: IdGenerator;
   readonly clock: Clock;
+  readonly referrals: ReferralRepository;
 }
 
 export interface NewAccount {
@@ -41,6 +44,8 @@ export interface NewAccount {
   readonly defaultSchoolName: string;
   /** Set when the address is already known to work (Google verified it); null otherwise. */
   readonly emailConfirmedAt: Date | null;
+  /** The invite code from the link the teacher came through, if any. */
+  readonly referralCode?: string | null | undefined;
 }
 
 export interface Account {
@@ -82,6 +87,7 @@ export class AccountCreator {
     await this.deps.schools.save(school.value);
     await this.deps.users.save(user.value);
     await this.deps.subscriptions.save(subscription.value);
+    await recordReferral(this.deps, input.referralCode, school.value.id);
     return ok({ user: user.value, school: school.value, subscription: subscription.value });
   }
 }

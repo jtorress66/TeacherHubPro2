@@ -40,6 +40,7 @@ export const en = {
     learning: 'Learning paths',
     semesters: 'Semesters',
     billing: 'Plans and billing',
+    invite: 'Invite a colleague',
     settings: 'Settings',
     connectedTools: 'Connected tools',
     approvals: 'Approvals',
@@ -492,6 +493,27 @@ export const en = {
     schoolInfo: 'Add your school information',
     firstClass: 'Create your first class',
     dismiss: 'Hide this checklist',
+  },
+  invite: {
+    title: 'Invite a colleague',
+    intro:
+      'Know a teacher who would like TeacherHubPro? Share your link. When they join and make their first payment, you get a free month.',
+    linkLabel: 'Your invite link',
+    shareEmail: 'Share by email',
+    emailSubject: 'Try TeacherHubPro with me',
+    emailBody:
+      'I use TeacherHubPro for lesson plans, grading and more. You can try it free for 7 days: {link}',
+    joined: 'Colleagues who joined: {count}',
+    freeMonths: 'Free months earned: {count}',
+    limitReached:
+      'You have earned {max} free months in the last 12 months, the most for a year. Thank you for sharing!',
+    howTitle: 'How it works',
+    rule1: 'Your colleague signs up through your link, by email or with Google.',
+    rule2:
+      'When they make their first payment, you get a free month: 30 more days of your trial, or your next charge moves 30 days later.',
+    rule3: 'You can earn up to {max} free months a year.',
+    rule4: 'We never email your colleagues. You share the link yourself.',
+    privacy: 'This page shows only counts, never your colleagues’ names.',
   },
   sample: {
     tryTitle: 'Try it with a sample class',

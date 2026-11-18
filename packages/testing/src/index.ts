@@ -11,6 +11,8 @@ export * from './fakes/ai.ts';
 export * from './fakes/files.ts';
 export * from './fakes/mailer.ts';
 export * from './fakes/billing.ts';
+export * from './fakes/referrals.ts';
+export * from './contracts/referrals.contract.ts';
 export * from './fakes/security.ts';
 export * from './fakes/job-queue.ts';
 export * from './fakes/google.ts';

@@ -39,6 +39,7 @@ export const deAppA = {
     learning: 'Lernpfade',
     semesters: 'Halbjahre',
     billing: 'Tarife und Abrechnung',
+    invite: 'Kollegin oder Kollegen einladen',
     settings: 'Einstellungen',
     connectedTools: 'Verbundene Tools',
     approvals: 'Freigaben',
@@ -502,6 +503,29 @@ export const deAppA = {
     schoolInfo: 'Angaben zur Schule hinzufügen',
     firstClass: 'Erste Klasse anlegen',
     dismiss: 'Checkliste ausblenden',
+  },
+  invite: {
+    title: 'Kollegin oder Kollegen einladen',
+    intro:
+      'Kennen Sie eine Lehrkraft, der TeacherHubPro gefallen würde? Teilen Sie Ihren Link. Wenn sie sich anmeldet und zum ersten Mal bezahlt, erhalten Sie einen Gratismonat.',
+    linkLabel: 'Ihr Einladungslink',
+    shareEmail: 'Per E-Mail teilen',
+    emailSubject: 'Probier TeacherHubPro mit mir aus',
+    emailBody:
+      'Ich nutze TeacherHubPro für Unterrichtsplanung, Bewertung und mehr. Du kannst es 7 Tage kostenlos testen: {link}',
+    joined: 'Angemeldete Kolleginnen und Kollegen: {count}',
+    freeMonths: 'Verdiente Gratismonate: {count}',
+    limitReached:
+      'Sie haben in den letzten 12 Monaten {max} Gratismonate verdient, das Maximum pro Jahr. Danke fürs Teilen!',
+    howTitle: 'So funktioniert es',
+    rule1:
+      'Ihre Kollegin oder Ihr Kollege meldet sich über Ihren Link an, per E-Mail oder mit Google.',
+    rule2:
+      'Bei der ersten Zahlung erhalten Sie einen Gratismonat: 30 Tage mehr Testzeit, oder Ihre nächste Abbuchung verschiebt sich um 30 Tage.',
+    rule3: 'Sie können bis zu {max} Gratismonate pro Jahr verdienen.',
+    rule4:
+      'Wir schreiben Ihren Kolleginnen und Kollegen nie eine E-Mail. Sie teilen den Link selbst.',
+    privacy: 'Diese Seite zeigt nur Zahlen, nie die Namen Ihrer Kolleginnen und Kollegen.',
   },
   sample: {
     tryTitle: 'Probieren Sie es mit einer Beispielklasse aus',

@@ -423,6 +423,22 @@ export interface RubricsTable {
   updated_at: Date;
 }
 
+export interface ReferralCodesTable {
+  code: string;
+  user_id: string;
+  school_id: string;
+}
+
+export interface ReferralsTable {
+  id: string;
+  referrer_id: string;
+  referrer_school_id: string;
+  invited_school_id: string;
+  joined_at: Date;
+  status: string;
+  decided_at: Date | null;
+}
+
 export interface UsedTicketsTable {
   ticket_id: string;
   expires_at: Date;
@@ -723,6 +739,8 @@ export interface Database {
   leads: LeadsTable;
   rate_limits: RateLimitsTable;
   used_tickets: UsedTicketsTable;
+  referral_codes: ReferralCodesTable;
+  referrals: ReferralsTable;
   audit_events: AuditEventsTable;
   rubrics: RubricsTable;
   chat_sessions: ChatSessionsTable;

@@ -17,6 +17,7 @@ import {
   type FieldErrors,
 } from '../../server/forms.ts';
 import { afterLogInPath, LTI_LINK_COOKIE } from '../../server/lti.ts';
+import { REFERRAL_COOKIE } from '../../server/referral.ts';
 import {
   safeNextPath,
   SIGN_IN_CONFIRM_COOKIE,
@@ -67,6 +68,7 @@ export async function signUpAction(_state: FormState, data: FormData): Promise<F
     language: locale,
     defaultSchoolName: createTranslator(locale)('defaults.schoolName'),
     userAgent: (await signInBrowser()).userAgent,
+    referralCode: (await cookies()).get(REFERRAL_COOKIE)?.value ?? null,
   });
   if (!result.ok) return rejectedForm(result.error, locale, data);
   await setSessionCookie(result.value.sessionToken);

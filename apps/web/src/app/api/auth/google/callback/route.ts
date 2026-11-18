@@ -9,6 +9,7 @@ import {
   sessionCookieOptions,
 } from '../../../../../server/cookies.ts';
 import { afterLogInPath, LTI_LINK_COOKIE } from '../../../../../server/lti.ts';
+import { REFERRAL_COOKIE } from '../../../../../server/referral.ts';
 import {
   confirmSignInPath,
   SIGN_IN_CONFIRM_COOKIE,
@@ -40,6 +41,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       sessionToken: request.cookies.get(SESSION_COOKIE)?.value ?? null,
       userAgent: request.headers.get('user-agent'),
     },
+    referralCode: request.cookies.get(REFERRAL_COOKIE)?.value ?? null,
   });
   if (!result.ok) return failed(result.error.code);
 

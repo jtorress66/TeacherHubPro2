@@ -2,6 +2,7 @@ export * from './postgres/index.ts';
 export * from './crypto/index.ts';
 export {
   LocalBillingEvents,
+  LocalBillingRewards,
   LocalCheckoutSessions,
   LocalCheckoutSimulator,
   signLocalWebhook,
@@ -10,6 +11,7 @@ export {
 export { createStripeClient } from './billing/stripe-client.ts';
 export { StripeCheckoutSessions } from './billing/stripe-checkout-sessions.ts';
 export { StripeBillingEvents } from './billing/stripe-billing-events.ts';
+export { StripeBillingRewards } from './billing/stripe-billing-rewards.ts';
 export { ensureStripePrices, type EnsuredPrice } from './billing/stripe-setup.ts';
 export {
   GoogleOAuthIdentity,

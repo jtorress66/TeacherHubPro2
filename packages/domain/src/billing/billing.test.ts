@@ -12,6 +12,7 @@ import {
   activateSubscription,
   cancelSubscription,
   expireTrial,
+  extendTrial,
   hasAccess,
   markPastDue,
   renewSubscription,
@@ -277,5 +278,33 @@ describe('renewSubscription', () => {
       from: 'trialing',
       action: 'renew',
     });
+  });
+});
+
+describe('extendTrial', () => {
+  it('adds days to the end of a running trial', () => {
+    const trial = valueOf(startTrial({ ...base, now }));
+
+    expect(valueOf(extendTrial(trial, 30, now)).trialEndsAt).toEqual(
+      new Date(trial.trialEndsAt.getTime() + 30 * day),
+    );
+  });
+
+  it('opens an ended trial again, counting from now', () => {
+    const later = new Date(now.getTime() + 20 * day);
+    const ended = valueOf(expireTrial(valueOf(startTrial({ ...base, now })), later));
+
+    expect(valueOf(extendTrial(ended, 30, later))).toMatchObject({
+      status: 'trialing',
+      trialEndsAt: new Date(later.getTime() + 30 * day),
+    });
+  });
+
+  it('does not touch a paid subscription', () => {
+    const paid = valueOf(
+      activateSubscription(valueOf(startTrial({ ...base, now })), { currentPeriodEnd: periodEnd }),
+    );
+
+    expect(errorOf(extendTrial(paid, 30, now))).toMatchObject({ code: 'invalid_transition' });
   });
 });

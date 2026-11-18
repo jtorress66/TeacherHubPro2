@@ -7,6 +7,7 @@ import type {
   EmailConfirmationRepository,
   RateLimiter,
   UsedTicketRepository,
+  ReferralRepository,
   AttachmentRepository,
   CanvaConnectionRepository,
   CalendarFeedRepository,
@@ -67,6 +68,7 @@ import {
   PostgresRateLimiter,
   PostgresUsedTicketRepository,
 } from './repositories/postgres-hardening.ts';
+import { PostgresReferralRepository } from './repositories/postgres-referrals.ts';
 import { PostgresAssignmentRepository } from './repositories/postgres-assignment-repository.ts';
 import { PostgresAttendanceSessionRepository } from './repositories/postgres-attendance-session-repository.ts';
 import { PostgresClassRepository } from './repositories/postgres-class-repository.ts';
@@ -154,6 +156,7 @@ export { PostgresToolKeyStore } from './repositories/postgres-tool-key-store.ts'
 export interface PostgresRepositories {
   readonly rateLimiter: RateLimiter;
   readonly usedTickets: UsedTicketRepository;
+  readonly referrals: ReferralRepository;
   readonly auditLog: AuditLog & ApprovalLogReader;
   readonly schools: SchoolRepository;
   readonly users: UserRepository;
@@ -219,6 +222,7 @@ export function createPostgresRepositories(db: Kysely<Database>): PostgresReposi
   return {
     rateLimiter: new PostgresRateLimiter(db),
     usedTickets: new PostgresUsedTicketRepository(db),
+    referrals: new PostgresReferralRepository(db),
     auditLog: new PostgresAuditLog(db),
     schools: new PostgresSchoolRepository(db),
     users: new PostgresUserRepository(db),

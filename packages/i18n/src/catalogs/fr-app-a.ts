@@ -39,6 +39,7 @@ export const frAppA = {
     learning: "Parcours d'apprentissage",
     semesters: 'Semestres',
     billing: 'Forfaits et facturation',
+    invite: 'Inviter un collègue',
     settings: 'Paramètres',
     connectedTools: 'Outils connectés',
     approvals: 'Approbations',
@@ -504,6 +505,27 @@ export const frAppA = {
     schoolInfo: 'Ajoutez les informations de votre école',
     firstClass: 'Créez votre première classe',
     dismiss: 'Masquer cette liste',
+  },
+  invite: {
+    title: 'Inviter un collègue',
+    intro:
+      'Vous connaissez un enseignant à qui TeacherHubPro plairait ? Partagez votre lien. Quand il s’inscrit et effectue son premier paiement, vous recevez un mois gratuit.',
+    linkLabel: 'Votre lien d’invitation',
+    shareEmail: 'Partager par e-mail',
+    emailSubject: 'Essaie TeacherHubPro avec moi',
+    emailBody:
+      'J’utilise TeacherHubPro pour mes plans de cours, mes notes et plus encore. Tu peux l’essayer gratuitement pendant 7 jours : {link}',
+    joined: 'Collègues inscrits : {count}',
+    freeMonths: 'Mois gratuits gagnés : {count}',
+    limitReached:
+      'Vous avez gagné {max} mois gratuits au cours des 12 derniers mois, le maximum pour une année. Merci de partager !',
+    howTitle: 'Comment ça marche',
+    rule1: 'Votre collègue s’inscrit avec votre lien, par e-mail ou avec Google.',
+    rule2:
+      'Quand il effectue son premier paiement, vous recevez un mois gratuit : 30 jours d’essai en plus, ou votre prochain prélèvement est repoussé de 30 jours.',
+    rule3: 'Vous pouvez gagner jusqu’à {max} mois gratuits par an.',
+    rule4: 'Nous n’envoyons jamais d’e-mails à vos collègues. C’est vous qui partagez le lien.',
+    privacy: 'Cette page n’affiche que des chiffres, jamais les noms de vos collègues.',
   },
   sample: {
     tryTitle: 'Essayez avec une classe exemple',

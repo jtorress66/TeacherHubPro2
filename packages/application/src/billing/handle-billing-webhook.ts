@@ -11,8 +11,9 @@ import {
 } from '@thp/domain';
 import type { BillingEvent, BillingEvents, SubscriptionRepository } from '@thp/ports';
 import { fail, type UseCaseError } from '../errors.ts';
+import { RewardReferrer, type RewardReferrerDeps } from '../referrals/referrals.ts';
 
-export interface HandleBillingWebhookDeps {
+export interface HandleBillingWebhookDeps extends RewardReferrerDeps {
   readonly billingEvents: BillingEvents;
   readonly subscriptions: SubscriptionRepository;
 }
@@ -46,7 +47,11 @@ function applyEvent<T extends BillingEvent['type']>(sub: Subscription, event: Ev
  * event arrives before the subscription it refers to); events that no longer fit are ignored.
  */
 export class HandleBillingWebhook {
-  constructor(private readonly deps: HandleBillingWebhookDeps) {}
+  private readonly rewards: RewardReferrer;
+
+  constructor(private readonly deps: HandleBillingWebhookDeps) {
+    this.rewards = new RewardReferrer(deps);
+  }
 
   async execute(input: {
     payload: string;
@@ -67,6 +72,11 @@ export class HandleBillingWebhook {
       return 'field' in outcome.error ? fail('below_minimum_seats') : ok({ handled: false });
     }
     if (outcome.value !== subscription) await this.deps.subscriptions.save(outcome.value);
+    // A colleague invited by another teacher has paid: the inviter's free month, given once.
+    if ('paid' in event && event.paid) {
+      const rewarded = await this.rewards.afterPayment(subscription.schoolId);
+      if (!rewarded.ok) return rewarded;
+    }
     return ok({ handled: true });
   }
 
