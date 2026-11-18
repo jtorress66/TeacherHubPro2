@@ -9,7 +9,7 @@ import {
   type User,
   type UserId,
 } from '@thp/domain';
-import type { Clock, TicketSigner, UserRepository } from '@thp/ports';
+import type { Clock, TicketSigner, UsedTicketRepository, UserRepository } from '@thp/ports';
 import { fail, type UseCaseError } from '../errors.ts';
 import { SessionIssuer, type SessionIssuerDeps } from './session-issuer.ts';
 import {
@@ -20,6 +20,8 @@ import {
 } from './sign-in-gate.ts';
 
 interface SignInTicket {
+  readonly ticketId: string;
+  readonly expiresAt: Date;
   readonly userId: UserId;
   readonly schoolId: SchoolId;
   readonly lastSeenAt: Date;
@@ -32,9 +34,12 @@ function readTicket(
 ): SignInTicket | null {
   const payload = deps.ticketSigner.verify(ticket, deps.clock.now());
   if (payload?.purpose !== signInConfirmPurpose) return null;
-  const { userId, schoolId, lastSeenAt, browser, os } = payload;
+  const { ticketId, expiresAt, userId, schoolId, lastSeenAt, browser, os } = payload;
+  if (ticketId === undefined || expiresAt === undefined) return null;
   if (userId === undefined || schoolId === undefined || lastSeenAt === undefined) return null;
   return {
+    ticketId,
+    expiresAt: new Date(expiresAt),
     userId: userId as UserId,
     schoolId: schoolId as SchoolId,
     lastSeenAt: new Date(lastSeenAt),
@@ -68,9 +73,13 @@ export class DescribeSignInConfirmation {
 export interface ConfirmSignInDeps extends SessionIssuerDeps {
   readonly ticketSigner: TicketSigner;
   readonly users: UserRepository;
+  readonly usedTickets: UsedTicketRepository;
 }
 
-/** The person a ticket signs in, unless it is not genuine or current, or they are suspended. */
+/**
+ * The person a ticket signs in, unless it is not genuine or current, was used before, or they are
+ * suspended. Only a ticket that passes every check is used up.
+ */
 async function ticketUser(
   deps: ConfirmSignInDeps,
   ticket: string,
@@ -80,7 +89,8 @@ async function ticketUser(
   const user = await deps.users.findById(read.schoolId, read.userId);
   if (user === null) return fail('sign_in_expired');
   if (user.suspendedAt !== null) return fail('account_suspended');
-  return ok(user);
+  const first = await deps.usedTickets.claim(read.ticketId, read.expiresAt);
+  return first ? ok(user) : fail('sign_in_expired');
 }
 
 /**

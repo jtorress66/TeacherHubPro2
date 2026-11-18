@@ -52,15 +52,19 @@ export class SignInGate {
       const device = deviceFromUserAgent(browser.userAgent);
       return { kind: 'signedIn', sessionToken: await this.issuer.issue(user, device) };
     }
+    const expiresAt = new Date(now.getTime() + signInConfirmTicketLifetimeMs);
     const ticket = this.deps.ticketSigner.sign(
       {
         purpose: signInConfirmPurpose,
+        // Recorded when the ticket is used, so it signs someone in only once.
+        ticketId: this.deps.tokens.generate(),
+        expiresAt: expiresAt.toISOString(),
         userId: user.id,
         schoolId: user.schoolId,
         lastSeenAt: other.lastSeenAt.toISOString(),
         ...(other.device ?? {}),
       },
-      new Date(now.getTime() + signInConfirmTicketLifetimeMs),
+      expiresAt,
     );
     return {
       kind: 'confirm',

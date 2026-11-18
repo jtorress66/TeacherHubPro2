@@ -92,6 +92,7 @@ describe('migrations', () => {
       'subscriptions',
       'tool_keys',
       'trial_reminders',
+      'used_tickets',
       'users',
     ]);
   });
@@ -101,6 +102,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0036_used_tickets',
           '0035_sample_classes',
           '0034_job_progress',
           '0033_lti_grades',
@@ -180,10 +182,11 @@ describe('migrations', () => {
           '0033_lti_grades',
           '0034_job_progress',
           '0035_sample_classes',
+          '0036_used_tickets',
         ],
       },
     });
-    expect(await tableNames()).toHaveLength(59);
+    expect(await tableNames()).toHaveLength(60);
   });
 
   it('turns plans saved before step 8 into valid plans of their kind', async () => {

@@ -1,5 +1,11 @@
 import { approvalActions, type AuditAction, type AuditEvent, type SchoolId } from '@thp/domain';
-import type { ApprovalFilter, ApprovalLogReader, AuditLog, RateLimiter } from '@thp/ports';
+import type {
+  ApprovalFilter,
+  ApprovalLogReader,
+  AuditLog,
+  RateLimiter,
+  UsedTicketRepository,
+} from '@thp/ports';
 
 export class InMemoryRateLimiter implements RateLimiter {
   private readonly counts = new Map<string, number>();
@@ -10,6 +16,16 @@ export class InMemoryRateLimiter implements RateLimiter {
     const count = (this.counts.get(slot) ?? 0) + 1;
     this.counts.set(slot, count);
     return Promise.resolve(count <= input.limit);
+  }
+}
+
+export class InMemoryUsedTicketRepository implements UsedTicketRepository {
+  private readonly used = new Set<string>();
+
+  claim(ticketId: string): Promise<boolean> {
+    if (this.used.has(ticketId)) return Promise.resolve(false);
+    this.used.add(ticketId);
+    return Promise.resolve(true);
   }
 }
 

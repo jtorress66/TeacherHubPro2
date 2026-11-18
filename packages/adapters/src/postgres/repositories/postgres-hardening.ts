@@ -11,9 +11,33 @@ import {
   type SchoolId,
   type UserId,
 } from '@thp/domain';
-import type { ApprovalFilter, ApprovalLogReader, AuditLog, RateLimiter } from '@thp/ports';
+import type {
+  ApprovalFilter,
+  ApprovalLogReader,
+  AuditLog,
+  RateLimiter,
+  UsedTicketRepository,
+} from '@thp/ports';
 import { oneOf } from '../mappers/columns.ts';
 import type { AuditEventsTable, Database } from '../schema.ts';
+
+/** Used sign-in tickets, kept until they expire; expired ones are cleared as new ones come in. */
+export class PostgresUsedTicketRepository implements UsedTicketRepository {
+  constructor(private readonly db: Kysely<Database>) {}
+
+  async claim(ticketId: string, expiresAt: Date): Promise<boolean> {
+    await this.db
+      .deleteFrom('used_tickets')
+      .where('expires_at', '<', sql<Date>`now()`)
+      .execute();
+    const inserted = await this.db
+      .insertInto('used_tickets')
+      .values({ ticket_id: ticketId, expires_at: expiresAt })
+      .onConflict((conflict) => conflict.column('ticket_id').doNothing())
+      .executeTakeFirst();
+    return inserted.numInsertedOrUpdatedRows === 1n;
+  }
+}
 
 export class PostgresRateLimiter implements RateLimiter {
   constructor(private readonly db: Kysely<Database>) {}

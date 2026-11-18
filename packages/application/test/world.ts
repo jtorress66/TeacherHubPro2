@@ -57,6 +57,7 @@ import {
   InMemoryBlockedDomainRepository,
   InMemoryEmailConfirmationRepository,
   InMemoryRateLimiter,
+  InMemoryUsedTicketRepository,
   InMemoryAuditLog,
 } from '@thp/testing';
 import { ConfirmEmail, SignUp, type SignInBrowser } from '../src/index.ts';
@@ -84,6 +85,7 @@ export const makeWorld = () => {
     blockedDomains: new InMemoryBlockedDomainRepository(),
     aiUsage: new InMemoryAiUsageStats(jobs),
     rateLimiter: new InMemoryRateLimiter(),
+    usedTickets: new InMemoryUsedTicketRepository(),
     auditLog: new InMemoryAuditLog(),
     lessonPlans: new InMemoryLessonPlanRepository(),
     planFolders: new InMemoryPlanFolderRepository(),

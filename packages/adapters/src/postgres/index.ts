@@ -6,6 +6,7 @@ import type {
   BlockedDomainRepository,
   EmailConfirmationRepository,
   RateLimiter,
+  UsedTicketRepository,
   AttachmentRepository,
   CanvaConnectionRepository,
   CalendarFeedRepository,
@@ -61,7 +62,11 @@ import type {
   SubscriptionRepository,
   UserRepository,
 } from '@thp/ports';
-import { PostgresAuditLog, PostgresRateLimiter } from './repositories/postgres-hardening.ts';
+import {
+  PostgresAuditLog,
+  PostgresRateLimiter,
+  PostgresUsedTicketRepository,
+} from './repositories/postgres-hardening.ts';
 import { PostgresAssignmentRepository } from './repositories/postgres-assignment-repository.ts';
 import { PostgresAttendanceSessionRepository } from './repositories/postgres-attendance-session-repository.ts';
 import { PostgresClassRepository } from './repositories/postgres-class-repository.ts';
@@ -148,6 +153,7 @@ export { PostgresToolKeyStore } from './repositories/postgres-tool-key-store.ts'
 
 export interface PostgresRepositories {
   readonly rateLimiter: RateLimiter;
+  readonly usedTickets: UsedTicketRepository;
   readonly auditLog: AuditLog & ApprovalLogReader;
   readonly schools: SchoolRepository;
   readonly users: UserRepository;
@@ -212,6 +218,7 @@ export function createPostgresRepositories(db: Kysely<Database>): PostgresReposi
   const chat = new PostgresChat(db);
   return {
     rateLimiter: new PostgresRateLimiter(db),
+    usedTickets: new PostgresUsedTicketRepository(db),
     auditLog: new PostgresAuditLog(db),
     schools: new PostgresSchoolRepository(db),
     users: new PostgresUserRepository(db),

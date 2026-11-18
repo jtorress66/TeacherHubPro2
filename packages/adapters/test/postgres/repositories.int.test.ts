@@ -55,6 +55,7 @@ import {
   accountProtectionContract,
   marketingContract,
   rateLimiterContract,
+  usedTicketRepositoryContract,
   approvalLogReaderContract,
   auditLogContract,
   gamePlayRepositoryContract,
@@ -462,6 +463,7 @@ withParents(parentsFor.none, () => {
 
 withParents(parentsFor.none, () => {
   rateLimiterContract('PostgresRateLimiter', () => repos.rateLimiter);
+  usedTicketRepositoryContract('PostgresUsedTicketRepository', () => repos.usedTickets);
 });
 
 withParents(parentsFor.school, () => {
