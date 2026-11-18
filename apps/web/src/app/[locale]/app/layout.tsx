@@ -16,7 +16,9 @@ export default async function AppLayout(props: LocaleParams & { readonly childre
   const locale = await localeFrom(props);
   const t = createTranslator(locale);
   const { user, school } = await requireUser(locale, { needsAccess: false });
-  const readyPrep = await getAppContainer().countReadyPrepBatches.execute({ actor: user });
+  const app = getAppContainer();
+  const readyPrep = await app.countReadyPrepBatches.execute({ actor: user });
+  const canInvite = await app.getInvitePage.isOpenTo(user);
   const base = `/${locale}/app`;
   const groups: NavGroup[] = [
     {
@@ -47,6 +49,9 @@ export default async function AppLayout(props: LocaleParams & { readonly childre
       links: [
         { href: `${base}/semesters`, label: t('nav.semesters'), icon: 'semesters' },
         { href: `${base}/billing`, label: t('nav.billing'), icon: 'billing' },
+        ...(canInvite
+          ? [{ href: `${base}/invite`, label: t('nav.invite'), icon: 'invite' as const }]
+          : []),
         { href: `${base}/integrations`, label: t('nav.connectedTools'), icon: 'connectedTools' },
         { href: `${base}/settings`, label: t('nav.settings'), icon: 'settings' },
       ],

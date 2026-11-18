@@ -1,6 +1,7 @@
 import { err, ok, type PlanId, type Result, type SchoolId, type SubscriptionId } from '@thp/domain';
 import type {
   BillingError,
+  BillingRewards,
   BillingEvent,
   BillingEventError,
   BillingEvents,
@@ -37,11 +38,13 @@ const readers: Readonly<Record<BillingEvent['type'], (payload: Payload) => Billi
     planId: text(p, 'planId') as PlanId,
     quantity: Number(p.quantity),
     currentPeriodEnd: date(p, 'currentPeriodEnd'),
+    paid: p.paid === true,
   }),
   renewed: (p) => ({
     type: 'renewed',
     externalId: text(p, 'externalId'),
     currentPeriodEnd: date(p, 'currentPeriodEnd'),
+    paid: p.paid === true,
   }),
   payment_failed: (p) => ({ type: 'payment_failed', externalId: text(p, 'externalId') }),
   canceled: (p) => ({ type: 'canceled', externalId: text(p, 'externalId') }),
@@ -71,5 +74,17 @@ export class FakeBillingEvents implements BillingEvents {
     const parsed = parseJson(payload);
     if (!isPayload(parsed) || !isEventType(parsed.type)) return err({ code: 'unsupported_event' });
     return ok(readers[parsed.type](parsed));
+  }
+}
+
+/** Records each delayed charge; `fail` plays the provider being down. */
+export class FakeBillingRewards implements BillingRewards {
+  readonly delays: { readonly externalId: string; readonly until: Date }[] = [];
+  fail = false;
+
+  delayNextCharge(externalId: string, until: Date): Promise<Result<null, BillingError>> {
+    if (this.fail) return Promise.resolve(err({ code: 'unavailable' }));
+    this.delays.push({ externalId, until });
+    return Promise.resolve(ok(null));
   }
 }

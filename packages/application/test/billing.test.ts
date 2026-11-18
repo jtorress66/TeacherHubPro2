@@ -122,6 +122,7 @@ describe('HandleBillingWebhook', () => {
       planId: 'school',
       quantity: 12,
       currentPeriodEnd: periodEnd,
+      paid: true,
     };
     const handle = (event: BillingEvent) =>
       new HandleBillingWebhook(world).execute(FakeBillingEvents.sign(event));
@@ -162,7 +163,12 @@ describe('HandleBillingWebhook', () => {
     await paid.handle({ type: 'payment_failed', externalId: 'sub_stripe_1' });
     expect((await stored(paid))?.status).toBe('past_due');
 
-    await paid.handle({ type: 'renewed', externalId: 'sub_stripe_1', currentPeriodEnd: nextYear });
+    await paid.handle({
+      type: 'renewed',
+      externalId: 'sub_stripe_1',
+      currentPeriodEnd: nextYear,
+      paid: true,
+    });
     expect(await stored(paid)).toMatchObject({ status: 'active', currentPeriodEnd: nextYear });
 
     await paid.handle({ type: 'canceled', externalId: 'sub_stripe_1' });
@@ -184,6 +190,7 @@ describe('HandleBillingWebhook', () => {
         type: 'renewed',
         externalId: 'sub_stripe_1',
         currentPeriodEnd: periodEnd,
+        paid: true,
       }),
     ).toEqual({
       ok: true,

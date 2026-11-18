@@ -22,6 +22,8 @@ export interface GoogleSignInInput {
   readonly language: string;
   readonly defaultSchoolName: string;
   readonly browser: SignInBrowser;
+  /** The invite code from the link the teacher came through; used only for a new account. */
+  readonly referralCode?: string | null;
 }
 
 export interface GoogleSignedIn extends Account {
@@ -83,6 +85,7 @@ export class SignInWithGoogle {
       picture: profile.picture,
       defaultSchoolName: input.defaultSchoolName,
       emailConfirmedAt: this.deps.clock.now(),
+      referralCode: input.referralCode,
     });
   }
 }

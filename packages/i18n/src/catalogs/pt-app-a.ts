@@ -39,6 +39,7 @@ export const ptAppA = {
     learning: 'Trilhas de aprendizagem',
     semesters: 'Semestres',
     billing: 'Planos e cobrança',
+    invite: 'Convidar um colega',
     settings: 'Configurações',
     connectedTools: 'Ferramentas conectadas',
     approvals: 'Aprovações',
@@ -499,6 +500,27 @@ export const ptAppA = {
     schoolInfo: 'Adicione os dados da sua escola',
     firstClass: 'Crie sua primeira turma',
     dismiss: 'Ocultar esta lista',
+  },
+  invite: {
+    title: 'Convidar um colega',
+    intro:
+      'Conhece um professor que gostaria do TeacherHubPro? Compartilhe seu link. Quando ele se cadastrar e fizer o primeiro pagamento, você ganha um mês grátis.',
+    linkLabel: 'Seu link de convite',
+    shareEmail: 'Compartilhar por e-mail',
+    emailSubject: 'Experimente o TeacherHubPro comigo',
+    emailBody:
+      'Uso o TeacherHubPro para planos de aula, notas e muito mais. Você pode experimentar grátis por 7 dias: {link}',
+    joined: 'Colegas que se cadastraram: {count}',
+    freeMonths: 'Meses grátis ganhos: {count}',
+    limitReached:
+      'Você ganhou {max} meses grátis nos últimos 12 meses, o máximo por ano. Obrigado por compartilhar!',
+    howTitle: 'Como funciona',
+    rule1: 'Seu colega se cadastra pelo seu link, por e-mail ou com o Google.',
+    rule2:
+      'Quando ele fizer o primeiro pagamento, você ganha um mês grátis: mais 30 dias de teste, ou sua próxima cobrança passa para 30 dias depois.',
+    rule3: 'Você pode ganhar até {max} meses grátis por ano.',
+    rule4: 'Nunca enviamos e-mails aos seus colegas. Você mesmo compartilha o link.',
+    privacy: 'Esta página mostra apenas números, nunca os nomes dos seus colegas.',
   },
   sample: {
     tryTitle: 'Experimente com uma turma de exemplo',

@@ -2,7 +2,12 @@ import Stripe from 'stripe';
 import { describe, expect, it } from 'vitest';
 import type { Email, SchoolId, SubscriptionId } from '@thp/domain';
 import type { BillingEvent, CheckoutRequest } from '@thp/ports';
-import { billingEventsContract, checkoutSessionsContract } from '@thp/testing';
+import {
+  billingEventsContract,
+  billingRewardsContract,
+  checkoutSessionsContract,
+} from '@thp/testing';
+import { StripeBillingRewards } from '../../src/billing/stripe-billing-rewards.ts';
 import { StripeBillingEvents } from '../../src/billing/stripe-billing-events.ts';
 import { StripeCheckoutSessions } from '../../src/billing/stripe-checkout-sessions.ts';
 import { fakeStripe, on, recorded } from './fake-stripe.ts';
@@ -50,7 +55,7 @@ function stripeEventFor(event: BillingEvent): object {
     case 'checkout_completed':
       return wrap(
         'customer.subscription.created',
-        subscription('trialing', {
+        subscription(event.paid ? 'active' : 'trialing', {
           metadata: {
             schoolId: event.schoolId,
             subscriptionId: event.clientReference,
@@ -63,7 +68,7 @@ function stripeEventFor(event: BillingEvent): object {
     case 'renewed':
       return wrap(
         'customer.subscription.updated',
-        subscription('active', period(event.currentPeriodEnd)),
+        subscription(event.paid ? 'active' : 'trialing', period(event.currentPeriodEnd)),
       );
     case 'payment_failed':
       return wrap('customer.subscription.updated', subscription('past_due'));
@@ -288,6 +293,39 @@ describe('StripeBillingEvents', () => {
     expect(events().parseWebhook(payload, signature)).toEqual({
       ok: true,
       value: { type: 'payment_failed', externalId: 'sub_x' },
+    });
+  });
+});
+
+billingRewardsContract('StripeBillingRewards', {
+  working: () =>
+    new StripeBillingRewards(
+      fakeStripe([on('POST', '/v1/subscriptions/ext-1', { body: recorded('subscription') })])
+        .stripe,
+    ),
+  failing: () =>
+    new StripeBillingRewards(
+      fakeStripe([
+        on('POST', '/v1/subscriptions/ext-1', { status: 500, body: recorded('api-error') }),
+      ]).stripe,
+    ),
+});
+
+describe('StripeBillingRewards', () => {
+  it('sets the trial end to the new date without charging for the extra days', async () => {
+    const { stripe, requests } = fakeStripe([
+      on('POST', '/v1/subscriptions/sub_x', { body: recorded('subscription') }),
+    ]);
+
+    await new StripeBillingRewards(stripe).delayNextCharge(
+      'sub_x',
+      new Date('2027-01-15T00:00:00Z'),
+    );
+
+    expect(requests).toHaveLength(1);
+    expect(Object.fromEntries(requests[0]?.params ?? [])).toEqual({
+      trial_end: String(unix(new Date('2027-01-15T00:00:00Z'))),
+      proration_behavior: 'none',
     });
   });
 });

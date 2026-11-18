@@ -76,6 +76,8 @@ describe('migrations', () => {
       'prep_batches',
       'presentations',
       'rate_limits',
+      'referral_codes',
+      'referrals',
       'report_card_comments',
       'rubrics',
       'schools',
@@ -102,6 +104,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0037_referrals',
           '0036_used_tickets',
           '0035_sample_classes',
           '0034_job_progress',
@@ -183,10 +186,11 @@ describe('migrations', () => {
           '0034_job_progress',
           '0035_sample_classes',
           '0036_used_tickets',
+          '0037_referrals',
         ],
       },
     });
-    expect(await tableNames()).toHaveLength(60);
+    expect(await tableNames()).toHaveLength(62);
   });
 
   it('turns plans saved before step 8 into valid plans of their kind', async () => {

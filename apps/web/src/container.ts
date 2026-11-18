@@ -34,6 +34,7 @@ import {
   GoogleOAuthIdentity,
   issueLocalGoogleCode,
   LocalBillingEvents,
+  LocalBillingRewards,
   LocalCheckoutSessions,
   LocalCheckoutSimulator,
   LocalGoogleIdentity,
@@ -44,6 +45,7 @@ import {
   ScryptPasswordHasher,
   Sha256TokenHasher,
   StripeBillingEvents,
+  StripeBillingRewards,
   StripeCheckoutSessions,
   SystemClock,
   UuidIdGenerator,
@@ -290,6 +292,7 @@ import {
   SaveAttendance,
   SubmitAttendance,
   HandleBillingWebhook,
+  GetInvitePage,
   ImportStudents,
   ListClasses,
   ListSemesters,
@@ -314,6 +317,7 @@ import {
 import type {
   SentMailbox,
   BillingEvents,
+  BillingRewards,
   CheckoutSessions,
   GoogleIdentity,
   GoogleProfile,
@@ -562,6 +566,7 @@ export interface AppContainer {
   readonly updateSchoolDetails: UpdateSchoolDetails;
   readonly startCheckout: StartCheckout;
   readonly handleBillingWebhook: HandleBillingWebhook;
+  readonly getInvitePage: GetInvitePage;
   readonly createClass: CreateClass;
   readonly updateClass: UpdateClass;
   readonly archiveClass: ArchiveClass;
@@ -646,6 +651,7 @@ export interface AppContainer {
 interface Billing {
   readonly checkout: CheckoutSessions;
   readonly billingEvents: BillingEvents;
+  readonly billingRewards: BillingRewards;
   readonly webhookSignatureHeader: string;
   readonly localCheckout: LocalCheckoutSimulator | null;
 }
@@ -775,6 +781,7 @@ function billingFor(config: BillingConfig, appUrl: string): Billing {
     return {
       checkout: new LocalCheckoutSessions(appUrl),
       billingEvents: new LocalBillingEvents(config.secret),
+      billingRewards: new LocalBillingRewards(),
       webhookSignatureHeader: LocalCheckoutSimulator.signatureHeader,
       localCheckout: new LocalCheckoutSimulator(appUrl, config.secret),
     };
@@ -783,6 +790,7 @@ function billingFor(config: BillingConfig, appUrl: string): Billing {
   return {
     checkout: new StripeCheckoutSessions(stripe),
     billingEvents: new StripeBillingEvents(stripe, config.webhookSecret),
+    billingRewards: new StripeBillingRewards(stripe),
     webhookSignatureHeader: 'stripe-signature',
     localCheckout: null,
   };
@@ -1083,6 +1091,7 @@ export function createAppContainer(
     updateSchoolDetails: new UpdateSchoolDetails(deps),
     startCheckout: new StartCheckout(deps),
     handleBillingWebhook: new HandleBillingWebhook(deps),
+    getInvitePage: new GetInvitePage(deps),
     createClass: new CreateClass(deps),
     updateClass: new UpdateClass(deps),
     archiveClass: new ArchiveClass(deps),

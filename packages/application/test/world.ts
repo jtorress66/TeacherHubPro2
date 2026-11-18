@@ -57,6 +57,8 @@ import {
   InMemoryBlockedDomainRepository,
   InMemoryEmailConfirmationRepository,
   InMemoryRateLimiter,
+  InMemoryReferralRepository,
+  FakeBillingRewards,
   InMemoryUsedTicketRepository,
   InMemoryAuditLog,
 } from '@thp/testing';
@@ -85,6 +87,8 @@ export const makeWorld = () => {
     blockedDomains: new InMemoryBlockedDomainRepository(),
     aiUsage: new InMemoryAiUsageStats(jobs),
     rateLimiter: new InMemoryRateLimiter(),
+    referrals: new InMemoryReferralRepository(),
+    billingRewards: new FakeBillingRewards(),
     usedTickets: new InMemoryUsedTicketRepository(),
     auditLog: new InMemoryAuditLog(),
     lessonPlans: new InMemoryLessonPlanRepository(),

@@ -35,6 +35,8 @@ export interface SignUpInput {
   readonly adult: boolean;
   /** The browser's user agent, kept only as coarse browser and system keys. */
   readonly userAgent: string | null;
+  /** The invite code from the link the teacher came through, if any. */
+  readonly referralCode?: string | null;
 }
 
 export interface SignedIn extends Account {
@@ -92,6 +94,7 @@ export class SignUp {
       picture: null,
       defaultSchoolName: input.defaultSchoolName,
       emailConfirmedAt: null,
+      referralCode: input.referralCode,
     });
     if (!account.ok) return account;
     const passwordHash = await this.deps.passwordHasher.hash(password.value);

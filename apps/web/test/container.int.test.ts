@@ -145,6 +145,7 @@ describe('web container against Postgres', () => {
       planId: 'school',
       quantity: 12,
       currentPeriodEnd: new Date('2027-09-01T00:00:00Z'),
+      paid: true,
     });
     expect(await app.handleBillingWebhook.execute(webhook)).toEqual({
       ok: true,

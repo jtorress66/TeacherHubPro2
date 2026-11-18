@@ -1,8 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import type { Email, SchoolId, SubscriptionId } from '@thp/domain';
-import { billingEventsContract, checkoutSessionsContract } from '@thp/testing';
+import {
+  billingEventsContract,
+  billingRewardsContract,
+  checkoutSessionsContract,
+} from '@thp/testing';
 import {
   LocalBillingEvents,
+  LocalBillingRewards,
   LocalCheckoutSessions,
   LocalCheckoutSimulator,
   signLocalWebhook,
@@ -20,6 +25,8 @@ billingEventsContract('LocalBillingEvents', {
   sign: (event) => signLocalWebhook(secret, event),
   unsupportedPayload: () => signLocalWebhook(secret, { type: 'local.ignored' }),
 });
+
+billingRewardsContract('LocalBillingRewards', { working: () => new LocalBillingRewards() });
 
 describe('LocalCheckoutSessions', () => {
   it('sends the teacher to the in-app test checkout with everything it needs', async () => {
@@ -86,6 +93,7 @@ describe('LocalCheckoutSimulator', () => {
         planId: 'school',
         quantity: 12,
         currentPeriodEnd: new Date('2027-09-01T00:00:00Z'),
+        paid: true,
       },
     });
   });

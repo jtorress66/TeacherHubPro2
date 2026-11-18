@@ -35,6 +35,7 @@ import * as ltiGrades from './0033_lti_grades.ts';
 import * as jobProgress from './0034_job_progress.ts';
 import * as sampleClasses from './0035_sample_classes.ts';
 import * as usedTickets from './0036_used_tickets.ts';
+import * as referrals from './0037_referrals.ts';
 
 /** Ordered list of migrations, bundled with the code (no filesystem lookups at runtime). */
 const migrations: Readonly<Record<string, Migration>> = {
@@ -74,6 +75,7 @@ const migrations: Readonly<Record<string, Migration>> = {
   '0034_job_progress': jobProgress,
   '0035_sample_classes': sampleClasses,
   '0036_used_tickets': usedTickets,
+  '0037_referrals': referrals,
 };
 
 export const migrationProvider: MigrationProvider = {

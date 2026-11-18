@@ -21,6 +21,7 @@ import {
 import { ticketSignerContract } from '../contracts/live.contract.ts';
 import {
   billingEventsContract,
+  billingRewardsContract,
   checkoutSessionsContract,
   llmClientContract,
   mailerContract,
@@ -28,7 +29,7 @@ import {
 } from '../contracts/services.contract.ts';
 import { FixedClock } from '../fixed-clock.ts';
 import { SequentialIdGenerator } from '../sequential-id-generator.ts';
-import { FakeBillingEvents, FakeCheckoutSessions } from './billing.ts';
+import { FakeBillingEvents, FakeBillingRewards, FakeCheckoutSessions } from './billing.ts';
 import { InMemoryFileStore, FakePdfTextExtractor } from './files.ts';
 import {
   FakeClassroom,
@@ -250,3 +251,12 @@ googleSlidesContract(
   () => new FakeGoogleSlides({ accessToken: 'token-1' }),
   'token-1',
 );
+
+billingRewardsContract('FakeBillingRewards', {
+  working: () => new FakeBillingRewards(),
+  failing: () => {
+    const rewards = new FakeBillingRewards();
+    rewards.fail = true;
+    return rewards;
+  },
+});

@@ -9,8 +9,15 @@ export type BillingEvent =
       readonly planId: PlanId;
       readonly quantity: number;
       readonly currentPeriodEnd: Date;
+      /** True once money was taken; false while the subscription is still in its free trial. */
+      readonly paid: boolean;
     }
-  | { readonly type: 'renewed'; readonly externalId: string; readonly currentPeriodEnd: Date }
+  | {
+      readonly type: 'renewed';
+      readonly externalId: string;
+      readonly currentPeriodEnd: Date;
+      readonly paid: boolean;
+    }
   | { readonly type: 'payment_failed'; readonly externalId: string }
   | { readonly type: 'canceled'; readonly externalId: string };
 

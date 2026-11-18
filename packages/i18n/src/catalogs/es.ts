@@ -41,6 +41,7 @@ export const es: Messages = {
     learning: 'Rutas de aprendizaje',
     semesters: 'Semestres',
     billing: 'Planes y pagos',
+    invite: 'Invita a un colega',
     settings: 'Configuración',
     connectedTools: 'Herramientas conectadas',
     approvals: 'Aprobaciones',
@@ -499,6 +500,27 @@ export const es: Messages = {
     schoolInfo: 'Agrega la información de tu escuela',
     firstClass: 'Crea tu primera clase',
     dismiss: 'Ocultar esta lista',
+  },
+  invite: {
+    title: 'Invita a un colega',
+    intro:
+      '¿Conoces a un maestro al que le gustaría TeacherHubPro? Comparte tu enlace. Cuando se una y haga su primer pago, recibes un mes gratis.',
+    linkLabel: 'Tu enlace de invitación',
+    shareEmail: 'Compartir por correo',
+    emailSubject: 'Prueba TeacherHubPro conmigo',
+    emailBody:
+      'Uso TeacherHubPro para planes de clase, calificaciones y más. Puedes probarlo gratis durante 7 días: {link}',
+    joined: 'Colegas que se unieron: {count}',
+    freeMonths: 'Meses gratis ganados: {count}',
+    limitReached:
+      'Has ganado {max} meses gratis en los últimos 12 meses, el máximo por año. ¡Gracias por compartir!',
+    howTitle: 'Cómo funciona',
+    rule1: 'Tu colega se registra con tu enlace, por correo o con Google.',
+    rule2:
+      'Cuando haga su primer pago, recibes un mes gratis: 30 días más de prueba, o tu próximo cobro se mueve 30 días más tarde.',
+    rule3: 'Puedes ganar hasta {max} meses gratis al año.',
+    rule4: 'Nunca enviamos correos a tus colegas. Tú compartes el enlace.',
+    privacy: 'Esta página solo muestra cifras, nunca los nombres de tus colegas.',
   },
   sample: {
     tryTitle: 'Pruébalo con una clase de muestra',

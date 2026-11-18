@@ -38,6 +38,7 @@ function created(subscription: Stripe.Subscription): Result<BillingEvent, Billin
     planId,
     quantity: seats,
     currentPeriodEnd: end,
+    paid: subscription.status === 'active',
   });
 }
 
@@ -49,7 +50,12 @@ function updated(subscription: Stripe.Subscription): Result<BillingEvent, Billin
       const end = periodEnd(subscription);
       return end === null
         ? unsupported
-        : ok({ type: 'renewed', externalId, currentPeriodEnd: end });
+        : ok({
+            type: 'renewed',
+            externalId,
+            currentPeriodEnd: end,
+            paid: subscription.status === 'active',
+          });
     }
     case 'past_due':
     case 'unpaid':

@@ -128,6 +128,7 @@ export * from './accounts/email-domains.ts';
 export * from './accounts/ai-usage.ts';
 export * from './users/admin-rules.ts';
 export * from './billing/access.ts';
+export * from './referrals/referral.ts';
 export * from './marketing/lead.ts';
 export * from './marketing/chat.ts';
 export * from './marketing/facts.ts';

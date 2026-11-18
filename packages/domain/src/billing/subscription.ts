@@ -18,7 +18,8 @@ export const subscriptionStatuses = [
 
 export type SubscriptionStatus = (typeof subscriptionStatuses)[number];
 
-export type SubscriptionAction = 'activate' | 'renew' | 'mark_past_due' | 'cancel' | 'expire_trial';
+export type SubscriptionAction =
+  'activate' | 'renew' | 'mark_past_due' | 'cancel' | 'expire_trial' | 'extend_trial';
 
 export type SubscriptionError =
   InvalidTransition<SubscriptionStatus, SubscriptionAction> | { readonly code: 'trial_not_over' };
@@ -52,6 +53,7 @@ const transitions: TransitionTable<SubscriptionStatus, SubscriptionAction> = {
   mark_past_due: ['active'],
   cancel: ['trialing', 'active', 'past_due'],
   expire_trial: ['trialing'],
+  extend_trial: ['trialing', 'expired'],
 };
 
 const dayMs = 24 * 60 * 60 * 1000;
@@ -131,6 +133,18 @@ export function expireTrial(
   if (!allowed.ok) return allowed;
   if (now < subscription.trialEndsAt) return err({ code: 'trial_not_over' });
   return ok({ ...subscription, status: 'expired' });
+}
+
+/** More trial days, counted from the trial's end, or from `now` when it has already ended. */
+export function extendTrial(
+  subscription: Subscription,
+  days: number,
+  now: Date,
+): Result<Subscription, SubscriptionError> {
+  const allowed = guardTransition(transitions, subscription.status, 'extend_trial');
+  if (!allowed.ok) return allowed;
+  const from = Math.max(subscription.trialEndsAt.getTime(), now.getTime());
+  return ok({ ...subscription, status: 'trialing', trialEndsAt: new Date(from + days * dayMs) });
 }
 
 /** Trials give access until they end; past-due keeps access while payment is retried. */

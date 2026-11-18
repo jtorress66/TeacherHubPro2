@@ -26,6 +26,8 @@ export type * from './comms/mailer.ts';
 export type * from './comms/mail-templates.ts';
 export type * from './billing/checkout-sessions.ts';
 export type * from './billing/billing-events.ts';
+export type * from './billing/billing-rewards.ts';
+export type * from './referrals/referrals.ts';
 export type * from './google/google-identity.ts';
 export type * from './google/classroom.ts';
 export type * from './google/classroom-authorization.ts';

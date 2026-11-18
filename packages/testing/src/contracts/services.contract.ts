@@ -3,6 +3,7 @@ import type { Email, SchoolId, SubscriptionId } from '@thp/domain';
 import type {
   BillingEvent,
   BillingEvents,
+  BillingRewards,
   CheckoutSessions,
   LlmClient,
   LlmError,
@@ -166,8 +167,30 @@ export function billingEventsContract(
         planId: 'school',
         quantity: 12,
         currentPeriodEnd: new Date('2027-09-01T00:00:00Z'),
+        paid: false,
       },
-      { type: 'renewed', externalId: 'ext-1', currentPeriodEnd: new Date('2028-09-01T00:00:00Z') },
+      {
+        type: 'checkout_completed',
+        clientReference: 'sub-2' as SubscriptionId,
+        schoolId: 'school-2' as SchoolId,
+        externalId: 'ext-2',
+        planId: 'individual_monthly',
+        quantity: 1,
+        currentPeriodEnd: new Date('2027-10-01T00:00:00Z'),
+        paid: true,
+      },
+      {
+        type: 'renewed',
+        externalId: 'ext-1',
+        currentPeriodEnd: new Date('2028-09-01T00:00:00Z'),
+        paid: true,
+      },
+      {
+        type: 'renewed',
+        externalId: 'ext-1',
+        currentPeriodEnd: new Date('2027-10-01T00:00:00Z'),
+        paid: false,
+      },
       { type: 'payment_failed', externalId: 'ext-1' },
       { type: 'canceled', externalId: 'ext-1' },
     ];
@@ -192,5 +215,35 @@ export function billingEventsContract(
         error: { code: 'unsupported_event' },
       });
     });
+  });
+}
+
+export function billingRewardsContract(
+  name: string,
+  setup: {
+    readonly working: () => BillingRewards;
+    /** Omitted for a stand-in that cannot fail. */
+    readonly failing?: () => BillingRewards;
+  },
+): void {
+  describe(`${name} (BillingRewards contract)`, () => {
+    const until = new Date('2027-01-15T00:00:00Z');
+
+    it('moves the next charge of a subscription', async () => {
+      expect(await setup.working().delayNextCharge('ext-1', until)).toEqual({
+        ok: true,
+        value: null,
+      });
+    });
+
+    const { failing } = setup;
+    if (failing !== undefined) {
+      it('reports a provider that cannot be reached as unavailable', async () => {
+        expect(await failing().delayNextCharge('ext-1', until)).toEqual({
+          ok: false,
+          error: { code: 'unavailable' },
+        });
+      });
+    }
   });
 }
