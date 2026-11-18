@@ -1,6 +1,6 @@
 # School privacy pack (owner guide)
 
-Schools and districts usually ask for a signed student data privacy agreement before they pay. TeacherHubPro offers the Student Data Privacy Consortium's **National Data Privacy Agreement (NDPA)**, which many US districts already use. The public page is `/en/school-privacy`.
+Schools and districts usually ask for a signed student data privacy agreement before they pay. TeacherHubPro offers the Student Data Privacy Consortium's **National Data Privacy Agreement (NDPA)**, which many US districts already use. The public privacy policy (`/en/privacy`) covers schools too: the agreement, where data is kept, the breach notice and the end of a contract.
 
 This guide is not legal advice. Have a lawyer read your filled-in agreement before you sign the first one.
 

@@ -53,7 +53,7 @@ describe('the marketing pages', () => {
     );
     expect(paths).toContain('/use-cases/schools');
     expect(paths).toContain('/ai-governance');
-    expect(paths).toContain('/school-privacy');
+    expect(paths).not.toContain('/school-privacy');
     expect(paths).not.toContain('/homeschool');
   });
 });
@@ -131,10 +131,10 @@ describe('legalSections', () => {
   });
 });
 
-describe('the school privacy page', () => {
-  it('states the agreement, where data is kept, the breach notice and the privacy email', async () => {
+describe('the privacy policy', () => {
+  it('is the one privacy page: the agreement, where data is kept, the breach notice and the privacy email', async () => {
     const { catalogs } = await import('@thp/i18n');
-    const text = Object.values(catalogs.en.legal.schoolPrivacy).join(' ');
+    const text = Object.values(catalogs.en.legal.privacy).join(' ');
     expect(text).toContain('National Data Privacy Agreement');
     expect(text).toContain('Virginia, USA');
     expect(text).toContain('72 hours');
