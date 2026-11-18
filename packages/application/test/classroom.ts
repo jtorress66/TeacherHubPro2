@@ -30,8 +30,8 @@ export const valueOf = <T>(result: { ok: true; value: T } | { ok: false; error: 
 };
 
 /** A teacher with a class of three students (Zayas, Acosta, Morales) and the standard categories. */
-export async function gradedClass(world: World) {
-  const account = await signedUp(world);
+export async function gradedClass(world: World, email?: string) {
+  const account = await signedUp(world, email);
   const actor = account.user;
   const cls = valueOf(
     await new CreateClass(world).execute({ actor, details: { name: 'Ciencias 5' } }),

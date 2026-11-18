@@ -10,6 +10,7 @@ import {
   type UserId,
 } from '@thp/domain';
 import type { Locale, MessageKey, Translate } from '@thp/i18n';
+import { csvText } from './csv.ts';
 import { formatDate } from './lesson-plan-display.ts';
 
 /** The filters as they arrive in a link: anything unexpected is simply ignored. */
@@ -99,17 +100,6 @@ export function approvalCells(
   ];
 }
 
-/** Characters a spreadsheet may read as the start of a formula. */
-const formulaStart = /^[=+\-@\t\r]/u;
-
-/** A CSV cell, quoted when needed, and never run as a formula by a spreadsheet. */
-export function csvCell(value: string): string {
-  const safe = formulaStart.test(value) ? `'${value}` : value;
-  return /[",\r\n]/u.test(safe) ? `"${safe.replaceAll('"', '""')}"` : safe;
-}
-
-const byteOrderMark = String.fromCharCode(0xfeff);
-
 /** The approvals as CSV with a translated header row; spreadsheets read it as UTF-8. */
 export function approvalsCsv(
   rows: readonly ApprovalRow[],
@@ -125,5 +115,5 @@ export function approvalsCsv(
     t('approvals.className'),
   ];
   const lines = [header, ...rows.map((row) => approvalCells(row, t, when, locale))];
-  return byteOrderMark + lines.map((cells) => cells.map(csvCell).join(',')).join('\r\n') + '\r\n';
+  return csvText(lines);
 }

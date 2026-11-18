@@ -580,3 +580,4 @@ export {
   type LtiGradeSendResult,
   type LtiGradeTarget,
 } from './lti/lti-grades.ts';
+export { ExportSchoolData, type SchoolExport } from './admin/school-export.ts';

@@ -7,7 +7,6 @@ import {
   approvalsCsv,
   approvalsQueryFrom,
   approvalsSearch,
-  csvCell,
 } from './approvals-view.ts';
 
 const event = (overrides: Partial<AuditEvent> = {}): AuditEvent => ({
@@ -168,23 +167,5 @@ describe('approvalsCsv', () => {
 
   it('starts with a byte order mark so spreadsheets read accents', () => {
     expect(approvalsCsv([], createTranslator('en'), when, 'en').charCodeAt(0)).toBe(0xfeff);
-  });
-});
-
-describe('csvCell', () => {
-  it('quotes commas, quotes and line breaks', () => {
-    expect(csvCell('plain')).toBe('plain');
-    expect(csvCell('a, b')).toBe('"a, b"');
-    expect(csvCell('say "hi"')).toBe('"say ""hi"""');
-    expect(csvCell('two\nlines')).toBe('"two\nlines"');
-  });
-
-  it('stops a spreadsheet from running a cell as a formula', () => {
-    expect(csvCell('=SUM(A1)')).toBe("'=SUM(A1)");
-    expect(csvCell('+1')).toBe("'+1");
-    expect(csvCell('-1')).toBe("'-1");
-    expect(csvCell('@cmd')).toBe("'@cmd");
-    expect(csvCell('=1,2')).toBe(`"'=1,2"`);
-    expect(csvCell('\tx')).toBe("'\tx");
   });
 });

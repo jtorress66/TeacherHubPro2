@@ -3,6 +3,7 @@ import { createTranslator } from '@thp/i18n';
 import { ProfileForm, SchoolForm } from '../../../../components/forms.tsx';
 import { LogoForm } from '../../../../components/gradebook-forms.tsx';
 import { removeLogoAction } from '../../../_lib/gradebook-actions.ts';
+import { getAppContainer } from '../../../../container.ts';
 import { requireUser } from '../../../_lib/auth.ts';
 import { localeFrom, type LocaleParams } from '../../locale-param.ts';
 
@@ -14,6 +15,7 @@ export default async function SettingsPage(props: LocaleParams) {
   const locale = await localeFrom(props);
   const t = createTranslator(locale);
   const { user, school } = await requireUser(locale);
+  const canExport = await getAppContainer().exportSchoolData.isOpenTo(user);
   return (
     <section className="stack">
       <h1>{t('settings.title')}</h1>
@@ -57,6 +59,19 @@ export default async function SettingsPage(props: LocaleParams) {
           )}
           <LogoForm locale={locale} />
         </section>
+        {canExport ? (
+          <section className="card stack" aria-labelledby="export-heading">
+            <h2 id="export-heading">{t('schoolExport.title')}</h2>
+            <p>{t('schoolExport.intro')}</p>
+            <p className="muted">{t('schoolExport.notIncluded')}</p>
+            <p className="muted">{t('schoolExport.privacy')}</p>
+            <p>
+              <a className="button" href={`/api/school-export?locale=${locale}`} download>
+                {t('schoolExport.button')}
+              </a>
+            </p>
+          </section>
+        ) : null}
         <section className="card stack" aria-labelledby="tools-heading">
           <h2 id="tools-heading">{t('connectedTools.title')}</h2>
           <p className="muted">{t('connectedTools.moved')}</p>

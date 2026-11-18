@@ -25,6 +25,7 @@ export const auditActions = [
   'grades_sent_to_course',
   'lti_platform_added',
   'lti_platform_removed',
+  'school_data_exported',
 ] as const;
 export type AuditAction = (typeof auditActions)[number];
 
