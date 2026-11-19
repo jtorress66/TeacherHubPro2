@@ -900,6 +900,11 @@ export const ptAppB = {
     resetButton: 'Escolher uma nova senha',
     passwordLinkExpires: 'Este link funciona uma única vez e expira em 3 dias.',
     weeklySentBy: 'Enviado por um professor da escola {school} com o TeacherHubPro.',
+    deletionSubject: 'Os dados da sua escola serão excluídos em {date}',
+    deletionBody:
+      'Você pediu para excluir todos os dados de {school} no TeacherHubPro. Eles serão excluídos em {date}. Até lá, você pode baixá-los ou cancelar a exclusão em Configurações.',
+    deletionNotYou: 'Se não foi você que pediu, cancele em Configurações e troque sua senha.',
+    deletionButton: 'Abrir Configurações',
     confirmSubject: 'Confirme seu e-mail para o TeacherHubPro',
     confirmBody:
       'Obrigado por criar sua conta no TeacherHubPro. Confirme seu endereço de e-mail para começar a usar as ferramentas de IA.',
@@ -1308,6 +1313,9 @@ export const ptAppB = {
     email_unconfirmed:
       'Confirme seu e-mail para usar as ferramentas de IA. Use Reenviar no aviso no topo da página se precisar de um novo link.',
     resend_limit: 'Você pode reenviar o e-mail até 5 vezes por dia. Tente novamente amanhã.',
+    name_mismatch: 'O nome não confere. Digite o nome da escola exatamente como aparece.',
+    renewal_failed:
+      'Não conseguimos falar com o serviço de pagamentos. Tente de novo em alguns minutos.',
     account_suspended: 'Esta conta está suspensa. Se você acha que é um engano, fale conosco.',
   },
 };

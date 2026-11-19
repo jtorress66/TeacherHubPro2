@@ -75,10 +75,15 @@ export function Field(props: FieldProps) {
   );
 }
 
-export function Submit({ label }: { readonly label: string }) {
+export function Submit(props: { readonly label: string; readonly tone?: 'danger' }) {
+  const { label, tone } = props;
   const { pending } = useFormStatus();
   return (
-    <button type="submit" className="button" disabled={pending}>
+    <button
+      type="submit"
+      className={tone === 'danger' ? 'button danger' : 'button'}
+      disabled={pending}
+    >
       {label}
     </button>
   );

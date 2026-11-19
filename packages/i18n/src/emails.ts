@@ -218,6 +218,36 @@ export function confirmEmailEmail(input: ConfirmEmailInput, site = ''): EmailCon
   });
 }
 
+export interface SchoolDeletionEmailInput {
+  readonly language: Locale;
+  readonly name: string;
+  readonly schoolName: string;
+  readonly deleteAfter: Date;
+  readonly settingsUrl: string;
+}
+
+/** Confirms a request to delete all of a school's data: the date, and where to cancel it. */
+export function schoolDeletionEmail(input: SchoolDeletionEmailInput, site = ''): EmailContent {
+  const t = createTranslator(input.language);
+  const date = new Intl.DateTimeFormat(input.language, {
+    dateStyle: 'long',
+    timeZone: 'UTC',
+  }).format(input.deleteAfter);
+  return render({
+    locale: input.language,
+    subject: t('emails.deletionSubject', { date }),
+    paragraphs: [
+      t('emails.trialHello', { name: input.name }),
+      t('emails.deletionBody', { school: input.schoolName, date }),
+      t('emails.deletionNotYou'),
+    ],
+    button: { label: t('emails.deletionButton'), url: input.settingsUrl },
+    footer: [],
+    signed: true,
+    site,
+  });
+}
+
 export interface LeadNoticeInput {
   readonly lead: {
     readonly name: string;
@@ -264,6 +294,7 @@ export function emailTemplates(site: string) {
     weeklyUpdate: (input: WeeklyUpdateEmailInput) => weeklyUpdateEmail(input, site),
     setPassword: (input: SetPasswordEmailInput) => setPasswordEmail(input, site),
     confirmEmail: (input: ConfirmEmailInput) => confirmEmailEmail(input, site),
+    schoolDeletionRequested: (input: SchoolDeletionEmailInput) => schoolDeletionEmail(input, site),
     leadNotice: (input: LeadNoticeInput) => leadNoticeEmail(input, site),
   };
 }

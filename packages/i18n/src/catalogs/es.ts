@@ -280,6 +280,8 @@ export const es: Messages = {
     action_lti_platform_added: 'Añadió un sistema de cursos',
     action_lti_platform_removed: 'Quitó un sistema de cursos',
     action_school_data_exported: 'Descargó todos los datos de la escuela',
+    action_school_deletion_requested: 'Solicitó eliminar todos los datos de la escuela',
+    action_school_deletion_canceled: 'Canceló la eliminación de todos los datos de la escuela',
     seeApprovals: 'Ver todas las aprobaciones',
   },
   approvals: {
@@ -522,6 +524,19 @@ export const es: Messages = {
     rule3: 'Puedes ganar hasta {max} meses gratis al año.',
     rule4: 'Nunca enviamos correos a tus colegas. Tú compartes el enlace.',
     privacy: 'Esta página solo muestra cifras, nunca los nombres de tus colegas.',
+  },
+  schoolDeletion: {
+    title: 'Eliminar todos los datos de la escuela',
+    intro:
+      'Esto elimina todo lo de {school}: cada cuenta, clase, estudiante, calificación, registro de asistencia, tarea, plan de clase y archivo. No se puede deshacer.',
+    hold: 'Los datos se eliminan {days} días después de su solicitud. Hasta entonces puede cancelarla y todavía puede descargarlos.',
+    billing: 'Un plan pagado deja de renovarse cuando lo solicita, así que no se cobra nada más.',
+    confirmLabel: 'Para confirmar, escriba el nombre de la escuela: {school}',
+    button: 'Eliminar todos los datos de la escuela',
+    notice: 'Todos los datos de esta escuela se eliminarán el {date}.',
+    cancel: 'Cancelar la eliminación',
+    manage: 'Ir a Configuración',
+    canceled: 'Eliminación cancelada. Los datos de su escuela se conservan.',
   },
   schoolExport: {
     title: 'Descargar todos los datos de la escuela',
@@ -2034,6 +2049,11 @@ export const es: Messages = {
     resetButton: 'Elegir una contraseña nueva',
     passwordLinkExpires: 'Este enlace funciona una sola vez y vence en 3 días.',
     weeklySentBy: 'Enviado por un maestro de {school} con TeacherHubPro.',
+    deletionSubject: 'Los datos de su escuela se eliminarán el {date}',
+    deletionBody:
+      'Usted solicitó eliminar todos los datos de {school} en TeacherHubPro. Se eliminarán el {date}. Hasta entonces puede descargarlos o cancelar la eliminación en Configuración.',
+    deletionNotYou: 'Si usted no lo solicitó, cancélelo en Configuración y cambie su contraseña.',
+    deletionButton: 'Abrir Configuración',
     confirmSubject: 'Confirme su correo para TeacherHubPro',
     confirmBody:
       'Gracias por crear su cuenta de TeacherHubPro. Confirme su correo electrónico para empezar a usar las herramientas de IA.',
@@ -2445,6 +2465,9 @@ export const es: Messages = {
     email_unconfirmed:
       'Confirme su correo para usar las herramientas de IA. Use Reenviar en el aviso de la parte superior de la página si necesita un enlace nuevo.',
     resend_limit: 'Puede reenviar el correo hasta 5 veces al día. Inténtelo de nuevo mañana.',
+    name_mismatch: 'El nombre no coincide. Escriba el nombre de la escuela tal como aparece.',
+    renewal_failed:
+      'No pudimos comunicarnos con el servicio de pagos. Inténtelo de nuevo en unos minutos.',
     account_suspended: 'Esta cuenta está suspendida. Si cree que es un error, contáctenos.',
   },
 };

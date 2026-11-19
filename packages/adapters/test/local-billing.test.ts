@@ -3,11 +3,13 @@ import type { Email, SchoolId, SubscriptionId } from '@thp/domain';
 import {
   billingEventsContract,
   billingRewardsContract,
+  subscriptionRenewalContract,
   checkoutSessionsContract,
 } from '@thp/testing';
 import {
   LocalBillingEvents,
   LocalBillingRewards,
+  LocalSubscriptionRenewal,
   LocalCheckoutSessions,
   LocalCheckoutSimulator,
   signLocalWebhook,
@@ -121,4 +123,7 @@ describe('LocalCheckoutSimulator', () => {
 
     expect(await simulator.pay(purchase)).toEqual({ ok: false, error: 'webhook_rejected' });
   });
+});
+subscriptionRenewalContract('LocalSubscriptionRenewal', {
+  working: () => new LocalSubscriptionRenewal(),
 });

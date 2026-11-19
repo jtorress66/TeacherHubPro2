@@ -22,6 +22,7 @@ export * from './accounts/password-policy.ts';
 export * from './schools/school.ts';
 export * from './schools/school-logo.ts';
 export * from './schools/school-export.ts';
+export * from './schools/school-deletion.ts';
 export * from './users/user.ts';
 export * from './users/roles.ts';
 export * from './onboarding/onboarding.ts';

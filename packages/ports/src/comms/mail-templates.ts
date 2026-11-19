@@ -34,6 +34,14 @@ export interface MailTemplates {
     readonly name: string;
     readonly url: string;
   }): MailContent;
+  /** Confirms a request to delete all of a school's data, with the date and where to cancel. */
+  schoolDeletionRequested(input: {
+    readonly language: Language;
+    readonly name: string;
+    readonly schoolName: string;
+    readonly deleteAfter: Date;
+    readonly settingsUrl: string;
+  }): MailContent;
   /** Tells the team about a high-priority lead from the website. */
   leadNotice(input: { readonly lead: Lead }): MailContent;
   /** The teacher's approved weekly update, as they wrote it. */

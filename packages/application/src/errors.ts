@@ -59,7 +59,9 @@ export type ApplicationErrorCode =
   | 'blocked_domain'
   | 'email_unconfirmed'
   | 'resend_limit'
-  | 'account_suspended';
+  | 'account_suspended'
+  | 'name_mismatch'
+  | 'renewal_failed';
 
 /**
  * What a use case can report: a broken validation rule (with its field) or an application-level

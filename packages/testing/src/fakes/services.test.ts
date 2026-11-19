@@ -22,6 +22,7 @@ import { ticketSignerContract } from '../contracts/live.contract.ts';
 import {
   billingEventsContract,
   billingRewardsContract,
+  subscriptionRenewalContract,
   checkoutSessionsContract,
   llmClientContract,
   mailerContract,
@@ -29,7 +30,12 @@ import {
 } from '../contracts/services.contract.ts';
 import { FixedClock } from '../fixed-clock.ts';
 import { SequentialIdGenerator } from '../sequential-id-generator.ts';
-import { FakeBillingEvents, FakeBillingRewards, FakeCheckoutSessions } from './billing.ts';
+import {
+  FakeBillingEvents,
+  FakeBillingRewards,
+  FakeCheckoutSessions,
+  FakeSubscriptionRenewal,
+} from './billing.ts';
 import { InMemoryFileStore, FakePdfTextExtractor } from './files.ts';
 import {
   FakeClassroom,
@@ -258,5 +264,14 @@ billingRewardsContract('FakeBillingRewards', {
     const rewards = new FakeBillingRewards();
     rewards.fail = true;
     return rewards;
+  },
+});
+
+subscriptionRenewalContract('FakeSubscriptionRenewal', {
+  working: () => new FakeSubscriptionRenewal(),
+  failing: () => {
+    const renewal = new FakeSubscriptionRenewal();
+    renewal.fail = true;
+    return renewal;
   },
 });

@@ -8,6 +8,7 @@ import type {
   CheckoutRequest,
   CheckoutSession,
   CheckoutSessions,
+  SubscriptionRenewal,
 } from '@thp/ports';
 
 export class FakeCheckoutSessions implements CheckoutSessions {
@@ -85,6 +86,25 @@ export class FakeBillingRewards implements BillingRewards {
   delayNextCharge(externalId: string, until: Date): Promise<Result<null, BillingError>> {
     if (this.fail) return Promise.resolve(err({ code: 'unavailable' }));
     this.delays.push({ externalId, until });
+    return Promise.resolve(ok(null));
+  }
+}
+
+/** Records which subscriptions stopped or resumed renewing; `fail` plays the provider being down. */
+export class FakeSubscriptionRenewal implements SubscriptionRenewal {
+  readonly stopped: string[] = [];
+  readonly resumed: string[] = [];
+  fail = false;
+
+  stopRenewal(externalId: string): Promise<Result<null, BillingError>> {
+    if (this.fail) return Promise.resolve(err({ code: 'unavailable' }));
+    this.stopped.push(externalId);
+    return Promise.resolve(ok(null));
+  }
+
+  resumeRenewal(externalId: string): Promise<Result<null, BillingError>> {
+    if (this.fail) return Promise.resolve(err({ code: 'unavailable' }));
+    this.resumed.push(externalId);
     return Promise.resolve(ok(null));
   }
 }

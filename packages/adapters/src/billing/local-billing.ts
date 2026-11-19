@@ -14,6 +14,7 @@ import type {
   BillingEventError,
   BillingEvents,
   BillingRewards,
+  SubscriptionRenewal,
   CheckoutRequest,
   CheckoutSession,
   CheckoutSessions,
@@ -131,6 +132,17 @@ export class LocalCheckoutSimulator {
 /** The stand-in has no real charges to move; the free month is recorded on our side only. */
 export class LocalBillingRewards implements BillingRewards {
   delayNextCharge(): Promise<Result<null, BillingError>> {
+    return Promise.resolve(ok(null));
+  }
+}
+
+/** The stand-in has no renewals to stop; the local plan simply runs until it is canceled. */
+export class LocalSubscriptionRenewal implements SubscriptionRenewal {
+  stopRenewal(): Promise<Result<null, BillingError>> {
+    return Promise.resolve(ok(null));
+  }
+
+  resumeRenewal(): Promise<Result<null, BillingError>> {
     return Promise.resolve(ok(null));
   }
 }

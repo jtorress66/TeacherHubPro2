@@ -50,7 +50,7 @@ Students have no accounts, so there is no student email address or password.
 
 **Breach notice:** within 72 hours of discovering a breach that affects the school's data.
 
-**End of contract:** on request, return the school's data as files, then delete it from the service and confirm in writing. A school's admins (or the account owner) can also download everything themselves: Settings → **Download all school data** gives one ZIP of spreadsheets (teachers, classes, students, assignments, grades, attendance and student answers). Each download is recorded in the activity log.
+**End of contract:** on request, return the school's data as files, then delete it from the service and confirm in writing. A school's admins (or the account owner) can also download everything themselves: Settings → **Download all school data** gives one ZIP of spreadsheets (teachers, classes, students, assignments, grades, attendance and student answers). Each download is recorded in the activity log. To delete, they use Settings → **Delete all school data** and type the school's name to confirm. A paid plan stops renewing straight away, everyone in the school sees the date the data will be deleted, and they can cancel during the 30-day hold. On that date everything is deleted (accounts, classes, students, work and files), and the only thing kept is a record of IDs and dates, so you can confirm the deletion in writing.
 
 ## Questions for the lawyer
 

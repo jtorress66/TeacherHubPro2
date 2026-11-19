@@ -36,6 +36,7 @@ import {
   issueLocalGoogleCode,
   LocalBillingEvents,
   LocalBillingRewards,
+  LocalSubscriptionRenewal,
   LocalCheckoutSessions,
   LocalCheckoutSimulator,
   LocalGoogleIdentity,
@@ -47,6 +48,7 @@ import {
   Sha256TokenHasher,
   StripeBillingEvents,
   StripeBillingRewards,
+  StripeSubscriptionRenewal,
   StripeCheckoutSessions,
   SystemClock,
   UuidIdGenerator,
@@ -295,6 +297,9 @@ import {
   HandleBillingWebhook,
   GetInvitePage,
   ExportSchoolData,
+  CancelSchoolDeletion,
+  GetSchoolDeletion,
+  RequestSchoolDeletion,
   ImportStudents,
   ListClasses,
   ListSemesters,
@@ -320,6 +325,7 @@ import type {
   SentMailbox,
   BillingEvents,
   BillingRewards,
+  SubscriptionRenewal,
   CheckoutSessions,
   GoogleIdentity,
   GoogleProfile,
@@ -571,6 +577,9 @@ export interface AppContainer {
   readonly handleBillingWebhook: HandleBillingWebhook;
   readonly getInvitePage: GetInvitePage;
   readonly exportSchoolData: ExportSchoolData;
+  readonly requestSchoolDeletion: RequestSchoolDeletion;
+  readonly cancelSchoolDeletion: CancelSchoolDeletion;
+  readonly getSchoolDeletion: GetSchoolDeletion;
   /** Packs the school data download into one ZIP file. */
   readonly zipFiles: ZipWriter;
   readonly createClass: CreateClass;
@@ -658,6 +667,7 @@ interface Billing {
   readonly checkout: CheckoutSessions;
   readonly billingEvents: BillingEvents;
   readonly billingRewards: BillingRewards;
+  readonly subscriptionRenewal: SubscriptionRenewal;
   readonly webhookSignatureHeader: string;
   readonly localCheckout: LocalCheckoutSimulator | null;
 }
@@ -788,6 +798,7 @@ function billingFor(config: BillingConfig, appUrl: string): Billing {
       checkout: new LocalCheckoutSessions(appUrl),
       billingEvents: new LocalBillingEvents(config.secret),
       billingRewards: new LocalBillingRewards(),
+      subscriptionRenewal: new LocalSubscriptionRenewal(),
       webhookSignatureHeader: LocalCheckoutSimulator.signatureHeader,
       localCheckout: new LocalCheckoutSimulator(appUrl, config.secret),
     };
@@ -797,6 +808,7 @@ function billingFor(config: BillingConfig, appUrl: string): Billing {
     checkout: new StripeCheckoutSessions(stripe),
     billingEvents: new StripeBillingEvents(stripe, config.webhookSecret),
     billingRewards: new StripeBillingRewards(stripe),
+    subscriptionRenewal: new StripeSubscriptionRenewal(stripe),
     webhookSignatureHeader: 'stripe-signature',
     localCheckout: null,
   };
@@ -1099,6 +1111,9 @@ export function createAppContainer(
     handleBillingWebhook: new HandleBillingWebhook(deps),
     getInvitePage: new GetInvitePage(deps),
     exportSchoolData: new ExportSchoolData(deps),
+    requestSchoolDeletion: new RequestSchoolDeletion(deps),
+    cancelSchoolDeletion: new CancelSchoolDeletion(deps),
+    getSchoolDeletion: new GetSchoolDeletion(deps),
     zipFiles: new JsZipWriter(),
     createClass: new CreateClass(deps),
     updateClass: new UpdateClass(deps),

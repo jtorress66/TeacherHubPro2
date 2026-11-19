@@ -697,6 +697,20 @@ export interface PasswordCredentialsTable {
   updated_at: Generated<Date>;
 }
 
+export interface SchoolDeletionRequestsTable {
+  school_id: string;
+  requested_by: string;
+  requested_at: Date;
+  delete_after: Date;
+}
+
+export interface SchoolDeletionsTable {
+  school_id: string;
+  requested_by: string;
+  requested_at: Date;
+  deleted_at: Date;
+}
+
 export interface Database {
   schools: SchoolsTable;
   users: UsersTable;
@@ -760,4 +774,6 @@ export interface Database {
   subscriptions: SubscriptionsTable;
   sessions: SessionsTable;
   password_credentials: PasswordCredentialsTable;
+  school_deletion_requests: SchoolDeletionRequestsTable;
+  school_deletions: SchoolDeletionsTable;
 }

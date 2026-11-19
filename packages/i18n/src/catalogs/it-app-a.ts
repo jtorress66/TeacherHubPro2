@@ -281,6 +281,8 @@ export const itAppA = {
     action_lti_platform_added: 'Ha aggiunto una piattaforma dei corsi',
     action_lti_platform_removed: 'Ha rimosso una piattaforma dei corsi',
     action_school_data_exported: 'Ha scaricato tutti i dati della scuola',
+    action_school_deletion_requested: 'Ha chiesto di eliminare tutti i dati della scuola',
+    action_school_deletion_canceled: 'Ha annullato l’eliminazione di tutti i dati della scuola',
     seeApprovals: 'Vedi tutte le approvazioni',
   },
   approvals: {
@@ -527,6 +529,20 @@ export const itAppA = {
     rule3: 'Puoi guadagnare fino a {max} mesi gratis all’anno.',
     rule4: 'Non inviamo mai email ai tuoi colleghi. Il link lo condividi tu.',
     privacy: 'Questa pagina mostra solo numeri, mai i nomi dei tuoi colleghi.',
+  },
+  schoolDeletion: {
+    title: 'Elimina tutti i dati della scuola',
+    intro:
+      'Questo elimina tutto di {school}: ogni account, classe, studente, voto, registro presenze, compito, piano di lezione e file. Non si può annullare.',
+    hold: 'I dati vengono eliminati {days} giorni dopo la tua richiesta. Fino ad allora puoi annullarla e puoi ancora scaricarli.',
+    billing:
+      'Un piano a pagamento smette di rinnovarsi quando lo chiedi, quindi non viene addebitato altro.',
+    confirmLabel: 'Per confermare, scrivi il nome della scuola: {school}',
+    button: 'Elimina tutti i dati della scuola',
+    notice: 'Tutti i dati di questa scuola saranno eliminati il {date}.',
+    cancel: 'Annulla l’eliminazione',
+    manage: 'Vai alle Impostazioni',
+    canceled: 'Eliminazione annullata. I dati della tua scuola restano.',
   },
   schoolExport: {
     title: 'Scarica tutti i dati della scuola',

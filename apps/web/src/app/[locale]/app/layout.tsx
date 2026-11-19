@@ -8,6 +8,7 @@ import { ConfirmEmailBanner } from '../../../components/confirm-email-forms.tsx'
 import { Logo } from '../../../components/logo.tsx';
 import { getAppContainer } from '../../../container.ts';
 import { requireUser } from '../../_lib/auth.ts';
+import { teacherTimeZone } from '../../_lib/time-zone.ts';
 import { localeFrom, type LocaleParams } from '../locale-param.ts';
 
 export const dynamic = 'force-dynamic';
@@ -19,6 +20,15 @@ export default async function AppLayout(props: LocaleParams & { readonly childre
   const app = getAppContainer();
   const readyPrep = await app.countReadyPrepBatches.execute({ actor: user });
   const canInvite = await app.getInvitePage.isOpenTo(user);
+  const deletion = await app.getSchoolDeletion.execute({ actor: user });
+  const deletionDate =
+    deletion === null
+      ? null
+      : new Intl.DateTimeFormat(locale, {
+          dateStyle: 'long',
+          timeZone: await teacherTimeZone(),
+        }).format(deletion.deleteAfter);
+  const managesDeletion = deletion !== null && (await app.requestSchoolDeletion.isOpenTo(user));
   const base = `/${locale}/app`;
   const groups: NavGroup[] = [
     {
@@ -87,6 +97,16 @@ export default async function AppLayout(props: LocaleParams & { readonly childre
         />
       </aside>
       <main className="app-main">
+        {deletionDate === null ? null : (
+          <section className="alert deletion-banner no-print" role="status">
+            <p>{t('schoolDeletion.notice', { date: deletionDate })}</p>
+            {managesDeletion ? (
+              <Link href={`${base}/settings#delete-heading`} className="button secondary">
+                {t('schoolDeletion.manage')}
+              </Link>
+            ) : null}
+          </section>
+        )}
         {hasConfirmedEmail(user) ? null : <ConfirmEmailBanner locale={locale} email={user.email} />}
         {props.children}
       </main>

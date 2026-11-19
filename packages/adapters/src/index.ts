@@ -5,6 +5,7 @@ export {
   LocalBillingRewards,
   LocalCheckoutSessions,
   LocalCheckoutSimulator,
+  LocalSubscriptionRenewal,
   signLocalWebhook,
   type LocalPurchase,
 } from './billing/local-billing.ts';
@@ -12,6 +13,7 @@ export { createStripeClient } from './billing/stripe-client.ts';
 export { StripeCheckoutSessions } from './billing/stripe-checkout-sessions.ts';
 export { StripeBillingEvents } from './billing/stripe-billing-events.ts';
 export { StripeBillingRewards } from './billing/stripe-billing-rewards.ts';
+export { StripeSubscriptionRenewal } from './billing/stripe-subscription-renewal.ts';
 export { ensureStripePrices, type EnsuredPrice } from './billing/stripe-setup.ts';
 export {
   GoogleOAuthIdentity,
