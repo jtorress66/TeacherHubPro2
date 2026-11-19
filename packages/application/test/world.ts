@@ -59,6 +59,9 @@ import {
   InMemoryRateLimiter,
   InMemoryReferralRepository,
   FakeBillingRewards,
+  FakeSubscriptionRenewal,
+  FakeSchoolEraser,
+  InMemorySchoolDeletionRepository,
   InMemoryUsedTicketRepository,
   InMemoryAuditLog,
 } from '@thp/testing';
@@ -79,6 +82,7 @@ export const makeWorld = () => {
   const clock = new FixedClock(new Date('2026-09-01T08:00:00.000Z'));
   const users = new InMemoryUserRepository();
   const jobs = new InMemoryJobQueue(clock, new SequentialIdGenerator('job'));
+  const schoolDeletions = new InMemorySchoolDeletionRepository();
   return {
     clock,
     ids: new SequentialIdGenerator(),
@@ -89,6 +93,9 @@ export const makeWorld = () => {
     rateLimiter: new InMemoryRateLimiter(),
     referrals: new InMemoryReferralRepository(),
     billingRewards: new FakeBillingRewards(),
+    subscriptionRenewal: new FakeSubscriptionRenewal(),
+    schoolDeletions,
+    schoolEraser: new FakeSchoolEraser(schoolDeletions),
     usedTickets: new InMemoryUsedTicketRepository(),
     auditLog: new InMemoryAuditLog(),
     lessonPlans: new InMemoryLessonPlanRepository(),

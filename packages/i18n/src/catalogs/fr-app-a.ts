@@ -280,6 +280,8 @@ export const frAppA = {
     action_lti_platform_added: 'A ajouté une plateforme de cours',
     action_lti_platform_removed: 'A retiré une plateforme de cours',
     action_school_data_exported: 'A téléchargé toutes les données de l’école',
+    action_school_deletion_requested: 'A demandé la suppression de toutes les données de l’école',
+    action_school_deletion_canceled: 'A annulé la suppression de toutes les données de l’école',
     seeApprovals: 'Voir toutes les approbations',
   },
   approvals: {
@@ -527,6 +529,20 @@ export const frAppA = {
     rule3: 'Vous pouvez gagner jusqu’à {max} mois gratuits par an.',
     rule4: 'Nous n’envoyons jamais d’e-mails à vos collègues. C’est vous qui partagez le lien.',
     privacy: 'Cette page n’affiche que des chiffres, jamais les noms de vos collègues.',
+  },
+  schoolDeletion: {
+    title: 'Supprimer toutes les données de l’école',
+    intro:
+      'Cela supprime tout ce qui concerne {school} : chaque compte, classe, élève, note, présence, devoir, plan de cours et fichier. C’est définitif.',
+    hold: 'Les données sont supprimées {days} jours après votre demande. D’ici là, vous pouvez l’annuler et encore les télécharger.',
+    billing:
+      'Un forfait payant cesse de se renouveler dès votre demande : plus rien n’est facturé.',
+    confirmLabel: 'Pour confirmer, saisissez : {school}',
+    button: 'Supprimer toutes les données de l’école',
+    notice: 'Toutes les données de cette école seront supprimées le {date}.',
+    cancel: 'Annuler la suppression',
+    manage: 'Aller aux paramètres',
+    canceled: 'Suppression annulée. Les données de votre école sont conservées.',
   },
   schoolExport: {
     title: 'Télécharger toutes les données de l’école',

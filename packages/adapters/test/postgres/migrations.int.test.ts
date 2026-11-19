@@ -80,6 +80,8 @@ describe('migrations', () => {
       'referrals',
       'report_card_comments',
       'rubrics',
+      'school_deletion_requests',
+      'school_deletions',
       'schools',
       'semesters',
       'sent_mail',
@@ -104,6 +106,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0038_school_deletions',
           '0037_referrals',
           '0036_used_tickets',
           '0035_sample_classes',
@@ -187,10 +190,11 @@ describe('migrations', () => {
           '0035_sample_classes',
           '0036_used_tickets',
           '0037_referrals',
+          '0038_school_deletions',
         ],
       },
     });
-    expect(await tableNames()).toHaveLength(62);
+    expect(await tableNames()).toHaveLength(64);
   });
 
   it('turns plans saved before step 8 into valid plans of their kind', async () => {

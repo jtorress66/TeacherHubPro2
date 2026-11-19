@@ -581,3 +581,9 @@ export {
   type LtiGradeTarget,
 } from './lti/lti-grades.ts';
 export { ExportSchoolData, type SchoolExport } from './admin/school-export.ts';
+export {
+  CancelSchoolDeletion,
+  DeleteDueSchools,
+  GetSchoolDeletion,
+  RequestSchoolDeletion,
+} from './admin/school-deletion.ts';

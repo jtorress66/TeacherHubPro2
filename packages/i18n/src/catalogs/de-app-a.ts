@@ -279,6 +279,8 @@ export const deAppA = {
     action_lti_platform_added: 'Ein Kurssystem hinzugefügt',
     action_lti_platform_removed: 'Ein Kurssystem entfernt',
     action_school_data_exported: 'Alle Schuldaten heruntergeladen',
+    action_school_deletion_requested: 'Hat die Löschung aller Schuldaten beantragt',
+    action_school_deletion_canceled: 'Hat die Löschung aller Schuldaten abgebrochen',
     seeApprovals: 'Alle Freigaben ansehen',
   },
   approvals: {
@@ -527,6 +529,20 @@ export const deAppA = {
     rule4:
       'Wir schreiben Ihren Kolleginnen und Kollegen nie eine E-Mail. Sie teilen den Link selbst.',
     privacy: 'Diese Seite zeigt nur Zahlen, nie die Namen Ihrer Kolleginnen und Kollegen.',
+  },
+  schoolDeletion: {
+    title: 'Alle Schuldaten löschen',
+    intro:
+      'Damit wird alles von {school} gelöscht: jedes Konto, jede Klasse, alle Schülerinnen und Schüler, Noten, Anwesenheiten, Aufgaben, Unterrichtspläne und Dateien. Das lässt sich nicht rückgängig machen.',
+    hold: 'Die Daten werden {days} Tage nach Ihrer Anfrage gelöscht. Bis dahin können Sie die Löschung abbrechen und die Daten noch herunterladen.',
+    billing:
+      'Ein bezahlter Tarif verlängert sich ab Ihrer Anfrage nicht mehr, es wird also nichts mehr berechnet.',
+    confirmLabel: 'Zur Bestätigung bitte eingeben: {school}',
+    button: 'Alle Schuldaten löschen',
+    notice: 'Alle Daten dieser Schule werden am {date} gelöscht.',
+    cancel: 'Löschung abbrechen',
+    manage: 'Zu den Einstellungen',
+    canceled: 'Löschung abgebrochen. Die Daten Ihrer Schule bleiben erhalten.',
   },
   schoolExport: {
     title: 'Alle Schuldaten herunterladen',

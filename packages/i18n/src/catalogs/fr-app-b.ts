@@ -910,6 +910,12 @@ export const frAppB = {
     resetButton: 'Choisir un nouveau mot de passe',
     passwordLinkExpires: "Ce lien ne fonctionne qu'une fois et expire dans 3 jours.",
     weeklySentBy: 'Envoyé par un(e) enseignant(e) de {school} avec TeacherHubPro.',
+    deletionSubject: 'Les données de votre école seront supprimées le {date}',
+    deletionBody:
+      'Vous avez demandé la suppression de toutes les données de {school} dans TeacherHubPro. Elles seront supprimées le {date}. D’ici là, vous pouvez les télécharger ou annuler la suppression dans les paramètres.',
+    deletionNotYou:
+      'Si vous n’êtes pas à l’origine de cette demande, annulez-la dans les paramètres et changez votre mot de passe.',
+    deletionButton: 'Ouvrir les paramètres',
     confirmSubject: 'Confirmez votre e-mail pour TeacherHubPro',
     confirmBody:
       "Merci d'avoir créé votre compte TeacherHubPro. Confirmez votre adresse e-mail pour commencer à utiliser les outils d'IA.",
@@ -1331,6 +1337,10 @@ export const frAppB = {
       "Confirmez votre e-mail pour utiliser les outils d'IA. Utilisez Renvoyer dans le bandeau en haut de la page si vous avez besoin d'un nouveau lien.",
     resend_limit:
       "Vous pouvez renvoyer l'e-mail jusqu'à 5 fois par jour. Veuillez réessayer demain.",
+    name_mismatch:
+      'Le nom ne correspond pas. Saisissez le nom de l’école exactement comme il est affiché.',
+    renewal_failed:
+      'Le service de paiement est injoignable. Veuillez réessayer dans quelques minutes.',
     account_suspended:
       "Ce compte est suspendu. Si vous pensez qu'il s'agit d'une erreur, contactez-nous.",
   },

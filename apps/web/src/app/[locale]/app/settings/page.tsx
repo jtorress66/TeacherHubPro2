@@ -1,21 +1,38 @@
 import type { Metadata } from 'next';
+import { deletionHoldDays } from '@thp/domain';
 import { createTranslator } from '@thp/i18n';
 import { ProfileForm, SchoolForm } from '../../../../components/forms.tsx';
 import { LogoForm } from '../../../../components/gradebook-forms.tsx';
+import {
+  CancelSchoolDeletionForm,
+  DeleteSchoolForm,
+} from '../../../../components/school-deletion-forms.tsx';
 import { removeLogoAction } from '../../../_lib/gradebook-actions.ts';
 import { getAppContainer } from '../../../../container.ts';
 import { requireUser } from '../../../_lib/auth.ts';
+import { teacherTimeZone } from '../../../_lib/time-zone.ts';
 import { localeFrom, type LocaleParams } from '../../locale-param.ts';
 
 export async function generateMetadata(props: LocaleParams): Promise<Metadata> {
   return { title: createTranslator(await localeFrom(props))('settings.title') };
 }
 
-export default async function SettingsPage(props: LocaleParams) {
+export default async function SettingsPage(
+  props: LocaleParams & { readonly searchParams: Promise<{ deletion?: string }> },
+) {
   const locale = await localeFrom(props);
   const t = createTranslator(locale);
-  const { user, school } = await requireUser(locale);
-  const canExport = await getAppContainer().exportSchoolData.isOpenTo(user);
+  // Open after a plan ends too: the school may still want to download or delete its data.
+  const { user, school } = await requireUser(locale, { needsAccess: false });
+  const app = getAppContainer();
+  const canExport = await app.exportSchoolData.isOpenTo(user);
+  const canDelete = await app.requestSchoolDeletion.isOpenTo(user);
+  const deletion = canDelete ? await app.getSchoolDeletion.execute({ actor: user }) : null;
+  const deleteOn = new Intl.DateTimeFormat(locale, {
+    dateStyle: 'long',
+    timeZone: await teacherTimeZone(),
+  });
+  const { deletion: done } = await props.searchParams;
   return (
     <section className="stack">
       <h1>{t('settings.title')}</h1>
@@ -70,6 +87,33 @@ export default async function SettingsPage(props: LocaleParams) {
                 {t('schoolExport.button')}
               </a>
             </p>
+          </section>
+        ) : null}
+        {canDelete ? (
+          <section className="card stack" aria-labelledby="delete-heading">
+            <h2 id="delete-heading">{t('schoolDeletion.title')}</h2>
+            {done === 'canceled' && deletion === null ? (
+              <p role="status" className="notice">
+                {t('schoolDeletion.canceled')}
+              </p>
+            ) : null}
+            {deletion === null ? (
+              <>
+                <p>{t('schoolDeletion.intro', { school: school.name })}</p>
+                <p className="muted">
+                  {t('schoolDeletion.hold', { days: deletionHoldDays })}{' '}
+                  {t('schoolDeletion.billing')}
+                </p>
+                <DeleteSchoolForm locale={locale} schoolName={school.name} />
+              </>
+            ) : (
+              <>
+                <p className="alert">
+                  {t('schoolDeletion.notice', { date: deleteOn.format(deletion.deleteAfter) })}
+                </p>
+                <CancelSchoolDeletionForm locale={locale} />
+              </>
+            )}
           </section>
         ) : null}
         <section className="card stack" aria-labelledby="tools-heading">

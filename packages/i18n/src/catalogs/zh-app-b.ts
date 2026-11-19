@@ -850,6 +850,11 @@ export const zhAppB = {
     resetButton: '设置新密码',
     passwordLinkExpires: '此链接只能使用一次，3 天后失效。',
     weeklySentBy: '由 {school} 的一位老师通过 TeacherHubPro 发送。',
+    deletionSubject: '贵校的数据将于 {date} 删除',
+    deletionBody:
+      '您已申请删除 {school} 在 TeacherHubPro 中的全部数据。数据将于 {date} 删除。在此之前，您可以在设置中下载数据或取消删除。',
+    deletionNotYou: '如果这不是您提出的请求，请在设置中取消删除并更改密码。',
+    deletionButton: '打开设置',
     confirmSubject: '确认您的 TeacherHubPro 邮箱',
     confirmBody: '感谢您创建 TeacherHubPro 账户。请确认您的邮箱地址，即可开始使用 AI 工具。',
     confirmButton: '确认我的邮箱',
@@ -1246,6 +1251,8 @@ export const zhAppB = {
     email_unconfirmed:
       '请确认您的邮箱后再使用 AI 工具。如需新链接，请使用页面顶部提示中的“重新发送”。',
     resend_limit: '每天最多可重新发送 5 次邮件。请明天再试。',
+    name_mismatch: '名称不匹配。请按显示的内容准确输入学校名称。',
+    renewal_failed: '无法连接付款服务。请几分钟后再试。',
     account_suspended: '此账户已被停用。如果您认为这是错误，请联系我们。',
   },
 };

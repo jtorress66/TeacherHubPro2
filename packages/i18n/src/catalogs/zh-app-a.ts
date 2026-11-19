@@ -272,6 +272,8 @@ export const zhAppA = {
     action_lti_platform_added: '添加了课程系统',
     action_lti_platform_removed: '移除了课程系统',
     action_school_data_exported: '下载了学校的全部数据',
+    action_school_deletion_requested: '申请删除学校的全部数据',
+    action_school_deletion_canceled: '取消了删除学校全部数据的申请',
     seeApprovals: '查看所有审批记录',
   },
   approvals: {
@@ -503,6 +505,19 @@ export const zhAppA = {
     rule3: '你每年最多可获得 {max} 个免费月。',
     rule4: '我们绝不会给你的同事发送电子邮件，链接由你自己分享。',
     privacy: '此页面只显示数量，绝不显示同事的姓名。',
+  },
+  schoolDeletion: {
+    title: '删除学校的全部数据',
+    intro:
+      '这将删除 {school} 的所有内容：每个账户、班级、学生、成绩、出勤记录、作业、教案和文件。此操作无法撤销。',
+    hold: '数据将在您提出请求 {days} 天后删除。在此之前，您可以取消，也仍可下载数据。',
+    billing: '提出请求后，付费方案将不再续订，因此不会再产生任何费用。',
+    confirmLabel: '请输入以下内容以确认：{school}',
+    button: '删除学校的全部数据',
+    notice: '本校的全部数据将于 {date} 删除。',
+    cancel: '取消删除',
+    manage: '前往设置',
+    canceled: '已取消删除。贵校的数据将被保留。',
   },
   schoolExport: {
     title: '下载学校的全部数据',

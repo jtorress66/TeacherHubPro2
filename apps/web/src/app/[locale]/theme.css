@@ -181,6 +181,18 @@ a:hover {
   color: var(--accent);
 }
 
+.button.danger {
+  border-color: var(--danger);
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.button.danger:hover {
+  border-color: var(--danger);
+  background: var(--danger);
+  color: var(--surface);
+}
+
 .button.quiet {
   border-color: transparent;
   background: transparent;
@@ -2016,6 +2028,20 @@ progress {
   .m-footer-brand {
     grid-column: 1 / -1;
   }
+}
+
+/* A school's data is about to be deleted: above every app page. */
+.deletion-banner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.deletion-banner p {
+  margin: 0;
 }
 
 /* Until the email is confirmed: above every app page. */

@@ -275,6 +275,8 @@ export const en = {
     action_lti_platform_added: 'Added a course system',
     action_lti_platform_removed: 'Removed a course system',
     action_school_data_exported: 'Downloaded all school data',
+    action_school_deletion_requested: 'Asked to delete all school data',
+    action_school_deletion_canceled: 'Canceled the deletion of all school data',
     seeApprovals: 'See all approvals',
   },
   approvals: {
@@ -515,6 +517,19 @@ export const en = {
     rule3: 'You can earn up to {max} free months a year.',
     rule4: 'We never email your colleagues. You share the link yourself.',
     privacy: 'This page shows only counts, never your colleagues’ names.',
+  },
+  schoolDeletion: {
+    title: 'Delete all school data',
+    intro:
+      'This deletes everything in {school}: every account, class, student, grade, attendance record, assignment, lesson plan and file. It cannot be undone.',
+    hold: 'The data is deleted {days} days after you ask. Until then you can cancel, and you can still download it.',
+    billing: 'A paid plan stops renewing when you ask, so nothing more is charged.',
+    confirmLabel: 'To confirm, type: {school}',
+    button: 'Delete all school data',
+    notice: 'All of this school’s data will be deleted on {date}.',
+    cancel: 'Cancel deletion',
+    manage: 'Go to Settings',
+    canceled: 'Deletion canceled. Your school’s data stays.',
   },
   schoolExport: {
     title: 'Download all school data',
@@ -2009,6 +2024,11 @@ export const en = {
     resetButton: 'Choose a new password',
     passwordLinkExpires: 'This link works once and expires in 3 days.',
     weeklySentBy: 'Sent by a teacher at {school} with TeacherHubPro.',
+    deletionSubject: 'Your school’s data will be deleted on {date}',
+    deletionBody:
+      'You asked to delete all of the data of {school} in TeacherHubPro. It will be deleted on {date}. Until then you can download it or cancel the deletion in Settings.',
+    deletionNotYou: 'If you did not ask for this, cancel it in Settings and change your password.',
+    deletionButton: 'Open Settings',
     confirmSubject: 'Confirm your email for TeacherHubPro',
     confirmBody:
       'Thanks for creating your TeacherHubPro account. Confirm your email address to start using the AI tools.',
@@ -2418,6 +2438,8 @@ export const en = {
     email_unconfirmed:
       'Confirm your email to use the AI tools. Use Resend in the banner at the top of the page if you need a new link.',
     resend_limit: 'You can resend the email up to 5 times a day. Please try again tomorrow.',
+    name_mismatch: 'The name does not match. Type the school’s name exactly as shown.',
+    renewal_failed: 'We could not reach the payment service. Please try again in a few minutes.',
     account_suspended: 'This account is suspended. If you think this is a mistake, contact us.',
   },
 } as const;

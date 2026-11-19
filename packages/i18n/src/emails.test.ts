@@ -3,6 +3,7 @@ import {
   confirmEmailEmail,
   emailTemplates,
   portalLinkEmail,
+  schoolDeletionEmail,
   leadNoticeEmail,
   setPasswordEmail,
   trialReminderEmail,
@@ -132,6 +133,44 @@ describe('confirmEmailEmail', () => {
   });
 });
 
+describe('schoolDeletionEmail', () => {
+  const url = 'https://teacherhubpro.com/en/app/settings';
+  const deleteAfter = new Date('2026-12-19T15:30:00Z');
+
+  it('gives the date, the school and where to cancel', () => {
+    const mail = schoolDeletionEmail({
+      language: 'en',
+      name: 'Ana',
+      schoolName: 'Luna <School>',
+      deleteAfter,
+      settingsUrl: url,
+    });
+    expect(mail.subject).toBe('Your school’s data will be deleted on December 19, 2026');
+    expect(mail.text).toContain('Hi Ana,');
+    expect(mail.text).toContain('all of the data of Luna <School>');
+    expect(mail.text).toMatch(/did not ask for this/u);
+    expect(mail.text).toContain(url);
+    expect(mail.html).toContain('Luna &lt;School&gt;');
+    expect(mail.html).toContain(`href="${url}"`);
+  });
+
+  it('is written in every language', () => {
+    for (const language of locales) {
+      const input = { language, name: 'Ana', schoolName: 'Luna', deleteAfter, settingsUrl: url };
+      expect(schoolDeletionEmail(input).text).toContain(url);
+    }
+    expect(
+      schoolDeletionEmail({
+        language: 'es',
+        name: 'Ana',
+        schoolName: 'Luna',
+        deleteAfter,
+        settingsUrl: url,
+      }).subject,
+    ).toBe('Los datos de su escuela se eliminarán el 19 de diciembre de 2026');
+  });
+});
+
 describe('leadNoticeEmail', () => {
   it('lists the lead’s details for the team, escaping them in HTML', () => {
     const mail = leadNoticeEmail({
@@ -185,6 +224,13 @@ describe('emailTemplates', () => {
       }),
       templates.weeklyUpdate({ language: 'en', subject: 'Week', body: 'Hi', schoolName: 'Luna' }),
       templates.confirmEmail({ language: 'pt', name: 'Ana', url: site }),
+      templates.schoolDeletionRequested({
+        language: 'de',
+        name: 'Ana',
+        schoolName: 'Luna',
+        deleteAfter: new Date('2026-12-19T00:00:00Z'),
+        settingsUrl: site,
+      }),
     ];
     for (const mail of mails) {
       expect(mail.html).toContain(`<img src="${site}/brand/logo-mark.png"`);

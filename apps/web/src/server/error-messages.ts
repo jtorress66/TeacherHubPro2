@@ -16,6 +16,7 @@ const fieldOf: Partial<Record<ApplicationErrorCode, string>> = {
   adult_required: 'adult',
   throwaway_email: 'email',
   blocked_domain: 'email',
+  name_mismatch: 'schoolName',
 };
 
 /** A use case error as a message in the page's language. */

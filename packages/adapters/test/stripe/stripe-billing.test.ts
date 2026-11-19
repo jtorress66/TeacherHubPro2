@@ -5,9 +5,11 @@ import type { BillingEvent, CheckoutRequest } from '@thp/ports';
 import {
   billingEventsContract,
   billingRewardsContract,
+  subscriptionRenewalContract,
   checkoutSessionsContract,
 } from '@thp/testing';
 import { StripeBillingRewards } from '../../src/billing/stripe-billing-rewards.ts';
+import { StripeSubscriptionRenewal } from '../../src/billing/stripe-subscription-renewal.ts';
 import { StripeBillingEvents } from '../../src/billing/stripe-billing-events.ts';
 import { StripeCheckoutSessions } from '../../src/billing/stripe-checkout-sessions.ts';
 import { fakeStripe, on, recorded } from './fake-stripe.ts';
@@ -327,5 +329,39 @@ describe('StripeBillingRewards', () => {
       trial_end: String(unix(new Date('2027-01-15T00:00:00Z'))),
       proration_behavior: 'none',
     });
+  });
+});
+
+subscriptionRenewalContract('StripeSubscriptionRenewal', {
+  working: () =>
+    new StripeSubscriptionRenewal(
+      fakeStripe([
+        on('POST', '/v1/subscriptions/ext-1', { body: recorded('subscription') }),
+        on('POST', '/v1/subscriptions/ext-1', { body: recorded('subscription') }),
+      ]).stripe,
+    ),
+  failing: () =>
+    new StripeSubscriptionRenewal(
+      fakeStripe([
+        on('POST', '/v1/subscriptions/ext-1', { status: 500, body: recorded('api-error') }),
+      ]).stripe,
+    ),
+});
+
+describe('StripeSubscriptionRenewal', () => {
+  it('ends the subscription with its period, and turns renewal back on', async () => {
+    const { stripe, requests } = fakeStripe([
+      on('POST', '/v1/subscriptions/sub_x', { body: recorded('subscription') }),
+      on('POST', '/v1/subscriptions/sub_x', { body: recorded('subscription') }),
+    ]);
+    const renewal = new StripeSubscriptionRenewal(stripe);
+
+    await renewal.stopRenewal('sub_x');
+    await renewal.resumeRenewal('sub_x');
+
+    expect(requests.map((r) => Object.fromEntries(r.params))).toEqual([
+      { cancel_at_period_end: 'true' },
+      { cancel_at_period_end: 'false' },
+    ]);
   });
 });

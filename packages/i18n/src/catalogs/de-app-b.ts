@@ -913,6 +913,12 @@ export const deAppB = {
     resetButton: 'Neues Passwort wählen',
     passwordLinkExpires: 'Dieser Link funktioniert einmal und läuft in 3 Tagen ab.',
     weeklySentBy: 'Gesendet von einer Lehrkraft der {school} mit TeacherHubPro.',
+    deletionSubject: 'Die Daten Ihrer Schule werden am {date} gelöscht',
+    deletionBody:
+      'Sie haben beantragt, alle Daten von {school} in TeacherHubPro zu löschen. Sie werden am {date} gelöscht. Bis dahin können Sie die Daten in den Einstellungen herunterladen oder die Löschung abbrechen.',
+    deletionNotYou:
+      'Wenn Sie das nicht beantragt haben, brechen Sie die Löschung in den Einstellungen ab und ändern Sie Ihr Passwort.',
+    deletionButton: 'Einstellungen öffnen',
     confirmSubject: 'Bestätigen Sie Ihre E-Mail für TeacherHubPro',
     confirmBody:
       'Danke, dass Sie ein TeacherHubPro-Konto erstellt haben. Bestätigen Sie Ihre E-Mail-Adresse, um die KI-Werkzeuge zu nutzen.',
@@ -1333,6 +1339,10 @@ export const deAppB = {
       'Bestätigen Sie Ihre E-Mail, um die KI-Werkzeuge zu nutzen. Mit „Erneut senden“ im Hinweis oben auf der Seite erhalten Sie bei Bedarf einen neuen Link.',
     resend_limit:
       'Sie können die E-Mail bis zu 5-mal am Tag erneut senden. Bitte versuchen Sie es morgen wieder.',
+    name_mismatch:
+      'Der Name stimmt nicht überein. Geben Sie den Namen der Schule genau wie angezeigt ein.',
+    renewal_failed:
+      'Der Zahlungsdienst ist nicht erreichbar. Bitte versuchen Sie es in einigen Minuten erneut.',
     account_suspended:
       'Dieses Konto ist gesperrt. Wenn Sie glauben, dass es sich um einen Fehler handelt, kontaktieren Sie uns.',
   },

@@ -4,6 +4,7 @@ import type {
   BillingEvent,
   BillingEvents,
   BillingRewards,
+  SubscriptionRenewal,
   CheckoutSessions,
   LlmClient,
   LlmError,
@@ -243,6 +244,32 @@ export function billingRewardsContract(
           ok: false,
           error: { code: 'unavailable' },
         });
+      });
+    }
+  });
+}
+
+export function subscriptionRenewalContract(
+  name: string,
+  setup: {
+    readonly working: () => SubscriptionRenewal;
+    /** Omitted for a stand-in that cannot fail. */
+    readonly failing?: () => SubscriptionRenewal;
+  },
+): void {
+  describe(`${name} (SubscriptionRenewal contract)`, () => {
+    it('stops a subscription renewing and turns renewal back on', async () => {
+      const renewal = setup.working();
+      expect(await renewal.stopRenewal('ext-1')).toEqual({ ok: true, value: null });
+      expect(await renewal.resumeRenewal('ext-1')).toEqual({ ok: true, value: null });
+    });
+
+    const { failing } = setup;
+    if (failing !== undefined) {
+      it('reports a provider that cannot be reached as unavailable', async () => {
+        const unavailable = { ok: false, error: { code: 'unavailable' } };
+        expect(await failing().stopRenewal('ext-1')).toEqual(unavailable);
+        expect(await failing().resumeRenewal('ext-1')).toEqual(unavailable);
       });
     }
   });

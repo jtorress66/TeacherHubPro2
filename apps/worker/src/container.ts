@@ -55,6 +55,7 @@ import {
   RunNextJob,
   RunNextChatTurn,
   SweepOldChats,
+  DeleteDueSchools,
   SendTrialReminders,
   SweepStaleJobs,
   LtiGradeSendHandler,
@@ -214,6 +215,7 @@ export function createJobRunner(
   });
   const runChat = new RunNextChatTurn({ ...repos, chatbot: new ChatbotAgent(model) });
   const sweepChats = new SweepOldChats({ chatSessions: repos.chatSessions, clock });
+  const deleteSchools = new DeleteDueSchools({ ...repos, clock });
   const runJobs = new RunNextJob({ jobs, handlers });
   return {
     runNext: {
@@ -222,10 +224,14 @@ export function createJobRunner(
         () => runJobs.execute(),
       ),
     },
-    /** Once a minute: stale jobs, then trial reminders (each goes out once, when mail reaches people). */
+    /**
+     * Once a minute: stale jobs, old chats, schools whose deletion hold is over, then trial
+     * reminders (each goes out once, when mail reaches people).
+     */
     housekeeping: async () => {
       const swept = await sweep.execute();
       await sweepChats.execute();
+      await deleteSchools.execute();
       if (mail.delivers) await reminders.execute();
       return swept;
     },

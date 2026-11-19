@@ -41,6 +41,11 @@ export const fakeMailTemplates: MailTemplates = {
     html: `<a href="${input.url}">${input.name}</a>`,
     text: `confirm: ${input.url}`,
   }),
+  schoolDeletionRequested: (input): MailContent => ({
+    subject: `[${input.language}] ${input.schoolName} deletion on ${input.deleteAfter.toISOString().slice(0, 10)}`,
+    html: `<a href="${input.settingsUrl}">${input.name}</a>`,
+    text: `${input.name}: ${input.settingsUrl}`,
+  }),
   weeklyUpdate: (input): MailContent => ({
     subject: `[${input.language}] ${input.subject}`,
     html: `<p>${input.body}</p>`,

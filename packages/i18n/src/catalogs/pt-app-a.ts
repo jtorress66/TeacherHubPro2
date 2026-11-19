@@ -278,6 +278,8 @@ export const ptAppA = {
     action_lti_platform_added: 'Adicionou um sistema de cursos',
     action_lti_platform_removed: 'Removeu um sistema de cursos',
     action_school_data_exported: 'Baixou todos os dados da escola',
+    action_school_deletion_requested: 'Pediu para excluir todos os dados da escola',
+    action_school_deletion_canceled: 'Cancelou a exclusão de todos os dados da escola',
     seeApprovals: 'Ver todas as aprovações',
   },
   approvals: {
@@ -522,6 +524,19 @@ export const ptAppA = {
     rule3: 'Você pode ganhar até {max} meses grátis por ano.',
     rule4: 'Nunca enviamos e-mails aos seus colegas. Você mesmo compartilha o link.',
     privacy: 'Esta página mostra apenas números, nunca os nomes dos seus colegas.',
+  },
+  schoolDeletion: {
+    title: 'Excluir todos os dados da escola',
+    intro:
+      'Isso exclui tudo de {school}: cada conta, turma, aluno, nota, registro de frequência, tarefa, plano de aula e arquivo. Não pode ser desfeito.',
+    hold: 'Os dados são excluídos {days} dias depois do seu pedido. Até lá, você pode cancelar e ainda pode baixá-los.',
+    billing: 'Um plano pago deixa de ser renovado quando você pede, então nada mais é cobrado.',
+    confirmLabel: 'Para confirmar, digite: {school}',
+    button: 'Excluir todos os dados da escola',
+    notice: 'Todos os dados desta escola serão excluídos em {date}.',
+    cancel: 'Cancelar a exclusão',
+    manage: 'Ir para Configurações',
+    canceled: 'Exclusão cancelada. Os dados da sua escola continuam.',
   },
   schoolExport: {
     title: 'Baixar todos os dados da escola',

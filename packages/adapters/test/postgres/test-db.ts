@@ -80,6 +80,7 @@ const tables = [
   'report_card_comments',
   'sessions',
   'password_credentials',
+  'school_deletions',
   'attendance_entries',
   'attendance_sessions',
   'submissions',
