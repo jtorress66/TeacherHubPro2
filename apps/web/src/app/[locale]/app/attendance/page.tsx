@@ -37,34 +37,36 @@ export default async function AttendanceOverviewPage(
       {classes.length === 0 ? (
         <p className="muted">{t('attendance.noClasses')}</p>
       ) : (
-        <table className="roster">
-          <tbody>
-            {classes.map(({ cls, status }) => (
-              <tr key={cls.id}>
-                <th scope="row">{cls.name}</th>
-                <td>
-                  <span className={`badge day-${status}`}>
-                    {t(`attendance.dayStatus_${status}`)}
-                  </span>
-                </td>
-                <td className="row-actions">
-                  <Link
-                    href={`/${locale}/app/classes/${cls.id}/attendance?date=${date}`}
-                    aria-label={`${t('attendance.take')}: ${cls.name}`}
-                  >
-                    {t('attendance.take')}
-                  </Link>
-                  <Link
-                    href={`/${locale}/app/classes/${cls.id}/attendance/report`}
-                    aria-label={`${t('attendance.report')}: ${cls.name}`}
-                  >
-                    {t('attendance.report')}
-                  </Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="table-scroll">
+          <table className="roster">
+            <tbody>
+              {classes.map(({ cls, status }) => (
+                <tr key={cls.id}>
+                  <th scope="row">{cls.name}</th>
+                  <td>
+                    <span className={`badge day-${status}`}>
+                      {t(`attendance.dayStatus_${status}`)}
+                    </span>
+                  </td>
+                  <td className="row-actions">
+                    <Link
+                      href={`/${locale}/app/classes/${cls.id}/attendance?date=${date}`}
+                      aria-label={`${t('attendance.take')}: ${cls.name}`}
+                    >
+                      {t('attendance.take')}
+                    </Link>
+                    <Link
+                      href={`/${locale}/app/classes/${cls.id}/attendance/report`}
+                      aria-label={`${t('attendance.report')}: ${cls.name}`}
+                    >
+                      {t('attendance.report')}
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </section>
   );

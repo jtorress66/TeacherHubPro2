@@ -85,41 +85,43 @@ export default async function AttendanceReportPage(props: Props) {
           {formatRate(rate, locale)} ({t(`attendance.band_${rateBand(rate)}`)})
         </span>
       </p>
-      <table className="roster">
-        <thead>
-          <tr>
-            <th scope="col">{t('attendance.student')}</th>
-            <th scope="col">{t('attendance.present')}</th>
-            <th scope="col">{t('attendance.absent')}</th>
-            <th scope="col">{t('attendance.tardy')}</th>
-            <th scope="col">{t('attendance.excused')}</th>
-            <th scope="col">{t('attendance.total')}</th>
-            <th scope="col">{t('attendance.rate')}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map(({ student, summary, rate: studentRate }) => {
-            const band = rateBand(studentRate);
-            return (
-              <tr key={student.id} data-testid="report-row">
-                <th scope="row">
-                  {student.lastName}, {student.firstName}
-                </th>
-                <td>{summary.present}</td>
-                <td>{summary.absent}</td>
-                <td>{summary.tardy}</td>
-                <td>{summary.excused}</td>
-                <td>{summary.total}</td>
-                <td>
-                  <span className={`rate band-${band}`}>
-                    {formatRate(studentRate, locale)} ({t(`attendance.band_${band}`)})
-                  </span>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      <div className="table-scroll">
+        <table className="roster">
+          <thead>
+            <tr>
+              <th scope="col">{t('attendance.student')}</th>
+              <th scope="col">{t('attendance.present')}</th>
+              <th scope="col">{t('attendance.absent')}</th>
+              <th scope="col">{t('attendance.tardy')}</th>
+              <th scope="col">{t('attendance.excused')}</th>
+              <th scope="col">{t('attendance.total')}</th>
+              <th scope="col">{t('attendance.rate')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map(({ student, summary, rate: studentRate }) => {
+              const band = rateBand(studentRate);
+              return (
+                <tr key={student.id} data-testid="report-row">
+                  <th scope="row">
+                    {student.lastName}, {student.firstName}
+                  </th>
+                  <td>{summary.present}</td>
+                  <td>{summary.absent}</td>
+                  <td>{summary.tardy}</td>
+                  <td>{summary.excused}</td>
+                  <td>{summary.total}</td>
+                  <td>
+                    <span className={`rate band-${band}`}>
+                      {formatRate(studentRate, locale)} ({t(`attendance.band_${band}`)})
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
       <p className="muted">{t('attendance.reportNote')}</p>
     </section>
   );

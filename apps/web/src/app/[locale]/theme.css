@@ -2060,3 +2060,109 @@ progress {
 .confirm-banner p {
   margin: 0;
 }
+
+/* Answer choices: the whole row is the target, big enough for a finger. */
+.choices .checkbox {
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.choices .checkbox:has(input:checked) {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+/* Phones: attendance is one card per student, with the four choices side by side. */
+@media (max-width: 56rem) {
+  .attendance-sheet thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .attendance-sheet,
+  .attendance-sheet tbody,
+  .attendance-sheet tr,
+  .app-main .attendance-sheet th,
+  .app-main .attendance-sheet td {
+    display: block;
+  }
+
+  .attendance-sheet tr {
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .attendance-sheet tbody tr:last-child {
+    border-bottom: 0;
+  }
+
+  .app-main .attendance-sheet th,
+  .app-main .attendance-sheet td {
+    padding: 0.25rem 0;
+    border-bottom: 0;
+  }
+
+  .app-main .attendance-sheet td:empty {
+    display: none;
+  }
+
+  .attendance-sheet td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 0.2rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .attendance-sheet input[type='text'] {
+    min-width: 0;
+  }
+
+  .status-choices {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.35rem;
+  }
+
+  .status-choices label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    padding: 0.35rem 0.25rem;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    text-align: center;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+  }
+
+  .status-choices label:has(input:checked) {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    font-weight: 700;
+  }
+
+  /* A grade category: its name, then its weight with Save and Delete on one line. */
+  .category-row {
+    grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .category-row > .field:first-of-type,
+  .category-row > :not(.field, button) {
+    grid-column: 1 / -1;
+  }
+}

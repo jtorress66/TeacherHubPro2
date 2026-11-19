@@ -98,43 +98,45 @@ export default async function LearningPage(props: Props) {
 
       <h2>{t('learning.progress')}</h2>
       <p className="hint">{t('learning.practiceNote')}</p>
-      <table className="table" aria-label={t('learning.progress')}>
-        <thead>
-          <tr>
-            <th scope="col">{t('learning.student')}</th>
-            <th scope="col">{t('learning.lessonsDone')}</th>
-            <th scope="col">{t('learning.average')}</th>
-            <th scope="col">{t('learning.levels')}</th>
-            <th scope="col">{t('learning.lastActivity')}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row) => (
-            <tr key={row.studentId}>
-              <td>
-                <Link href={`${base}/students/${row.studentId}`}>
-                  {row.firstName} {row.lastName}
-                </Link>
-              </td>
-              <td>{t('learning.lessonsOf', { done: row.done, total: row.total })}</td>
-              <td>{row.average === null ? '—' : `${String(row.average)}%`}</td>
-              <td>
-                {row.levels
-                  .map((l) =>
-                    t('learning.levelOf', {
-                      subject: t(`assistant.subject_${l.subject}` as Parameters<typeof t>[0]),
-                      level: l.level,
-                    }),
-                  )
-                  .join(', ') || '—'}
-              </td>
-              <td>
-                {row.lastActivity === null ? t('learning.never') : day.format(row.lastActivity)}
-              </td>
+      <div className="table-scroll">
+        <table className="table" aria-label={t('learning.progress')}>
+          <thead>
+            <tr>
+              <th scope="col">{t('learning.student')}</th>
+              <th scope="col">{t('learning.lessonsDone')}</th>
+              <th scope="col">{t('learning.average')}</th>
+              <th scope="col">{t('learning.levels')}</th>
+              <th scope="col">{t('learning.lastActivity')}</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {rows.map((row) => (
+              <tr key={row.studentId}>
+                <td>
+                  <Link href={`${base}/students/${row.studentId}`}>
+                    {row.firstName} {row.lastName}
+                  </Link>
+                </td>
+                <td>{t('learning.lessonsOf', { done: row.done, total: row.total })}</td>
+                <td>{row.average === null ? '—' : `${String(row.average)}%`}</td>
+                <td>
+                  {row.levels
+                    .map((l) =>
+                      t('learning.levelOf', {
+                        subject: t(`assistant.subject_${l.subject}` as Parameters<typeof t>[0]),
+                        level: l.level,
+                      }),
+                    )
+                    .join(', ') || '—'}
+                </td>
+                <td>
+                  {row.lastActivity === null ? t('learning.never') : day.format(row.lastActivity)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </section>
   );
 }
