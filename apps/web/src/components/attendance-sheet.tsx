@@ -128,7 +128,7 @@ function SheetForm(
                     ))}
                   </fieldset>
                 </td>
-                <td>
+                <td data-label={t('attendance.minutesLate')}>
                   {status === 'tardy' ? (
                     <>
                       <input
@@ -145,7 +145,7 @@ function SheetForm(
                     </>
                   ) : null}
                 </td>
-                <td>
+                <td data-label={t('attendance.note')}>
                   <input
                     type="text"
                     maxLength={200}

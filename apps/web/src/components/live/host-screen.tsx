@@ -66,24 +66,26 @@ export function HostScreen(props: {
         <>
           {view.status !== 'ended' ? joinPanel : null}
           <h2>{t('live.studentsPlaying')}</h2>
-          <table className="table" aria-label={t('live.studentsPlaying')}>
-            <thead>
-              <tr>
-                <th scope="col">{t('live.student')}</th>
-                <th scope="col">{t('live.rounds')}</th>
-                <th scope="col">{t('live.best')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {(view.selfPaced ?? []).map((row) => (
-                <tr key={row.playerId}>
-                  <td>{row.firstName}</td>
-                  <td>{row.plays}</td>
-                  <td>{row.bestPercent === null ? '—' : `${String(row.bestPercent)}%`}</td>
+          <div className="table-scroll">
+            <table className="table" aria-label={t('live.studentsPlaying')}>
+              <thead>
+                <tr>
+                  <th scope="col">{t('live.student')}</th>
+                  <th scope="col">{t('live.rounds')}</th>
+                  <th scope="col">{t('live.best')}</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {(view.selfPaced ?? []).map((row) => (
+                  <tr key={row.playerId}>
+                    <td>{row.firstName}</td>
+                    <td>{row.plays}</td>
+                    <td>{row.bestPercent === null ? '—' : `${String(row.bestPercent)}%`}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
           {view.status !== 'ended' ? end : <p>{t('live.status_ended')}</p>}
         </>
       ) : null}

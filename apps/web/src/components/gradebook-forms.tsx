@@ -86,7 +86,7 @@ export function CategoryRow(props: ClassFormProps & { readonly category: GradeCa
   return (
     <tr>
       <td colSpan={3}>
-        <form action={action} className="field-row" noValidate key={sent.key}>
+        <form action={action} className="field-row category-row" noValidate key={sent.key}>
           <Hidden {...props} />
           <input type="hidden" name="categoryId" value={category.id} />
           <div className="field">
@@ -260,65 +260,67 @@ export function GradeEntryForm(
       <FormAlert message={state.errors?.form} />
       <Saved message={state.saved && !state.errors && t('gradebook.gradesSaved')} />
       <p className="muted">{t('gradebook.entryHelp')}</p>
-      <table className="roster">
-        <thead>
-          <tr>
-            <th scope="col">{t('gradebook.student')}</th>
-            <th scope="col">
-              {t('gradebook.score')}{' '}
-              <span className="muted">({t('gradebook.outOf', { points: props.maxPoints })})</span>
-            </th>
-            <th scope="col">{t('gradebook.status')}</th>
-            <th scope="col">{t('gradebook.comment')}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {props.rows.map((row) => {
-            const error = state.errors?.[`score.${row.studentId}`];
-            return (
-              <tr key={row.studentId} data-testid="grade-row">
-                <th scope="row">{row.name}</th>
-                <td>
-                  <input
-                    name={`score.${row.studentId}`}
-                    type="number"
-                    min={0}
-                    step="any"
-                    className="narrow-input"
-                    defaultValue={sent.text(`score.${row.studentId}`, row.score)}
-                    disabled={!props.editable}
-                    aria-label={t('gradebook.scoreFor', { name: row.name })}
-                    aria-invalid={error ? true : undefined}
-                  />
-                  {error ? <p className="field-error">{error}</p> : null}
-                </td>
-                <td>
-                  <select
-                    name={`status.${row.studentId}`}
-                    defaultValue={sent.text(`status.${row.studentId}`, choiceOf(row.status))}
-                    disabled={!props.editable}
-                    aria-label={t('gradebook.statusFor', { name: row.name })}
-                  >
-                    {choices.map((choice) => (
-                      <option key={choice.value} value={choice.value}>
-                        {choice.label}
-                      </option>
-                    ))}
-                  </select>
-                </td>
-                <td>
-                  <input
-                    name={`comment.${row.studentId}`}
-                    defaultValue={sent.text(`comment.${row.studentId}`, row.comment)}
-                    disabled={!props.editable}
-                    aria-label={t('gradebook.commentFor', { name: row.name })}
-                  />
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      <div className="table-scroll">
+        <table className="roster">
+          <thead>
+            <tr>
+              <th scope="col">{t('gradebook.student')}</th>
+              <th scope="col">
+                {t('gradebook.score')}{' '}
+                <span className="muted">({t('gradebook.outOf', { points: props.maxPoints })})</span>
+              </th>
+              <th scope="col">{t('gradebook.status')}</th>
+              <th scope="col">{t('gradebook.comment')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {props.rows.map((row) => {
+              const error = state.errors?.[`score.${row.studentId}`];
+              return (
+                <tr key={row.studentId} data-testid="grade-row">
+                  <th scope="row">{row.name}</th>
+                  <td>
+                    <input
+                      name={`score.${row.studentId}`}
+                      type="number"
+                      min={0}
+                      step="any"
+                      className="narrow-input"
+                      defaultValue={sent.text(`score.${row.studentId}`, row.score)}
+                      disabled={!props.editable}
+                      aria-label={t('gradebook.scoreFor', { name: row.name })}
+                      aria-invalid={error ? true : undefined}
+                    />
+                    {error ? <p className="field-error">{error}</p> : null}
+                  </td>
+                  <td>
+                    <select
+                      name={`status.${row.studentId}`}
+                      defaultValue={sent.text(`status.${row.studentId}`, choiceOf(row.status))}
+                      disabled={!props.editable}
+                      aria-label={t('gradebook.statusFor', { name: row.name })}
+                    >
+                      {choices.map((choice) => (
+                        <option key={choice.value} value={choice.value}>
+                          {choice.label}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                  <td>
+                    <input
+                      name={`comment.${row.studentId}`}
+                      defaultValue={sent.text(`comment.${row.studentId}`, row.comment)}
+                      disabled={!props.editable}
+                      aria-label={t('gradebook.commentFor', { name: row.name })}
+                    />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
       {props.editable ? <Submit label={t('gradebook.saveGrades')} /> : null}
     </form>
   );

@@ -362,43 +362,45 @@ export function ResultsForm(props: {
           {state.message}
         </p>
       ) : null}
-      <table className="table">
-        <thead>
-          <tr>
-            <th scope="col">{t('games.student')}</th>
-            <th scope="col">{t('games.attempts')}</th>
-            <th scope="col">{t('games.best')}</th>
-            <th scope="col">{t('games.last')}</th>
-            <th scope="col">{t('games.lastPlayed')}</th>
-            {props.grading ? <th scope="col">{t('games.draft')}</th> : null}
-            {props.grading ? <th scope="col">{t('games.confirmed')}</th> : null}
-          </tr>
-        </thead>
-        <tbody>
-          {props.rows.map((row) => (
-            <tr key={row.studentId}>
-              <th scope="row">{row.name}</th>
-              <td>{row.attempts}</td>
-              <td>{row.bestPercent}%</td>
-              <td>{row.lastPercent}%</td>
-              <td>{row.lastPlayed}</td>
-              {props.grading ? (
-                <td>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min={0}
-                    name={`score:${row.studentId}`}
-                    aria-label={t('games.scoreFor', { name: row.name })}
-                    defaultValue={sent.text(`score:${row.studentId}`, row.draftScore) ?? ''}
-                  />
-                </td>
-              ) : null}
-              {props.grading ? <td>{row.confirmedScore ?? '—'}</td> : null}
+      <div className="table-scroll">
+        <table className="table">
+          <thead>
+            <tr>
+              <th scope="col">{t('games.student')}</th>
+              <th scope="col">{t('games.attempts')}</th>
+              <th scope="col">{t('games.best')}</th>
+              <th scope="col">{t('games.last')}</th>
+              <th scope="col">{t('games.lastPlayed')}</th>
+              {props.grading ? <th scope="col">{t('games.draft')}</th> : null}
+              {props.grading ? <th scope="col">{t('games.confirmed')}</th> : null}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {props.rows.map((row) => (
+              <tr key={row.studentId}>
+                <th scope="row">{row.name}</th>
+                <td>{row.attempts}</td>
+                <td>{row.bestPercent}%</td>
+                <td>{row.lastPercent}%</td>
+                <td>{row.lastPlayed}</td>
+                {props.grading ? (
+                  <td>
+                    <input
+                      type="number"
+                      step="0.01"
+                      min={0}
+                      name={`score:${row.studentId}`}
+                      aria-label={t('games.scoreFor', { name: row.name })}
+                      defaultValue={sent.text(`score:${row.studentId}`, row.draftScore) ?? ''}
+                    />
+                  </td>
+                ) : null}
+                {props.grading ? <td>{row.confirmedScore ?? '—'}</td> : null}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       {props.grading ? (
         <>
           <p className="hint">{t('games.confirmHint')}</p>
