@@ -512,7 +512,7 @@ export const zhAppA = {
       '这将删除 {school} 的所有内容：每个账户、班级、学生、成绩、出勤记录、作业、教案和文件。此操作无法撤销。',
     hold: '数据将在您提出请求 {days} 天后删除。在此之前，您可以取消，也仍可下载数据。',
     billing: '提出请求后，付费方案将不再续订，因此不会再产生任何费用。',
-    confirmLabel: '请输入学校名称以确认：{school}',
+    confirmLabel: '请输入以下内容以确认：{school}',
     button: '删除学校的全部数据',
     notice: '本校的全部数据将于 {date} 删除。',
     cancel: '取消删除',

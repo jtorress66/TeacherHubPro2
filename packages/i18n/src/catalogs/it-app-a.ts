@@ -537,7 +537,7 @@ export const itAppA = {
     hold: 'I dati vengono eliminati {days} giorni dopo la tua richiesta. Fino ad allora puoi annullarla e puoi ancora scaricarli.',
     billing:
       'Un piano a pagamento smette di rinnovarsi quando lo chiedi, quindi non viene addebitato altro.',
-    confirmLabel: 'Per confermare, scrivi il nome della scuola: {school}',
+    confirmLabel: 'Per confermare, scrivi: {school}',
     button: 'Elimina tutti i dati della scuola',
     notice: 'Tutti i dati di questa scuola saranno eliminati il {date}.',
     cancel: 'Annulla l’eliminazione',

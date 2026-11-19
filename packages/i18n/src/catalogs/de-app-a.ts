@@ -537,7 +537,7 @@ export const deAppA = {
     hold: 'Die Daten werden {days} Tage nach Ihrer Anfrage gelöscht. Bis dahin können Sie die Löschung abbrechen und die Daten noch herunterladen.',
     billing:
       'Ein bezahlter Tarif verlängert sich ab Ihrer Anfrage nicht mehr, es wird also nichts mehr berechnet.',
-    confirmLabel: 'Geben Sie zur Bestätigung den Namen der Schule ein: {school}',
+    confirmLabel: 'Zur Bestätigung bitte eingeben: {school}',
     button: 'Alle Schuldaten löschen',
     notice: 'Alle Daten dieser Schule werden am {date} gelöscht.',
     cancel: 'Löschung abbrechen',

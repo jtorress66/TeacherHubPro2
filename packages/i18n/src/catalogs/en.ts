@@ -524,7 +524,7 @@ export const en = {
       'This deletes everything in {school}: every account, class, student, grade, attendance record, assignment, lesson plan and file. It cannot be undone.',
     hold: 'The data is deleted {days} days after you ask. Until then you can cancel, and you can still download it.',
     billing: 'A paid plan stops renewing when you ask, so nothing more is charged.',
-    confirmLabel: 'To confirm, type the school’s name: {school}',
+    confirmLabel: 'To confirm, type: {school}',
     button: 'Delete all school data',
     notice: 'All of this school’s data will be deleted on {date}.',
     cancel: 'Cancel deletion',

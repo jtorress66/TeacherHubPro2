@@ -531,7 +531,7 @@ export const ptAppA = {
       'Isso exclui tudo de {school}: cada conta, turma, aluno, nota, registro de frequência, tarefa, plano de aula e arquivo. Não pode ser desfeito.',
     hold: 'Os dados são excluídos {days} dias depois do seu pedido. Até lá, você pode cancelar e ainda pode baixá-los.',
     billing: 'Um plano pago deixa de ser renovado quando você pede, então nada mais é cobrado.',
-    confirmLabel: 'Para confirmar, digite o nome da escola: {school}',
+    confirmLabel: 'Para confirmar, digite: {school}',
     button: 'Excluir todos os dados da escola',
     notice: 'Todos os dados desta escola serão excluídos em {date}.',
     cancel: 'Cancelar a exclusão',

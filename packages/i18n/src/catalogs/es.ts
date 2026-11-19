@@ -531,7 +531,7 @@ export const es: Messages = {
       'Esto elimina todo lo de {school}: cada cuenta, clase, estudiante, calificación, registro de asistencia, tarea, plan de clase y archivo. No se puede deshacer.',
     hold: 'Los datos se eliminan {days} días después de su solicitud. Hasta entonces puede cancelarla y todavía puede descargarlos.',
     billing: 'Un plan pagado deja de renovarse cuando lo solicita, así que no se cobra nada más.',
-    confirmLabel: 'Para confirmar, escriba el nombre de la escuela: {school}',
+    confirmLabel: 'Para confirmar, escriba: {school}',
     button: 'Eliminar todos los datos de la escuela',
     notice: 'Todos los datos de esta escuela se eliminarán el {date}.',
     cancel: 'Cancelar la eliminación',

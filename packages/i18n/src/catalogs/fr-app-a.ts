@@ -537,7 +537,7 @@ export const frAppA = {
     hold: 'Les données sont supprimées {days} jours après votre demande. D’ici là, vous pouvez l’annuler et encore les télécharger.',
     billing:
       'Un forfait payant cesse de se renouveler dès votre demande : plus rien n’est facturé.',
-    confirmLabel: 'Pour confirmer, saisissez le nom de l’école : {school}',
+    confirmLabel: 'Pour confirmer, saisissez : {school}',
     button: 'Supprimer toutes les données de l’école',
     notice: 'Toutes les données de cette école seront supprimées le {date}.',
     cancel: 'Annuler la suppression',
