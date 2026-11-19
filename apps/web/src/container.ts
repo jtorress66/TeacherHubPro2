@@ -3,6 +3,7 @@ import {
   CanvaConnectAuthorization,
   CanvaConnectDesigns,
   DocxDocumentWriter,
+  JsZipWriter,
   LocalCanvaAuthorization,
   LocalCanvaDesigns,
   LocalMicrosoftAuthorization,
@@ -293,6 +294,7 @@ import {
   SubmitAttendance,
   HandleBillingWebhook,
   GetInvitePage,
+  ExportSchoolData,
   ImportStudents,
   ListClasses,
   ListSemesters,
@@ -326,6 +328,7 @@ import type {
   TeamsAssignments,
   TeamsClasses,
   ToolKeyStore,
+  ZipWriter,
 } from '@thp/ports';
 import {
   parseWebConfig,
@@ -567,6 +570,9 @@ export interface AppContainer {
   readonly startCheckout: StartCheckout;
   readonly handleBillingWebhook: HandleBillingWebhook;
   readonly getInvitePage: GetInvitePage;
+  readonly exportSchoolData: ExportSchoolData;
+  /** Packs the school data download into one ZIP file. */
+  readonly zipFiles: ZipWriter;
   readonly createClass: CreateClass;
   readonly updateClass: UpdateClass;
   readonly archiveClass: ArchiveClass;
@@ -1092,6 +1098,8 @@ export function createAppContainer(
     startCheckout: new StartCheckout(deps),
     handleBillingWebhook: new HandleBillingWebhook(deps),
     getInvitePage: new GetInvitePage(deps),
+    exportSchoolData: new ExportSchoolData(deps),
+    zipFiles: new JsZipWriter(),
     createClass: new CreateClass(deps),
     updateClass: new UpdateClass(deps),
     archiveClass: new ArchiveClass(deps),

@@ -58,6 +58,7 @@ for (const colorScheme of ['light', 'dark'] as const) {
         '/es/app/learning',
         '/es/app/approvals',
         '/es/app/invite',
+        '/es/app/settings',
         `${classPath}/gradebook`,
       ]) {
         await page.goto(path);

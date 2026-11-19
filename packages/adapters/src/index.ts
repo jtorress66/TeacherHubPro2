@@ -67,6 +67,7 @@ export {
 export { TeamsGraph } from './microsoft/teams-graph.ts';
 export { PptxPresentationWriter } from './documents/pptx-presentation-writer.ts';
 export { DocxDocumentWriter } from './documents/docx-document-writer.ts';
+export { JsZipWriter } from './documents/jszip-writer.ts';
 export { ResendMailer, type ResendConfig } from './mail/resend-mailer.ts';
 export { LocalMailer } from './mail/local-mailer.ts';
 export { loggedMailer } from './mail/logged-mailer.ts';

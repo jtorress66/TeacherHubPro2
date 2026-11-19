@@ -22,6 +22,7 @@ export type * from './files/file-store.ts';
 export type * from './files/pdf-text-extractor.ts';
 export type * from './documents/report-card-renderer.ts';
 export type * from './documents/office-files.ts';
+export type * from './documents/zip-writer.ts';
 export type * from './comms/mailer.ts';
 export type * from './comms/mail-templates.ts';
 export type * from './billing/checkout-sessions.ts';

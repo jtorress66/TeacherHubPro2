@@ -50,7 +50,7 @@ Students have no accounts, so there is no student email address or password.
 
 **Breach notice:** within 72 hours of discovering a breach that affects the school's data.
 
-**End of contract:** on request, return the school's data as files, then delete it from the service and confirm in writing.
+**End of contract:** on request, return the school's data as files, then delete it from the service and confirm in writing. A school's admins (or the account owner) can also download everything themselves: Settings → **Download all school data** gives one ZIP of spreadsheets (teachers, classes, students, assignments, grades, attendance and student answers). Each download is recorded in the activity log.
 
 ## Questions for the lawyer
 
