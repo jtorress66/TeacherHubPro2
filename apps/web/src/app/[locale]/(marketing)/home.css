@@ -994,6 +994,15 @@
   .home-sticky p {
     display: none;
   }
+
+  /* No room side by side on a phone: Chat with Ed moves up while the trial bar is showing. */
+  .m-chat {
+    transition: bottom 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  body:has(.home-sticky.is-shown) .m-chat {
+    bottom: calc(5.75rem + env(safe-area-inset-bottom, 0px));
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1008,7 +1017,8 @@
   }
 
   .bento-tile,
-  .home-sticky {
+  .home-sticky,
+  .m-chat {
     transition: none;
   }
 }
