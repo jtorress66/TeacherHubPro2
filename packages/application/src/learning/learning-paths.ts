@@ -32,6 +32,7 @@ import type {
   PathWriter,
   StudentRepository,
   SubscriptionRepository,
+  SchoolRepository,
 } from '@thp/ports';
 import { checkAiAccess } from '../accounts/ai-access.ts';
 import { findManagedClass } from '../classes/managed-class.ts';
@@ -103,6 +104,7 @@ export class RequestLearningPath {
       readonly students: StudentRepository;
       readonly jobs: JobQueue;
       readonly subscriptions: SubscriptionRepository;
+      readonly schools: SchoolRepository;
       readonly clock: Clock;
     },
   ) {}

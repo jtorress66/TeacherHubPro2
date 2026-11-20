@@ -160,6 +160,7 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
       `${app}/billing`,
       `${app}/invite`,
       `${app}/integrations`,
+      `${app}/school`,
     ]) {
       await check(page, path, found);
     }

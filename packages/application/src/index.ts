@@ -582,6 +582,12 @@ export {
 } from './lti/lti-grades.ts';
 export { ExportSchoolData, type SchoolExport } from './admin/school-export.ts';
 export {
+  GetSchoolOverview,
+  SetSchoolFeatures,
+  aiDraftJobKinds,
+  type SchoolOverview,
+} from './admin/school-overview.ts';
+export {
   CancelSchoolDeletion,
   DeleteDueSchools,
   GetSchoolDeletion,

@@ -61,7 +61,9 @@ export type ApplicationErrorCode =
   | 'resend_limit'
   | 'account_suspended'
   | 'name_mismatch'
-  | 'renewal_failed';
+  | 'renewal_failed'
+  | 'ai_off_for_school'
+  | 'student_flags_off';
 
 /**
  * What a use case can report: a broken validation rule (with its field) or an application-level

@@ -9,6 +9,7 @@ import {
   type ClassId,
   type Job,
   type JobFailure,
+  type SchoolId,
   type Language,
   type Result,
   type Student,
@@ -35,6 +36,7 @@ import type {
   StudentNoteRepository,
   StudentRepository,
   SubscriptionRepository,
+  SchoolRepository,
 } from '@thp/ports';
 import { checkAiAccess } from '../accounts/ai-access.ts';
 import { findManagedClass } from '../classes/managed-class.ts';
@@ -107,7 +109,9 @@ export interface StudentView {
   readonly summary: Student360;
   /** The viewer's own notes, newest first. */
   readonly notes: readonly StudentNote[];
-  /** The viewer's latest AI insight, if they asked for one. */
+  /** False when the school turned student insights off: no insight is shown or drafted. */
+  readonly insightsOn: boolean;
+  /** The viewer's latest AI insight, if they asked for one and insights are on. */
   readonly insight: StudentInsight | null;
 }
 
@@ -117,6 +121,7 @@ export class GetStudent360 {
     private readonly deps: RecordDeps & {
       readonly studentNotes: StudentNoteRepository;
       readonly studentInsights: StudentInsightRepository;
+      readonly schools: SchoolRepository;
       readonly clock: Clock;
     },
   ) {}
@@ -129,6 +134,7 @@ export class GetStudent360 {
     const { cls, student } = found.value;
     const { schoolId, id: viewer } = input.actor;
     const notes = await this.deps.studentNotes.listFor(schoolId, student.id, viewer);
+    const insightsOn = await studentFlagsOn(this.deps.schools, schoolId);
     return ok({
       student,
       cls,
@@ -141,7 +147,10 @@ export class GetStudent360 {
         input.timeZone,
       ),
       notes,
-      insight: await this.deps.studentInsights.find(schoolId, student.id, viewer),
+      insightsOn,
+      insight: insightsOn
+        ? await this.deps.studentInsights.find(schoolId, student.id, viewer)
+        : null,
     });
   }
 }
@@ -204,12 +213,18 @@ interface InsightPayload {
   readonly timeZone: string;
 }
 
+/** Whether the school shows student flags and insights (on unless an admin turned them off). */
+async function studentFlagsOn(schools: SchoolRepository, schoolId: SchoolId): Promise<boolean> {
+  return (await schools.findById(schoolId))?.features.studentFlags ?? true;
+}
+
 /** Starts an AI insight on a student for the actor. Needs AI access. */
 export class RequestStudentInsight {
   constructor(
     private readonly deps: Pick<RecordDeps, 'classes' | 'students'> & {
       readonly jobs: JobQueue;
       readonly subscriptions: SubscriptionRepository;
+      readonly schools: SchoolRepository;
       readonly clock: Clock;
     },
   ) {}
@@ -219,6 +234,9 @@ export class RequestStudentInsight {
   ): Promise<Result<Job, UseCaseError>> {
     const found = await classStudent(this.deps, input);
     if (!found.ok) return found;
+    if (!(await studentFlagsOn(this.deps.schools, input.actor.schoolId))) {
+      return fail('student_flags_off');
+    }
     const access = await checkAiAccess(this.deps, input.actor);
     if (!access.ok) return access;
     const payload: InsightPayload = {

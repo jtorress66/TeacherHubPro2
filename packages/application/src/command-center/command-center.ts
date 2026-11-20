@@ -33,6 +33,7 @@ import type {
   GradeCategoryRepository,
   GradeRepository,
   LessonPlanRepository,
+  SchoolRepository,
   StudentRepository,
   SubmissionRepository,
 } from '@thp/ports';
@@ -46,6 +47,8 @@ export type TodayAttendance = 'done' | 'open' | 'not_taken';
 
 export interface CommandCenter {
   readonly today: LocalDate;
+  /** False when the school turned off "students who may need help": the list is then empty. */
+  readonly studentFlags: boolean;
   readonly classesToday: readonly {
     readonly cls: Class;
     readonly students: number;
@@ -80,6 +83,7 @@ interface Deps {
   readonly grades: GradeRepository;
   readonly submissions: SubmissionRepository;
   readonly lessonPlans: LessonPlanRepository;
+  readonly schools: SchoolRepository;
   readonly clock: Clock;
 }
 
@@ -158,7 +162,9 @@ export class GetCommandCenter {
       .flatMap((day) => day.toGrade)
       .sort(byUrgency)
       .slice(0, maxToGrade);
-    const atRisk = atRiskList(days.flatMap((day) => day.risks));
+    const school = await this.deps.schools.findById(actor.schoolId);
+    const studentFlags = school?.features.studentFlags ?? true;
+    const atRisk = studentFlags ? atRiskList(days.flatMap((day) => day.risks)) : [];
     const plans = (await this.deps.lessonPlans.listByTeacher(actor.schoolId, actor.id)).map(
       (plan) => ({ plan, span: planSpan(plan.body) }),
     );
@@ -170,6 +176,7 @@ export class GetCommandCenter {
 
     return ok({
       today,
+      studentFlags,
       classesToday: scheduled,
       toGrade: pending,
       atRisk,

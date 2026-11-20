@@ -28,6 +28,10 @@ export const auditActions = [
   'school_data_exported',
   'school_deletion_requested',
   'school_deletion_canceled',
+  'school_ai_turned_off',
+  'school_ai_turned_on',
+  'school_student_flags_turned_off',
+  'school_student_flags_turned_on',
 ] as const;
 export type AuditAction = (typeof auditActions)[number];
 

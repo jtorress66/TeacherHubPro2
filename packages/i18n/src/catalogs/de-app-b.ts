@@ -1341,6 +1341,9 @@ export const deAppB = {
       'Sie können die E-Mail bis zu 5-mal am Tag erneut senden. Bitte versuchen Sie es morgen wieder.',
     name_mismatch:
       'Der Name stimmt nicht überein. Geben Sie den Namen der Schule genau wie angezeigt ein.',
+    ai_off_for_school:
+      'Ihre Schule hat die KI-Funktionen ausgeschaltet. Fragen Sie bei Bedarf die Schuladministration.',
+    student_flags_off: 'Ihre Schule hat die Einschätzungen zu Schülern ausgeschaltet.',
     renewal_failed:
       'Der Zahlungsdienst ist nicht erreichbar. Bitte versuchen Sie es in einigen Minuten erneut.',
     account_suspended:

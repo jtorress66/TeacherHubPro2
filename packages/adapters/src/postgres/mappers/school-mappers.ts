@@ -57,6 +57,8 @@ export const schoolMapper: RowMapper<School, SchoolsTable> = {
     email: school.email,
     logo_key: school.logoKey,
     plan_format: school.planFormat,
+    ai_enabled: school.features.ai,
+    student_flags_enabled: school.features.studentFlags,
   }),
   fromRow: (row) => ({
     id: row.id as SchoolId,
@@ -66,6 +68,7 @@ export const schoolMapper: RowMapper<School, SchoolsTable> = {
     email: row.email as Email | null,
     logoKey: row.logo_key,
     planFormat: oneOf(planFormats, row.plan_format, 'schools.plan_format'),
+    features: { ai: row.ai_enabled, studentFlags: row.student_flags_enabled },
   }),
 };
 

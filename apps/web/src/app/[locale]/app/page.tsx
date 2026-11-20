@@ -96,10 +96,12 @@ export default async function DashboardPage(props: LocaleParams) {
               <dt>{t('commandCenter.stat_toGrade')}</dt>
               <dd>{center.value.stats.toGrade}</dd>
             </div>
-            <div>
-              <dt>{t('commandCenter.stat_atRisk')}</dt>
-              <dd>{center.value.stats.atRisk}</dd>
-            </div>
+            {center.value.studentFlags ? (
+              <div>
+                <dt>{t('commandCenter.stat_atRisk')}</dt>
+                <dd>{center.value.stats.atRisk}</dd>
+              </div>
+            ) : null}
           </dl>
 
           <section className="card stack" aria-labelledby="suggestions-heading">
@@ -161,29 +163,31 @@ export default async function DashboardPage(props: LocaleParams) {
             )}
           </section>
 
-          <section id="at-risk" className="card stack" aria-labelledby="at-risk-heading">
-            <h2 id="at-risk-heading">{t('commandCenter.atRisk')}</h2>
-            {center.value.atRisk.length === 0 ? (
-              <p className="muted">{t('commandCenter.atRiskEmpty')}</p>
-            ) : (
-              <ul className="list" aria-label={t('commandCenter.atRisk')}>
-                {center.value.atRisk.map(({ student, cls, risk }) => (
-                  <li key={student.id}>
-                    <Link href={`${base}/app/classes/${cls.id}/students/${student.id}`}>
-                      {student.firstName} {student.lastName}
-                    </Link>{' '}
-                    <span className="hint">
-                      {cls.name} · {t('commandCenter.riskScore', { score: risk.score })}
-                    </span>
-                    <br />
-                    {risk.factors
-                      .map((factor) => t(`risk.${factor.kind}`, { value: factor.value }))
-                      .join(' · ')}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
+          {center.value.studentFlags ? (
+            <section id="at-risk" className="card stack" aria-labelledby="at-risk-heading">
+              <h2 id="at-risk-heading">{t('commandCenter.atRisk')}</h2>
+              {center.value.atRisk.length === 0 ? (
+                <p className="muted">{t('commandCenter.atRiskEmpty')}</p>
+              ) : (
+                <ul className="list" aria-label={t('commandCenter.atRisk')}>
+                  {center.value.atRisk.map(({ student, cls, risk }) => (
+                    <li key={student.id}>
+                      <Link href={`${base}/app/classes/${cls.id}/students/${student.id}`}>
+                        {student.firstName} {student.lastName}
+                      </Link>{' '}
+                      <span className="hint">
+                        {cls.name} · {t('commandCenter.riskScore', { score: risk.score })}
+                      </span>
+                      <br />
+                      {risk.factors
+                        .map((factor) => t(`risk.${factor.kind}`, { value: factor.value }))
+                        .join(' · ')}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          ) : null}
 
           <section className="card stack" aria-labelledby="to-grade-heading">
             <h2 id="to-grade-heading">{t('commandCenter.toGrade')}</h2>

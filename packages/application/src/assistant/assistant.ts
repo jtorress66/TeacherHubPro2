@@ -20,6 +20,7 @@ import type {
   JobProgressReporter,
   JobQueue,
   SubscriptionRepository,
+  SchoolRepository,
 } from '@thp/ports';
 import { checkAiAccess } from '../accounts/ai-access.ts';
 import type { UseCaseError } from '../errors.ts';
@@ -42,6 +43,7 @@ export class RequestGeneration {
     private readonly deps: {
       readonly jobs: JobQueue;
       readonly subscriptions: SubscriptionRepository;
+      readonly schools: SchoolRepository;
       readonly clock: Clock;
     },
   ) {}

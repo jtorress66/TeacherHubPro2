@@ -64,7 +64,7 @@ export default async function Student360Page(props: Props) {
     timeZone: await teacherTimeZone(),
   });
   if (!view.ok) notFound();
-  const { student, cls, summary, notes, insight } = view.value;
+  const { student, cls, summary, notes, insight, insightsOn } = view.value;
   const { stats } = summary;
   const path = `/${locale}/app/classes/${classId}/students/${studentId}`;
   const ids = { locale, classId, studentId };
@@ -116,37 +116,39 @@ export default async function Student360Page(props: Props) {
         )}
       </section>
 
-      <section id="insight" className="card stack" aria-labelledby="insight-heading">
-        <h2 id="insight-heading">{t('student360.insight')}</h2>
-        <p className="hint">{t('student360.insightIntro')}</p>
-        {job === undefined ? null : (
-          <JobProgress
-            locale={locale}
-            jobId={job}
-            doneHref={path}
-            retryHref={path}
-            labels={{
-              working: t('student360.working'),
-              failed: t('drafts.failed'),
-              tryAgain: t('drafts.tryAgain'),
-              open: t('student360.open'),
-            }}
-          />
-        )}
-        {insight === null ? null : (
-          <div className="stack">
-            <ul className="list" aria-label={t('student360.insight')}>
-              {insight.bullets.map((bullet) => (
-                <li key={bullet}>{bullet}</li>
-              ))}
-            </ul>
-            <p className="hint">
-              {t('student360.insightDraft', { date: day.format(insight.generatedAt) })}
-            </p>
-          </div>
-        )}
-        {job === undefined ? <InsightForm {...ids} again={insight !== null} /> : null}
-      </section>
+      {insightsOn ? (
+        <section id="insight" className="card stack" aria-labelledby="insight-heading">
+          <h2 id="insight-heading">{t('student360.insight')}</h2>
+          <p className="hint">{t('student360.insightIntro')}</p>
+          {job === undefined ? null : (
+            <JobProgress
+              locale={locale}
+              jobId={job}
+              doneHref={path}
+              retryHref={path}
+              labels={{
+                working: t('student360.working'),
+                failed: t('drafts.failed'),
+                tryAgain: t('drafts.tryAgain'),
+                open: t('student360.open'),
+              }}
+            />
+          )}
+          {insight === null ? null : (
+            <div className="stack">
+              <ul className="list" aria-label={t('student360.insight')}>
+                {insight.bullets.map((bullet) => (
+                  <li key={bullet}>{bullet}</li>
+                ))}
+              </ul>
+              <p className="hint">
+                {t('student360.insightDraft', { date: day.format(insight.generatedAt) })}
+              </p>
+            </div>
+          )}
+          {job === undefined ? <InsightForm {...ids} again={insight !== null} /> : null}
+        </section>
+      ) : null}
 
       <section className="card stack" aria-labelledby="notes-heading">
         <h2 id="notes-heading">{t('student360.notes')}</h2>

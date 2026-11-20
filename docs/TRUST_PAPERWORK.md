@@ -15,6 +15,7 @@ This guide is not legal advice.
 | FERPA and COPPA pages, trust center | /en/ferpa, /en/coppa, /en/trust |
 | Answers for privacy agreements and security questions | `docs/SCHOOL_PRIVACY.md` |
 | School data download and deletion | Settings → Download / Delete all school data |
+| Admin controls: usage by teacher, AI on/off, student flags on/off (each change logged) | School overview (menu, for school admins and the account owner) |
 | Breach notice promise: 72 hours | privacy page, section 8 |
 
 ## Step 1: form the LLC (needed before anything is signed)
@@ -33,7 +34,7 @@ Agreements are signed by the business, so this comes first.
 2. **Puerto Rico Ley 185-2024** (online privacy of minors, 27 August 2024).
    - It seems aimed at social networks that publish minors' information.
    - Ask whether it applies to software a school hires.
-   - Ask whether the app's **"students who may need help"** flags and **student insights** count as profiling. If they might, I can add a switch that lets a school turn them off.
+   - Ask whether the app's **"students who may need help"** flags and **student insights** count as profiling. A school can already turn them off for everyone (School overview → School-wide switches); ask whether they should start **off** for Puerto Rico schools.
 3. **Puerto Rico Ley 111-2005** (data breaches).
    - It requires telling DACO (the consumer affairs department) within **10 days** of finding a breach, and the affected people as quickly as possible. Rules: DACO Regulation 7376.
    - Our privacy page promises schools notice within 72 hours. Ask the lawyer to confirm the steps and who notifies families: us or the school.

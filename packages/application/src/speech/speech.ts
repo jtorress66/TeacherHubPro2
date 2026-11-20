@@ -18,7 +18,7 @@ import type {
   TextToSpeech,
   TokenHasher,
 } from '@thp/ports';
-import { checkAiAccess } from '../accounts/ai-access.ts';
+import { checkPaidAccess } from '../accounts/ai-access.ts';
 import { fail, type UseCaseError } from '../errors.ts';
 import type { JobHandler } from '../jobs/jobs.ts';
 
@@ -73,7 +73,7 @@ export class RequestSpeech {
     language: string;
   }): Promise<Result<SpeechOutcome, UseCaseError>> {
     const { actor } = input;
-    const access = await checkAiAccess(this.deps, actor);
+    const access = await checkPaidAccess(this.deps, actor);
     if (!access.ok) return access;
     const request = createSpeechRequest(input);
     if (!request.ok) return request;

@@ -16,6 +16,8 @@ export interface SchoolsTable {
   email: string | null;
   logo_key: string | null;
   plan_format: string;
+  ai_enabled: boolean;
+  student_flags_enabled: boolean;
   created_at: CreatedAt;
 }
 

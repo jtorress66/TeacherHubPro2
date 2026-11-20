@@ -297,6 +297,8 @@ import {
   HandleBillingWebhook,
   GetInvitePage,
   ExportSchoolData,
+  GetSchoolOverview,
+  SetSchoolFeatures,
   CancelSchoolDeletion,
   GetSchoolDeletion,
   RequestSchoolDeletion,
@@ -580,6 +582,8 @@ export interface AppContainer {
   readonly requestSchoolDeletion: RequestSchoolDeletion;
   readonly cancelSchoolDeletion: CancelSchoolDeletion;
   readonly getSchoolDeletion: GetSchoolDeletion;
+  readonly getSchoolOverview: GetSchoolOverview;
+  readonly setSchoolFeatures: SetSchoolFeatures;
   /** Packs the school data download into one ZIP file. */
   readonly zipFiles: ZipWriter;
   readonly createClass: CreateClass;
@@ -1114,6 +1118,8 @@ export function createAppContainer(
     requestSchoolDeletion: new RequestSchoolDeletion(deps),
     cancelSchoolDeletion: new CancelSchoolDeletion(deps),
     getSchoolDeletion: new GetSchoolDeletion(deps),
+    getSchoolOverview: new GetSchoolOverview(deps),
+    setSchoolFeatures: new SetSchoolFeatures(deps),
     zipFiles: new JsZipWriter(),
     createClass: new CreateClass(deps),
     updateClass: new UpdateClass(deps),

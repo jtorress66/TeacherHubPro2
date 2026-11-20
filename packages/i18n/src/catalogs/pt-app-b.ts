@@ -1314,6 +1314,9 @@ export const ptAppB = {
       'Confirme seu e-mail para usar as ferramentas de IA. Use Reenviar no aviso no topo da página se precisar de um novo link.',
     resend_limit: 'Você pode reenviar o e-mail até 5 vezes por dia. Tente novamente amanhã.',
     name_mismatch: 'O nome não confere. Digite o nome da escola exatamente como aparece.',
+    ai_off_for_school:
+      'A sua escola desligou as funções de IA. Se precisar delas, fale com o administrador da escola.',
+    student_flags_off: 'A sua escola desligou as análises dos alunos.',
     renewal_failed:
       'Não conseguimos falar com o serviço de pagamentos. Tente de novo em alguns minutos.',
     account_suspended: 'Esta conta está suspensa. Se você acha que é um engano, fale conosco.',

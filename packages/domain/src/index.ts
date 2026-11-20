@@ -23,6 +23,7 @@ export * from './schools/school.ts';
 export * from './schools/school-logo.ts';
 export * from './schools/school-export.ts';
 export * from './schools/school-deletion.ts';
+export * from './schools/school-overview.ts';
 export * from './users/user.ts';
 export * from './users/roles.ts';
 export * from './onboarding/onboarding.ts';

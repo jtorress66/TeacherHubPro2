@@ -1252,6 +1252,8 @@ export const zhAppB = {
       '请确认您的邮箱后再使用 AI 工具。如需新链接，请使用页面顶部提示中的“重新发送”。',
     resend_limit: '每天最多可重新发送 5 次邮件。请明天再试。',
     name_mismatch: '名称不匹配。请按显示的内容准确输入学校名称。',
+    ai_off_for_school: '你的学校已关闭 AI 功能。如有需要，请联系学校管理员。',
+    student_flags_off: '你的学校已关闭学生分析。',
     renewal_failed: '无法连接付款服务。请几分钟后再试。',
     account_suspended: '此账户已被停用。如果您认为这是错误，请联系我们。',
   },
