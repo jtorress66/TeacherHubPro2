@@ -31,6 +31,7 @@ import type {
   SubmissionRepository,
   SubscriptionRepository,
   AssignmentRepository,
+  SchoolRepository,
 } from '@thp/ports';
 import { checkAiAccess } from '../accounts/ai-access.ts';
 import { recordApproval, type ApprovalLogDeps } from '../security/approvals.ts';
@@ -96,6 +97,7 @@ export class RequestAiGrading {
       readonly submissions: SubmissionRepository;
       readonly jobs: JobQueue;
       readonly subscriptions: SubscriptionRepository;
+      readonly schools: SchoolRepository;
       readonly clock: Clock;
     },
   ) {}

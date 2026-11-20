@@ -10,6 +10,7 @@ import type {
   ReferralRepository,
   SchoolDeletionRepository,
   SchoolEraser,
+  SchoolUsageReport,
   AttachmentRepository,
   CanvaConnectionRepository,
   CalendarFeedRepository,
@@ -75,6 +76,7 @@ import {
   PostgresSchoolDeletionRepository,
   PostgresSchoolEraser,
 } from './repositories/postgres-school-deletions.ts';
+import { PostgresSchoolUsageReport } from './repositories/postgres-school-usage.ts';
 import { PostgresAssignmentRepository } from './repositories/postgres-assignment-repository.ts';
 import { PostgresAttendanceSessionRepository } from './repositories/postgres-attendance-session-repository.ts';
 import { PostgresClassRepository } from './repositories/postgres-class-repository.ts';
@@ -165,6 +167,7 @@ export interface PostgresRepositories {
   readonly referrals: ReferralRepository;
   readonly schoolDeletions: SchoolDeletionRepository;
   readonly schoolEraser: SchoolEraser;
+  readonly schoolUsage: SchoolUsageReport;
   readonly auditLog: AuditLog & ApprovalLogReader;
   readonly schools: SchoolRepository;
   readonly users: UserRepository;
@@ -233,6 +236,7 @@ export function createPostgresRepositories(db: Kysely<Database>): PostgresReposi
     referrals: new PostgresReferralRepository(db),
     schoolDeletions: new PostgresSchoolDeletionRepository(db),
     schoolEraser: new PostgresSchoolEraser(db),
+    schoolUsage: new PostgresSchoolUsageReport(db),
     auditLog: new PostgresAuditLog(db),
     schools: new PostgresSchoolRepository(db),
     users: new PostgresUserRepository(db),

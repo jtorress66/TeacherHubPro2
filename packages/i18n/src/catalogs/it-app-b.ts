@@ -1319,6 +1319,9 @@ export const itAppB = {
       'Confermi la Sua email per usare gli strumenti di IA. Usi Invia di nuovo nel banner in cima alla pagina se le serve un nuovo link.',
     resend_limit: "Può inviare di nuovo l'email fino a 5 volte al giorno. Riprovi domani.",
     name_mismatch: 'Il nome non corrisponde. Scrivi il nome della scuola esattamente come appare.',
+    ai_off_for_school:
+      'La tua scuola ha spento le funzioni dell’IA. Se ti servono, chiedi all’amministratore della scuola.',
+    student_flags_off: 'La tua scuola ha spento le analisi sugli studenti.',
     renewal_failed:
       'Non riusciamo a raggiungere il servizio di pagamento. Riprova tra qualche minuto.',
     account_suspended: 'Questo account è sospeso. Se pensa che sia un errore, ci contatti.',

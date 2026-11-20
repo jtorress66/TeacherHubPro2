@@ -1339,6 +1339,9 @@ export const frAppB = {
       "Vous pouvez renvoyer l'e-mail jusqu'à 5 fois par jour. Veuillez réessayer demain.",
     name_mismatch:
       'Le nom ne correspond pas. Saisissez le nom de l’école exactement comme il est affiché.',
+    ai_off_for_school:
+      'Votre école a désactivé les fonctions d’IA. Demandez à l’administrateur de votre école si vous en avez besoin.',
+    student_flags_off: 'Votre école a désactivé les analyses sur les élèves.',
     renewal_failed:
       'Le service de paiement est injoignable. Veuillez réessayer dans quelques minutes.',
     account_suspended:

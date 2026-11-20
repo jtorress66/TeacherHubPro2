@@ -20,6 +20,7 @@ import type {
   PdfTextExtractor,
   QuestionExtractor,
   SubscriptionRepository,
+  SchoolRepository,
 } from '@thp/ports';
 import { checkAiAccess } from '../accounts/ai-access.ts';
 import { fail, type UseCaseError } from '../errors.ts';
@@ -56,6 +57,7 @@ export class RequestPdfImport {
       readonly files: FileStore;
       readonly jobs: JobQueue;
       readonly subscriptions: SubscriptionRepository;
+      readonly schools: SchoolRepository;
       readonly clock: Clock;
       readonly ids: IdGenerator;
     },

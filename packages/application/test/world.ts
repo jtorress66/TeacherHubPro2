@@ -62,6 +62,7 @@ import {
   FakeSubscriptionRenewal,
   FakeSchoolEraser,
   InMemorySchoolDeletionRepository,
+  InMemorySchoolUsageReport,
   InMemoryUsedTicketRepository,
   InMemoryAuditLog,
 } from '@thp/testing';
@@ -96,6 +97,7 @@ export const makeWorld = () => {
     subscriptionRenewal: new FakeSubscriptionRenewal(),
     schoolDeletions,
     schoolEraser: new FakeSchoolEraser(schoolDeletions),
+    schoolUsage: new InMemorySchoolUsageReport(),
     usedTickets: new InMemoryUsedTicketRepository(),
     auditLog: new InMemoryAuditLog(),
     lessonPlans: new InMemoryLessonPlanRepository(),

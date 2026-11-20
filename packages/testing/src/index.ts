@@ -15,6 +15,8 @@ export * from './fakes/referrals.ts';
 export * from './contracts/referrals.contract.ts';
 export * from './fakes/school-deletion.ts';
 export * from './contracts/school-deletion.contract.ts';
+export * from './fakes/school-usage.ts';
+export * from './contracts/school-usage.contract.ts';
 export * from './fakes/security.ts';
 export * from './fakes/job-queue.ts';
 export * from './fakes/google.ts';

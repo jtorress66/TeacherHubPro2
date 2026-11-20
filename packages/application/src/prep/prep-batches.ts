@@ -33,6 +33,7 @@ import type {
   PrepBatchRepository,
   StudentRepository,
   SubscriptionRepository,
+  SchoolRepository,
 } from '@thp/ports';
 import { checkAiAccess } from '../accounts/ai-access.ts';
 import { fail, type UseCaseError } from '../errors.ts';
@@ -82,6 +83,7 @@ export class StartPrepBatch {
     private readonly deps: Batches & {
       readonly jobs: JobQueue;
       readonly subscriptions: SubscriptionRepository;
+      readonly schools: SchoolRepository;
       readonly classes: ClassRepository;
       readonly gradeCategories: GradeCategoryRepository;
       readonly ids: IdGenerator;

@@ -15,6 +15,7 @@ describe('createSchool', () => {
       email: null,
       logoKey: null,
       planFormat: 'classic',
+      features: { ai: true, studentFlags: true },
     });
   });
 
@@ -87,6 +88,7 @@ describe('updateSchoolDetails', () => {
       email: 'a@luz.edu',
       logoKey: null,
       planFormat: 'classic',
+      features: { ai: true, studentFlags: true },
     });
   });
 

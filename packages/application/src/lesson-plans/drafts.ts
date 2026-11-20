@@ -19,6 +19,7 @@ import type {
   JobQueue,
   LessonPlanDrafter,
   SubscriptionRepository,
+  SchoolRepository,
 } from '@thp/ports';
 import { checkAiAccess } from '../accounts/ai-access.ts';
 import { fail, type UseCaseError } from '../errors.ts';
@@ -42,6 +43,7 @@ export class RequestLessonPlanDraft {
     private readonly deps: {
       readonly jobs: JobQueue;
       readonly subscriptions: SubscriptionRepository;
+      readonly schools: SchoolRepository;
       readonly classes: ClassRepository;
       readonly clock: Clock;
     },

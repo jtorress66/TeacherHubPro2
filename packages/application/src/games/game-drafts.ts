@@ -17,6 +17,7 @@ import type {
   GameWriter,
   JobQueue,
   SubscriptionRepository,
+  SchoolRepository,
 } from '@thp/ports';
 import { checkAiAccess } from '../accounts/ai-access.ts';
 import { fail, type UseCaseError } from '../errors.ts';
@@ -59,6 +60,7 @@ export class RequestGameDraft {
       readonly games: GameRepository;
       readonly jobs: JobQueue;
       readonly subscriptions: SubscriptionRepository;
+      readonly schools: SchoolRepository;
       readonly clock: Clock;
     },
   ) {}

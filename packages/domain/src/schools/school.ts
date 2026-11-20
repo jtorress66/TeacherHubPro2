@@ -14,7 +14,19 @@ export interface School {
   readonly logoKey: string | null;
   /** How the school's weekly plans print. */
   readonly planFormat: PlanFormat;
+  /** What the school's admins have switched on for everyone in the school. */
+  readonly features: SchoolFeatures;
 }
+
+/** School-wide switches, both on unless an admin turns them off. */
+export interface SchoolFeatures {
+  /** AI drafting: plans, materials, grading drafts, games, paths and the prep agent. */
+  readonly ai: boolean;
+  /** "Students who may need help" flags and AI student insights. */
+  readonly studentFlags: boolean;
+}
+
+export const defaultSchoolFeatures: SchoolFeatures = { ai: true, studentFlags: true };
 
 export interface SchoolInput {
   readonly id: SchoolId;
@@ -24,6 +36,7 @@ export interface SchoolInput {
   readonly email?: string | null;
   readonly logoKey?: string | null;
   readonly planFormat?: string;
+  readonly features?: SchoolFeatures;
 }
 
 export function createSchool(input: SchoolInput): Result<School, ValidationError> {
@@ -46,14 +59,15 @@ export function createSchool(input: SchoolInput): Result<School, ValidationError
     email: email.value,
     logoKey: input.logoKey ?? null,
     planFormat,
+    features: input.features ?? defaultSchoolFeatures,
   });
 }
 
-export type SchoolDetails = Omit<SchoolInput, 'id' | 'logoKey'>;
+export type SchoolDetails = Omit<SchoolInput, 'id' | 'logoKey' | 'features'>;
 
 /**
- * Replaces the school's details, with the same rules as creating one. The logo is kept, and so
- * is the plan format unless given.
+ * Replaces the school's details, with the same rules as creating one. The logo and the features
+ * are kept, and so is the plan format unless given.
  */
 export function updateSchoolDetails(
   school: School,
@@ -64,6 +78,7 @@ export function updateSchoolDetails(
     ...details,
     id: school.id,
     logoKey: school.logoKey,
+    features: school.features,
   });
 }
 

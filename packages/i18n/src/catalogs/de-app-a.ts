@@ -42,6 +42,7 @@ export const deAppA = {
     invite: 'Kollegin oder Kollegen einladen',
     settings: 'Einstellungen',
     connectedTools: 'Verbundene Tools',
+    schoolOverview: 'Schulübersicht',
     approvals: 'Freigaben',
     logOut: 'Abmelden',
     menu: 'Menü',
@@ -281,6 +282,12 @@ export const deAppA = {
     action_school_data_exported: 'Alle Schuldaten heruntergeladen',
     action_school_deletion_requested: 'Hat die Löschung aller Schuldaten beantragt',
     action_school_deletion_canceled: 'Hat die Löschung aller Schuldaten abgebrochen',
+    action_school_ai_turned_off: 'Hat die KI-Funktionen für die Schule ausgeschaltet',
+    action_school_ai_turned_on: 'Hat die KI-Funktionen für die Schule eingeschaltet',
+    action_school_student_flags_turned_off:
+      'Hat Hinweise und Einschätzungen zu Schülern ausgeschaltet',
+    action_school_student_flags_turned_on:
+      'Hat Hinweise und Einschätzungen zu Schülern eingeschaltet',
     seeApprovals: 'Alle Freigaben ansehen',
   },
   approvals: {
@@ -529,6 +536,35 @@ export const deAppA = {
     rule4:
       'Wir schreiben Ihren Kolleginnen und Kollegen nie eine E-Mail. Sie teilen den Link selbst.',
     privacy: 'Diese Seite zeigt nur Zahlen, nie die Namen Ihrer Kolleginnen und Kollegen.',
+  },
+  schoolOverview: {
+    title: 'Schulübersicht',
+    intro:
+      'So nutzt {school} TeacherHubPro in den letzten {days} Tagen. Nur Zahlen: Arbeiten, Noten oder Namen von Schülerinnen und Schülern erscheinen hier nicht.',
+    activeTeachers: 'Aktive Lehrkräfte',
+    activeOf: '{active} von {total}',
+    students: 'Schülerinnen und Schüler',
+    aiDrafts: 'KI-Entwürfe',
+    attendanceDays: 'Anwesenheitstage',
+    byTeacher: 'Nach Lehrkraft',
+    col_name: 'Lehrkraft',
+    col_lastActive: 'Zuletzt aktiv',
+    col_classes: 'Klassen',
+    col_students: 'Schüler',
+    col_aiDrafts: 'KI-Entwürfe',
+    col_attendance: 'Anwesenheitstage',
+    col_assignments: 'Aufgaben',
+    never: 'Noch nicht',
+    switchesTitle: 'Schalter für die ganze Schule',
+    switchesIntro: 'Sie gelten für alle an der Schule. Ausschalten löscht nichts.',
+    ai: 'KI-Funktionen',
+    aiHint:
+      'KI-Entwürfe für Pläne, Arbeitsblätter, Folien, Bewertungsraster, Spiele, Lernpfade und Bewertungen sowie der Vorbereitungsagent. Das Vorlesen funktioniert weiter.',
+    studentFlags: 'Schülerinnen und Schüler, die Hilfe brauchen könnten, und KI-Einschätzungen',
+    studentFlagsHint:
+      'Erscheinen im Dashboard und auf den Schülerseiten. Ausschalten, um sie für alle auszublenden.',
+    save: 'Schalter speichern',
+    saved: 'Schalter gespeichert.',
   },
   schoolDeletion: {
     title: 'Alle Schuldaten löschen',

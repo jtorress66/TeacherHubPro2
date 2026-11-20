@@ -25,6 +25,7 @@ import type {
   PresentationDrafter,
   PresentationRepository,
   SubscriptionRepository,
+  SchoolRepository,
 } from '@thp/ports';
 import { checkAiAccess } from '../accounts/ai-access.ts';
 import { findOwned } from '../assistant/owned.ts';
@@ -45,6 +46,7 @@ export class RequestPresentationDraft {
     private readonly deps: {
       readonly jobs: JobQueue;
       readonly subscriptions: SubscriptionRepository;
+      readonly schools: SchoolRepository;
       readonly clock: Clock;
     },
   ) {}
