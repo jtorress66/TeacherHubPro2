@@ -781,16 +781,22 @@ export const marketingPt: MarketingMessages = {
     },
     accessibility: {
       title: 'Acessibilidade',
-      description: 'Como o TeacherHubPro trabalha pela acessibilidade.',
-      s1Title: 'Nosso objetivo',
+      description: 'Como o TeacherHubPro cumpre as normas de acessibilidade e o que ainda falta.',
+      s1Title: 'A nossa norma',
       s1Text:
-        'Nosso objetivo é que o TeacherHubPro atenda ao nível AA das WCAG 2, para que todo professor, aluno e família possa usá-lo.',
-      s2Title: 'O que fazemos',
+        'O TeacherHubPro é feito para cumprir as WCAG 2.1 nível AA, a norma exigida às escolas dos EUA. O nosso relatório de acessibilidade (VPAT), que percorre cada requisito, está disponível a pedido.',
+      s2Title: 'Como verificamos',
       s2Text:
-        'As páginas são testadas automaticamente quanto a problemas dos níveis A e AA das WCAG 2 a cada alteração. O aplicativo funciona com teclado, usa formulários e títulos identificados, segue sua configuração de modo claro ou escuro e pode ler textos em voz alta.',
-      s3Title: 'Fale conosco',
+        'Cada página que um professor, aluno ou família pode abrir é testada automaticamente quanto aos critérios WCAG 2.1 A e AA a cada alteração, em inglês e espanhol. Outros testes verificam que as tarefas principais funcionam só com o teclado, com um indicador de foco visível, e que as páginas cabem no ecrã de um telemóvel.',
+      s3Title: 'O que ajuda',
       s3Text:
-        'Se algo for difícil de usar, escreva para nós pela página de contato e diga qual página e o que aconteceu.',
+        'Formulários com rótulos, títulos e regiões; bom contraste do texto no ecrã e impressões a preto sobre branco; menos movimento quando o seu dispositivo o pede; toda a interface em sete idiomas; e um botão Ouvir que lê em voz alta as lições e as apresentações.',
+      s4Title: 'Ainda por fazer',
+      s4Text:
+        'Os PDF descarregados, como os boletins, ainda não estão etiquetados para leitores de ecrã; a mesma informação está na página da aplicação. As perguntas das tarefas ainda não têm botão Ouvir. As páginas geridas por outros, como o pagamento Stripe e o início de sessão Google, seguem a sua própria acessibilidade.',
+      s5Title: 'Diga-nos',
+      s5Text:
+        'Se algo for difícil de usar, ou se precisar do relatório de acessibilidade, escreva-nos a partir da página de contacto e indique a página e o que aconteceu.',
     },
     acceptableUse: {
       title: 'Uso aceitável',

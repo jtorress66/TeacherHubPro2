@@ -9,6 +9,7 @@ import { reopenAttendanceAction } from '../../../../../_lib/attendance-actions.t
 import { requireUser } from '../../../../../_lib/auth.ts';
 import { teacherTimeZone } from '../../../../../_lib/time-zone.ts';
 import { localeFrom, type LocaleParams } from '../../../../locale-param.ts';
+import { TableScroll } from '../../../../../../components/table-scroll.tsx';
 
 type Props = LocaleParams & {
   readonly params: Promise<{ locale: string; classId: string }>;
@@ -97,26 +98,28 @@ export default async function TakeAttendancePage(props: Props) {
           }))}
         />
       ) : (
-        <table className="roster" data-testid="attendance-read-only">
-          <thead>
-            <tr>
-              <th scope="col">{t('attendance.student')}</th>
-              <th scope="col">{t('attendance.status')}</th>
-              <th scope="col">{t('attendance.minutesLate')}</th>
-              <th scope="col">{t('attendance.note')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row) => (
-              <tr key={row.student.id}>
-                <th scope="row">{nameOf(row)}</th>
-                <td>{t(`attendance.status_${row.status}`)}</td>
-                <td>{row.minutesLate ?? ''}</td>
-                <td>{row.note ?? ''}</td>
+        <TableScroll>
+          <table className="roster" data-testid="attendance-read-only">
+            <thead>
+              <tr>
+                <th scope="col">{t('attendance.student')}</th>
+                <th scope="col">{t('attendance.status')}</th>
+                <th scope="col">{t('attendance.minutesLate')}</th>
+                <th scope="col">{t('attendance.note')}</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr key={row.student.id}>
+                  <th scope="row">{nameOf(row)}</th>
+                  <td>{t(`attendance.status_${row.status}`)}</td>
+                  <td>{row.minutesLate ?? ''}</td>
+                  <td>{row.note ?? ''}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </TableScroll>
       )}
 
       <section className="stack" aria-labelledby="recent-days">

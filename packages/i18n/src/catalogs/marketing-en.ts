@@ -754,16 +754,22 @@ export const marketingEn = {
     },
     accessibility: {
       title: 'Accessibility',
-      description: 'How TeacherHubPro works toward accessibility.',
-      s1Title: 'Our goal',
+      description: 'How TeacherHubPro meets accessibility standards, and what is not done yet.',
+      s1Title: 'Our standard',
       s1Text:
-        'We aim for TeacherHubPro to meet WCAG 2 level AA, so that every teacher, student and family can use it.',
-      s2Title: 'What we do',
+        'TeacherHubPro is built to meet WCAG 2.1 level AA, the standard US schools are asked to meet. Our accessibility report (VPAT), which goes through each requirement, is available on request.',
+      s2Title: 'How we check',
       s2Text:
-        'Pages are tested automatically for WCAG 2 A and AA issues as part of every change. The app works with a keyboard, uses labelled forms and headings, follows your light or dark setting, and can read text aloud.',
-      s3Title: 'Tell us',
+        'Every page a teacher, student or family can reach is tested automatically for WCAG 2.1 A and AA issues on every change, in English and Spanish. Other tests check that the main tasks work with a keyboard alone, with a visible focus ring, and that pages fit a phone screen.',
+      s3Title: 'What helps',
       s3Text:
-        'If something is hard to use, write to us from the contact page and tell us the page and what happened.',
+        'Labelled forms, headings and landmarks; strong text contrast on screen and dark-on-white printouts; less motion when your device asks for it; the whole interface in seven languages; and a Listen button that reads learning lessons and presentations aloud.',
+      s4Title: 'Not done yet',
+      s4Text:
+        'Downloaded PDFs, such as report cards, are not yet tagged for screen readers; the same information is on the page in the app. Assignment questions do not have a Listen button yet. Pages run by others, such as Stripe checkout and Google sign-in, follow their own accessibility.',
+      s5Title: 'Tell us',
+      s5Text:
+        'If something is hard to use, or you need the accessibility report, write to us from the contact page and tell us the page and what happened.',
     },
     acceptableUse: {
       title: 'Acceptable use',

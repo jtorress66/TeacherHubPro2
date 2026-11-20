@@ -38,7 +38,7 @@ export const legalSections: Readonly<Record<LegalSlug, number>> = {
   privacy: 10,
   terms: 6,
   cookies: 3,
-  accessibility: 3,
+  accessibility: 5,
   'acceptable-use': 3,
   ferpa: 3,
   coppa: 3,

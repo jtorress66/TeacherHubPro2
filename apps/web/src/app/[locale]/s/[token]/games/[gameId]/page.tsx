@@ -10,6 +10,7 @@ import {
   startStudentRoundAction,
 } from '../../../../../_lib/game-actions.ts';
 import { localeFrom, type LocaleParams } from '../../../../locale-param.ts';
+import { TableScroll } from '../../../../../../components/table-scroll.tsx';
 
 type Props = LocaleParams & {
   readonly params: Promise<{ locale: string; token: string; gameId: string }>;
@@ -56,29 +57,31 @@ export default async function StudentGamePage(props: Props) {
       {board.ok && board.value.length > 0 ? (
         <>
           <h2>{t('games.leaderboard')}</h2>
-          <table className="table" aria-label={t('games.leaderboard')}>
-            <thead>
-              <tr>
-                <th scope="col">{t('games.rank')}</th>
-                <th scope="col">{t('games.name')}</th>
-                <th scope="col">{t('games.score')}</th>
-                <th scope="col">{t('games.time')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {board.value.map((row) => (
-                <tr key={row.rank} aria-current={row.you ? 'true' : undefined}>
-                  <td>{row.rank}</td>
-                  <td>
-                    {row.name}
-                    {row.you ? ` (${t('gamePlay.you')})` : ''}
-                  </td>
-                  <td>{row.percent}%</td>
-                  <td>{formatDuration(row.durationMs)}</td>
+          <TableScroll>
+            <table className="table" aria-label={t('games.leaderboard')}>
+              <thead>
+                <tr>
+                  <th scope="col">{t('games.rank')}</th>
+                  <th scope="col">{t('games.name')}</th>
+                  <th scope="col">{t('games.score')}</th>
+                  <th scope="col">{t('games.time')}</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {board.value.map((row) => (
+                  <tr key={row.rank} aria-current={row.you ? 'true' : undefined}>
+                    <td>{row.rank}</td>
+                    <td>
+                      {row.name}
+                      {row.you ? ` (${t('gamePlay.you')})` : ''}
+                    </td>
+                    <td>{row.percent}%</td>
+                    <td>{formatDuration(row.durationMs)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </TableScroll>
         </>
       ) : null}
     </main>

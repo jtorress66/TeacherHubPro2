@@ -6,6 +6,7 @@ import { DraftPathForm } from '../../../../components/learning/draft-path-form.t
 import { getAppContainer } from '../../../../container.ts';
 import { requireUser } from '../../../_lib/auth.ts';
 import { localeFrom, type LocaleParams } from '../../locale-param.ts';
+import { TableScroll } from '../../../../components/table-scroll.tsx';
 
 type Props = LocaleParams & {
   readonly searchParams: Promise<{ class?: string; jobs?: string }>;
@@ -98,7 +99,7 @@ export default async function LearningPage(props: Props) {
 
       <h2>{t('learning.progress')}</h2>
       <p className="hint">{t('learning.practiceNote')}</p>
-      <div className="table-scroll">
+      <TableScroll>
         <table className="table" aria-label={t('learning.progress')}>
           <thead>
             <tr>
@@ -136,7 +137,7 @@ export default async function LearningPage(props: Props) {
             ))}
           </tbody>
         </table>
-      </div>
+      </TableScroll>
     </section>
   );
 }

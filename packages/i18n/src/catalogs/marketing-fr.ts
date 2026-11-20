@@ -812,16 +812,23 @@ export const marketingFr: MarketingMessages = {
     },
     accessibility: {
       title: 'Accessibilité',
-      description: "Comment TeacherHubPro progresse vers l'accessibilité.",
-      s1Title: 'Notre objectif',
+      description:
+        'Comment TeacherHubPro respecte les normes d’accessibilité, et ce qui reste à faire.',
+      s1Title: 'Notre norme',
       s1Text:
-        "Nous visons à ce que TeacherHubPro respecte le niveau AA des WCAG 2, afin que chaque enseignant, élève et famille puisse l'utiliser.",
-      s2Title: 'Ce que nous faisons',
+        'TeacherHubPro est conçu pour respecter les WCAG 2.1 niveau AA, la norme demandée aux écoles américaines. Notre rapport d’accessibilité (VPAT), qui reprend chaque exigence, est disponible sur demande.',
+      s2Title: 'Comment nous vérifions',
       s2Text:
-        "Les pages sont testées automatiquement pour détecter les problèmes WCAG 2 de niveaux A et AA à chaque modification. L'application fonctionne au clavier, utilise des formulaires et des titres étiquetés, suit votre réglage clair ou sombre, et peut lire le texte à voix haute.",
-      s3Title: 'Signalez-nous un problème',
+        'Chaque page qu’un enseignant, un élève ou une famille peut ouvrir est testée automatiquement pour les critères WCAG 2.1 A et AA à chaque modification, en anglais et en espagnol. D’autres tests vérifient que les tâches principales se font au clavier seul, avec un repère de focus visible, et que les pages tiennent sur l’écran d’un téléphone.',
+      s3Title: 'Ce qui aide',
       s3Text:
-        "Si quelque chose est difficile à utiliser, écrivez-nous depuis la page de contact en nous indiquant la page et ce qui s'est passé.",
+        'Formulaires étiquetés, titres et zones repères ; texte bien contrasté à l’écran et impressions noir sur blanc ; moins d’animations quand votre appareil le demande ; toute l’interface en sept langues ; et un bouton Écouter qui lit à voix haute les leçons et les présentations.',
+      s4Title: 'Pas encore fait',
+      s4Text:
+        'Les PDF téléchargés, comme les bulletins, ne sont pas encore balisés pour les lecteurs d’écran ; les mêmes informations figurent sur la page de l’application. Les questions des devoirs n’ont pas encore de bouton Écouter. Les pages gérées par d’autres, comme le paiement Stripe et la connexion Google, suivent leur propre accessibilité.',
+      s5Title: 'Dites-le-nous',
+      s5Text:
+        'Si quelque chose est difficile à utiliser, ou si vous avez besoin du rapport d’accessibilité, écrivez-nous depuis la page de contact en indiquant la page et ce qui s’est passé.',
     },
     acceptableUse: {
       title: 'Utilisation acceptable',

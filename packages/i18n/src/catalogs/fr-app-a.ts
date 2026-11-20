@@ -942,7 +942,7 @@ export const frAppA = {
     saveComment: 'Enregistrer le commentaire',
     commentSaved: 'Commentaire enregistré.',
     download: 'Télécharger le PDF',
-    downloadFor: 'Télécharger le bulletin de {name}',
+    downloadFor: 'Télécharger le PDF : bulletin de {name}',
     downloadAll: 'Tout télécharger ({count})',
     noStudents: 'Ajoutez des élèves à la classe pour créer des bulletins.',
     fileName: 'bulletin',

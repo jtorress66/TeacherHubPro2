@@ -940,7 +940,7 @@ export const itAppA = {
     saveComment: 'Salva commento',
     commentSaved: 'Commento salvato.',
     download: 'Scarica PDF',
-    downloadFor: 'Scarica la pagella di {name}',
+    downloadFor: 'Scarica PDF: pagella di {name}',
     downloadAll: 'Scarica tutte ({count})',
     noStudents: 'Aggiunga studenti alla classe per creare le pagelle.',
     fileName: 'pagella',

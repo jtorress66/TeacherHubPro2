@@ -13,6 +13,7 @@ import {
 } from '../../../../../../../server/gradebook-display.ts';
 import { requireUser } from '../../../../../../_lib/auth.ts';
 import { localeFrom, type LocaleParams } from '../../../../../locale-param.ts';
+import { TableScroll } from '../../../../../../../components/table-scroll.tsx';
 
 type Props = LocaleParams & { readonly params: Promise<{ locale: string; classId: string }> };
 
@@ -74,38 +75,40 @@ export default async function GradebookReportPage(props: Props) {
         </ul>
       </section>
 
-      <table className="roster">
-        <thead>
-          <tr>
-            <th scope="col">{t('gradebook.student')}</th>
-            <th scope="col">{t('gradebook.completed')}</th>
-            <th scope="col">{t('gradebook.pointsEarned')}</th>
-            <th scope="col">{t('gradebook.overall')}</th>
-            <th scope="col">{t('gradebook.gpa')}</th>
-            <th scope="col">{t('gradebook.letter')}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map(({ student, summary }) => (
-            <tr key={student.id} data-testid="report-row">
-              <th scope="row">
-                {student.lastName}, {student.firstName}
-              </th>
-              <td>{summary.completed}</td>
-              <td>
-                {formatPoints(summary.earned, locale)} / {formatPoints(summary.possible, locale)}
-              </td>
-              <td>{formatPercent(summary.overall, locale)}</td>
-              <td>{formatGpa(summary.gpa, locale)}</td>
-              <td>
-                <span className={`letter letter-${letterBand(summary.letter)}`}>
-                  {summary.letter ?? '—'}
-                </span>
-              </td>
+      <TableScroll>
+        <table className="roster">
+          <thead>
+            <tr>
+              <th scope="col">{t('gradebook.student')}</th>
+              <th scope="col">{t('gradebook.completed')}</th>
+              <th scope="col">{t('gradebook.pointsEarned')}</th>
+              <th scope="col">{t('gradebook.overall')}</th>
+              <th scope="col">{t('gradebook.gpa')}</th>
+              <th scope="col">{t('gradebook.letter')}</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {rows.map(({ student, summary }) => (
+              <tr key={student.id} data-testid="report-row">
+                <th scope="row">
+                  {student.lastName}, {student.firstName}
+                </th>
+                <td>{summary.completed}</td>
+                <td>
+                  {formatPoints(summary.earned, locale)} / {formatPoints(summary.possible, locale)}
+                </td>
+                <td>{formatPercent(summary.overall, locale)}</td>
+                <td>{formatGpa(summary.gpa, locale)}</td>
+                <td>
+                  <span className={`letter letter-${letterBand(summary.letter)}`}>
+                    {summary.letter ?? '—'}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </TableScroll>
       <p className="muted">{t('gradebook.reportNote')}</p>
     </section>
   );

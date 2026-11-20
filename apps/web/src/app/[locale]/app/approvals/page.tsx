@@ -12,6 +12,7 @@ import {
 import { requireUser } from '../../../_lib/auth.ts';
 import { teacherTimeZone } from '../../../_lib/time-zone.ts';
 import { localeFrom, type LocaleParams } from '../../locale-param.ts';
+import { TableScroll } from '../../../../components/table-scroll.tsx';
 
 type Props = LocaleParams & { readonly searchParams: Promise<SearchParams> };
 
@@ -99,7 +100,7 @@ export default async function ApprovalsPage(props: Props) {
       {rows.length === 0 ? (
         <p className="muted">{t('approvals.empty')}</p>
       ) : (
-        <div className="table-scroll">
+        <TableScroll>
           <table className="roster" aria-label={t('approvals.title')}>
             <thead>
               <tr>
@@ -125,7 +126,7 @@ export default async function ApprovalsPage(props: Props) {
               })}
             </tbody>
           </table>
-        </div>
+        </TableScroll>
       )}
       {limited ? <p className="hint">{t('approvals.limit', { count: rows.length })}</p> : null}
     </section>

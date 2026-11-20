@@ -11,6 +11,7 @@ import { messageFor } from '../../../../../../../server/error-messages.ts';
 import { requireUser } from '../../../../../../_lib/auth.ts';
 import { teacherTimeZone } from '../../../../../../_lib/time-zone.ts';
 import { localeFrom, type LocaleParams } from '../../../../../locale-param.ts';
+import { TableScroll } from '../../../../../../../components/table-scroll.tsx';
 
 type Props = LocaleParams & {
   readonly params: Promise<{ locale: string; classId: string }>;
@@ -85,7 +86,7 @@ export default async function AttendanceReportPage(props: Props) {
           {formatRate(rate, locale)} ({t(`attendance.band_${rateBand(rate)}`)})
         </span>
       </p>
-      <div className="table-scroll">
+      <TableScroll>
         <table className="roster">
           <thead>
             <tr>
@@ -121,7 +122,7 @@ export default async function AttendanceReportPage(props: Props) {
             })}
           </tbody>
         </table>
-      </div>
+      </TableScroll>
       <p className="muted">{t('attendance.reportNote')}</p>
     </section>
   );

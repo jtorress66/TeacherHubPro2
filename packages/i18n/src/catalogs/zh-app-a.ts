@@ -900,7 +900,7 @@ export const zhAppA = {
     saveComment: '保存评语',
     commentSaved: '评语已保存。',
     download: '下载 PDF',
-    downloadFor: '下载 {name} 的成绩单',
+    downloadFor: '下载 PDF：{name} 的成绩单',
     downloadAll: '全部下载（{count}）',
     noStudents: '请先向班级添加学生，再制作成绩单。',
     fileName: 'report-card',

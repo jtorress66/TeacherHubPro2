@@ -4,6 +4,7 @@ import { createTranslator } from '@thp/i18n';
 import { getAppContainer } from '../../../../container.ts';
 import { requireUser } from '../../../_lib/auth.ts';
 import { localeFrom, type LocaleParams } from '../../locale-param.ts';
+import { TableScroll } from '../../../../components/table-scroll.tsx';
 
 export const metadata: Metadata = { title: 'TeacherHubPro' };
 
@@ -20,35 +21,37 @@ export default async function GradebookOverviewPage(props: LocaleParams) {
       {classes.length === 0 ? (
         <p className="muted">{t('gradebook.noClasses')}</p>
       ) : (
-        <table className="roster">
-          <tbody>
-            {classes.map((cls) => (
-              <tr key={cls.id}>
-                <th scope="row">{cls.name}</th>
-                <td className="row-actions">
-                  <Link
-                    href={`/${locale}/app/classes/${cls.id}/gradebook`}
-                    aria-label={`${t('gradebook.open')}: ${cls.name}`}
-                  >
-                    {t('gradebook.open')}
-                  </Link>
-                  <Link
-                    href={`/${locale}/app/classes/${cls.id}/gradebook/report`}
-                    aria-label={`${t('gradebook.report')}: ${cls.name}`}
-                  >
-                    {t('gradebook.report')}
-                  </Link>
-                  <Link
-                    href={`/${locale}/app/classes/${cls.id}/report-cards`}
-                    aria-label={`${t('gradebook.reportCards')}: ${cls.name}`}
-                  >
-                    {t('gradebook.reportCards')}
-                  </Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <TableScroll>
+          <table className="roster">
+            <tbody>
+              {classes.map((cls) => (
+                <tr key={cls.id}>
+                  <th scope="row">{cls.name}</th>
+                  <td className="row-actions">
+                    <Link
+                      href={`/${locale}/app/classes/${cls.id}/gradebook`}
+                      aria-label={`${t('gradebook.open')}: ${cls.name}`}
+                    >
+                      {t('gradebook.open')}
+                    </Link>
+                    <Link
+                      href={`/${locale}/app/classes/${cls.id}/gradebook/report`}
+                      aria-label={`${t('gradebook.report')}: ${cls.name}`}
+                    >
+                      {t('gradebook.report')}
+                    </Link>
+                    <Link
+                      href={`/${locale}/app/classes/${cls.id}/report-cards`}
+                      aria-label={`${t('gradebook.reportCards')}: ${cls.name}`}
+                    >
+                      {t('gradebook.reportCards')}
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </TableScroll>
       )}
     </section>
   );

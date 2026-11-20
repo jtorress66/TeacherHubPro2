@@ -20,7 +20,7 @@ export function generateStaticParams() {
 }
 
 /** When the legal pages' wording last changed. */
-const updated = '2026-11-18';
+const updated = '2026-11-20';
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const { legal } = await props.params;

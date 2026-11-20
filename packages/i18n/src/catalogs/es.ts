@@ -936,7 +936,7 @@ export const es: Messages = {
     saveComment: 'Guardar comentario',
     commentSaved: 'Comentario guardado.',
     download: 'Descargar PDF',
-    downloadFor: 'Descargar la boleta de {name}',
+    downloadFor: 'Descargar PDF: boleta de {name}',
     downloadAll: 'Descargar todas ({count})',
     noStudents: 'Agrega estudiantes a la clase para crear boletas.',
     fileName: 'boleta',

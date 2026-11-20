@@ -1,4 +1,5 @@
 import { parseMarkdown, type Block, type Inline } from '../server/markdown.ts';
+import { TableScroll } from './table-scroll.tsx';
 
 function Inlines({ items }: { readonly items: readonly Inline[] }) {
   return (
@@ -41,30 +42,32 @@ function BlockView({ block }: { readonly block: Block }) {
     }
     case 'table':
       return (
-        <table className="md-table">
-          {block.header ? (
-            <thead>
-              <tr>
-                {block.header.map((cell, index) => (
-                  <th key={index} scope="col">
-                    <Inlines items={cell} />
-                  </th>
-                ))}
-              </tr>
-            </thead>
-          ) : null}
-          <tbody>
-            {block.rows.map((row, r) => (
-              <tr key={r}>
-                {row.map((cell, c) => (
-                  <td key={c}>
-                    <Inlines items={cell} />
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <TableScroll>
+          <table className="md-table">
+            {block.header ? (
+              <thead>
+                <tr>
+                  {block.header.map((cell, index) => (
+                    <th key={index} scope="col">
+                      <Inlines items={cell} />
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+            ) : null}
+            <tbody>
+              {block.rows.map((row, r) => (
+                <tr key={r}>
+                  {row.map((cell, c) => (
+                    <td key={c}>
+                      <Inlines items={cell} />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </TableScroll>
       );
     case 'rule':
       return <hr />;

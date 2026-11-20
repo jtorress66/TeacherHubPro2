@@ -21,6 +21,7 @@ import {
   restoreClassAction,
 } from '../../../../_lib/roster-actions.ts';
 import { localeFrom, type LocaleParams } from '../../../locale-param.ts';
+import { TableScroll } from '../../../../../components/table-scroll.tsx';
 
 type Props = LocaleParams & { readonly params: Promise<{ locale: string; classId: string }> };
 
@@ -126,55 +127,57 @@ export default async function ClassPage(props: Props) {
         {roster.length === 0 ? (
           <p className="muted">{t('students.empty')}</p>
         ) : (
-          <table className="roster">
-            <thead>
-              <tr>
-                <th scope="col">{t('students.lastName')}</th>
-                <th scope="col">{t('students.firstName')}</th>
-                <th scope="col">{t('students.studentNumber')}</th>
-                <th scope="col">
-                  <span className="visually-hidden">{t('students.edit')}</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {roster.map((student) => (
-                <tr key={student.id}>
-                  <td>
-                    <Link href={`/${locale}/app/classes/${cls.id}/students/${student.id}`}>
-                      {student.lastName}
-                    </Link>
-                  </td>
-                  <td>{student.firstName}</td>
-                  <td>{student.studentNumber ?? ''}</td>
-                  <td className="row-actions">
-                    {archived ? null : (
-                      <>
-                        <Link
-                          href={`/${locale}/app/classes/${cls.id}/students/${student.id}/edit`}
-                          aria-label={`${t('students.edit')} ${student.firstName} ${student.lastName}`}
-                        >
-                          {t('students.edit')}
-                        </Link>
-                        <form action={deleteStudentAction}>
-                          <input type="hidden" name="locale" value={locale} />
-                          <input type="hidden" name="classId" value={cls.id} />
-                          <input type="hidden" name="studentId" value={student.id} />
-                          <button
-                            type="submit"
-                            className="link-button"
-                            aria-label={`${t('students.delete')} ${student.firstName} ${student.lastName}`}
-                          >
-                            {t('students.delete')}
-                          </button>
-                        </form>
-                      </>
-                    )}
-                  </td>
+          <TableScroll>
+            <table className="roster">
+              <thead>
+                <tr>
+                  <th scope="col">{t('students.lastName')}</th>
+                  <th scope="col">{t('students.firstName')}</th>
+                  <th scope="col">{t('students.studentNumber')}</th>
+                  <th scope="col">
+                    <span className="visually-hidden">{t('students.edit')}</span>
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {roster.map((student) => (
+                  <tr key={student.id}>
+                    <td>
+                      <Link href={`/${locale}/app/classes/${cls.id}/students/${student.id}`}>
+                        {student.lastName}
+                      </Link>
+                    </td>
+                    <td>{student.firstName}</td>
+                    <td>{student.studentNumber ?? ''}</td>
+                    <td className="row-actions">
+                      {archived ? null : (
+                        <>
+                          <Link
+                            href={`/${locale}/app/classes/${cls.id}/students/${student.id}/edit`}
+                            aria-label={`${t('students.edit')} ${student.firstName} ${student.lastName}`}
+                          >
+                            {t('students.edit')}
+                          </Link>
+                          <form action={deleteStudentAction}>
+                            <input type="hidden" name="locale" value={locale} />
+                            <input type="hidden" name="classId" value={cls.id} />
+                            <input type="hidden" name="studentId" value={student.id} />
+                            <button
+                              type="submit"
+                              className="link-button"
+                              aria-label={`${t('students.delete')} ${student.firstName} ${student.lastName}`}
+                            >
+                              {t('students.delete')}
+                            </button>
+                          </form>
+                        </>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </TableScroll>
         )}
       </section>
 
