@@ -17,6 +17,7 @@ import {
 import { requireUser } from '../../../../../_lib/auth.ts';
 import { addStandardCategoriesAction } from '../../../../../_lib/gradebook-actions.ts';
 import { localeFrom, type LocaleParams } from '../../../../locale-param.ts';
+import { TableScroll } from '../../../../../../components/table-scroll.tsx';
 
 type Props = LocaleParams & { readonly params: Promise<{ locale: string; classId: string }> };
 
@@ -78,7 +79,7 @@ export default async function GradebookPage(props: Props) {
       )}
 
       {assignments.length === 0 ? null : <p className="hint">{t('gradebook.openHint')}</p>}
-      <div className="table-scroll">
+      <TableScroll>
         <table className="roster gradebook" data-testid="gradebook-grid">
           <thead>
             <tr>
@@ -116,7 +117,7 @@ export default async function GradebookPage(props: Props) {
             ))}
           </tbody>
         </table>
-      </div>
+      </TableScroll>
       {assignments.length === 0 ? <p className="muted">{t('gradebook.noAssignments')}</p> : null}
 
       <section className="card stack" aria-labelledby="categories-heading">
@@ -141,33 +142,35 @@ export default async function GradebookPage(props: Props) {
                 ? t('gradebook.totalWeight', { total: totalWeight })
                 : t('gradebook.weightWarning', { total: totalWeight })}
             </p>
-            <table className="roster">
-              <thead>
-                <tr>
-                  <th scope="col">{t('gradebook.category')}</th>
-                  <th scope="col">{t('gradebook.weight')}</th>
-                  <th scope="col" />
-                </tr>
-              </thead>
-              <tbody>
-                {categories.map((category) =>
-                  editable ? (
-                    <CategoryRow
-                      key={category.id}
-                      locale={locale}
-                      classId={cls.id}
-                      category={category}
-                    />
-                  ) : (
-                    <tr key={category.id}>
-                      <td>{category.name}</td>
-                      <td>{category.weightPercent}</td>
-                      <td />
-                    </tr>
-                  ),
-                )}
-              </tbody>
-            </table>
+            <TableScroll>
+              <table className="roster">
+                <thead>
+                  <tr>
+                    <th scope="col">{t('gradebook.category')}</th>
+                    <th scope="col">{t('gradebook.weight')}</th>
+                    <th scope="col" />
+                  </tr>
+                </thead>
+                <tbody>
+                  {categories.map((category) =>
+                    editable ? (
+                      <CategoryRow
+                        key={category.id}
+                        locale={locale}
+                        classId={cls.id}
+                        category={category}
+                      />
+                    ) : (
+                      <tr key={category.id}>
+                        <td>{category.name}</td>
+                        <td>{category.weightPercent}</td>
+                        <td />
+                      </tr>
+                    ),
+                  )}
+                </tbody>
+              </table>
+            </TableScroll>
           </>
         )}
         {editable ? <AddCategoryForm locale={locale} classId={cls.id} /> : null}

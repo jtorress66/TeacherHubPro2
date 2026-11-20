@@ -7,6 +7,7 @@ import {
   type RubricLevel,
 } from '@thp/domain';
 import { createTranslator, type Locale } from '@thp/i18n';
+import { TableScroll } from './table-scroll.tsx';
 
 const resize = (list: readonly string[], length: number) =>
   Array.from({ length }, (_, index) => list[index] ?? '');
@@ -74,7 +75,7 @@ export function RubricGrid(props: {
 
   return (
     <>
-      <div className="table-scroll">
+      <TableScroll>
         <table className="rubric-grid">
           <thead>
             <tr>
@@ -154,7 +155,7 @@ export function RubricGrid(props: {
             ))}
           </tbody>
         </table>
-      </div>
+      </TableScroll>
       <p className="actions">
         {criteria.length < rubricCriteriaRange.max ? (
           <button type="button" className="button secondary" onClick={addCriterion}>

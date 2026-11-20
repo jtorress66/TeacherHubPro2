@@ -15,6 +15,8 @@
   --muted: #566074;
   --border: #e6e2d9;
   --border-strong: #cfc9bc;
+  /* Form fields are found by their outline: 3:1 against any surface (WCAG 1.4.11). */
+  --field-border: #8a8578;
 
   --accent: #1d4ed8;
   --accent-hover: #1e40af;
@@ -55,6 +57,7 @@
     --muted: #a7b0c2;
     --border: #283244;
     --border-strong: #3a4659;
+    --field-border: #6b7891;
 
     --accent: #8db1ff;
     --accent-hover: #b4cbff;
@@ -285,7 +288,7 @@ details {
 .app-main input[type='time'],
 .app-main select {
   padding: 0.6rem 0.75rem;
-  border: 1px solid var(--border-strong);
+  border: 1px solid var(--field-border);
   border-radius: var(--radius-sm);
   background: var(--surface);
   color: var(--fg);
@@ -1470,7 +1473,7 @@ input[type='radio'] {
 
 .answer-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr));
   gap: 0.75rem;
 }
 
@@ -1697,7 +1700,7 @@ progress {
 
 .m-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr));
   gap: 1rem;
   margin: 1.5rem 0;
   padding: 0;
@@ -1705,11 +1708,11 @@ progress {
 }
 
 .m-grid-2 {
-  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(20rem, 100%), 1fr));
 }
 
 .m-grid-4 {
-  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(14rem, 100%), 1fr));
 }
 
 .m-card {

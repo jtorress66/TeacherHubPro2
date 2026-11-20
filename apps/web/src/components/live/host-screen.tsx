@@ -4,6 +4,7 @@ import type { LiveView } from '@thp/application';
 import { createTranslator, type Locale } from '@thp/i18n';
 import { AnswerOptions, optionLabel } from './answer-options.tsx';
 import { useCountdown, useLiveSocket } from './use-live-socket.ts';
+import { TableScroll } from '../table-scroll.tsx';
 
 function Leaderboard({ view, locale }: { readonly view: LiveView; readonly locale: Locale }) {
   const t = createTranslator(locale);
@@ -66,7 +67,7 @@ export function HostScreen(props: {
         <>
           {view.status !== 'ended' ? joinPanel : null}
           <h2>{t('live.studentsPlaying')}</h2>
-          <div className="table-scroll">
+          <TableScroll>
             <table className="table" aria-label={t('live.studentsPlaying')}>
               <thead>
                 <tr>
@@ -85,7 +86,7 @@ export function HostScreen(props: {
                 ))}
               </tbody>
             </table>
-          </div>
+          </TableScroll>
           {view.status !== 'ended' ? end : <p>{t('live.status_ended')}</p>}
         </>
       ) : null}

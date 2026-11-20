@@ -798,16 +798,23 @@ export const marketingDe: MarketingMessages = {
     },
     accessibility: {
       title: 'Barrierefreiheit',
-      description: 'Wie TeacherHubPro auf Barrierefreiheit hinarbeitet.',
-      s1Title: 'Unser Ziel',
+      description:
+        'Wie TeacherHubPro die Standards für Barrierefreiheit erfüllt und was noch fehlt.',
+      s1Title: 'Unser Standard',
       s1Text:
-        'Wir streben an, dass TeacherHubPro WCAG 2 Stufe AA erfüllt, damit jede Lehrkraft, jede Schülerin und jeder Schüler und jede Familie es nutzen kann.',
-      s2Title: 'Was wir tun',
+        'TeacherHubPro ist darauf ausgelegt, WCAG 2.1 Stufe AA zu erfüllen, den Standard, den US-Schulen erfüllen sollen. Unser Bericht zur Barrierefreiheit (VPAT), der jede Anforderung durchgeht, ist auf Anfrage erhältlich.',
+      s2Title: 'Wie wir prüfen',
       s2Text:
-        'Die Seiten werden bei jeder Änderung automatisch auf Probleme nach WCAG 2 A und AA getestet. Die App funktioniert mit der Tastatur, verwendet beschriftete Formulare und Überschriften, folgt Ihrer hellen oder dunklen Einstellung und kann Texte vorlesen.',
-      s3Title: 'Sagen Sie es uns',
+        'Jede Seite, die eine Lehrkraft, ein Kind oder eine Familie erreichen kann, wird bei jeder Änderung automatisch auf WCAG 2.1 A und AA geprüft, auf Englisch und Spanisch. Weitere Tests prüfen, dass die wichtigsten Aufgaben allein mit der Tastatur und mit sichtbarem Fokusrahmen funktionieren und dass die Seiten auf einen Handybildschirm passen.',
+      s3Title: 'Was hilft',
       s3Text:
-        'Wenn etwas schwer zu bedienen ist, schreiben Sie uns über die Kontaktseite und nennen Sie uns die Seite und was passiert ist.',
+        'Beschriftete Formulare, Überschriften und Bereiche; starker Textkontrast am Bildschirm und Ausdrucke schwarz auf weiß; weniger Bewegung, wenn Ihr Gerät das wünscht; die ganze Oberfläche in sieben Sprachen; und eine Anhören-Schaltfläche, die Lerneinheiten und Präsentationen vorliest.',
+      s4Title: 'Noch nicht fertig',
+      s4Text:
+        'Heruntergeladene PDFs wie Zeugnisse sind noch nicht für Screenreader getaggt; dieselben Angaben stehen auf der Seite in der App. Aufgabenfragen haben noch keine Anhören-Schaltfläche. Seiten anderer Anbieter, etwa die Stripe-Zahlung und die Google-Anmeldung, folgen ihrer eigenen Barrierefreiheit.',
+      s5Title: 'Sagen Sie es uns',
+      s5Text:
+        'Wenn etwas schwer zu bedienen ist oder Sie den Bericht zur Barrierefreiheit brauchen, schreiben Sie uns über die Kontaktseite und nennen Sie die Seite und was passiert ist.',
     },
     acceptableUse: {
       title: 'Zulässige Nutzung',

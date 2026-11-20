@@ -933,7 +933,7 @@ export const ptAppA = {
     saveComment: 'Salvar comentário',
     commentSaved: 'Comentário salvo.',
     download: 'Baixar PDF',
-    downloadFor: 'Baixar o boletim de {name}',
+    downloadFor: 'Baixar PDF: boletim de {name}',
     downloadAll: 'Baixar todos ({count})',
     noStudents: 'Adicione alunos à turma para gerar boletins.',
     fileName: 'boletim',

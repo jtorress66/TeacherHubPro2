@@ -7,6 +7,7 @@ import { RoleForm, SendLinkForm, TransferForm } from '../../../../components/adm
 import { getAppContainer } from '../../../../container.ts';
 import { requireUser } from '../../../_lib/auth.ts';
 import { localeFrom, type LocaleParams } from '../../locale-param.ts';
+import { TableScroll } from '../../../../components/table-scroll.tsx';
 
 export const metadata: Metadata = { title: 'TeacherHubPro' };
 
@@ -30,7 +31,7 @@ export default async function SchoolUsersPage(props: LocaleParams) {
           <span className="muted"> · {t('lti.adminLinkText')}</span>
         </p>
       ) : null}
-      <div className="table-scroll">
+      <TableScroll>
         <table className="roster" aria-label={t('admin.title')}>
           <thead>
             <tr>
@@ -75,7 +76,7 @@ export default async function SchoolUsersPage(props: LocaleParams) {
             })}
           </tbody>
         </table>
-      </div>
+      </TableScroll>
       <section className="card stack" aria-labelledby="transfer-heading">
         <h2 id="transfer-heading">{t('admin.transfer')}</h2>
         <p className="hint">{t('admin.transferIntro')}</p>

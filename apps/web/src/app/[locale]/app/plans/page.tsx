@@ -9,6 +9,7 @@ import { monthCalendar, monthOf, shiftMonth } from '../../../../server/plan-cale
 import { requireUser } from '../../../_lib/auth.ts';
 import { teacherTimeZone } from '../../../_lib/time-zone.ts';
 import { localeFrom, type LocaleParams } from '../../locale-param.ts';
+import { TableScroll } from '../../../../components/table-scroll.tsx';
 
 type Props = LocaleParams & {
   readonly searchParams: Promise<{ folder?: string; view?: string; month?: string }>;
@@ -44,7 +45,7 @@ function Calendar(props: {
           {t('planner.nextMonth')} →
         </Link>
       </p>
-      <div className="table-scroll">
+      <TableScroll>
         <table className="plan-calendar" data-testid="plan-calendar">
           <thead>
             <tr>
@@ -75,7 +76,7 @@ function Calendar(props: {
             ))}
           </tbody>
         </table>
-      </div>
+      </TableScroll>
     </section>
   );
 }

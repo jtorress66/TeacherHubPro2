@@ -15,6 +15,7 @@ import {
 } from '../app/_lib/gradebook-actions.ts';
 import { Field, FormAlert, Submit } from './forms.tsx';
 import { prefill } from '../server/form-values.ts';
+import { TableScroll } from './table-scroll.tsx';
 
 const initial: GradebookFormState = {};
 
@@ -260,7 +261,7 @@ export function GradeEntryForm(
       <FormAlert message={state.errors?.form} />
       <Saved message={state.saved && !state.errors && t('gradebook.gradesSaved')} />
       <p className="muted">{t('gradebook.entryHelp')}</p>
-      <div className="table-scroll">
+      <TableScroll>
         <table className="roster">
           <thead>
             <tr>
@@ -320,7 +321,7 @@ export function GradeEntryForm(
             })}
           </tbody>
         </table>
-      </div>
+      </TableScroll>
       {props.editable ? <Submit label={t('gradebook.saveGrades')} /> : null}
     </form>
   );

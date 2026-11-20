@@ -4,6 +4,7 @@ import { PrintButton } from '../../../../components/browser-helpers.tsx';
 import { getAppContainer } from '../../../../container.ts';
 import { teacherTimeZone } from '../../../_lib/time-zone.ts';
 import { localeFrom, type LocaleParams } from '../../locale-param.ts';
+import { TableScroll } from '../../../../components/table-scroll.tsx';
 
 type Props = LocaleParams & { readonly params: Promise<{ locale: string; token: string }> };
 
@@ -55,29 +56,31 @@ export default async function FamilyPortalPage(props: Props) {
       {report.assignments.length === 0 ? (
         <p>{t('family.noGrades')}</p>
       ) : (
-        <table className="table" aria-label={t('family.grades')}>
-          <thead>
-            <tr>
-              <th scope="col">{t('family.assignment')}</th>
-              <th scope="col">{t('family.due')}</th>
-              <th scope="col">{t('family.score')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {report.assignments.map((a, i) => (
-              <tr key={i}>
-                <td>{a.title}</td>
-                <td>{a.dueDate === null ? '—' : date(a.dueDate)}</td>
-                <td>
-                  {a.score === null
-                    ? t(`family.status_${a.status}`)
-                    : t('family.points', { score: a.score, points: a.points })}
-                  {a.status === 'late' ? ` · ${t('family.status_late')}` : ''}
-                </td>
+        <TableScroll>
+          <table className="table" aria-label={t('family.grades')}>
+            <thead>
+              <tr>
+                <th scope="col">{t('family.assignment')}</th>
+                <th scope="col">{t('family.due')}</th>
+                <th scope="col">{t('family.score')}</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {report.assignments.map((a, i) => (
+                <tr key={i}>
+                  <td>{a.title}</td>
+                  <td>{a.dueDate === null ? '—' : date(a.dueDate)}</td>
+                  <td>
+                    {a.score === null
+                      ? t(`family.status_${a.status}`)
+                      : t('family.points', { score: a.score, points: a.points })}
+                    {a.status === 'late' ? ` · ${t('family.status_late')}` : ''}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </TableScroll>
       )}
 
       <h2>{t('family.upcoming')}</h2>

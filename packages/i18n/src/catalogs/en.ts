@@ -924,7 +924,7 @@ export const en = {
     saveComment: 'Save comment',
     commentSaved: 'Comment saved.',
     download: 'Download PDF',
-    downloadFor: 'Download the report card of {name}',
+    downloadFor: 'Download PDF: report card of {name}',
     downloadAll: 'Download all ({count})',
     noStudents: 'Add students to the class to make report cards.',
     fileName: 'report-card',

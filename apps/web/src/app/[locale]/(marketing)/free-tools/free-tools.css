@@ -1,7 +1,7 @@
 /* The free tools: a grade calculator, a group maker and a rubric maker. */
 
 .free-tool-list {
-  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
 }
 
 .free-tool-list h2 {
@@ -102,7 +102,7 @@
   list-style: none;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(12rem, 100%), 1fr));
   gap: 1rem;
 }
 

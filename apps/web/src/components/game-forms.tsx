@@ -15,6 +15,7 @@ import { gameModeChoices, kindForMode } from '../server/game-forms.ts';
 import { Field, FormAlert, Submit } from './forms.tsx';
 import { Hidden, Select, type Option } from './form-fields.tsx';
 import { prefill, type Prefill } from '../server/form-values.ts';
+import { TableScroll } from './table-scroll.tsx';
 
 const initial: GameFormState = {};
 const option = (id: string, name: string): Option => ({ id, name });
@@ -362,7 +363,7 @@ export function ResultsForm(props: {
           {state.message}
         </p>
       ) : null}
-      <div className="table-scroll">
+      <TableScroll>
         <table className="table">
           <thead>
             <tr>
@@ -400,7 +401,7 @@ export function ResultsForm(props: {
             ))}
           </tbody>
         </table>
-      </div>
+      </TableScroll>
       {props.grading ? (
         <>
           <p className="hint">{t('games.confirmHint')}</p>

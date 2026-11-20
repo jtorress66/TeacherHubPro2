@@ -175,7 +175,7 @@ h2 {
   margin: 0;
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr));
 }
 
 .plan-grid p {
@@ -185,7 +185,7 @@ h2 {
 .settings-grid {
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
 }
 
 /* Connected tools: the name with its group tag on one line, wrapping on narrow screens */
@@ -213,7 +213,7 @@ h2 {
 .field-row {
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(10rem, 100%), 1fr));
 }
 
 fieldset {
@@ -369,7 +369,12 @@ details[open] > summary {
   }
 }
 
+/* Never wider than the page, even inside a grid or flex layout; `relative` keeps
+   screen-reader-only text inside the box too. */
 .table-scroll {
+  position: relative;
+  max-width: 100%;
+  min-width: 0;
   overflow-x: auto;
 }
 
@@ -479,7 +484,7 @@ details[open] > summary {
 
 .stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(9rem, 100%), 1fr));
   gap: 1rem;
   margin: 0;
 }
@@ -1110,7 +1115,7 @@ details[open] > summary {
 
 .memory-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(8rem, 100%), 1fr));
   gap: 0.5rem;
 }
 
@@ -1651,7 +1656,7 @@ tr[aria-current='true'] {
 .rubric-columns {
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
   align-items: start;
 }
 

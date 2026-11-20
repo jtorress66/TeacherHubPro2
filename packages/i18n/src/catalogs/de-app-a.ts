@@ -945,7 +945,7 @@ export const deAppA = {
     saveComment: 'Kommentar speichern',
     commentSaved: 'Kommentar gespeichert.',
     download: 'PDF herunterladen',
-    downloadFor: 'Zeugnis von {name} herunterladen',
+    downloadFor: 'PDF herunterladen: Zeugnis von {name}',
     downloadAll: 'Alle herunterladen ({count})',
     noStudents: 'Fügen Sie der Klasse Schüler:innen hinzu, um Zeugnisse zu erstellen.',
     fileName: 'zeugnis',

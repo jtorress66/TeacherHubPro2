@@ -6,6 +6,7 @@ import { getAppContainer } from '../../../../container.ts';
 import { requireUser } from '../../../_lib/auth.ts';
 import { teacherTimeZone } from '../../../_lib/time-zone.ts';
 import { localeFrom, type LocaleParams } from '../../locale-param.ts';
+import { TableScroll } from '../../../../components/table-scroll.tsx';
 
 export const metadata: Metadata = { title: 'TeacherHubPro' };
 
@@ -37,7 +38,7 @@ export default async function AttendanceOverviewPage(
       {classes.length === 0 ? (
         <p className="muted">{t('attendance.noClasses')}</p>
       ) : (
-        <div className="table-scroll">
+        <TableScroll>
           <table className="roster">
             <tbody>
               {classes.map(({ cls, status }) => (
@@ -66,7 +67,7 @@ export default async function AttendanceOverviewPage(
               ))}
             </tbody>
           </table>
-        </div>
+        </TableScroll>
       )}
     </section>
   );

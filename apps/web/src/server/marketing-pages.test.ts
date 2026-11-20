@@ -159,3 +159,15 @@ describe('the privacy policy', () => {
     }
   });
 });
+
+describe('the accessibility statement', () => {
+  it('names the standard, offers the report, and is honest about what is not done yet', async () => {
+    const { catalogs } = await import('@thp/i18n');
+    const text = Object.values(catalogs.en.legal.accessibility).join(' ');
+    expect(text).toContain('WCAG 2.1 level AA');
+    expect(text).toContain('accessibility report (VPAT)');
+    expect(text).toContain('not yet tagged for screen readers');
+    // The site is always dark on screen: it does not follow a light or dark setting.
+    expect(text).not.toContain('light or dark setting');
+  });
+});

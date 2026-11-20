@@ -790,16 +790,22 @@ export const marketingIt: MarketingMessages = {
     },
     accessibility: {
       title: 'Accessibilità',
-      description: "Come TeacherHubPro lavora per l'accessibilità.",
-      s1Title: 'Il nostro obiettivo',
+      description: 'Come TeacherHubPro rispetta gli standard di accessibilità e cosa manca ancora.',
+      s1Title: 'Il nostro standard',
       s1Text:
-        'Puntiamo a far sì che TeacherHubPro soddisfi le WCAG 2 livello AA, affinché ogni docente, studente e famiglia possa usarlo.',
-      s2Title: 'Cosa facciamo',
+        'TeacherHubPro è costruito per rispettare le WCAG 2.1 livello AA, lo standard richiesto alle scuole statunitensi. Il nostro rapporto sull’accessibilità (VPAT), che esamina ogni requisito, è disponibile su richiesta.',
+      s2Title: 'Come verifichiamo',
       s2Text:
-        "Le pagine vengono testate automaticamente per i problemi WCAG 2 A e AA a ogni modifica. L'app funziona con la tastiera, usa moduli e intestazioni con etichette, segue la Sua impostazione chiara o scura e può leggere il testo ad alta voce.",
-      s3Title: 'Ce lo segnali',
+        'Ogni pagina che un insegnante, uno studente o una famiglia può aprire viene controllata automaticamente per i criteri WCAG 2.1 A e AA a ogni modifica, in inglese e in spagnolo. Altri test verificano che le attività principali funzionino con la sola tastiera, con un indicatore di focus visibile, e che le pagine stiano nello schermo di un telefono.',
+      s3Title: 'Cosa aiuta',
       s3Text:
-        'Se qualcosa è difficile da usare, ci scriva dalla pagina dei contatti indicando la pagina e cosa è successo.',
+        'Moduli con etichette, titoli e aree; buon contrasto del testo sullo schermo e stampe nero su bianco; meno movimento quando il dispositivo lo chiede; tutta l’interfaccia in sette lingue; e un pulsante Ascolta che legge ad alta voce le lezioni e le presentazioni.',
+      s4Title: 'Non ancora fatto',
+      s4Text:
+        'I PDF scaricati, come le pagelle, non sono ancora etichettati per i lettori di schermo; le stesse informazioni sono nella pagina dell’app. Le domande dei compiti non hanno ancora il pulsante Ascolta. Le pagine gestite da altri, come il pagamento Stripe e l’accesso con Google, seguono la propria accessibilità.',
+      s5Title: 'Diccelo',
+      s5Text:
+        'Se qualcosa è difficile da usare, o ti serve il rapporto sull’accessibilità, scrivici dalla pagina dei contatti indicando la pagina e cosa è successo.',
     },
     acceptableUse: {
       title: 'Uso accettabile',

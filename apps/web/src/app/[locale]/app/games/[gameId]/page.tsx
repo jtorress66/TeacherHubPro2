@@ -16,6 +16,7 @@ import { contentText } from '../../../../../server/game-text.ts';
 import { deleteGameAction } from '../../../../_lib/game-actions.ts';
 import { requireUser } from '../../../../_lib/auth.ts';
 import { localeFrom, type LocaleParams } from '../../../locale-param.ts';
+import { TableScroll } from '../../../../../components/table-scroll.tsx';
 
 type Props = LocaleParams & {
   readonly params: Promise<{ locale: string; gameId: string }>;
@@ -131,26 +132,28 @@ export default async function GamePage(props: Props) {
             }))}
           />
           <h3>{t('games.leaderboard')}</h3>
-          <table className="table" aria-label={t('games.leaderboard')}>
-            <thead>
-              <tr>
-                <th scope="col">{t('games.rank')}</th>
-                <th scope="col">{t('games.name')}</th>
-                <th scope="col">{t('games.score')}</th>
-                <th scope="col">{t('games.time')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {results.value.leaderboard.map((entry) => (
-                <tr key={entry.studentId}>
-                  <td>{entry.rank}</td>
-                  <td>{entry.name}</td>
-                  <td>{entry.percent}%</td>
-                  <td>{formatDuration(entry.durationMs)}</td>
+          <TableScroll>
+            <table className="table" aria-label={t('games.leaderboard')}>
+              <thead>
+                <tr>
+                  <th scope="col">{t('games.rank')}</th>
+                  <th scope="col">{t('games.name')}</th>
+                  <th scope="col">{t('games.score')}</th>
+                  <th scope="col">{t('games.time')}</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {results.value.leaderboard.map((entry) => (
+                  <tr key={entry.studentId}>
+                    <td>{entry.rank}</td>
+                    <td>{entry.name}</td>
+                    <td>{entry.percent}%</td>
+                    <td>{formatDuration(entry.durationMs)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </TableScroll>
         </>
       )}
 
@@ -168,44 +171,48 @@ export default async function GamePage(props: Props) {
           </p>
           <p className="hint">{t('live.practiceNote')}</p>
           <h3>{t('live.hardest')}</h3>
-          <table className="table" aria-label={t('live.hardest')}>
-            <thead>
-              <tr>
-                <th scope="col">{t('live.question')}</th>
-                <th scope="col">{t('live.answered')}</th>
-                <th scope="col">{t('live.accuracy')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {insights.value.questions.map((q) => (
-                <tr key={q.prompt}>
-                  <td>{q.prompt}</td>
-                  <td>{q.answered}</td>
-                  <td>{q.percentCorrect}%</td>
+          <TableScroll>
+            <table className="table" aria-label={t('live.hardest')}>
+              <thead>
+                <tr>
+                  <th scope="col">{t('live.question')}</th>
+                  <th scope="col">{t('live.answered')}</th>
+                  <th scope="col">{t('live.accuracy')}</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          <table className="table" aria-label={t('live.student')}>
-            <thead>
-              <tr>
-                <th scope="col">{t('live.student')}</th>
-                <th scope="col">{t('live.sessionsCount')}</th>
-                <th scope="col">{t('live.answered')}</th>
-                <th scope="col">{t('live.accuracy')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {insights.value.students.map((s) => (
-                <tr key={s.studentId}>
-                  <td>{s.firstName}</td>
-                  <td>{s.sessions}</td>
-                  <td>{s.answered}</td>
-                  <td>{s.accuracy}%</td>
+              </thead>
+              <tbody>
+                {insights.value.questions.map((q) => (
+                  <tr key={q.prompt}>
+                    <td>{q.prompt}</td>
+                    <td>{q.answered}</td>
+                    <td>{q.percentCorrect}%</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </TableScroll>
+          <TableScroll>
+            <table className="table" aria-label={t('live.student')}>
+              <thead>
+                <tr>
+                  <th scope="col">{t('live.student')}</th>
+                  <th scope="col">{t('live.sessionsCount')}</th>
+                  <th scope="col">{t('live.answered')}</th>
+                  <th scope="col">{t('live.accuracy')}</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {insights.value.students.map((s) => (
+                  <tr key={s.studentId}>
+                    <td>{s.firstName}</td>
+                    <td>{s.sessions}</td>
+                    <td>{s.answered}</td>
+                    <td>{s.accuracy}%</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </TableScroll>
         </>
       )}
 

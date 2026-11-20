@@ -2,6 +2,7 @@ import type { SchoolId, User } from '@thp/domain';
 import { createTranslator, type Locale } from '@thp/i18n';
 import { getAppContainer } from '../container.ts';
 import { teacherTimeZone } from '../app/_lib/time-zone.ts';
+import { TableScroll } from './table-scroll.tsx';
 
 /** A school's latest activity log, newest first, for its admins. */
 export async function ActivityLog(props: {
@@ -33,7 +34,7 @@ export async function ActivityLog(props: {
       {events.value.length === 0 ? (
         <p>{t('activity.empty')}</p>
       ) : (
-        <div className="table-scroll">
+        <TableScroll>
           <table className="roster" aria-label={t('activity.title')}>
             <thead>
               <tr>
@@ -52,7 +53,7 @@ export async function ActivityLog(props: {
               ))}
             </tbody>
           </table>
-        </div>
+        </TableScroll>
       )}
     </section>
   );
