@@ -158,6 +158,17 @@ describe('with AI turned off', () => {
     );
   });
 
+  it('applies to everyone in the school, a super admin included', async () => {
+    const world = makeWorld();
+    const actor = await owner(world);
+    await turnOff(world, actor, { ai: false, studentFlags: true });
+
+    const superAdmin = { ...actor, role: 'super_admin' as const };
+    expect(await new RequestGeneration(world).execute({ actor: superAdmin, ...worksheet })).toEqual(
+      { ok: false, error: { code: 'ai_off_for_school' } },
+    );
+  });
+
   it('still reads text aloud: listening is not drafting', async () => {
     const world = makeWorld();
     const actor = await owner(world);
