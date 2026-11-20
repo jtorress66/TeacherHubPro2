@@ -738,7 +738,7 @@ export const marketingEs: MarketingMessages = {
         'Las contraseñas se guardan como hash de un solo sentido. Los enlaces de sesión, de estudiantes, de familias y de contraseña son aleatorios y se guardan solo como hash. Los tokens de Google Classroom, de Canva y de Microsoft se cifran. Cada registro pertenece a una escuela y solo lo pueden ver los usuarios de esa escuela. El enlace de calendario de un maestro también es aleatorio y se guarda solo como hash: muestra únicamente los títulos de los planes y de las tareas con sus fechas, nunca información de los estudiantes, y el maestro puede reemplazarlo o desactivarlo en Configuración.',
       s7Title: 'Conservación y eliminación',
       s7Text:
-        'Los datos se conservan mientras la cuenta esté activa. Los PDF subidos se borran en cuanto se leen. Los chats del sitio web se borran a los 30 días. Para pedir una copia o el borrado de sus datos, escriba a privacy@teacherhubpro.com. Cuando termina el contrato de una escuela, si lo pide le devolvemos sus datos en archivos, luego los borramos del servicio y se lo confirmamos por escrito.',
+        'Los datos se conservan mientras la cuenta esté activa. Los PDF subidos se borran en cuanto se leen. Los chats del sitio web se borran a los 30 días. Para pedir una copia o el borrado de sus datos, escriba a privacy@teacherhubpro.com. Los administradores de la escuela y el titular de la cuenta también pueden hacerlo ellos mismos en Configuración: “Descargar todos los datos de la escuela” entrega un ZIP de hojas de cálculo, y “Eliminar todos los datos de la escuela” lo borra todo tras una espera de 30 días que se puede cancelar. Cuando termina el contrato de una escuela, si lo pide le devolvemos sus datos en archivos, luego los borramos del servicio y se lo confirmamos por escrito.',
       s8Title: 'Si algo sale mal',
       s8Text:
         'Si una brecha de seguridad afecta los datos de su escuela, se lo comunicamos en un plazo de 72 horas desde que la descubrimos: qué pasó, qué datos estuvieron involucrados y qué estamos haciendo al respecto.',
@@ -856,7 +856,7 @@ export const marketingEs: MarketingMessages = {
       s4Text: 'El chat del sitio es un asistente de IA y lo dice cuando se le pregunta.',
       s5Title: 'Proveedores',
       s5Text:
-        'Los borradores de IA se hacen con Claude, de Anthropic; el audio de lectura en voz alta, con OpenAI.',
+        'Los borradores de IA se hacen con Claude, de Anthropic; el audio de lectura en voz alta, con OpenAI. Según sus condiciones para empresas, ninguna de las dos lo usa para entrenar sus modelos y ambas lo borran en un plazo de 30 días, salvo que deban conservarlo más tiempo para investigar un mal uso o por ley.',
     },
     trust: {
       title: 'Centro de confianza',

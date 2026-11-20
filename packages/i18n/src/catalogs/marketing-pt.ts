@@ -734,7 +734,7 @@ export const marketingPt: MarketingMessages = {
         'As senhas são guardadas como hashes unidirecionais. Os links de sessão, de alunos, de famílias e de senha são aleatórios e guardados apenas como hashes. Os tokens do Google Classroom, do Canva e da Microsoft são criptografados. Cada registro pertence a uma única escola e só pode ser acessado pelos usuários dessa escola. O link do calendário de um professor também é aleatório e guardado apenas como hash: ele mostra só os títulos dos planos e das atividades com as datas, nunca informações dos alunos, e o professor pode substituí-lo ou desativá-lo nas Configurações.',
       s7Title: 'Retenção e exclusão de dados',
       s7Text:
-        'Os dados ficam guardados enquanto a conta estiver ativa. Os PDFs enviados são excluídos assim que são lidos. As conversas do site são excluídas após 30 dias. Para pedir uma cópia ou a exclusão dos seus dados, escreva para privacy@teacherhubpro.com. Quando o contrato de uma escola termina, devolvemos os dados dela em arquivos mediante pedido, depois os excluímos do serviço e confirmamos por escrito.',
+        'Os dados ficam guardados enquanto a conta estiver ativa. Os PDFs enviados são excluídos assim que são lidos. As conversas do site são excluídas após 30 dias. Para pedir uma cópia ou a exclusão dos seus dados, escreva para privacy@teacherhubpro.com. Os administradores da escola e o titular da conta também podem fazer isso sozinhos em Configurações: “Baixar todos os dados da escola” gera um ZIP de planilhas, e “Excluir todos os dados da escola” apaga tudo após uma espera de 30 dias que pode ser cancelada. Quando o contrato de uma escola termina, devolvemos os dados dela em arquivos mediante pedido, depois os excluímos do serviço e confirmamos por escrito.',
       s8Title: 'Se algo der errado',
       s8Text:
         'Se uma violação de segurança afetar os dados da sua escola, avisamos você em até 72 horas após descobri-la: o que aconteceu, quais dados foram envolvidos e o que estamos fazendo a respeito.',
@@ -850,7 +850,7 @@ export const marketingPt: MarketingMessages = {
       s4Text: 'O chat do site é um assistente de IA e diz isso quando perguntado.',
       s5Title: 'Provedores',
       s5Text:
-        'Os rascunhos de IA são feitos com o Claude, da Anthropic; o áudio de leitura em voz alta, com a OpenAI.',
+        'Os rascunhos de IA são feitos com o Claude, da Anthropic; o áudio de leitura em voz alta, com a OpenAI. Pelos termos empresariais, nenhuma das duas o usa para treinar os seus modelos e ambas o excluem em até 30 dias, a menos que precisem guardá-lo por mais tempo para investigar abusos ou por exigência legal.',
     },
     trust: {
       title: 'Central de confiança',

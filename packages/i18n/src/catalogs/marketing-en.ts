@@ -707,7 +707,7 @@ export const marketingEn = {
         'Passwords are stored as one-way hashes. Session, student, family and password links are random and stored only as hashes. Google Classroom, Canva and Microsoft tokens are encrypted. Every record belongs to one school and is reachable only by that school’s users. A teacher’s calendar link is also random and stored only as a hash: it shows only plan titles and assignment titles with their dates, never student information, and the teacher can replace it or turn it off in Settings.',
       s7Title: 'Keeping and deleting data',
       s7Text:
-        'Data stays while the account is active. Uploaded PDFs are deleted once they are read. Website chats are deleted after 30 days. To ask for a copy or deletion of your data, write to privacy@teacherhubpro.com. When a school’s contract ends, we return its data as files on request, then delete it from the service and confirm in writing.',
+        'Data stays while the account is active. Uploaded PDFs are deleted once they are read. Website chats are deleted after 30 days. To ask for a copy or deletion of your data, write to privacy@teacherhubpro.com. A school’s admins and the account owner can also do this themselves in Settings: “Download all school data” gives one ZIP of spreadsheets, and “Delete all school data” erases everything after a 30-day hold that can be canceled. When a school’s contract ends, we return its data as files on request, then delete it from the service and confirm in writing.',
       s8Title: 'If something goes wrong',
       s8Text:
         'If a security breach affects your school’s data, we tell you within 72 hours of finding it: what happened, what data was involved and what we are doing about it.',
@@ -822,7 +822,8 @@ export const marketingEn = {
       s4Title: 'Honest about AI',
       s4Text: 'The website chat is an AI assistant and says so when asked.',
       s5Title: 'Providers',
-      s5Text: 'AI drafts are made with Anthropic’s Claude; read-aloud audio with OpenAI.',
+      s5Text:
+        'AI drafts are made with Anthropic’s Claude; read-aloud audio with OpenAI. Under their business terms, these companies do not use what we send them to train their models, and delete it within 30 days, unless they must keep it longer to look into misuse or by law.',
     },
     trust: {
       title: 'Trust center',

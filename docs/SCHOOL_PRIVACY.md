@@ -8,8 +8,8 @@ This guide is not legal advice. Have a lawyer read your filled-in agreement befo
 
 1. **Form the LLC.** The agreement is signed by the business, so use its exact legal name and address once it exists.
 2. **Create the mailbox `privacy@teacherhubpro.com`** (or an alias that forwards to you). The website promises this address.
-3. **Get the current NDPA** from the Student Data Privacy Consortium's website (search for "SDPC National Data Privacy Agreement"). Its exhibits ask for the answers below; match each answer to the exhibit that asks for it in the version you download.
-4. **Fill in the vendor parts** with the answers below.
+3. **Read the current NDPA** on the Student Data Privacy Consortium's website (search for "SDPC National Data Privacy Agreement"), so you know it before a school asks. A vendor cannot start one alone: the school district, or its state's alliance, starts the agreement in the SDPC registry and sends it to you (see `docs/TRUST_PAPERWORK.md`, step 4).
+4. **Fill in the vendor parts** with the answers below. The exhibits ask for them; match each answer to the exhibit that asks for it.
 5. **Have a lawyer read it**, then keep the signed copies in one folder.
 
 ## Answers for the vendor parts
@@ -40,8 +40,8 @@ Students have no accounts, so there is no student email address or password.
 | Render | hosts the app and the database | all data, stored for the service |
 | Stripe | payments | the account holder's billing details, never student data |
 | Email provider (Resend) | account emails and messages teachers send families | email addresses and message text |
-| Anthropic (Claude) | AI drafts (plans, grading drafts, insights) | only the fields each task needs; student names are not sent where an ID or first name will do |
-| OpenAI | read-aloud audio | the text being read |
+| Anthropic (Claude) | AI drafts (plans, grading drafts, insights) | only the fields each task needs; student names are not sent where an ID or first name will do. Not used to train its models; deleted within 30 days (Anthropic's commercial terms) |
+| OpenAI | read-aloud audio | the text being read. Not used to train its models; kept at most 30 days (OpenAI API terms) |
 | Google | sign-in and Google Classroom, only when a teacher connects it | what the teacher syncs |
 | Canva | only when a teacher connects it | the presentation or worksheet the teacher opens there, never student data |
 | Microsoft | only when a teacher connects it | the files the teacher saves to OneDrive, never student data |

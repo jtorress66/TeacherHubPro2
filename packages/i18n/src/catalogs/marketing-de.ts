@@ -750,7 +750,7 @@ export const marketingDe: MarketingMessages = {
         'Passwörter werden als Einweg-Hashes gespeichert. Sitzungs-, Schüler-, Familien- und Passwort-Links sind zufällig und werden nur als Hashes gespeichert. Google-Classroom-, Canva- und Microsoft-Tokens sind verschlüsselt. Jeder Datensatz gehört zu genau einer Schule und ist nur für die Benutzer dieser Schule erreichbar. Auch der Kalenderlink einer Lehrkraft ist zufällig und wird nur als Hash gespeichert: Er zeigt nur die Titel von Plänen und Aufgaben mit ihren Daten, nie Informationen über Schülerinnen und Schüler, und die Lehrkraft kann ihn in den Einstellungen ersetzen oder ausschalten.',
       s7Title: 'Aufbewahrung und Löschung von Daten',
       s7Text:
-        'Daten bleiben gespeichert, solange das Konto aktiv ist. Hochgeladene PDFs werden gelöscht, sobald sie gelesen wurden. Website-Chats werden nach 30 Tagen gelöscht. Für eine Kopie oder die Löschung Ihrer Daten schreiben Sie an privacy@teacherhubpro.com. Endet der Vertrag einer Schule, geben wir ihr auf Anfrage ihre Daten als Dateien zurück, löschen sie danach aus dem Dienst und bestätigen das schriftlich.',
+        'Daten bleiben gespeichert, solange das Konto aktiv ist. Hochgeladene PDFs werden gelöscht, sobald sie gelesen wurden. Website-Chats werden nach 30 Tagen gelöscht. Für eine Kopie oder die Löschung Ihrer Daten schreiben Sie an privacy@teacherhubpro.com. Die Administratoren der Schule und der Kontoinhaber können das auch selbst unter Einstellungen tun: „Alle Schuldaten herunterladen“ liefert eine ZIP-Datei mit Tabellen, und „Alle Schuldaten löschen“ löscht alles nach einer Frist von 30 Tagen, die sich abbrechen lässt. Endet der Vertrag einer Schule, geben wir ihr auf Anfrage ihre Daten als Dateien zurück, löschen sie danach aus dem Dienst und bestätigen das schriftlich.',
       s8Title: 'Wenn etwas schiefgeht',
       s8Text:
         'Wenn eine Sicherheitsverletzung die Daten Ihrer Schule betrifft, informieren wir Sie innerhalb von 72 Stunden nach der Entdeckung: was passiert ist, welche Daten betroffen sind und was wir dagegen tun.',
@@ -870,7 +870,7 @@ export const marketingDe: MarketingMessages = {
       s4Text: 'Der Website-Chat ist ein KI-Assistent und sagt das, wenn er gefragt wird.',
       s5Title: 'Anbieter',
       s5Text:
-        'KI-Entwürfe werden mit Claude von Anthropic erstellt; vorgelesene Audioinhalte mit OpenAI.',
+        'KI-Entwürfe werden mit Claude von Anthropic erstellt; vorgelesene Audioinhalte mit OpenAI. Nach ihren Geschäftsbedingungen nutzt keines der beiden Unternehmen diese Daten zum Training seiner Modelle, und beide löschen sie innerhalb von 30 Tagen, außer sie müssen sie zur Prüfung von Missbrauch oder von Gesetzes wegen länger aufbewahren.',
     },
     trust: {
       title: 'Trust Center',
