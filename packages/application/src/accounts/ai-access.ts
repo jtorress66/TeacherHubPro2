@@ -23,7 +23,10 @@ export async function checkPaidAccess(
     : fail('subscription_required');
 }
 
-/** AI drafting: paid access, and the school has not turned AI off. */
+/**
+ * AI drafting: paid access, and the school has not turned AI off. The switch applies to everyone in
+ * the school, super admins included, as the School overview promises.
+ */
 export async function checkAiAccess(
   deps: {
     readonly subscriptions: SubscriptionRepository;
@@ -34,7 +37,6 @@ export async function checkAiAccess(
 ): Promise<Result<true, UseCaseError>> {
   const paid = await checkPaidAccess(deps, actor);
   if (!paid.ok) return paid;
-  if (actor.role === 'super_admin') return paid;
   const school = await deps.schools.findById(actor.schoolId);
   return school === null || school.features.ai ? paid : fail('ai_off_for_school');
 }
