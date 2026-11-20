@@ -216,7 +216,9 @@ h2 {
   grid-template-columns: repeat(auto-fit, minmax(min(10rem, 100%), 1fr));
 }
 
+/* `min-width: 0`: browsers make a fieldset as wide as its widest content, past a narrow screen. */
 fieldset {
+  min-width: 0;
   border: 1px solid var(--border);
   border-radius: 0.5rem;
   padding: 0.75rem 1rem;
