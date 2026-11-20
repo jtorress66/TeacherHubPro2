@@ -764,7 +764,7 @@ export const marketingFr: MarketingMessages = {
         "Les mots de passe sont stockés sous forme de hachages à sens unique. Les liens de session, d'élève, de famille et de mot de passe sont aléatoires et stockés uniquement sous forme de hachages. Les jetons Google Classroom, Canva et Microsoft sont chiffrés. Chaque donnée appartient à une seule école et n'est accessible qu'aux utilisateurs de cette école. Le lien de calendrier d'un enseignant est lui aussi aléatoire et stocké uniquement sous forme de hachage : il ne montre que les titres des plans et des devoirs avec leurs dates, jamais d'informations sur les élèves, et l'enseignant peut le remplacer ou le désactiver dans les Paramètres.",
       s7Title: 'Conservation et suppression des données',
       s7Text:
-        'Les données sont conservées tant que le compte est actif. Les PDF envoyés sont supprimés dès qu’ils ont été lus. Les conversations du site sont supprimées après 30 jours. Pour demander une copie ou la suppression de vos données, écrivez à privacy@teacherhubpro.com. À la fin du contrat d’une école, nous lui rendons ses données sous forme de fichiers sur demande, puis nous les supprimons du service et le confirmons par écrit.',
+        'Les données sont conservées tant que le compte est actif. Les PDF envoyés sont supprimés dès qu’ils ont été lus. Les conversations du site sont supprimées après 30 jours. Pour demander une copie ou la suppression de vos données, écrivez à privacy@teacherhubpro.com. Les administrateurs de l’école et le titulaire du compte peuvent aussi le faire eux-mêmes dans Paramètres : « Télécharger toutes les données de l’école » fournit un ZIP de tableurs, et « Supprimer toutes les données de l’école » efface tout après un délai de 30 jours qui peut être annulé. À la fin du contrat d’une école, nous lui rendons ses données sous forme de fichiers sur demande, puis nous les supprimons du service et le confirmons par écrit.',
       s8Title: 'En cas de problème',
       s8Text:
         'Si une faille de sécurité touche les données de votre école, nous vous prévenons dans les 72 heures suivant sa découverte : ce qui s’est passé, quelles données sont concernées et ce que nous faisons.',
@@ -885,7 +885,7 @@ export const marketingFr: MarketingMessages = {
       s4Text: "Le chat du site est un assistant IA et le dit lorsqu'on le lui demande.",
       s5Title: 'Fournisseurs',
       s5Text:
-        "Les brouillons de l'IA sont réalisés avec Claude d'Anthropic ; l'audio de lecture à voix haute avec OpenAI.",
+        "Les brouillons de l'IA sont réalisés avec Claude d'Anthropic ; l'audio de lecture à voix haute avec OpenAI. Selon leurs conditions pour les entreprises, aucune des deux ne s’en sert pour entraîner ses modèles et toutes deux le suppriment sous 30 jours, sauf si elles doivent le garder plus longtemps pour enquêter sur un abus ou parce que la loi l’exige.",
     },
     trust: {
       title: 'Centre de confiance',

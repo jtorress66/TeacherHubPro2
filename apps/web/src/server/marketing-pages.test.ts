@@ -152,6 +152,17 @@ describe('the privacy policy', () => {
     }
   });
 
+  it('names the Settings buttons that download or delete a school’s data, in every language', async () => {
+    const { catalogs, locales } = await import('@thp/i18n');
+    for (const locale of locales) {
+      const catalog = catalogs[locale];
+      const keeping = catalog.legal.privacy.s7Text;
+      expect(keeping, locale).toContain(catalog.schoolExport.title);
+      expect(keeping, locale).toContain(catalog.schoolDeletion.title);
+      expect(keeping, locale).toContain(catalog.nav.settings);
+    }
+  });
+
   it('is pointed to from the trust center in every language', async () => {
     const { catalogs, locales } = await import('@thp/i18n');
     for (const locale of locales) {
@@ -169,5 +180,15 @@ describe('the accessibility statement', () => {
     expect(text).toContain('not yet tagged for screen readers');
     // The site is always dark on screen: it does not follow a light or dark setting.
     expect(text).not.toContain('light or dark setting');
+  });
+});
+
+describe('the AI governance page', () => {
+  it('says the AI providers do not train on what we send and keep it at most 30 days', async () => {
+    const { catalogs, locales } = await import('@thp/i18n');
+    expect(catalogs.en.legal.aiGovernance.s5Text).toContain('do not use what we send them to train their models');
+    for (const locale of locales) {
+      expect(catalogs[locale].legal.aiGovernance.s5Text, locale).toContain('30');
+    }
   });
 });

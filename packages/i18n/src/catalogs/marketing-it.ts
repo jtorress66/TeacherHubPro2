@@ -743,7 +743,7 @@ export const marketingIt: MarketingMessages = {
         'Le password sono conservate come hash unidirezionali. I link di sessione, per studenti, per famiglie e per la password sono casuali e conservati solo come hash. I token di Google Classroom, di Canva e di Microsoft sono cifrati. Ogni dato appartiene a una sola scuola ed è accessibile solo agli utenti di quella scuola. Anche il link del calendario di un docente è casuale e conservato solo come hash: mostra soltanto i titoli dei piani e dei compiti con le relative date, mai informazioni sugli studenti, e il docente può sostituirlo o disattivarlo nelle Impostazioni.',
       s7Title: 'Conservazione e cancellazione dei dati',
       s7Text:
-        'I dati restano finché l’account è attivo. I PDF caricati vengono eliminati appena letti. Le chat del sito vengono eliminate dopo 30 giorni. Per chiedere una copia o la cancellazione dei Suoi dati, scriva a privacy@teacherhubpro.com. Alla fine del contratto di una scuola, su richiesta le restituiamo i suoi dati in file, poi li eliminiamo dal servizio e lo confermiamo per iscritto.',
+        'I dati restano finché l’account è attivo. I PDF caricati vengono eliminati appena letti. Le chat del sito vengono eliminate dopo 30 giorni. Per chiedere una copia o la cancellazione dei Suoi dati, scriva a privacy@teacherhubpro.com. Gli amministratori della scuola e il titolare dell’account possono farlo anche da soli in Impostazioni: “Scarica tutti i dati della scuola” fornisce uno ZIP di fogli di calcolo, e “Elimina tutti i dati della scuola” cancella tutto dopo un’attesa di 30 giorni che si può annullare. Alla fine del contratto di una scuola, su richiesta le restituiamo i suoi dati in file, poi li eliminiamo dal servizio e lo confermiamo per iscritto.',
       s8Title: 'Se qualcosa va storto',
       s8Text:
         'Se una violazione della sicurezza riguarda i dati della Sua scuola, La avvisiamo entro 72 ore dalla scoperta: cosa è successo, quali dati sono coinvolti e cosa stiamo facendo.',
@@ -860,7 +860,7 @@ export const marketingIt: MarketingMessages = {
       s4Text: 'La chat del sito è un assistente IA e lo dichiara quando viene chiesto.',
       s5Title: 'Fornitori',
       s5Text:
-        "Le bozze dell'IA sono realizzate con Claude di Anthropic; l'audio di lettura ad alta voce con OpenAI.",
+        "Le bozze dell'IA sono realizzate con Claude di Anthropic; l'audio di lettura ad alta voce con OpenAI. Secondo le loro condizioni per le aziende, nessuna delle due li usa per addestrare i propri modelli ed entrambe li eliminano entro 30 giorni, salvo doverli conservare più a lungo per indagare su un abuso o per legge.",
     },
     trust: {
       title: 'Centro fiducia',
