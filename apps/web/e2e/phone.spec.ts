@@ -105,3 +105,32 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     await expect(answer.getByRole('radio')).toBeChecked();
   });
 }
+
+for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
+  test(`on a phone, the trial bar and Chat with Ed never cover each other (${locale})`, async ({
+    page,
+  }) => {
+    const t = createTranslator(locale);
+    await page.goto(`/${locale}`);
+    const chat = page.getByRole('button', { name: t('marketing.chat.open') });
+    const bar = page.locator('.home-sticky.is-shown');
+
+    // Past the hero, the trial bar slides up.
+    await page.evaluate(() => {
+      window.scrollTo(0, document.documentElement.scrollHeight / 2);
+    });
+    await expect(bar).toBeVisible();
+    await expect
+      .poll(async () => {
+        const [a, b] = await Promise.all([bar.boundingBox(), chat.boundingBox()]);
+        if (a === null || b === null) return 'missing';
+        const apart =
+          a.x + a.width <= b.x ||
+          b.x + b.width <= a.x ||
+          a.y + a.height <= b.y ||
+          b.y + b.height <= a.y;
+        return apart ? 'apart' : 'overlapping';
+      })
+      .toBe('apart');
+  });
+}
