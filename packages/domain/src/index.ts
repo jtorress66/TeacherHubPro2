@@ -122,6 +122,7 @@ export * from './students/student-360.ts';
 export * from './prep/parent-email.ts';
 export * from './prep/prep-request.ts';
 export * from './prep/prep-batch.ts';
+export * from './prep/email-translations.ts';
 export * from './presentations/google-slides.ts';
 export * from './canva/canva.ts';
 export * from './microsoft/microsoft.ts';

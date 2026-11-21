@@ -1,7 +1,9 @@
 import {
   createPrepRequest,
   editEmail,
+  editTranslations,
   err,
+  familyLanguages,
   finishBatch,
   invalid,
   jobAsSeen,
@@ -15,7 +17,9 @@ import {
   startBatch,
   type Job,
   type JobFailure,
+  type EmailTranslation,
   type JobId,
+  type Language,
   type ParentEmail,
   type PrepBatch,
   type PrepBatchId,
@@ -47,17 +51,17 @@ interface PrepStepPayload {
   readonly batchId: PrepBatchId;
 }
 
-interface BatchRef {
+export interface BatchRef {
   readonly actor: User;
   readonly batchId: PrepBatchId;
 }
 
-interface Batches {
+export interface Batches {
   readonly prepBatches: PrepBatchRepository;
 }
 
 /** The actor's own batch; anyone else's, a school admin's included, is not found. */
-async function findBatch(
+export async function findBatch(
   deps: Batches,
   { actor, batchId }: BatchRef,
 ): Promise<Result<PrepBatch, UseCaseError>> {
@@ -204,6 +208,26 @@ export interface PrepBatchView {
   readonly stalled: boolean;
   /** How many families would get the parent email. */
   readonly recipients: number;
+  /** The languages, other than the email's, that families read, and how many families each. */
+  readonly familyLanguages: readonly { readonly language: Language; readonly families: number }[];
+}
+
+/**
+ * Each distinct parent email on the class roster, with the language its family reads (the
+ * email's own when none is set). An address shared by siblings counts once.
+ */
+export async function familyAddresses(
+  students: StudentRepository,
+  batch: PrepBatch,
+): Promise<readonly { readonly address: string; readonly language: Language }[]> {
+  const roster = await students.listByClass(batch.schoolId, batch.classId);
+  const families = new Map<string, Language>();
+  for (const { parentEmail, familyLanguage } of roster) {
+    if (parentEmail !== null && !families.has(parentEmail)) {
+      families.set(parentEmail, familyLanguage ?? batch.request.language);
+    }
+  }
+  return [...families].map(([address, language]) => ({ address, language }));
 }
 
 /** The distinct parent emails on the class roster. */
@@ -211,8 +235,7 @@ export async function parentEmails(
   students: StudentRepository,
   batch: PrepBatch,
 ): Promise<readonly string[]> {
-  const roster = await students.listByClass(batch.schoolId, batch.classId);
-  return [...new Set(roster.flatMap((s) => (s.parentEmail === null ? [] : [s.parentEmail])))];
+  return (await familyAddresses(students, batch)).map((family) => family.address);
 }
 
 export class GetPrepBatch {
@@ -228,11 +251,13 @@ export class GetPrepBatch {
     const found = await findBatch(this.deps, input);
     if (!found.ok) return found;
     const batch = found.value;
+    const roster = await this.deps.students.listByClass(batch.schoolId, batch.classId);
     return ok({
       batch,
       progress: prepProgress(batch),
       stalled: await isStalled(this.deps, batch),
       recipients: (await parentEmails(this.deps.students, batch)).length,
+      familyLanguages: familyLanguages(roster, batch.request.language),
     });
   }
 }
@@ -260,12 +285,19 @@ export class CountReadyPrepBatches {
   }
 }
 
-/** The teacher picks the items to publish and edits the parent email. */
+/**
+ * The teacher picks the items to publish and edits the parent email and its translations.
+ * Translations sent with an email that has since changed are refused: they no longer match it.
+ */
 export class UpdatePrepSelection {
   constructor(private readonly deps: Batches) {}
 
   async execute(
-    input: BatchRef & { keep: readonly string[]; email?: ParentEmail },
+    input: BatchRef & {
+      keep: readonly string[];
+      email?: ParentEmail;
+      translations?: readonly EmailTranslation[];
+    },
   ): Promise<Result<PrepBatch, UseCaseError>> {
     const found = await findBatch(this.deps, input);
     if (!found.ok) return found;
@@ -273,8 +305,16 @@ export class UpdatePrepSelection {
     if (!selected.ok) return selected;
     const edited = input.email === undefined ? selected : editEmail(selected.value, input.email);
     if (!edited.ok) return edited;
-    await this.deps.prepBatches.save(edited.value);
-    return edited;
+    const translations = input.translations ?? [];
+    let batch = edited.value;
+    if (translations.length > 0) {
+      if (batch.translations === null) return fail('translations_outdated');
+      const translated = editTranslations(batch, translations);
+      if (!translated.ok) return translated;
+      batch = translated.value;
+    }
+    await this.deps.prepBatches.save(batch);
+    return ok(batch);
   }
 }
 

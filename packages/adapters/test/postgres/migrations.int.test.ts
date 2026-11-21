@@ -106,6 +106,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0040_family_languages',
           '0039_school_features',
           '0038_school_deletions',
           '0037_referrals',
@@ -193,6 +194,7 @@ describe('migrations', () => {
           '0037_referrals',
           '0038_school_deletions',
           '0039_school_features',
+          '0040_family_languages',
         ],
       },
     });

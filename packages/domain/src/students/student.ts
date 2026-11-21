@@ -1,7 +1,8 @@
 import { parseOptionalEmail, type Email } from '../shared/email.ts';
 import type { ClassId, SchoolId, StudentId } from '../shared/ids.ts';
+import { isLanguage, type Language } from '../shared/language.ts';
 import { ok, type Result } from '../shared/result.ts';
-import { optionalText, requiredText, type ValidationError } from '../shared/validation.ts';
+import { invalid, optionalText, requiredText, type ValidationError } from '../shared/validation.ts';
 
 /** A rostered student. Students are minors: keep only what features need. */
 export interface Student {
@@ -13,6 +14,8 @@ export interface Student {
   readonly studentNumber: string | null;
   readonly parentEmail: Email | null;
   readonly accommodations: string | null;
+  /** The language the family reads, when it is not the teacher's; null means the teacher's. */
+  readonly familyLanguage: Language | null;
 }
 
 export interface StudentInput {
@@ -24,6 +27,7 @@ export interface StudentInput {
   readonly studentNumber?: string | null;
   readonly parentEmail?: string | null;
   readonly accommodations?: string | null;
+  readonly familyLanguage?: string | null;
 }
 
 export function createStudent(input: StudentInput): Result<Student, ValidationError> {
@@ -37,6 +41,10 @@ export function createStudent(input: StudentInput): Result<Student, ValidationEr
   if (!parentEmail.ok) return parentEmail;
   const accommodations = optionalText('accommodations', input.accommodations, 2000);
   if (!accommodations.ok) return accommodations;
+  const familyLanguage = input.familyLanguage?.trim() ?? '';
+  if (familyLanguage !== '' && !isLanguage(familyLanguage)) {
+    return invalid('familyLanguage', 'invalid_format');
+  }
 
   return ok({
     id: input.id,
@@ -47,6 +55,7 @@ export function createStudent(input: StudentInput): Result<Student, ValidationEr
     studentNumber: studentNumber.value,
     parentEmail: parentEmail.value,
     accommodations: accommodations.value,
+    familyLanguage: familyLanguage === '' ? null : familyLanguage,
   });
 }
 

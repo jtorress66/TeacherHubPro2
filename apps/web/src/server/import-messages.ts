@@ -9,6 +9,7 @@ const columnLabels: Readonly<Record<string, MessageKey>> = {
   studentNumber: 'students.studentNumber',
   parentEmail: 'students.parentEmail',
   accommodations: 'students.accommodations',
+  familyLanguage: 'students.familyLanguage',
   name: 'admin.name',
   email: 'admin.email',
   role: 'admin.role',

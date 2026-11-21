@@ -159,6 +159,15 @@ export const zhAppA = {
     open: '显示洞察',
   },
   prep: {
+    familyLanguages: '使用其他语言的家庭：{languages}。',
+    translate: '为家庭翻译',
+    translateHint:
+      'AI 会用每个家庭的语言起草你的邮件。发布前请检查每份译文。没有译文的家庭会收到你的原始邮件。',
+    translating: '正在翻译……通常不到一分钟。',
+    translationFailed: '无法完成翻译。请重试。',
+    translationHeading: '{language}邮件',
+    translationSubject: '主题（{language}）',
+    translationBody: '正文（{language}）',
     title: '备课助手',
     intro:
       '用一句话描述这一周。助手会起草每周计划、每节课的幻灯片和练习单、周五小测以及一封家长邮件。在您批准之前，不会保存或发送任何内容。',
@@ -705,6 +714,8 @@ export const zhAppA = {
     back: '所有班级',
   },
   students: {
+    familyLanguage: '家庭使用的语言',
+    familyLanguageSame: '与我的邮件语言相同',
     roster: '学生',
     add: '添加学生',
     firstName: '名',
@@ -726,7 +737,7 @@ export const zhAppA = {
     copyArchived: '已归档',
     importTitle: '从 CSV 文件导入学生',
     importHelp:
-      '列：名、姓（必填）、学号、家长邮箱、特殊照顾措施。只要有任何一行有问题，就不会导入任何内容。',
+      '列：名、姓（必填）、学号、家长邮箱、特殊照顾措施、家庭使用的语言。只要有任何一行有问题，就不会导入任何内容。',
     file: 'CSV 文件',
     import: '导入学生',
     imported: '已导入 {count} 名学生。',

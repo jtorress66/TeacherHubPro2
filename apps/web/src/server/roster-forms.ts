@@ -54,6 +54,7 @@ export const studentForm = z.object({
   studentNumber: optional,
   parentEmail: optional,
   accommodations: optional,
+  familyLanguage: optional,
   locale,
 });
 

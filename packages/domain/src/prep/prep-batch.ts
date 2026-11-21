@@ -15,6 +15,7 @@ import type {
 } from '../shared/ids.ts';
 import { ok, type Result } from '../shared/result.ts';
 import { invalid, type ValidationError } from '../shared/validation.ts';
+import { withEmail, type EmailTranslations } from './email-translations.ts';
 import { checkParentEmail, parentEmailDraft, type ParentEmail } from './parent-email.ts';
 import type { PrepRequest } from './prep-request.ts';
 
@@ -68,6 +69,8 @@ export interface PrepBatch {
   readonly status: PrepStatus;
   readonly items: readonly PrepItem[];
   readonly parentEmail: ParentEmail | null;
+  /** The parent email in the families' other languages, for the teacher to check. */
+  readonly translations: EmailTranslations | null;
   /** The job running the current item, to tell a stalled batch. */
   readonly jobId: JobId;
   readonly createdAt: Date;
@@ -110,6 +113,7 @@ export function startBatch(input: {
     status: 'running',
     items: itemsFor(input.request),
     parentEmail: null,
+    translations: null,
     readyAt: null,
     publishedAt: null,
     published: null,
@@ -233,7 +237,7 @@ export function editEmail(
 ): Result<PrepBatch, ValidationError> {
   if (batch.status !== 'ready' || batch.parentEmail === null) return notReady();
   const checked = checkParentEmail(email);
-  return checked.ok ? ok({ ...batch, parentEmail: checked.value }) : checked;
+  return checked.ok ? ok(withEmail(batch, checked.value)) : checked;
 }
 
 /** The items to save: drafted and kept by the teacher. */

@@ -719,7 +719,7 @@ export const marketingPt: MarketingMessages = {
         'Esta política se aplica a professores, funcionários de escolas e pais que educam em casa e usam o TeacherHubPro, e às informações de alunos e famílias que eles inserem. Alunos e famílias não criam contas; eles usam links privados que um professor lhes fornece.',
       s2Title: 'O que guardamos',
       s2Text:
-        'Dados da conta (nome, e-mail, escola, idioma), o que os professores criam (turmas, planos, tarefas, notas, frequência, anotações) e o que os alunos enviam pelos seus links. Os registros dos alunos contêm apenas o que um recurso precisa: nomes, um número de matrícula opcional, um e-mail opcional do responsável e adaptações opcionais.',
+        'Dados da conta (nome, e-mail, escola, idioma), o que os professores criam (turmas, planos, tarefas, notas, frequência, anotações) e o que os alunos enviam pelos seus links. Os registros dos alunos contêm apenas o que um recurso precisa: nomes, um número de matrícula opcional, um e-mail opcional do responsável, adaptações opcionais e, opcionalmente, o idioma que a família lê.',
       s3Title: 'Como usamos',
       s3Text:
         'Apenas para operar o serviço para a escola ou o professor que inseriu os dados. Não vendemos dados pessoais nem usamos dados de alunos para publicidade.',

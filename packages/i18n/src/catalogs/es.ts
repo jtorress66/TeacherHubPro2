@@ -163,6 +163,15 @@ export const es: Messages = {
     open: 'Ver el análisis',
   },
   prep: {
+    familyLanguages: 'Familias que leen otro idioma: {languages}.',
+    translate: 'Traducir para las familias',
+    translateHint:
+      'La IA prepara tu correo en el idioma de cada familia. Revisa cada traducción antes de publicar. Las familias sin traducción reciben tu correo tal como está.',
+    translating: 'Traduciendo… Suele tardar menos de un minuto.',
+    translationFailed: 'No se pudo hacer la traducción. Inténtalo de nuevo.',
+    translationHeading: 'Correo en {language}',
+    translationSubject: 'Asunto ({language})',
+    translationBody: 'Mensaje ({language})',
     title: 'Agente de preparación',
     intro:
       'Describa la semana en una oración. El agente prepara el plan semanal, diapositivas y una hoja de trabajo para cada lección, una prueba corta para el viernes y un correo para las familias. No se guarda ni se envía nada hasta que usted lo apruebe.',
@@ -736,6 +745,8 @@ export const es: Messages = {
     back: 'Todas las clases',
   },
   students: {
+    familyLanguage: 'Idioma de la familia',
+    familyLanguageSame: 'El idioma de mis correos',
     roster: 'Estudiantes',
     add: 'Agregar estudiante',
     firstName: 'Nombre',
@@ -757,7 +768,7 @@ export const es: Messages = {
     copyArchived: 'archivada',
     importTitle: 'Importar estudiantes desde un archivo CSV',
     importHelp:
-      'Columnas: nombre, apellidos (obligatorias), número de estudiante, correo del padre o la madre, adaptaciones. No se importa nada si alguna fila tiene un problema.',
+      'Columnas: nombre, apellidos (obligatorias), número de estudiante, correo del padre o la madre, adaptaciones, idioma de la familia. No se importa nada si alguna fila tiene un problema.',
     file: 'Archivo CSV',
     import: 'Importar estudiantes',
     imported: 'Se importaron {count} estudiantes.',
@@ -1281,6 +1292,7 @@ export const es: Messages = {
     level_high: 'Escuela superior',
   },
   assistant: {
+    blank: 'espacio en blanco',
     title: 'Asistente de IA',
     intro: 'La IA escribe un primer borrador. Revísalo antes de usarlo en clase.',
     type: 'Qué crear',
@@ -2412,6 +2424,8 @@ export const es: Messages = {
       'Esta página necesita el enlace de su correo. Si no funciona, inicie sesión y use Reenviar para recibir uno nuevo.',
   },
   errors: {
+    translations_outdated:
+      'Cambiaste el correo después de traducirlo. Pulsa Traducir para las familias otra vez para que cada familia reciba el texto nuevo.',
     own_account: 'No puede hacer esto con su propia cuenta.',
     has_classes:
       'Esta persona todavía enseña clases. Primero pase sus clases a otro maestro de la escuela.',

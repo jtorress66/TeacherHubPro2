@@ -1,5 +1,6 @@
 import {
   createStudent,
+  languageFromText,
   err,
   ok,
   type Class,
@@ -98,6 +99,8 @@ export class RosterImporter {
       studentNumber: row.studentNumber,
       parentEmail: row.parentEmail,
       accommodations: row.accommodations,
+      // A name the app knows becomes its code; anything else is checked, and refused, as typed.
+      familyLanguage: languageFromText(row.familyLanguage) ?? row.familyLanguage,
     });
   }
 }

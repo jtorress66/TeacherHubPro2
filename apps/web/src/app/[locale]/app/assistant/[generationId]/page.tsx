@@ -60,7 +60,7 @@ export default async function GenerationPage(props: Props) {
         </form>
       </div>
       <article className="card generated" lang={generation.language}>
-        <Markdown source={generation.content} />
+        <Markdown source={generation.content} locale={locale} />
       </article>
       {app.canva === null ? null : (
         <section className="card stack" aria-labelledby="generation-canva-heading">

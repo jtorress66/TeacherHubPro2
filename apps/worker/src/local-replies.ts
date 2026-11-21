@@ -11,8 +11,9 @@ import {
   asksIfAi,
   rubricSystemPrompt,
   slidesSystemPrompt,
+  translatorSystemPrompt,
 } from '@thp/agents';
-import type { ContentKind } from '@thp/domain';
+import type { ContentKind, Language } from '@thp/domain';
 import type { LlmRequest } from '@thp/ports';
 import { localPlannerReply } from './local-planner-reply.ts';
 
@@ -271,6 +272,73 @@ function rubricReply(request: LlmRequest): string {
   });
 }
 
+/** A stand-in translation's wording in each language, enough for the translator's checks. */
+const translationWords: Readonly<
+  Record<Language, { name: string; subject: string; greeting: string; intro: string; day: string }>
+> = {
+  en: {
+    name: 'English',
+    subject: 'This week in class',
+    greeting: 'Dear families,',
+    intro: 'This is what the students will learn this week:',
+    day: 'Day {n}: the topic of the day',
+  },
+  es: {
+    name: 'Spanish',
+    subject: 'Esta semana en la clase',
+    greeting: 'Queridas familias:',
+    intro: 'Esto es lo que los estudiantes aprenderán esta semana:',
+    day: 'Día {n}: el tema del día',
+  },
+  fr: {
+    name: 'French',
+    subject: 'Cette semaine en classe',
+    greeting: 'Chères familles,',
+    intro: 'Voici ce que les élèves vont apprendre cette semaine :',
+    day: 'Jour {n} : le sujet du jour',
+  },
+  pt: {
+    name: 'Portuguese',
+    subject: 'Esta semana na turma',
+    greeting: 'Queridas famílias,',
+    intro: 'Isto é o que os alunos vão aprender esta semana com a turma:',
+    day: 'Dia {n}: o tema do dia',
+  },
+  de: {
+    name: 'German',
+    subject: 'Diese Woche in der Klasse',
+    greeting: 'Liebe Familien,',
+    intro: 'Das lernen die Schüler und Schülerinnen diese Woche:',
+    day: 'Tag {n}: das Thema des Tages',
+  },
+  it: {
+    name: 'Italian',
+    subject: 'Questa settimana in classe',
+    greeting: 'Care famiglie,',
+    intro: 'Ecco che cosa gli studenti impareranno questa settimana con la classe:',
+    day: 'Giorno {n}: il tema del giorno',
+  },
+  zh: {
+    name: 'Simplified Chinese',
+    subject: '本周课堂内容',
+    greeting: '各位家长：',
+    intro: '本周学生们将学习以下内容：',
+    day: '第{n}天：当天的主题',
+  },
+};
+
+/** The email in the language asked for: a fixed wording, with one bullet for each of the email's. */
+function translationReply(request: LlmRequest): string {
+  const prompt = promptOf(request);
+  const words =
+    Object.values(translationWords).find((w) => prompt.includes(`into ${w.name}`)) ??
+    translationWords.en;
+  const bullets = (prompt.match(/•/g) ?? []).length;
+  const days = Array.from({ length: bullets }, (_, i) => `• ${words.day.replace('{n}', nth(i))}`);
+  const body = [words.greeting, words.intro, days.join('\n')].join('\n\n');
+  return JSON.stringify({ subject: words.subject, body });
+}
+
 const repliesBySystem: ReadonlyMap<string, (request: LlmRequest) => string> = new Map([
   [contentSystemPrompt, contentReply],
   [slidesSystemPrompt, slidesReply],
@@ -282,6 +350,7 @@ const repliesBySystem: ReadonlyMap<string, (request: LlmRequest) => string> = ne
   [chatbotSystemPrompt, chatbotReply],
   [gameWriterSystemPrompt, gameReply],
   [pathWriterSystemPrompt, pathReply],
+  [translatorSystemPrompt, translationReply],
 ]);
 
 export function localReply(request: LlmRequest): string {

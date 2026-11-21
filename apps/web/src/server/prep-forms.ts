@@ -1,10 +1,12 @@
 import {
   isGradeLevel,
   isLanguage,
+  languages,
   planWeekdays,
   type Class,
   type ClassId,
   type EmailTemplate,
+  type EmailTranslation,
   type GradeCategoryId,
   type GradeLevel,
   type ParentEmail,
@@ -75,14 +77,27 @@ export function prepEmailTemplate(
   };
 }
 
-/** The items the teacher kept, and the email when the form has one. */
+/** The email's translations on the form, named `translation.<language>.subject` and `.body`. */
+function translationsOf(data: FormData): EmailTranslation[] {
+  return languages.flatMap((language) => {
+    const name = `translation.${language}`;
+    return data.has(`${name}.subject`)
+      ? [{ language, subject: field(data, `${name}.subject`), body: field(data, `${name}.body`) }]
+      : [];
+  });
+}
+
+/** The items the teacher kept, and the email and its translations when the form has them. */
 export function parseEmailForm(data: FormData): {
   keep: string[];
   email?: ParentEmail;
+  translations?: EmailTranslation[];
 } {
   const keep = all(data, 'keep');
   if (!data.has('emailSubject')) return { keep };
-  return { keep, email: { subject: field(data, 'emailSubject'), body: field(data, 'emailBody') } };
+  const email = { subject: field(data, 'emailSubject'), body: field(data, 'emailBody') };
+  const translations = translationsOf(data);
+  return translations.length === 0 ? { keep, email } : { keep, email, translations };
 }
 
 /** Words in a class's free-text subject that point to a Common Core subject. */

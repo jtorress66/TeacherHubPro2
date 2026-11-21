@@ -216,6 +216,7 @@ import {
   CountReadyPrepBatches,
   UpdatePrepSelection,
   PublishPrepBatch,
+  RequestEmailTranslations,
   DeletePrepBatch,
   MakeFormsQuiz,
   FindFormsQuiz,
@@ -544,6 +545,7 @@ export interface AppContainer {
   readonly countReadyPrepBatches: CountReadyPrepBatches;
   readonly updatePrepSelection: UpdatePrepSelection;
   readonly publishPrepBatch: PublishPrepBatch;
+  readonly requestEmailTranslations: RequestEmailTranslations;
   readonly deletePrepBatch: DeletePrepBatch;
   readonly makeFormsQuiz: MakeFormsQuiz;
   readonly findFormsQuiz: FindFormsQuiz;
@@ -1080,6 +1082,7 @@ export function createAppContainer(
     countReadyPrepBatches: new CountReadyPrepBatches(deps),
     updatePrepSelection: new UpdatePrepSelection(deps),
     publishPrepBatch: new PublishPrepBatch(deps),
+    requestEmailTranslations: new RequestEmailTranslations(deps),
     deletePrepBatch: new DeletePrepBatch(deps),
     makeFormsQuiz: new MakeFormsQuiz(deps),
     findFormsQuiz: new FindFormsQuiz(deps),

@@ -33,7 +33,7 @@ export default async function PrintGenerationPage(props: Props) {
         <PrintButton locale={locale} />
       </p>
       <p className="muted small">{school.name}</p>
-      <Markdown source={generation.content} />
+      <Markdown source={generation.content} locale={locale} />
     </article>
   );
 }

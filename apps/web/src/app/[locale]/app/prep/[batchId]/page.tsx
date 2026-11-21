@@ -132,7 +132,7 @@ export default async function PrepBatchPage(props: Props) {
     batchId: batchId as PrepBatchId,
   });
   if (!view.ok) notFound();
-  const { batch, progress, stalled, recipients } = view.value;
+  const { batch, progress, stalled, recipients, familyLanguages } = view.value;
   const ids = { locale, batchId: batch.id };
 
   return (
@@ -186,6 +186,8 @@ export default async function PrepBatchPage(props: Props) {
             items={batch.items}
             parentEmail={batch.parentEmail}
             recipients={recipients}
+            familyLanguages={familyLanguages}
+            translations={batch.translations}
           />
         </section>
       ) : null}

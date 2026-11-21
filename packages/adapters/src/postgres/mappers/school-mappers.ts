@@ -152,6 +152,7 @@ export const studentMapper: RowMapper<Student, StudentsTable> = {
     student_number: student.studentNumber,
     parent_email: student.parentEmail,
     accommodations: student.accommodations,
+    family_language: student.familyLanguage,
   }),
   fromRow: (row) => ({
     id: row.id as StudentId,
@@ -162,6 +163,10 @@ export const studentMapper: RowMapper<Student, StudentsTable> = {
     studentNumber: row.student_number,
     parentEmail: row.parent_email as Email | null,
     accommodations: row.accommodations,
+    familyLanguage:
+      row.family_language === null
+        ? null
+        : oneOf(languages, row.family_language, 'students.family_language'),
   }),
 };
 

@@ -728,7 +728,7 @@ export const marketingIt: MarketingMessages = {
         "Questa informativa riguarda i docenti, il personale scolastico e i genitori che praticano l'istruzione parentale che usano TeacherHubPro, e le informazioni su studenti e famiglie che inseriscono. Studenti e famiglie non creano account; usano link privati forniti da un docente.",
       s2Title: 'Cosa conserviamo',
       s2Text:
-        "Dati dell'account (nome, email, scuola, lingua), ciò che i docenti creano (classi, piani, compiti, voti, presenze, note) e ciò che gli studenti inviano tramite i propri link. I dati degli studenti contengono solo ciò che serve a una funzionalità: nomi, un numero di matricola facoltativo, un'email facoltativa di un genitore e adattamenti facoltativi.",
+        "Dati dell'account (nome, email, scuola, lingua), ciò che i docenti creano (classi, piani, compiti, voti, presenze, note) e ciò che gli studenti inviano tramite i propri link. I dati degli studenti contengono solo ciò che serve a una funzionalità: nomi, un numero di matricola facoltativo, un'email facoltativa di un genitore, adattamenti facoltativi e, in modo facoltativo, la lingua che legge la famiglia.",
       s3Title: 'Come li usiamo',
       s3Text:
         'Solo per fornire il servizio alla scuola o al docente che li ha inseriti. Non vendiamo dati personali né usiamo i dati degli studenti per la pubblicità.',
