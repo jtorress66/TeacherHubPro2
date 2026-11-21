@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState } from 'react';
-import type { StudentQuestion } from '@thp/domain';
+import { spokenQuestion, type StudentQuestion } from '@thp/domain';
 import { createTranslator, type Locale } from '@thp/i18n';
 import {
   submitAnswersAction,
@@ -10,6 +10,7 @@ import {
 } from '../app/_lib/student-actions.ts';
 import { FormAlert, Submit } from './forms.tsx';
 import { Hidden } from './form-fields.tsx';
+import { ReadAloud } from './read-aloud.tsx';
 import { prefill, type Prefill } from '../server/form-values.ts';
 
 const initial: StudentFormState = {};
@@ -125,7 +126,7 @@ export function StudentAnswerForm(props: {
         message={state.errors === undefined ? undefined : Object.values(state.errors).join(' ')}
       />
       <ol className="question-list">
-        {props.questions.map((question) => (
+        {props.questions.map((question, index) => (
           <li key={question.id} className="card stack">
             {question.instructions === null ? null : (
               <p className="hint">{question.instructions}</p>
@@ -135,6 +136,17 @@ export function StudentAnswerForm(props: {
               <span className="muted small">
                 {t('student.questionPoints', { points: question.points })}
               </span>
+            </p>
+            <p>
+              <ReadAloud
+                locale={props.locale}
+                language={props.locale}
+                text={spokenQuestion(question, {
+                  true: t('questions.true'),
+                  false: t('questions.false'),
+                })}
+                context={t('student.listenQuestion', { number: index + 1 })}
+              />
             </p>
             <Answer locale={props.locale} question={question} sent={sent} />
           </li>

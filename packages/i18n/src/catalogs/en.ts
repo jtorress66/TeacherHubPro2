@@ -1530,6 +1530,8 @@ export const en = {
     open: 'Open',
     files: 'Files',
     questionPoints: '{points} pts',
+    listenInstructions: 'the instructions',
+    listenQuestion: 'question {number}',
     choose: 'Choose…',
     submit: 'Hand in',
     submitted: 'Handed in on {date}. Your teacher will review it.',

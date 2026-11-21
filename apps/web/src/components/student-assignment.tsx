@@ -1,5 +1,6 @@
 import type { StudentAssignmentView } from '@thp/application';
 import { createTranslator, type Locale } from '@thp/i18n';
+import { ReadAloud } from './read-aloud.tsx';
 import { StudentAnswerForm } from './student-forms.tsx';
 
 /**
@@ -21,7 +22,19 @@ export function StudentAssignment(props: {
   return (
     <>
       <h1>{assignment.title}</h1>
-      {assignment.instructions === null ? null : <p>{assignment.instructions}</p>}
+      {assignment.instructions === null ? null : (
+        <div className="stack">
+          <p>{assignment.instructions}</p>
+          <p>
+            <ReadAloud
+              locale={locale}
+              language={locale}
+              text={assignment.instructions}
+              context={t('student.listenInstructions')}
+            />
+          </p>
+        </div>
+      )}
       {attachments.length === 0 ? null : (
         <section className="stack" aria-labelledby="files-heading">
           <h2 id="files-heading">{t('student.files')}</h2>

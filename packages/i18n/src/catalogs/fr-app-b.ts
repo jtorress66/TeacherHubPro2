@@ -370,6 +370,8 @@ export const frAppB = {
     open: 'Ouvrir',
     files: 'Fichiers',
     questionPoints: '{points} pts',
+    listenInstructions: 'les consignes',
+    listenQuestion: 'question {number}',
     choose: 'Choisir…',
     submit: 'Rendre',
     submitted: 'Rendu le {date}. Ton enseignant(e) va le corriger.',

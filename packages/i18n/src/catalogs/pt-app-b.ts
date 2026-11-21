@@ -366,6 +366,8 @@ export const ptAppB = {
     open: 'Abrir',
     files: 'Arquivos',
     questionPoints: '{points} pts',
+    listenInstructions: 'as instruções',
+    listenQuestion: 'pergunta {number}',
     choose: 'Escolha…',
     submit: 'Entregar',
     submitted: 'Entregue em {date}. Seu professor vai revisar.',

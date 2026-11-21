@@ -30,3 +30,22 @@ export function questionForStudent(question: Question): StudentQuestion {
         : [],
   };
 }
+
+/**
+ * What read-aloud says for one question: its instructions, the question, then each choice (or each
+ * item to match). Matching choices are left out: read in order, they would hint at the answers.
+ */
+export function spokenQuestion(
+  question: StudentQuestion,
+  labels: { readonly true: string; readonly false: string },
+): string {
+  const choices =
+    question.type === 'true_false'
+      ? [labels.true, labels.false]
+      : question.type === 'matching'
+        ? question.lefts
+        : question.options;
+  const parts = [question.instructions, question.prompt].filter((part) => part !== null);
+  if (choices.length > 0) parts.push(choices.map((choice) => `${choice}.`).join('\n'));
+  return parts.join('\n\n');
+}

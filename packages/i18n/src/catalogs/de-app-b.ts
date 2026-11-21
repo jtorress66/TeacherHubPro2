@@ -374,6 +374,8 @@ export const deAppB = {
     open: 'Öffnen',
     files: 'Dateien',
     questionPoints: '{points} Pkt.',
+    listenInstructions: 'die Anweisungen',
+    listenQuestion: 'Frage {number}',
     choose: 'Auswählen …',
     submit: 'Abgeben',
     submitted: 'Abgegeben am {date}. Deine Lehrkraft schaut es sich an.',

@@ -3,7 +3,7 @@ import Link from 'next/link';
 import type { LearningPathId } from '@thp/domain';
 import { createTranslator } from '@thp/i18n';
 import { LessonCheck } from '../../../../../../../components/learning/lesson-check.tsx';
-import { ReadAloud } from '../../../../../../../components/learning/read-aloud.tsx';
+import { ReadAloud } from '../../../../../../../components/read-aloud.tsx';
 import { getAppContainer } from '../../../../../../../container.ts';
 import { localeFrom, type LocaleParams } from '../../../../../locale-param.ts';
 
