@@ -1549,6 +1549,8 @@ export const es: Messages = {
     open: 'Abrir',
     files: 'Archivos',
     questionPoints: '{points} pts',
+    listenInstructions: 'las instrucciones',
+    listenQuestion: 'pregunta {number}',
     choose: 'Elige…',
     submit: 'Entregar',
     submitted: 'Entregada el {date}. Tu maestro la revisará.',

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { createQuestion, type Question } from '../gradebook/question.ts';
 import type { QuestionId } from '../shared/ids.ts';
 import type { ExtractedQuestionInput } from './extracted-test.ts';
-import { questionForStudent } from './student-view.ts';
+import { questionForStudent, spokenQuestion } from './student-view.ts';
 
 const q = (input: ExtractedQuestionInput): Question => {
   const created = createQuestion({ id: 'q1' as QuestionId, ...input });
@@ -54,5 +54,50 @@ describe('questionForStudent', () => {
       }),
     );
     expect(view).toMatchObject({ lefts: ['dog', 'cat'], rights: ['gato', 'perro'], options: [] });
+  });
+});
+
+describe('spokenQuestion', () => {
+  const labels = { true: 'True', false: 'False' };
+
+  it('reads the instructions, the question and each choice', () => {
+    const view = questionForStudent(
+      q({
+        type: 'multiple_choice',
+        prompt: 'Pick a fruit',
+        instructions: 'Choose one.',
+        options: ['Apple', 'Bread'],
+        correctOption: 0,
+      }),
+    );
+    expect(spokenQuestion(view, labels)).toBe('Choose one.\n\nPick a fruit\n\nApple.\nBread.');
+  });
+
+  it('reads true or false in the page language', () => {
+    const view = questionForStudent(
+      q({ type: 'true_false', prompt: 'The sky is green', answer: false }),
+    );
+    expect(spokenQuestion(view, { true: 'Cierto', false: 'Falso' })).toBe(
+      'The sky is green\n\nCierto.\nFalso.',
+    );
+  });
+
+  it('reads the items to match, never their order of answers', () => {
+    const view = questionForStudent(
+      q({
+        type: 'matching',
+        prompt: 'Match',
+        pairs: [
+          { left: 'Dog', right: 'Bark' },
+          { left: 'Cat', right: 'Meow' },
+        ],
+      }),
+    );
+    expect(spokenQuestion(view, labels)).toBe('Match\n\nDog.\nCat.');
+  });
+
+  it('reads only the question when there is nothing to choose', () => {
+    const view = questionForStudent(q({ type: 'short_answer', prompt: 'Why?' }));
+    expect(spokenQuestion(view, labels)).toBe('Why?');
   });
 });

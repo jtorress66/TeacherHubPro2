@@ -367,6 +367,8 @@ export const itAppB = {
     open: 'Apri',
     files: 'File',
     questionPoints: '{points} pt',
+    listenInstructions: 'le istruzioni',
+    listenQuestion: 'domanda {number}',
     choose: 'Scegli…',
     submit: 'Consegna',
     submitted: "Consegnato il {date}. L'insegnante lo controllerà.",

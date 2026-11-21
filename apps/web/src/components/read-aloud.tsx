@@ -4,13 +4,15 @@ import { useEffect, useState } from 'react';
 import { createTranslator, type Locale } from '@thp/i18n';
 
 /**
- * Reads a lesson aloud with the device's own voice: free, and the text never leaves the device.
- * Hidden where the browser has no speech.
+ * Reads text aloud (a lesson, an assignment's instructions or one question) with the device's own
+ * voice: free, and the text never leaves the device. Hidden where the browser has no speech.
  */
 export function ReadAloud(props: {
   readonly locale: Locale;
   readonly language: string;
   readonly text: string;
+  /** What is read, for screen readers when a page has several buttons, e.g. "question 2". */
+  readonly context?: string;
 }) {
   const t = createTranslator(props.locale);
   const [supported, setSupported] = useState(false);
@@ -46,6 +48,9 @@ export function ReadAloud(props: {
       }}
     >
       {speaking ? t('learning.stop') : t('learning.listen')}
+      {props.context === undefined ? null : (
+        <span className="visually-hidden"> {props.context}</span>
+      )}
     </button>
   );
 }

@@ -353,6 +353,8 @@ export const zhAppB = {
     open: '打开',
     files: '文件',
     questionPoints: '{points} 分',
+    listenInstructions: '说明',
+    listenQuestion: '第 {number} 题',
     choose: '请选择……',
     submit: '提交',
     submitted: '已于 {date} 提交。老师会进行批阅。',

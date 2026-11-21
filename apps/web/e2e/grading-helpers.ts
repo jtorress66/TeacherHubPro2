@@ -58,7 +58,32 @@ export async function importQuestions(page: Page, locale: Locale): Promise<void>
   ).toHaveCount(3);
 }
 
-/** The student opens their link in their own browser, answers and hands in. */
+/** Stands in for the browser's voice, keeping what it was asked to say in `window.spoken`. */
+async function recordSpeech(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    const spoken: { text: string; lang: string }[] = [];
+    const define = (name: string, value: unknown) => {
+      Object.defineProperty(window, name, { value, configurable: true });
+    };
+    define('spoken', spoken);
+    define(
+      'SpeechSynthesisUtterance',
+      class {
+        lang = '';
+        onend: (() => void) | null = null;
+        constructor(readonly text: string) {}
+      },
+    );
+    define('speechSynthesis', {
+      speak: (utterance: { text: string; lang: string }) => {
+        spoken.push({ text: utterance.text, lang: utterance.lang });
+      },
+      cancel: () => undefined,
+    });
+  });
+}
+
+/** The student opens their link in their own browser, listens to a question, answers and hands in. */
 export async function studentAnswers(
   browser: Browser,
   locale: Locale,
@@ -68,11 +93,28 @@ export async function studentAnswers(
 ) {
   const t = createTranslator(locale);
   const student = await browser.newPage();
+  await recordSpeech(student);
   await student.goto(url);
   await expect(student.getByRole('heading', { level: 1 })).toHaveText(
     t('student.hello', { name: firstName }),
   );
   await student.getByRole('link', { name: title }).click();
+
+  // Read-aloud: the first question and its choices, in the page's language.
+  const question1 = t('student.listenQuestion', { number: 1 });
+  const listen = student.getByRole('button', { name: `${t('learning.listen')} ${question1}` });
+  const stop = student.getByRole('button', { name: `${t('learning.stop')} ${question1}` });
+  await listen.click();
+  await expect(stop).toHaveAttribute('aria-pressed', 'true');
+  const spoken = await student.evaluate(
+    () => (window as unknown as { spoken: { text: string; lang: string }[] }).spoken,
+  );
+  expect(spoken).toHaveLength(1);
+  expect(spoken[0]?.text).toContain('Mercury.');
+  expect(spoken[0]?.lang).toBe(locale);
+  await stop.click();
+  await expect(listen).toHaveAttribute('aria-pressed', 'false');
+
   await student.getByRole('radio', { name: 'Mercury' }).check();
   await student.getByRole('radio', { name: t('questions.true') }).check();
   await student.getByLabel('Why do we have day and night?').fill('Because the Earth turns around.');
