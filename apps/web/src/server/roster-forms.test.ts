@@ -72,9 +72,18 @@ describe('student and semester forms', () => {
         studentNumber: null,
         parentEmail: null,
         accommodations: null,
+        familyLanguage: null,
         locale: 'en',
       },
     });
+  });
+
+  it("reads the family's language", () => {
+    const parsed = parseForm(
+      studentForm,
+      form({ firstName: 'Ana', lastName: 'Wu', familyLanguage: 'zh' }),
+    );
+    expect(parsed.ok && parsed.value.familyLanguage).toBe('zh');
   });
 
   it('reads a semester and whether to make it active', () => {

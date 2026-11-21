@@ -63,7 +63,8 @@ export type ApplicationErrorCode =
   | 'name_mismatch'
   | 'renewal_failed'
   | 'ai_off_for_school'
-  | 'student_flags_off';
+  | 'student_flags_off'
+  | 'translations_outdated';
 
 /**
  * What a use case can report: a broken validation rule (with its field) or an application-level

@@ -7,6 +7,8 @@ import {
   planWeekdays,
   prepDaysRange,
   standardSubjects,
+  type EmailTranslations,
+  type Language,
   type ParentEmail,
   type PrepItem,
 } from '@thp/domain';
@@ -14,11 +16,13 @@ import { createTranslator, localeInfo, locales, type Locale } from '@thp/i18n';
 import {
   publishPrepAction,
   startPrepAction,
+  translatePrepAction,
   type PrepFormState,
 } from '../app/_lib/prep-actions.ts';
 import { Field, FormAlert, Submit } from './forms.tsx';
 import { Hidden, Select, TextArea, type Option } from './form-fields.tsx';
 import { Markdown } from './markdown.tsx';
+import { PrepTranslations } from './prep-translations.tsx';
 import { prefill, type Prefill } from '../server/form-values.ts';
 
 const initial: PrepFormState = {};
@@ -208,7 +212,7 @@ function PlanPreview({ item, locale }: { readonly item: PrepItem; readonly local
       <p>
         <strong>{t('prep.objective')}:</strong>
       </p>
-      <Markdown source={plan.objective} />
+      <Markdown source={plan.objective} locale={locale} />
       {plan.standards.length === 0 ? null : (
         <p>
           <strong>{t('prep.standards')}:</strong> {plan.standards.join(', ')}
@@ -220,9 +224,9 @@ function PlanPreview({ item, locale }: { readonly item: PrepItem; readonly local
             <strong>{t(`planner.day_${planWeekdays[index] ?? 'Mon'}`)}:</strong>{' '}
             {day.theme ?? t('prep.noTheme')}
             <div className="hint">
-              <Markdown source={day.notes} />
+              <Markdown source={day.notes} locale={locale} />
               {(day.activities ?? []).map((activity, a) => (
-                <Markdown key={a} source={activity.notes} />
+                <Markdown key={a} source={activity.notes} locale={locale} />
               ))}
             </div>
           </li>
@@ -299,7 +303,7 @@ function QuizPreview({ item, locale }: { readonly item: PrepItem; readonly local
 }
 
 function ItemPreview({ item, locale }: { readonly item: PrepItem; readonly locale: Locale }) {
-  if (item.kind === 'worksheet') return <Markdown source={item.content} />;
+  if (item.kind === 'worksheet') return <Markdown source={item.content} locale={locale} />;
   if (item.kind === 'presentation') return <SlidesPreview item={item} />;
   if (item.kind === 'quiz') return <QuizPreview item={item} locale={locale} />;
   return <PlanPreview item={item} locale={locale} />;
@@ -315,10 +319,15 @@ export function PrepReview(props: {
   readonly items: readonly PrepItem[];
   readonly parentEmail: ParentEmail | null;
   readonly recipients: number;
+  readonly familyLanguages: readonly { readonly language: Language; readonly families: number }[];
+  readonly translations: EmailTranslations | null;
 }) {
   const { locale, items } = props;
   const t = createTranslator(locale);
-  const [state, action] = useActionState(publishPrepAction, initial);
+  const [published, action] = useActionState(publishPrepAction, initial);
+  const [translating, translateAction] = useActionState(translatePrepAction, initial);
+  // Whichever was refused last shows its errors and what the teacher sent.
+  const state = translating.errors === undefined ? published : translating;
   const [shown, setShown] = useState(items.find((i) => i.status === 'done')?.key ?? '');
   const current = items.find((i) => i.key === shown);
   const errors = state.errors ?? {};
@@ -405,6 +414,14 @@ export function PrepReview(props: {
             defaultValue={sent.text('emailBody', props.parentEmail.body)}
             error={errors.emailBody}
             rows={10}
+          />
+          <PrepTranslations
+            locale={locale}
+            familyLanguages={props.familyLanguages}
+            translations={props.translations}
+            translateAction={translateAction}
+            sent={sent}
+            refresher={<PrepRefresher />}
           />
         </section>
       )}

@@ -34,6 +34,7 @@ import {
   PathWriter,
   QuestionExtractor,
   InsightWriter,
+  MessageTranslator,
   QuizWriter,
   ChatbotAgent,
   SubmissionGrader,
@@ -48,6 +49,7 @@ import {
   JobHandlerRegistry,
   makePrepRunners,
   PrepStepHandler,
+  TranslateEmailHandler,
   LessonPlanDraftHandler,
   PresentationDraftHandler,
   RubricDraftHandler,
@@ -189,6 +191,10 @@ export function createJobRunner(
       clock,
     }),
     new LearningPathHandler({ pathWriter: new PathWriter(model), learningPaths, ids, clock }),
+    new TranslateEmailHandler({
+      prepBatches: repos.prepBatches,
+      messageTranslator: new MessageTranslator(model),
+    }),
     new PrepStepHandler({
       prepBatches: repos.prepBatches,
       jobs,

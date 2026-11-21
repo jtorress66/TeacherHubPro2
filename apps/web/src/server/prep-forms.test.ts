@@ -81,6 +81,21 @@ describe('parseEmailForm', () => {
     ).toEqual({ keep: ['plan', 'quiz'], email: { subject: 'Semana 3', body: 'Hola' } });
     expect(parseEmailForm(form([['keep', 'plan']]))).toEqual({ keep: ['plan'] });
   });
+
+  it('reads each translation the teacher checked, skipping unknown languages', () => {
+    expect(
+      parseEmailForm(
+        form([
+          ['emailSubject', 'Week 3'],
+          ['emailBody', 'Hello'],
+          ['translation.zh.subject', ' 第3周 '],
+          ['translation.zh.body', '您好'],
+          ['translation.xx.subject', 'Nope'],
+          ['translation.xx.body', 'Nope'],
+        ]),
+      ).translations,
+    ).toEqual([{ language: 'zh', subject: '第3周', body: '您好' }]);
+  });
 });
 
 describe('classDefaults', () => {

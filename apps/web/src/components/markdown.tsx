@@ -1,16 +1,20 @@
+import { createTranslator, type Locale } from '@thp/i18n';
 import { parseMarkdown, type Block, type Inline } from '../server/markdown.ts';
 import { TableScroll } from './table-scroll.tsx';
 
-function Inlines({ items }: { readonly items: readonly Inline[] }) {
+/** A blank to fill in is a line on the page, named for screen readers in the page's language. */
+function Inlines({ items, blank }: { readonly items: readonly Inline[]; readonly blank: string }) {
   return (
     <>
       {items.map((item, index) => {
         if (item.kind === 'text') return <span key={index}>{item.text}</span>;
-        if (item.kind === 'blank') return <span key={index} className="blank" aria-label="blank" />;
+        if (item.kind === 'blank') {
+          return <span key={index} className="blank" role="img" aria-label={blank} />;
+        }
         const Tag = item.kind === 'strong' ? 'strong' : 'em';
         return (
           <Tag key={index}>
-            <Inlines items={item.children} />
+            <Inlines items={item.children} blank={blank} />
           </Tag>
         );
       })}
@@ -18,13 +22,13 @@ function Inlines({ items }: { readonly items: readonly Inline[] }) {
   );
 }
 
-function BlockView({ block }: { readonly block: Block }) {
+function BlockView({ block, blank }: { readonly block: Block; readonly blank: string }) {
   switch (block.kind) {
     case 'heading': {
       const Tag = (['h3', 'h4', 'h5'] as const)[block.level - 1] ?? 'h5';
       return (
         <Tag>
-          <Inlines items={block.content} />
+          <Inlines blank={blank} items={block.content} />
         </Tag>
       );
     }
@@ -34,7 +38,7 @@ function BlockView({ block }: { readonly block: Block }) {
         <Tag start={block.ordered && block.start !== 1 ? block.start : undefined}>
           {block.items.map((item, index) => (
             <li key={index}>
-              <Inlines items={item} />
+              <Inlines blank={blank} items={item} />
             </li>
           ))}
         </Tag>
@@ -49,7 +53,7 @@ function BlockView({ block }: { readonly block: Block }) {
                 <tr>
                   {block.header.map((cell, index) => (
                     <th key={index} scope="col">
-                      <Inlines items={cell} />
+                      <Inlines blank={blank} items={cell} />
                     </th>
                   ))}
                 </tr>
@@ -60,7 +64,7 @@ function BlockView({ block }: { readonly block: Block }) {
                 <tr key={r}>
                   {row.map((cell, c) => (
                     <td key={c}>
-                      <Inlines items={cell} />
+                      <Inlines blank={blank} items={cell} />
                     </td>
                   ))}
                 </tr>
@@ -77,7 +81,7 @@ function BlockView({ block }: { readonly block: Block }) {
           {block.lines.map((line, index) => (
             <span key={index}>
               {index > 0 ? <br /> : null}
-              <Inlines items={line} />
+              <Inlines blank={blank} items={line} />
             </span>
           ))}
         </p>
@@ -86,12 +90,19 @@ function BlockView({ block }: { readonly block: Block }) {
 }
 
 /** Plan text with its tables, lists and blanks, rendered as elements (never as raw HTML). */
-export function Markdown({ source }: { readonly source: string | null | undefined }) {
+export function Markdown({
+  source,
+  locale,
+}: {
+  readonly source: string | null | undefined;
+  readonly locale: Locale;
+}) {
   if (!source) return null;
+  const blank = createTranslator(locale)('assistant.blank');
   return (
     <div className="markdown">
       {parseMarkdown(source).map((block, index) => (
-        <BlockView key={index} block={block} />
+        <BlockView key={index} block={block} blank={blank} />
       ))}
     </div>
   );

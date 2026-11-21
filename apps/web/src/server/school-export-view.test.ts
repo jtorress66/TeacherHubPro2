@@ -26,6 +26,7 @@ const data: SchoolExport = {
       studentNumber: '0042',
       parentEmail: 'mom@x.com',
       accommodations: 'Extra time',
+      familyLanguage: 'zh',
     },
   ],
   assignments: [
@@ -93,7 +94,9 @@ describe('schoolExportFiles', () => {
       '',
     ]);
     expect(lines(file('classes.csv'))[1]).toBe('Ciencias 5,Ana López,Ciencias,5,,2026-2027,Yes');
-    expect(lines(file('students.csv'))[1]).toBe('Ciencias 5,Ben,Acosta,0042,mom@x.com,Extra time');
+    expect(lines(file('students.csv'))[1]).toBe(
+      'Ciencias 5,Ben,Acosta,0042,mom@x.com,Extra time,zh',
+    );
     expect(lines(file('assignments.csv'))[1]).toBe('Ciencias 5,Quiz 1,Quizzes,10,2026-09-10');
     expect(lines(file('grades.csv'))[1]).toBe("Ciencias 5,Ben Acosta,Quiz 1,Graded,9.5,'=nice");
     expect(lines(file('attendance.csv'))[1]).toBe('Ciencias 5,Ben Acosta,2026-09-01,Tardy,5,');

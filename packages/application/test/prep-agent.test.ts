@@ -1,111 +1,23 @@
 import { describe, expect, it } from 'vitest';
-import {
-  err,
-  ok,
-  type Email,
-  type PrepBatchId,
-  type PrepRequestInput,
-  type SchoolId,
-  type UserId,
-} from '@thp/domain';
-import {
-  aPresentationDraft,
-  aUser,
-  aWeeklyDraft,
-  FakeContentWriter,
-  FakeLessonPlanDrafter,
-  FakeMailer,
-  FakePresentationDrafter,
-  FakeQuizWriter,
-} from '@thp/testing';
+import { err, type PrepBatchId, type SchoolId, type UserId } from '@thp/domain';
+import { aUser, FakeLessonPlanDrafter, FakeMailer, FakePresentationDrafter } from '@thp/testing';
 import {
   CountReadyPrepBatches,
   CreatePlan,
   DeletePrepBatch,
   GetPrepBatch,
-  JobHandlerRegistry,
   ListPrepBatches,
-  makePrepRunners,
-  PrepStepHandler,
   PublishPrepBatch,
   ResumePrepBatch,
-  RunNextJob,
   StartPrepBatch,
   UpdatePrepSelection,
 } from '../src/index.ts';
-import { colleagueOf, gradedClass, valueOf } from './classroom.ts';
-import { advanceDays, makeWorld, type World } from './world.ts';
+import { colleagueOf, valueOf } from './classroom.ts';
+import { aiFakes, readyBatch, runSteps, teacherWithClass } from './prep-setup.ts';
+import { advanceDays, makeWorld } from './world.ts';
 
 const outsider = aUser({ id: 'u-9' as UserId, schoolId: 'school-9' as SchoolId, email: 'o@x.edu' });
 const notFound = { ok: false, error: { code: 'not_found' } };
-
-interface AiFakes {
-  readonly drafter: FakeLessonPlanDrafter;
-  readonly presentationDrafter: FakePresentationDrafter;
-  readonly contentWriter: FakeContentWriter;
-  readonly quizWriter: FakeQuizWriter;
-}
-
-function aiFakes(overrides: Partial<AiFakes> = {}): AiFakes {
-  return {
-    drafter: new FakeLessonPlanDrafter(
-      ok(aWeeklyDraft({ days: [{ theme: 'Causes' }, { theme: 'Battles' }, {}, {}, {}] })),
-    ),
-    presentationDrafter: new FakePresentationDrafter(ok(aPresentationDraft())),
-    contentWriter: new FakeContentWriter(ok('# Worksheet\n\n1. Name a cause.')),
-    quizWriter: new FakeQuizWriter(),
-    ...overrides,
-  };
-}
-
-async function teacherWithClass(world: World) {
-  const setup = await gradedClass(world);
-  await world.students.save({ ...setup.ana, parentEmail: 'ana.mom@x.edu' as Email });
-  await world.students.save({ ...setup.ben, parentEmail: 'ben.dad@x.edu' as Email });
-  const input: PrepRequestInput = {
-    classId: setup.cls.id,
-    prompt: 'Prep next week for Unit 3 History (Civil War)',
-    weekStart: '2026-09-07',
-    subject: 'social_studies',
-    grade: '7',
-    days: 2,
-    options: { presentations: true, worksheets: true, quiz: true, parentEmail: true },
-    quizCategoryId: setup.category('Pruebas cortas'),
-    language: 'es',
-    emailTemplate: {
-      subject: 'Esta semana en Ciencias 5',
-      greeting: 'Queridas familias:',
-      intro: 'Esto aprenderemos esta semana:',
-      quizLine: 'El viernes habrá una prueba corta.',
-      signOff: 'Saludos,\nAna López',
-      dayLabels: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'],
-    },
-  };
-  return { ...setup, input };
-}
-
-/** Runs queued prep steps until none is left; returns how many ran. */
-async function runSteps(world: World, fakes = aiFakes()) {
-  const run = new RunNextJob({
-    jobs: world.jobs,
-    handlers: new JobHandlerRegistry([
-      new PrepStepHandler({ ...world, runners: makePrepRunners({ ...world, ...fakes }) }),
-    ]),
-  });
-  let count = 0;
-  while ((await run.execute()) !== 'idle') count += 1;
-  return count;
-}
-
-async function readyBatch(world: World, fakes = aiFakes()) {
-  const setup = await teacherWithClass(world);
-  const batch = valueOf(
-    await new StartPrepBatch(world).execute({ actor: setup.actor, request: setup.input }),
-  );
-  await runSteps(world, fakes);
-  const ref = { actor: setup.actor, batchId: batch.id };
-  return { ...setup, batch, ref, fakes };
-}
 
 describe('StartPrepBatch', () => {
   it('saves a running batch and queues its first step', async () => {

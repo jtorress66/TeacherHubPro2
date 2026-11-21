@@ -20,6 +20,16 @@ describe('createStudent', () => {
       studentNumber: null,
       parentEmail: null,
       accommodations: null,
+      familyLanguage: null,
+    });
+  });
+
+  it("keeps the family's language when it differs from the teacher's, or none", () => {
+    expect(valueOf(createStudent({ ...base, familyLanguage: 'zh' })).familyLanguage).toBe('zh');
+    expect(valueOf(createStudent({ ...base, familyLanguage: ' ' })).familyLanguage).toBeNull();
+    expect(errorOf(createStudent({ ...base, familyLanguage: 'klingon' }))).toEqual({
+      field: 'familyLanguage',
+      code: 'invalid_format',
     });
   });
 

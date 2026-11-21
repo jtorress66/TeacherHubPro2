@@ -38,6 +38,7 @@ import * as usedTickets from './0036_used_tickets.ts';
 import * as referrals from './0037_referrals.ts';
 import * as schoolDeletions from './0038_school_deletions.ts';
 import * as schoolFeatures from './0039_school_features.ts';
+import * as familyLanguages from './0040_family_languages.ts';
 
 /** Ordered list of migrations, bundled with the code (no filesystem lookups at runtime). */
 const migrations: Readonly<Record<string, Migration>> = {
@@ -80,6 +81,7 @@ const migrations: Readonly<Record<string, Migration>> = {
   '0037_referrals': referrals,
   '0038_school_deletions': schoolDeletions,
   '0039_school_features': schoolFeatures,
+  '0040_family_languages': familyLanguages,
 };
 
 export const migrationProvider: MigrationProvider = {

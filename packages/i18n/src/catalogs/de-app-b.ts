@@ -101,6 +101,7 @@ export const deAppB = {
     level_high: 'Oberstufe',
   },
   assistant: {
+    blank: 'Lücke',
     title: 'KI-Assistent',
     intro:
       'Die KI schreibt einen ersten Entwurf. Prüfen Sie ihn, bevor Sie ihn im Unterricht verwenden.',
@@ -1243,6 +1244,8 @@ export const deAppB = {
       'Diese Seite braucht den Link aus Ihrer E-Mail. Falls er nicht funktioniert, melden Sie sich an und fordern Sie mit „Erneut senden“ einen neuen an.',
   },
   errors: {
+    translations_outdated:
+      'Sie haben die E-Mail nach der Übersetzung geändert. Klicken Sie erneut auf Für die Familien übersetzen, damit jede Familie den neuen Text erhält.',
     own_account: 'Das können Sie nicht mit Ihrem eigenen Konto tun.',
     has_classes:
       'Diese Person unterrichtet noch Klassen. Übergeben Sie ihre Klassen zuerst an eine andere Lehrkraft der Schule.',

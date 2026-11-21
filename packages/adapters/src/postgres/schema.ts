@@ -64,6 +64,7 @@ export interface StudentsTable {
   student_number: string | null;
   parent_email: string | null;
   accommodations: string | null;
+  family_language: string | null;
   created_at: CreatedAt;
 }
 
@@ -537,6 +538,7 @@ export interface PrepBatchesTable {
   status: string;
   items: Json;
   parent_email: Json | null;
+  email_translations: Json | null;
   job_id: string;
   started_at: Date;
   ready_at: Date | null;

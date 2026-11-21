@@ -9,6 +9,8 @@ export interface RosterRow {
   readonly studentNumber: string;
   readonly parentEmail: string;
   readonly accommodations: string;
+  /** As typed: a code or a language's name. */
+  readonly familyLanguage: string;
 }
 
 type Column = Exclude<keyof RosterRow, 'line'>;
@@ -50,6 +52,15 @@ const headerAliases: Readonly<Record<Column, readonly string[]>> = {
     'correo padre',
   ],
   accommodations: ['accommodations', 'adaptaciones', 'acomodaciones', 'acomodos'],
+  familyLanguage: [
+    'family language',
+    'home language',
+    'parent language',
+    'language',
+    'idioma de la familia',
+    'idioma del hogar',
+    'idioma',
+  ],
 };
 
 const required: readonly Column[] = ['firstName', 'lastName'];

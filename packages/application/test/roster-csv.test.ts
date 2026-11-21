@@ -19,8 +19,18 @@ describe('parseRosterCsv', () => {
         studentNumber: 'S-1',
         parentEmail: 'mom@x.com',
         accommodations: '',
+        familyLanguage: '',
       },
     ]);
+  });
+
+  it("reads the family's language column, in English or Spanish", () => {
+    expect(rows('First name,Last name,Home language\nAna,Wu,Chinese\n')[0]?.familyLanguage).toBe(
+      'Chinese',
+    );
+    expect(rows('Nombre,Apellidos,Idioma de la familia\nAna,Wu,chino\n')[0]?.familyLanguage).toBe(
+      'chino',
+    );
   });
 
   it('reads a semicolon file with Spanish headers, ignoring case and accents', () => {
@@ -34,6 +44,7 @@ describe('parseRosterCsv', () => {
         studentNumber: '7',
         parentEmail: '',
         accommodations: 'Más tiempo',
+        familyLanguage: '',
       },
     ]);
   });

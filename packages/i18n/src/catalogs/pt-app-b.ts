@@ -98,6 +98,7 @@ export const ptAppB = {
     level_high: 'Ensino médio',
   },
   assistant: {
+    blank: 'espaço em branco',
     title: 'Assistente de IA',
     intro: 'A IA escreve um primeiro rascunho. Revise-o antes de usá-lo em aula.',
     type: 'O que criar',
@@ -1226,6 +1227,8 @@ export const ptAppB = {
       'Esta página precisa do link do seu e-mail. Se não funcionar, entre na sua conta e use Reenviar para receber um novo.',
   },
   errors: {
+    translations_outdated:
+      'Você alterou o e-mail depois da tradução. Clique em Traduzir para as famílias de novo para que cada família receba o novo texto.',
     own_account: 'Você não pode fazer isso com a sua própria conta.',
     has_classes:
       'Esta pessoa ainda dá aulas em turmas. Primeiro passe as turmas dela para outro professor da escola.',
