@@ -24,6 +24,7 @@ These match the app as built. If a feature changes, update this list and the web
 - optional student number;
 - optional parent or guardian email;
 - optional accommodations (free text the teacher writes);
+- optional family language (so the weekly family email can be sent in the language the family reads);
 - class membership;
 - attendance;
 - assignments, student answers and uploaded work;

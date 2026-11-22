@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import type { UseCaseError } from '@thp/application';
 import type { PrepBatchId } from '@thp/domain';
 import { isLocale, type Locale } from '@thp/i18n';
 import { submittedValues, type SubmittedValues } from '../../server/form-values.ts';
@@ -73,7 +74,18 @@ export async function resumePrepAction(data: FormData): Promise<void> {
   redirect(path);
 }
 
-/** Keeps the ticked drafts and the edited email, then publishes them. */
+/** A refused selection, with email field errors under the email's own fields. */
+function selectionRefused(error: UseCaseError, locale: Locale, data: FormData): PrepFormState {
+  const errors = formErrors(error, locale);
+  return {
+    errors: Object.fromEntries(
+      Object.entries(errors).map(([field, message]) => [emailFields[field] ?? field, message]),
+    ),
+    values: submittedValues(data),
+  };
+}
+
+/** Keeps the ticked drafts, the edited email and its checked translations, then publishes. */
 export async function publishPrepAction(
   _state: PrepFormState,
   data: FormData,
@@ -84,17 +96,32 @@ export async function publishPrepAction(
     ...ref,
     ...parseEmailForm(data),
   });
-  if (!selection.ok) {
-    const errors = formErrors(selection.error, locale);
-    return {
-      errors: Object.fromEntries(
-        Object.entries(errors).map(([field, message]) => [emailFields[field] ?? field, message]),
-      ),
-      values: submittedValues(data),
-    };
-  }
+  if (!selection.ok) return selectionRefused(selection.error, locale, data);
   const published = await container.publishPrepBatch.execute(ref);
   if (!published.ok) return rejectedForm(published.error, locale, data);
+  revalidatePath(path);
+  redirect(path);
+}
+
+/**
+ * Keeps the ticked drafts and the edited email, then asks the AI to draft it in the families'
+ * languages. Earlier translations are replaced, so they are not saved here.
+ */
+export async function translatePrepAction(
+  _state: PrepFormState,
+  data: FormData,
+): Promise<PrepFormState> {
+  const { locale, path, ref } = await refOf(data);
+  const container = getAppContainer();
+  const { keep, email } = parseEmailForm(data);
+  const selection = await container.updatePrepSelection.execute({
+    ...ref,
+    keep,
+    ...(email === undefined ? {} : { email }),
+  });
+  if (!selection.ok) return selectionRefused(selection.error, locale, data);
+  const started = await container.requestEmailTranslations.execute(ref);
+  if (!started.ok) return rejectedForm(started.error, locale, data);
   revalidatePath(path);
   redirect(path);
 }

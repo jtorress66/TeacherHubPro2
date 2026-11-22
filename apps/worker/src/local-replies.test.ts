@@ -6,6 +6,7 @@ import {
   PresentationWriter,
   RubricWriter,
   InsightWriter,
+  MessageTranslator,
   QuestionExtractor,
   QuizWriter,
   ChatbotAgent,
@@ -22,6 +23,7 @@ import {
   gameCountRange,
   leniencyFor,
   chatFacts,
+  languages,
   type QuestionId,
 } from '@thp/domain';
 import { aContentRequest, unwrap } from '@thp/testing';
@@ -115,6 +117,19 @@ describe('the local stand-in replies', () => {
     const draft = unwrap(await new RubricWriter(local()).draft(request));
     expect(draft.criteria).toHaveLength(3);
     expect(draft.levels.map((level) => level.points)).toEqual([5, 4, 3, 2, 1]);
+  });
+
+  it("translates the family email into each language, passing the translator's checks", async () => {
+    const email = {
+      subject: 'Esta semana en Historia 7',
+      body: 'Queridas familias:\n\n• Lunes: Causas\n• Martes: Batallas\n\nSaludos,\nAna',
+    };
+    for (const to of languages.filter((language) => language !== 'es')) {
+      const translated = unwrap(
+        await new MessageTranslator(local()).translate({ email, from: 'es', to }),
+      );
+      expect(translated.body.split('\n').filter((line) => line.startsWith('•'))).toHaveLength(2);
+    }
   });
 
   it('drafts a three-bullet insight that passes the writer’s checks', async () => {

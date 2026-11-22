@@ -98,6 +98,7 @@ export const itAppB = {
     level_high: 'Scuola superiore',
   },
   assistant: {
+    blank: 'spazio vuoto',
     title: 'Assistente IA',
     intro: "L'IA scrive una prima bozza. La riveda prima di usarla in classe.",
     type: 'Cosa creare',
@@ -1231,6 +1232,8 @@ export const itAppB = {
       'Questa pagina richiede il link della Sua email. Se non funziona, acceda e usi Invia di nuovo per riceverne uno nuovo.',
   },
   errors: {
+    translations_outdated:
+      'Hai modificato l’email dopo la traduzione. Premi di nuovo Traduci per le famiglie perché ogni famiglia riceva il nuovo testo.',
     own_account: 'Non può farlo sul Suo account.',
     has_classes:
       'Questa persona insegna ancora in alcune classi. Prima assegni le sue classi a un altro insegnante della scuola.',

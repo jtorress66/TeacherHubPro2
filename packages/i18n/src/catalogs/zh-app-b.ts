@@ -94,6 +94,7 @@ export const zhAppB = {
     level_high: '高中',
   },
   assistant: {
+    blank: '空白',
     title: 'AI 助手',
     intro: 'AI 会写出初稿。在课堂上使用前请先审阅。',
     type: '要生成的内容',
@@ -1169,6 +1170,8 @@ export const zhAppB = {
     noLink: '此页面需要您邮件中的链接。如果链接无效，请登录并使用“重新发送”获取新链接。',
   },
   errors: {
+    translations_outdated:
+      '邮件翻译后你又修改了它。请再次点击“为家庭翻译”，让每个家庭都收到新的内容。',
     own_account: '您不能对自己的账户执行此操作。',
     has_classes: '此人仍在教授班级。请先将其班级交给本校的另一位老师。',
     in_use: '此项仍在使用中：有人员、班级或记录属于它。',

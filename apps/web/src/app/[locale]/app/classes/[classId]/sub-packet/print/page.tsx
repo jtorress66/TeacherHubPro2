@@ -64,7 +64,7 @@ export default async function PrintSubPacketPage(props: Props) {
           </div>
         </dl>
         <h3>{t('subPacket.emergencyProcedures')}</h3>
-        <Markdown source={notes.emergencyProcedures ?? none} />
+        <Markdown source={notes.emergencyProcedures ?? none} locale={locale} />
       </section>
 
       <section className="stack">
@@ -115,7 +115,7 @@ export default async function PrintSubPacketPage(props: Props) {
                     <th scope="row">{t(`planner.day_${weekday}`)}</th>
                     <td>{week.days[i]?.theme ?? ''}</td>
                     <td>
-                      <Markdown source={week.days[i]?.notes} />
+                      <Markdown source={week.days[i]?.notes} locale={locale} />
                     </td>
                   </tr>
                 ))}
@@ -170,9 +170,9 @@ export default async function PrintSubPacketPage(props: Props) {
       <section className="stack page-break">
         <h2>{t('subPacket.subNotes')}</h2>
         <h3>{t('subPacket.dailyRoutines')}</h3>
-        <Markdown source={notes.dailyRoutines ?? none} />
+        <Markdown source={notes.dailyRoutines ?? none} locale={locale} />
         <h3>{t('subPacket.additionalNotes')}</h3>
-        <Markdown source={notes.additionalNotes ?? none} />
+        <Markdown source={notes.additionalNotes ?? none} locale={locale} />
       </section>
       <p className="muted small">{t('planner.printedOn')}</p>
     </article>

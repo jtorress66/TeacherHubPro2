@@ -161,6 +161,15 @@ export const en = {
     open: 'Show the insight',
   },
   prep: {
+    familyLanguages: 'Families who read another language: {languages}.',
+    translate: 'Translate for families',
+    translateHint:
+      'The AI drafts your email in each family’s language. Check each translation before you publish. Families without one get your email as it is.',
+    translating: 'Translating… This usually takes under a minute.',
+    translationFailed: 'The translation could not be made. Please try again.',
+    translationHeading: 'Email in {language}',
+    translationSubject: 'Subject ({language})',
+    translationBody: 'Message ({language})',
     title: 'Prep Agent',
     intro:
       'Describe the week in one sentence. The agent drafts the weekly plan, slides and a worksheet for each lesson, a Friday quiz and a parent email. Nothing is saved or sent until you approve it.',
@@ -726,6 +735,8 @@ export const en = {
     back: 'All classes',
   },
   students: {
+    familyLanguage: 'Family’s language',
+    familyLanguageSame: 'The language of my emails',
     roster: 'Students',
     add: 'Add student',
     firstName: 'First name',
@@ -747,7 +758,7 @@ export const en = {
     copyArchived: 'archived',
     importTitle: 'Import students from a CSV file',
     importHelp:
-      'Columns: first name, last name (required), student number, parent email, accommodations. Nothing is imported if any row has a problem.',
+      'Columns: first name, last name (required), student number, parent email, accommodations, family language. Nothing is imported if any row has a problem.',
     file: 'CSV file',
     import: 'Import students',
     imported: '{count} students imported.',
@@ -1266,6 +1277,7 @@ export const en = {
     level_high: 'High school',
   },
   assistant: {
+    blank: 'blank',
     title: 'AI assistant',
     intro: 'The AI writes a first draft. Review it before you use it in class.',
     type: 'What to make',
@@ -2385,6 +2397,8 @@ export const en = {
       'This page needs the link from your email. If it does not work, log in and use Resend to get a new one.',
   },
   errors: {
+    translations_outdated:
+      'You changed the email after it was translated. Press Translate for families again so every family gets the new text.',
     own_account: 'You cannot do this to your own account.',
     has_classes:
       'This person still teaches classes. Hand their classes to another teacher of the school first.',

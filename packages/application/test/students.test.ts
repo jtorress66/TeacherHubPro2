@@ -211,6 +211,38 @@ describe('ImportStudents', () => {
     expect(listed.ok && listed.value).toHaveLength(25);
   });
 
+  it("keeps each family's language, written as a code or a name", async () => {
+    const world = makeWorld();
+    const { user, cls } = await classroom(world);
+    const text = 'first name,last name,family language\nAna,Wu,Chinese\nBen,Ortiz,es\nCara,Ruiz,\n';
+
+    expect(
+      await new ImportStudents(world).execute({ actor: user, classId: cls.id, csv: text }),
+    ).toEqual({ ok: true, value: { imported: 3 } });
+    const listed = await new ListStudents(world).execute({ actor: user, classId: cls.id });
+    expect(listed.ok && listed.value.map((s) => [s.firstName, s.familyLanguage])).toEqual([
+      ['Ben', 'es'],
+      ['Cara', null],
+      ['Ana', 'zh'],
+    ]);
+  });
+
+  it('reports a language it does not know on its row', async () => {
+    const world = makeWorld();
+    const { user, cls } = await classroom(world);
+    const text = 'first name,last name,family language\nAna,Wu,Klingon\n';
+
+    expect(
+      await new ImportStudents(world).execute({ actor: user, classId: cls.id, csv: text }),
+    ).toEqual({
+      ok: false,
+      error: {
+        code: 'invalid_rows',
+        rows: [{ line: 2, field: 'familyLanguage', code: 'invalid_format' }],
+      },
+    });
+  });
+
   it('imports nothing when any row is invalid, and reports each bad row with its line', async () => {
     const world = makeWorld();
     const { user, cls } = await classroom(world);

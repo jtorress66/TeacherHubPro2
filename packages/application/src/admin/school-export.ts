@@ -6,6 +6,7 @@ import {
   type AuditEventId,
   type Class,
   type GradeStatus,
+  type Language,
   type LocalDate,
   type Result,
   type Role,
@@ -49,6 +50,7 @@ export interface SchoolExport {
     studentNumber: string | null;
     parentEmail: string | null;
     accommodations: string | null;
+    familyLanguage: Language | null;
   }[];
   readonly assignments: readonly {
     className: string;
@@ -186,6 +188,7 @@ export class ExportSchoolData {
         studentNumber: student.studentNumber,
         parentEmail: student.parentEmail,
         accommodations: student.accommodations,
+        familyLanguage: student.familyLanguage,
       });
     }
 

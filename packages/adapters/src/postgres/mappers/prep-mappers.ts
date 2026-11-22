@@ -1,5 +1,6 @@
 import {
   type ClassId,
+  type EmailTranslations,
   type JobId,
   type ParentEmail,
   type PrepBatch,
@@ -37,6 +38,7 @@ export const prepBatchMapper: RowMapper<PrepBatch, PrepBatchesTable> = {
     status: batch.status,
     items: toJson(batch.items),
     parent_email: batch.parentEmail === null ? null : toJson(batch.parentEmail),
+    email_translations: batch.translations === null ? null : toJson(batch.translations),
     job_id: batch.jobId,
     started_at: batch.createdAt,
     ready_at: batch.readyAt,
@@ -52,6 +54,10 @@ export const prepBatchMapper: RowMapper<PrepBatch, PrepBatchesTable> = {
     status: oneOf(statuses, row.status, 'prep_batches.status'),
     items: stored(row.items, 'items') as readonly PrepItem[],
     parentEmail: optional(row.parent_email, 'parent_email') as ParentEmail | null,
+    translations: optional(
+      row.email_translations,
+      'email_translations',
+    ) as EmailTranslations | null,
     jobId: row.job_id as JobId,
     createdAt: row.started_at,
     readyAt: row.ready_at,

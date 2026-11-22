@@ -89,6 +89,18 @@ export function studentRepositoryContract(name: string, make: () => StudentRepos
       ).toEqual(['s1', 's2', 's3']);
     });
 
+    it("keeps the family's language", async () => {
+      const students = make();
+      const ana = aStudent({ ...student('s1', null), familyLanguage: 'zh' });
+      await students.saveMany([ana, student('s2', null)]);
+
+      const listed = await students.listByClass(schoolA, 'class-1' as ClassId);
+      expect(listed.map((s) => [s.id, s.familyLanguage]).sort()).toEqual([
+        ['s1', 'zh'],
+        ['s2', null],
+      ]);
+    });
+
     it('saves all or nothing: a repeated student number in the class refuses the whole batch', async () => {
       const students = make();
       await students.save(student('s1', 'A1'));

@@ -162,6 +162,16 @@ export const deAppA = {
     open: 'Einschätzung anzeigen',
   },
   prep: {
+    familyLanguages: 'Familien, die eine andere Sprache lesen: {languages}.',
+    translate: 'Für die Familien übersetzen',
+    translateHint:
+      'Die KI entwirft Ihre E-Mail in der Sprache jeder Familie. Prüfen Sie jede Übersetzung vor dem Veröffentlichen. Familien ohne Übersetzung erhalten Ihre E-Mail unverändert.',
+    translating: 'Wird übersetzt … Das dauert meist weniger als eine Minute.',
+    translationFailed:
+      'Die Übersetzung konnte nicht erstellt werden. Bitte versuchen Sie es erneut.',
+    translationHeading: 'E-Mail auf {language}',
+    translationSubject: 'Betreff ({language})',
+    translationBody: 'Nachricht ({language})',
     title: 'Prep-Agent',
     intro:
       'Beschreiben Sie die Woche in einem Satz. Der Agent entwirft den Wochenplan, Folien und ein Arbeitsblatt für jede Stunde, einen Test am Freitag und eine E-Mail an die Eltern. Nichts wird gespeichert oder gesendet, bevor Sie es freigeben.',
@@ -744,6 +754,8 @@ export const deAppA = {
     back: 'Alle Klassen',
   },
   students: {
+    familyLanguage: 'Sprache der Familie',
+    familyLanguageSame: 'Die Sprache meiner E-Mails',
     roster: 'Schüler:innen',
     add: 'Schüler:in hinzufügen',
     firstName: 'Vorname',
@@ -766,7 +778,7 @@ export const deAppA = {
     copyArchived: 'archiviert',
     importTitle: 'Schüler:innen aus einer CSV-Datei importieren',
     importHelp:
-      'Spalten: Vorname, Nachname (Pflicht), Schülernummer, Eltern-E-Mail, Fördermaßnahmen. Hat eine Zeile ein Problem, wird nichts importiert.',
+      'Spalten: Vorname, Nachname (Pflicht), Schülernummer, Eltern-E-Mail, Fördermaßnahmen, Sprache der Familie. Hat eine Zeile ein Problem, wird nichts importiert.',
     file: 'CSV-Datei',
     import: 'Schüler:innen importieren',
     imported: '{count} Schüler:innen importiert.',

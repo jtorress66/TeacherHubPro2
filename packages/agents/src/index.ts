@@ -27,6 +27,11 @@ export {
 } from './insight-writer/insight-writer.ts';
 export * from './insight-writer/insight-scorecard.ts';
 export {
+  MessageTranslator,
+  reviewTranslation,
+  translatorSystemPrompt,
+} from './message-translator/message-translator.ts';
+export {
   QuizWriter,
   quizQuestionTypes,
   quizSystemPrompt,

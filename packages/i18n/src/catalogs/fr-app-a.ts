@@ -162,6 +162,15 @@ export const frAppA = {
     open: "Afficher l'analyse",
   },
   prep: {
+    familyLanguages: 'Familles qui lisent une autre langue : {languages}.',
+    translate: 'Traduire pour les familles',
+    translateHint:
+      'L’IA rédige votre e-mail dans la langue de chaque famille. Vérifiez chaque traduction avant de publier. Les familles sans traduction reçoivent votre e-mail tel quel.',
+    translating: 'Traduction en cours… Cela prend en général moins d’une minute.',
+    translationFailed: 'La traduction n’a pas pu être faite. Veuillez réessayer.',
+    translationHeading: 'E-mail en {language}',
+    translationSubject: 'Objet ({language})',
+    translationBody: 'Message ({language})',
     title: 'Agent de préparation',
     intro:
       "Décrivez la semaine en une phrase. L'agent rédige le plan de la semaine, des diapositives et une fiche d'exercices pour chaque cours, un quiz du vendredi et un e-mail aux parents. Rien n'est enregistré ni envoyé avant votre approbation.",
@@ -743,6 +752,8 @@ export const frAppA = {
     back: 'Toutes les classes',
   },
   students: {
+    familyLanguage: 'Langue de la famille',
+    familyLanguageSame: 'La langue de mes e-mails',
     roster: 'Élèves',
     add: 'Ajouter un élève',
     firstName: 'Prénom',
@@ -764,7 +775,7 @@ export const frAppA = {
     copyArchived: 'archivée',
     importTitle: 'Importer des élèves depuis un fichier CSV',
     importHelp:
-      "Colonnes : prénom, nom (obligatoires), numéro d'élève, e-mail du parent, aménagements. Rien n'est importé si une ligne pose problème.",
+      "Colonnes : prénom, nom (obligatoires), numéro d'élève, e-mail du parent, aménagements, langue de la famille. Rien n'est importé si une ligne pose problème.",
     file: 'Fichier CSV',
     import: 'Importer les élèves',
     imported: '{count} élèves importés.',

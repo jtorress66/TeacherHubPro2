@@ -162,6 +162,15 @@ export const itAppA = {
     open: "Mostra l'analisi",
   },
   prep: {
+    familyLanguages: 'Famiglie che leggono un’altra lingua: {languages}.',
+    translate: 'Traduci per le famiglie',
+    translateHint:
+      'L’IA prepara la tua email nella lingua di ogni famiglia. Controlla ogni traduzione prima di pubblicare. Le famiglie senza traduzione ricevono la tua email così com’è.',
+    translating: 'Traduzione in corso… Di solito richiede meno di un minuto.',
+    translationFailed: 'Non è stato possibile fare la traduzione. Riprova.',
+    translationHeading: 'Email in {language}',
+    translationSubject: 'Oggetto ({language})',
+    translationBody: 'Messaggio ({language})',
     title: 'Agente di preparazione',
     intro:
       "Descriva la settimana in una frase. L'agente prepara la bozza del piano settimanale, delle slide e di una scheda per ogni lezione, un quiz del venerdì e un'email per le famiglie. Nulla viene salvato o inviato finché Lei non approva.",
@@ -741,6 +750,8 @@ export const itAppA = {
     back: 'Tutte le classi',
   },
   students: {
+    familyLanguage: 'Lingua della famiglia',
+    familyLanguageSame: 'La lingua delle mie email',
     roster: 'Studenti',
     add: 'Aggiungi studente',
     firstName: 'Nome',
@@ -762,7 +773,7 @@ export const itAppA = {
     copyArchived: 'archiviata',
     importTitle: 'Importa studenti da un file CSV',
     importHelp:
-      'Colonne: nome, cognome (obbligatori), numero di matricola, email dei genitori, misure di supporto. Non viene importato nulla se una riga presenta un problema.',
+      'Colonne: nome, cognome (obbligatori), numero di matricola, email dei genitori, misure di supporto, lingua della famiglia. Non viene importato nulla se una riga presenta un problema.',
     file: 'File CSV',
     import: 'Importa studenti',
     imported: '{count} studenti importati.',

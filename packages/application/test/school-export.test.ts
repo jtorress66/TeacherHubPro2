@@ -94,6 +94,7 @@ describe('ExportSchoolData', () => {
       studentNumber: null,
       parentEmail: null,
       accommodations: null,
+      familyLanguage: null,
     });
     expect(data.assignments).toEqual([
       {

@@ -60,7 +60,7 @@ function WeekView({
       t('planner.materials'),
       (i) => week.days[i]?.materials.map((m) => t(`planner.material_${m}`)).join(', '),
     ],
-    [t('planner.notes'), (i) => <Markdown source={week.days[i]?.notes} />],
+    [t('planner.notes'), (i) => <Markdown source={week.days[i]?.notes} locale={locale} />],
   ];
   const typed = Object.entries(week.domainStandards).filter(([, codes]) => codes.length > 0);
   return (
@@ -75,7 +75,7 @@ function WeekView({
       {week.objective ? (
         <>
           <h3>{t('planner.objective')}</h3>
-          <Markdown source={week.objective} />
+          <Markdown source={week.objective} locale={locale} />
         </>
       ) : null}
       {week.skills.length > 0 ? (
@@ -108,7 +108,7 @@ function WeekView({
       {week.expectations ? (
         <>
           <h3>{t('planner.expectations')}</h3>
-          <Markdown source={week.expectations} />
+          <Markdown source={week.expectations} locale={locale} />
         </>
       ) : null}
       <table className="print-days">
@@ -188,7 +188,7 @@ function ConversationalView({
         text ? (
           <section key={label}>
             <h2>{label}</h2>
-            <Markdown source={text} />
+            <Markdown source={text} locale={locale} />
           </section>
         ) : null,
       )}

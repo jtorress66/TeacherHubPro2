@@ -692,7 +692,7 @@ export const marketingEn = {
         'This policy covers teachers, school staff and homeschool parents who use TeacherHubPro, and the student and family information they enter. Students and families do not create accounts; they use private links a teacher gives them.',
       s2Title: 'What we keep',
       s2Text:
-        'Account details (name, email, school, language), what teachers create (classes, plans, assignments, grades, attendance, notes), and what students submit through their links. Student records hold only what a feature needs: names, an optional student number, an optional parent email and optional accommodations.',
+        'Account details (name, email, school, language), what teachers create (classes, plans, assignments, grades, attendance, notes), and what students submit through their links. Student records hold only what a feature needs: names, an optional student number, an optional parent email, optional accommodations and, optionally, the language the family reads.',
       s3Title: 'How we use it',
       s3Text:
         'Only to run the service for the school or teacher who entered it. We do not sell personal data or use student data for advertising.',

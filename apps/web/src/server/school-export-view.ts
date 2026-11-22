@@ -61,6 +61,7 @@ export function schoolExportFiles(data: SchoolExport, t: Translate, timeZone: st
         t('schoolExport.col_studentNumber'),
         t('schoolExport.col_parentEmail'),
         t('schoolExport.col_accommodations'),
+        t('students.familyLanguage'),
       ],
       ...data.students.map((row) => [
         row.className,
@@ -69,6 +70,7 @@ export function schoolExportFiles(data: SchoolExport, t: Translate, timeZone: st
         text(row.studentNumber),
         text(row.parentEmail),
         text(row.accommodations),
+        text(row.familyLanguage),
       ]),
     ]),
     file(t('schoolExport.file_assignments'), [

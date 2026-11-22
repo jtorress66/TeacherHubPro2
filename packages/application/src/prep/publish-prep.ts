@@ -9,6 +9,7 @@ import {
   invalid,
   markPublished,
   ok,
+  emailFor,
   parseEmail,
   publishable,
   quizDay,
@@ -42,7 +43,7 @@ import type {
 import { fail, type UseCaseError } from '../errors.ts';
 import { findEditableClass } from '../gradebook/gradebook-access.ts';
 import { recordApproval, type ApprovalLogDeps } from '../security/approvals.ts';
-import { parentEmails } from './prep-batches.ts';
+import { familyAddresses } from './prep-batches.ts';
 
 type Item<K extends PrepItem['kind']> = Extract<PrepItem, { kind: K }>;
 
@@ -202,22 +203,26 @@ export class PublishPrepBatch {
     return ok(assignment.value.id);
   }
 
-  /** One email per family address; refused ones are counted, never retried or logged here. */
+  /**
+   * One email per family address, in the family's language when the teacher checked a
+   * translation; refused ones are counted, never retried or logged here.
+   */
   private async sendEmails(
     batch: PrepBatch,
   ): Promise<{ emailsSent: number; emailsFailed: number }> {
-    const email = batch.parentEmail;
-    if (email === null) return { emailsSent: 0, emailsFailed: 0 };
+    if (batch.parentEmail === null) return { emailsSent: 0, emailsFailed: 0 };
     const school = await this.deps.schools.findById(batch.schoolId);
-    const content = this.deps.mailTemplates.weeklyUpdate({
-      language: batch.request.language,
-      subject: email.subject,
-      body: email.body,
-      schoolName: school?.name ?? '',
-    });
     let emailsSent = 0;
     let emailsFailed = 0;
-    for (const address of await parentEmails(this.deps.students, batch)) {
+    for (const { address, language } of await familyAddresses(this.deps.students, batch)) {
+      const email = emailFor(batch, language);
+      if (email === null) continue;
+      const content = this.deps.mailTemplates.weeklyUpdate({
+        language: email.language,
+        subject: email.subject,
+        body: email.body,
+        schoolName: school?.name ?? '',
+      });
       const to = parseEmail('to', address);
       const sent = to.ok ? await this.deps.mailer.send({ to: to.value, ...content }) : to;
       if (sent.ok) emailsSent += 1;

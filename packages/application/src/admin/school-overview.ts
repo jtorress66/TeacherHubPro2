@@ -32,6 +32,7 @@ import { prepStepJobKind } from '../prep/prep-batches.ts';
 import { presentationDraftJobKind } from '../presentations/presentations.ts';
 import { rubricDraftJobKind } from '../rubrics/rubrics.ts';
 import { studentInsightJobKind } from '../students/student-360.ts';
+import { translateEmailJobKind } from '../prep/email-translations.ts';
 
 /**
  * The background jobs that are AI drafts, counted in the overview. Read-aloud audio and sending
@@ -48,6 +49,7 @@ export const aiDraftJobKinds: readonly string[] = [
   gradingJobKind,
   pdfImportJobKind,
   studentInsightJobKind,
+  translateEmailJobKind,
 ];
 
 export interface SchoolOverview {

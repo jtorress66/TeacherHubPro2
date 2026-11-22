@@ -100,6 +100,7 @@ export const frAppB = {
     level_high: 'Lycée',
   },
   assistant: {
+    blank: 'espace à compléter',
     title: 'Assistant IA',
     intro: "L'IA rédige un premier brouillon. Relisez-le avant de l'utiliser en classe.",
     type: 'Que créer',
@@ -1245,6 +1246,8 @@ export const frAppB = {
       "Cette page a besoin du lien de votre e-mail. S'il ne fonctionne pas, connectez-vous et utilisez Renvoyer pour en recevoir un nouveau.",
   },
   errors: {
+    translations_outdated:
+      'Vous avez modifié l’e-mail après sa traduction. Appuyez de nouveau sur Traduire pour les familles pour que chaque famille reçoive le nouveau texte.',
     own_account: 'Vous ne pouvez pas faire cela sur votre propre compte.',
     has_classes:
       "Cette personne enseigne encore des classes. Confiez d'abord ses classes à un(e) autre enseignant(e) de l'établissement.",

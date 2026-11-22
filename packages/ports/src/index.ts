@@ -14,6 +14,7 @@ export type * from './ai/presentation-drafter.ts';
 export type * from './ai/rubric-drafter.ts';
 export type * from './ai/question-extractor.ts';
 export type * from './ai/insight-writer.ts';
+export type * from './ai/message-translator.ts';
 export type * from './ai/submission-grader.ts';
 export type * from './ai/game-writer.ts';
 export type * from './ai/path-writer.ts';

@@ -9,7 +9,7 @@ import {
   type Semester,
   type Student,
 } from '@thp/domain';
-import { createTranslator, type Locale } from '@thp/i18n';
+import { createTranslator, localeInfo, locales, type Locale } from '@thp/i18n';
 import {
   addStudentAction,
   createClassAction,
@@ -197,6 +197,15 @@ function StudentFields(props: {
         name="accommodations"
         defaultValue={sent.text('accommodations', student?.accommodations)}
         error={state.errors?.accommodations}
+      />
+      <Select
+        id="familyLanguage"
+        name="familyLanguage"
+        label={t('students.familyLanguage')}
+        empty={t('students.familyLanguageSame')}
+        options={locales.map((code) => ({ id: code, name: localeInfo[code].nativeName }))}
+        defaultValue={sent.text('familyLanguage', student?.familyLanguage)}
+        error={state.errors?.familyLanguage}
       />
     </>
   );

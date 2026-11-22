@@ -2,8 +2,10 @@ import { describe, expect, it } from 'vitest';
 import {
   createPrepRequest,
   finishBatch,
+  finishTranslations,
   recordDone,
   startBatch,
+  startTranslations,
   type ClassId,
   type GradeCategoryId,
   type JobId,
@@ -74,6 +76,14 @@ export function prepBatchRepositoryContract(name: string, make: () => PrepBatchR
       );
       await repo.save(ready);
       expect(await repo.find(schoolA, teacher, started.id)).toEqual(ready);
+
+      const translating = startTranslations(ready, ['es']);
+      if (!translating.ok || ready.parentEmail === null) throw new Error('not ready');
+      const translated = finishTranslations(translating.value, ready.parentEmail, [
+        { language: 'es', subject: 'Esta semana', body: 'Queridas familias:' },
+      ]);
+      await repo.save(translated);
+      expect(await repo.find(schoolA, teacher, started.id)).toEqual(translated);
     });
 
     it("never returns a colleague's or another school's batch", async () => {

@@ -9,6 +9,7 @@ import {
   type Language,
   type DraftRequest,
   type LessonPlanDraft,
+  type ParentEmail,
   type PresentationDraft,
   type PresentationRequest,
   type RubricDraft,
@@ -32,10 +33,12 @@ import type {
   LlmError,
   LlmRequest,
   LlmResponse,
+  MessageTranslator,
   Speech,
   SpeechRequest,
   TextToSpeech,
   TextToSpeechError,
+  TranslationRequest,
 } from '@thp/ports';
 
 type ScriptedReply = Result<LlmResponse, LlmError>;
@@ -271,5 +274,21 @@ export class FakeQuizWriter implements QuizWriter {
   write(request: QuizRequest): Promise<Result<ExtractedTest, DraftError>> {
     this.requests.push(request);
     return Promise.resolve(this.outcome);
+  }
+}
+
+/** Marks each part with the language asked for, e.g. "[zh] This week"; or fails as told. */
+export class FakeMessageTranslator implements MessageTranslator {
+  readonly requests: TranslationRequest[] = [];
+
+  constructor(private readonly failure: DraftError | null = null) {}
+
+  translate(request: TranslationRequest): Promise<Result<ParentEmail, DraftError>> {
+    this.requests.push(request);
+    if (this.failure !== null) return Promise.resolve(err(this.failure));
+    const mark = `[${request.to}] `;
+    return Promise.resolve(
+      ok({ subject: mark + request.email.subject, body: mark + request.email.body }),
+    );
   }
 }
