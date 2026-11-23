@@ -1232,6 +1232,8 @@ export const itAppB = {
       'Questa pagina richiede il link della Sua email. Se non funziona, acceda e usi Invia di nuovo per riceverne uno nuovo.',
   },
   errors: {
+    school_is_paying:
+      'Questa scuola ha o ha avuto un piano a pagamento, quindi non ha una prova da estendere.',
     translations_outdated:
       'Hai modificato l’email dopo la traduzione. Premi di nuovo Traduci per le famiglie perché ogni famiglia riceva il nuovo testo.',
     own_account: 'Non può farlo sul Suo account.',

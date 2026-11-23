@@ -1244,6 +1244,8 @@ export const deAppB = {
       'Diese Seite braucht den Link aus Ihrer E-Mail. Falls er nicht funktioniert, melden Sie sich an und fordern Sie mit „Erneut senden“ einen neuen an.',
   },
   errors: {
+    school_is_paying:
+      'Diese Schule hat oder hatte einen bezahlten Tarif und daher keine Testphase zum Verlängern.',
     translations_outdated:
       'Sie haben die E-Mail nach der Übersetzung geändert. Klicken Sie erneut auf Für die Familien übersetzen, damit jede Familie den neuen Text erhält.',
     own_account: 'Das können Sie nicht mit Ihrem eigenen Konto tun.',

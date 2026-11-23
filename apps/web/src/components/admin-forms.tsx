@@ -9,6 +9,7 @@ import {
   createUserAction,
   deleteSchoolAction,
   deleteUserAction,
+  extendTrialAction,
   importSchoolStudentsAction,
   importTeachersAction,
   sendPasswordLinkAction,
@@ -239,6 +240,40 @@ export function SchoolDetailsForm(props: {
         error={errors.planFormat}
       />
       <Submit label={label} />
+    </form>
+  );
+}
+
+/** A super admin gives a school more free trial days, for example an app reviewer. */
+export function TrialForm(props: { readonly locale: Locale; readonly schoolId: string }) {
+  const t = createTranslator(props.locale);
+  const [state, action] = useActionState(extendTrialAction, initial);
+  const sent = prefill(state.values);
+  return (
+    <form
+      action={action}
+      className="inline-form"
+      noValidate
+      aria-label={t('superAdmin.extendTrial')}
+      key={sent.key}
+    >
+      <Hidden values={{ locale: props.locale, schoolId: props.schoolId }} />
+      <FormAlert message={alertOf(state, ['days'])} />
+      <Notice
+        message={state.notice === 'trialExtended' ? t('superAdmin.trialExtended') : undefined}
+      />
+      <Field
+        id="trial-days"
+        name="days"
+        type="number"
+        label={t('superAdmin.trialDays')}
+        defaultValue={sent.text('days', '30')}
+        error={state.errors?.days}
+        min={1}
+        max={90}
+        required
+      />
+      <Submit label={t('superAdmin.extendTrial')} />
     </form>
   );
 }

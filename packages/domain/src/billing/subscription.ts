@@ -5,7 +5,7 @@ import {
   type InvalidTransition,
   type TransitionTable,
 } from '../shared/state-machine.ts';
-import { invalid, type ValidationError } from '../shared/validation.ts';
+import { invalid, outOfRange, type ValidationError } from '../shared/validation.ts';
 import { isValidQuantity, planCatalog, trialDays, type PlanId } from './plan-catalog.ts';
 
 export const subscriptionStatuses = [
@@ -145,6 +145,23 @@ export function extendTrial(
   if (!allowed.ok) return allowed;
   const from = Math.max(subscription.trialEndsAt.getTime(), now.getTime());
   return ok({ ...subscription, status: 'trialing', trialEndsAt: new Date(from + days * dayMs) });
+}
+
+export const maxGrantedTrialDays = 90;
+
+/**
+ * Trial days a super admin gives a school, for example an app reviewer or a pilot: whole days,
+ * 1 to 90 at a time. A paying school is never touched.
+ */
+export function grantTrialDays(
+  subscription: Subscription,
+  days: number,
+  now: Date,
+): Result<Subscription, SubscriptionError | ValidationError> {
+  if (!Number.isInteger(days) || days < 1 || days > maxGrantedTrialDays) {
+    return outOfRange('days', { min: 1, max: maxGrantedTrialDays });
+  }
+  return extendTrial(subscription, days, now);
 }
 
 /** Trials give access until they end; past-due keeps access while payment is retried. */

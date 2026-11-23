@@ -290,6 +290,7 @@ export const en = {
     action_school_ai_turned_off: 'Turned AI features off for the school',
     action_school_ai_turned_on: 'Turned AI features on for the school',
     action_school_student_flags_turned_off: 'Turned off student flags and insights',
+    action_school_trial_extended: "Extended the school's free trial",
     action_school_student_flags_turned_on: 'Turned on student flags and insights',
     seeApprovals: 'See all approvals',
   },
@@ -353,6 +354,16 @@ export const en = {
     you: 'you',
   },
   superAdmin: {
+    trialHeading: 'Free trial',
+    trialHint:
+      "Give the school more free days, up to 90 at a time, for example for an app reviewer or a pilot school. It is written in the school's activity log.",
+    trialEnds: 'The trial ends on {date}.',
+    trialEnded: 'The trial ended on {date}.',
+    trialPaid: 'This school has or had a paid plan, so it has no trial to extend.',
+    trialNone: "This school has no trial yet. It starts when the school's first account is added.",
+    trialDays: 'Days to add',
+    extendTrial: 'Extend trial',
+    trialExtended: 'Trial extended.',
     title: 'Super admin',
     overview: 'Overview',
     schools: 'Schools',
@@ -2397,6 +2408,7 @@ export const en = {
       'This page needs the link from your email. If it does not work, log in and use Resend to get a new one.',
   },
   errors: {
+    school_is_paying: 'This school has or had a paid plan, so it has no trial to extend.',
     translations_outdated:
       'You changed the email after it was translated. Press Translate for families again so every family gets the new text.',
     own_account: 'You cannot do this to your own account.',

@@ -1170,6 +1170,7 @@ export const zhAppB = {
     noLink: '此页面需要您邮件中的链接。如果链接无效，请登录并使用“重新发送”获取新链接。',
   },
   errors: {
+    school_is_paying: '这所学校已有或曾有付费方案，因此没有可延长的试用。',
     translations_outdated:
       '邮件翻译后你又修改了它。请再次点击“为家庭翻译”，让每个家庭都收到新的内容。',
     own_account: '您不能对自己的账户执行此操作。',

@@ -193,7 +193,7 @@ export {
   RequestLessonPlanDraft,
   draftJobKind,
 } from './lesson-plans/drafts.ts';
-export { checkAiAccess } from './accounts/ai-access.ts';
+export { checkAiAccess, checkPaidAccess } from './accounts/ai-access.ts';
 export {
   ConfirmEmail,
   ConfirmationLinks,
@@ -586,6 +586,7 @@ export {
   type LtiGradeTarget,
 } from './lti/lti-grades.ts';
 export { ExportSchoolData, type SchoolExport } from './admin/school-export.ts';
+export { ExtendSchoolTrial, GetSchoolTrial, type SchoolTrial } from './admin/school-trial.ts';
 export {
   GetSchoolOverview,
   SetSchoolFeatures,

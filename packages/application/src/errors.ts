@@ -64,7 +64,8 @@ export type ApplicationErrorCode =
   | 'renewal_failed'
   | 'ai_off_for_school'
   | 'student_flags_off'
-  | 'translations_outdated';
+  | 'translations_outdated'
+  | 'school_is_paying';
 
 /**
  * What a use case can report: a broken validation rule (with its field) or an application-level

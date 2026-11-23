@@ -295,6 +295,7 @@ export const frAppA = {
     action_school_ai_turned_off: 'A désactivé les fonctions d’IA pour l’école',
     action_school_ai_turned_on: 'A activé les fonctions d’IA pour l’école',
     action_school_student_flags_turned_off: 'A désactivé les alertes et analyses sur les élèves',
+    action_school_trial_extended: "A prolongé l'essai gratuit de l'école",
     action_school_student_flags_turned_on: 'A activé les alertes et analyses sur les élèves',
     seeApprovals: 'Voir toutes les approbations',
   },
@@ -360,6 +361,17 @@ export const frAppA = {
     you: 'vous',
   },
   superAdmin: {
+    trialHeading: 'Essai gratuit',
+    trialHint:
+      "Donnez à l'école plus de jours gratuits, jusqu'à 90 à la fois, par exemple pour la personne qui évalue une app ou pour une école pilote. C'est noté dans le journal d'activité de l'école.",
+    trialEnds: "L'essai se termine le {date}.",
+    trialEnded: "L'essai s'est terminé le {date}.",
+    trialPaid: "Cette école a ou a eu un forfait payant : elle n'a pas d'essai à prolonger.",
+    trialNone:
+      "Cette école n'a pas encore d'essai. Il commence quand le premier compte de l'école est ajouté.",
+    trialDays: 'Jours à ajouter',
+    extendTrial: "Prolonger l'essai",
+    trialExtended: 'Essai prolongé.',
     title: 'Super administrateur',
     overview: "Vue d'ensemble",
     schools: 'Écoles',

@@ -13,8 +13,10 @@ import {
   cancelSubscription,
   expireTrial,
   extendTrial,
+  grantTrialDays,
   hasAccess,
   markPastDue,
+  maxGrantedTrialDays,
   renewSubscription,
   seatLimit,
   startTrial,
@@ -306,5 +308,38 @@ describe('extendTrial', () => {
     );
 
     expect(errorOf(extendTrial(paid, 30, now))).toMatchObject({ code: 'invalid_transition' });
+  });
+});
+
+describe('grantTrialDays', () => {
+  it('gives an ended trial the days asked for, from now', () => {
+    const later = new Date(now.getTime() + 20 * day);
+    const trial = valueOf(startTrial({ ...base, now }));
+
+    expect(valueOf(grantTrialDays(trial, 30, later))).toMatchObject({
+      status: 'trialing',
+      trialEndsAt: new Date(later.getTime() + 30 * day),
+    });
+  });
+
+  it('gives between 1 and 90 whole days', () => {
+    const trial = trialing();
+
+    expect(valueOf(grantTrialDays(trial, maxGrantedTrialDays, now)).trialEndsAt).toEqual(
+      new Date(trial.trialEndsAt.getTime() + 90 * day),
+    );
+    for (const days of [0, -5, 91, 2.5]) {
+      expect(errorOf(grantTrialDays(trial, days, now))).toEqual({
+        field: 'days',
+        code: 'out_of_range',
+        range: { min: 1, max: 90 },
+      });
+    }
+  });
+
+  it('does not touch a paid subscription', () => {
+    expect(errorOf(grantTrialDays(active(), 30, now))).toMatchObject({
+      code: 'invalid_transition',
+    });
   });
 });
