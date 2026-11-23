@@ -32,6 +32,7 @@ export const auditActions = [
   'school_ai_turned_on',
   'school_student_flags_turned_off',
   'school_student_flags_turned_on',
+  'school_trial_extended',
 ] as const;
 export type AuditAction = (typeof auditActions)[number];
 

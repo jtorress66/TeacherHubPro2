@@ -66,3 +66,26 @@ export async function joinSchoolOf(email: string, colleagueEmail: string): Promi
     await db.destroy();
   }
 }
+
+/**
+ * Test-only: ends the free trial of the school of the account with this email, as if its 7 days
+ * passed long ago. Returns the school's id.
+ */
+export async function endTrialOf(email: string): Promise<string> {
+  const db = createDatabase(databaseUrl);
+  try {
+    const { school_id: schoolId } = await db
+      .selectFrom('users')
+      .select('school_id')
+      .where('email', '=', email.toLowerCase())
+      .executeTakeFirstOrThrow();
+    await db
+      .updateTable('subscriptions')
+      .set({ trial_ends_at: new Date(Date.now() - 24 * 60 * 60 * 1000) })
+      .where('school_id', '=', schoolId)
+      .execute();
+    return schoolId;
+  } finally {
+    await db.destroy();
+  }
+}

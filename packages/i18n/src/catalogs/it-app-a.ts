@@ -296,6 +296,7 @@ export const itAppA = {
     action_school_ai_turned_off: 'Ha spento le funzioni dell’IA per la scuola',
     action_school_ai_turned_on: 'Ha acceso le funzioni dell’IA per la scuola',
     action_school_student_flags_turned_off: 'Ha spento avvisi e analisi sugli studenti',
+    action_school_trial_extended: 'Ha esteso la prova gratuita della scuola',
     action_school_student_flags_turned_on: 'Ha acceso avvisi e analisi sugli studenti',
     seeApprovals: 'Vedi tutte le approvazioni',
   },
@@ -360,6 +361,18 @@ export const itAppA = {
     you: 'Lei',
   },
   superAdmin: {
+    trialHeading: 'Prova gratuita',
+    trialHint:
+      "Dai alla scuola altri giorni gratuiti, fino a 90 alla volta, ad esempio per chi valuta un'app o per una scuola pilota. Viene annotato nel registro attività della scuola.",
+    trialEnds: 'La prova termina il {date}.',
+    trialEnded: 'La prova è terminata il {date}.',
+    trialPaid:
+      'Questa scuola ha o ha avuto un piano a pagamento, quindi non ha una prova da estendere.',
+    trialNone:
+      'Questa scuola non ha ancora una prova. Inizia quando viene aggiunto il primo account della scuola.',
+    trialDays: 'Giorni da aggiungere',
+    extendTrial: 'Estendi prova',
+    trialExtended: 'Prova estesa.',
     title: 'Super amministratore',
     overview: 'Panoramica',
     schools: 'Scuole',

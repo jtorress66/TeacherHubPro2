@@ -293,6 +293,7 @@ export const ptAppA = {
     action_school_ai_turned_off: 'Desligou as funções de IA da escola',
     action_school_ai_turned_on: 'Ligou as funções de IA da escola',
     action_school_student_flags_turned_off: 'Desligou os alertas e análises dos alunos',
+    action_school_trial_extended: 'Estendeu o teste grátis da escola',
     action_school_student_flags_turned_on: 'Ligou os alertas e análises dos alunos',
     seeApprovals: 'Ver todas as aprovações',
   },
@@ -356,6 +357,17 @@ export const ptAppA = {
     you: 'você',
   },
   superAdmin: {
+    trialHeading: 'Teste grátis',
+    trialHint:
+      'Dê à escola mais dias grátis, até 90 de cada vez, por exemplo para quem avalia um app ou para uma escola piloto. Fica registrado no registro de atividades da escola.',
+    trialEnds: 'O teste termina em {date}.',
+    trialEnded: 'O teste terminou em {date}.',
+    trialPaid: 'Esta escola tem ou teve um plano pago, então não tem teste para estender.',
+    trialNone:
+      'Esta escola ainda não tem teste. Ele começa quando a primeira conta da escola é adicionada.',
+    trialDays: 'Dias a adicionar',
+    extendTrial: 'Estender teste',
+    trialExtended: 'Teste estendido.',
     title: 'Superadministrador',
     overview: 'Visão geral',
     schools: 'Escolas',

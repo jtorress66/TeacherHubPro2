@@ -296,6 +296,7 @@ export const deAppA = {
     action_school_ai_turned_on: 'Hat die KI-Funktionen für die Schule eingeschaltet',
     action_school_student_flags_turned_off:
       'Hat Hinweise und Einschätzungen zu Schülern ausgeschaltet',
+    action_school_trial_extended: 'Hat die kostenlose Testphase der Schule verlängert',
     action_school_student_flags_turned_on:
       'Hat Hinweise und Einschätzungen zu Schülern eingeschaltet',
     seeApprovals: 'Alle Freigaben ansehen',
@@ -361,6 +362,18 @@ export const deAppA = {
     you: 'Sie',
   },
   superAdmin: {
+    trialHeading: 'Kostenlose Testphase',
+    trialHint:
+      'Geben Sie der Schule weitere kostenlose Tage, bis zu 90 auf einmal, zum Beispiel für die Prüfung einer App oder für eine Pilotschule. Das wird im Aktivitätsprotokoll der Schule festgehalten.',
+    trialEnds: 'Die Testphase endet am {date}.',
+    trialEnded: 'Die Testphase endete am {date}.',
+    trialPaid:
+      'Diese Schule hat oder hatte einen bezahlten Tarif und daher keine Testphase zum Verlängern.',
+    trialNone:
+      'Diese Schule hat noch keine Testphase. Sie beginnt, wenn das erste Konto der Schule angelegt wird.',
+    trialDays: 'Tage hinzufügen',
+    extendTrial: 'Testphase verlängern',
+    trialExtended: 'Testphase verlängert.',
     title: 'Super-Admin',
     overview: 'Überblick',
     schools: 'Schulen',

@@ -1246,6 +1246,7 @@ export const frAppB = {
       "Cette page a besoin du lien de votre e-mail. S'il ne fonctionne pas, connectez-vous et utilisez Renvoyer pour en recevoir un nouveau.",
   },
   errors: {
+    school_is_paying: "Cette école a ou a eu un forfait payant : elle n'a pas d'essai à prolonger.",
     translations_outdated:
       'Vous avez modifié l’e-mail après sa traduction. Appuyez de nouveau sur Traduire pour les familles pour que chaque famille reçoive le nouveau texte.',
     own_account: 'Vous ne pouvez pas faire cela sur votre propre compte.',

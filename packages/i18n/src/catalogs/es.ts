@@ -295,6 +295,7 @@ export const es: Messages = {
     action_school_ai_turned_off: 'Apagó las funciones de IA para la escuela',
     action_school_ai_turned_on: 'Encendió las funciones de IA para la escuela',
     action_school_student_flags_turned_off: 'Apagó los avisos y la información sobre estudiantes',
+    action_school_trial_extended: 'Extendió la prueba gratis de la escuela',
     action_school_student_flags_turned_on: 'Encendió los avisos y la información sobre estudiantes',
     seeApprovals: 'Ver todas las aprobaciones',
   },
@@ -358,6 +359,17 @@ export const es: Messages = {
     you: 'usted',
   },
   superAdmin: {
+    trialHeading: 'Prueba gratis',
+    trialHint:
+      'Dale a la escuela más días gratis, hasta 90 cada vez, por ejemplo para quien revisa una app o para una escuela piloto. Queda anotado en el registro de actividad de la escuela.',
+    trialEnds: 'La prueba termina el {date}.',
+    trialEnded: 'La prueba terminó el {date}.',
+    trialPaid: 'Esta escuela tiene o tuvo un plan pagado, así que no tiene prueba que extender.',
+    trialNone:
+      'Esta escuela aún no tiene prueba. Empieza cuando se añade la primera cuenta de la escuela.',
+    trialDays: 'Días que añadir',
+    extendTrial: 'Extender prueba',
+    trialExtended: 'Prueba extendida.',
     title: 'Superadministración',
     overview: 'Resumen',
     schools: 'Escuelas',
@@ -2424,6 +2436,8 @@ export const es: Messages = {
       'Esta página necesita el enlace de su correo. Si no funciona, inicie sesión y use Reenviar para recibir uno nuevo.',
   },
   errors: {
+    school_is_paying:
+      'Esta escuela tiene o tuvo un plan pagado, así que no tiene prueba que extender.',
     translations_outdated:
       'Cambiaste el correo después de traducirlo. Pulsa Traducir para las familias otra vez para que cada familia reciba el texto nuevo.',
     own_account: 'No puede hacer esto con su propia cuenta.',

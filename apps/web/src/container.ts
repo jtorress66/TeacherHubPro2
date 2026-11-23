@@ -198,6 +198,8 @@ import {
   UpdateSchool,
   DeleteSchool,
   ListSchoolClasses,
+  GetSchoolTrial,
+  ExtendSchoolTrial,
   ListAllUsers,
   CreateUser,
   UpdateUser,
@@ -527,6 +529,8 @@ export interface AppContainer {
   readonly updateSchool: UpdateSchool;
   readonly deleteSchool: DeleteSchool;
   readonly listSchoolClasses: ListSchoolClasses;
+  readonly getSchoolTrial: GetSchoolTrial;
+  readonly extendSchoolTrial: ExtendSchoolTrial;
   readonly listAllUsers: ListAllUsers;
   readonly createUser: CreateUser;
   readonly updateUser: UpdateUser;
@@ -1064,6 +1068,8 @@ export function createAppContainer(
     updateSchool: new UpdateSchool(deps),
     deleteSchool: new DeleteSchool(deps),
     listSchoolClasses: new ListSchoolClasses(deps),
+    getSchoolTrial: new GetSchoolTrial(deps),
+    extendSchoolTrial: new ExtendSchoolTrial(deps),
     listAllUsers: new ListAllUsers(deps),
     createUser: new CreateUser(deps),
     updateUser: new UpdateUser(deps),

@@ -1227,6 +1227,7 @@ export const ptAppB = {
       'Esta página precisa do link do seu e-mail. Se não funcionar, entre na sua conta e use Reenviar para receber um novo.',
   },
   errors: {
+    school_is_paying: 'Esta escola tem ou teve um plano pago, então não tem teste para estender.',
     translations_outdated:
       'Você alterou o e-mail depois da tradução. Clique em Traduzir para as famílias de novo para que cada família receba o novo texto.',
     own_account: 'Você não pode fazer isso com a sua própria conta.',

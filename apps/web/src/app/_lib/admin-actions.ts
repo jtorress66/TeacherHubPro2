@@ -165,6 +165,23 @@ export async function deleteSchoolAction(
   redirect(`/${locale}/app/super-admin/schools`);
 }
 
+/** A super admin gives a school more free trial days. */
+export async function extendTrialAction(
+  state: AdminFormState,
+  data: FormData,
+): Promise<AdminFormState> {
+  const { locale, actor } = await actorOf(data);
+  const schoolId = text(data, 'schoolId') as SchoolId;
+  const extended = await getAppContainer().extendSchoolTrial.execute({
+    actor,
+    schoolId,
+    days: Number(text(data, 'days')),
+  });
+  if (!extended.ok) return rejectedForm(extended.error, locale, data);
+  revalidatePath(`/${locale}/app/super-admin/schools/${schoolId}`);
+  return next(state, { notice: 'trialExtended' });
+}
+
 export async function createUserAction(
   state: AdminFormState,
   data: FormData,
