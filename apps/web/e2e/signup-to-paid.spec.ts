@@ -31,7 +31,7 @@ test('a teacher signs up with email and buys the School plan for 12 teachers', a
   await choosePlan(page, 'es', 'school', 12);
   await expect(page.getByText(t('checkout.testMode'))).toBeVisible();
   await expect(page.getByText(normalize(t('checkout.total', { price: '$864.00' })))).toBeVisible();
-  await page.getByRole('button', { name: /\$864\.00/}).click();
+  await page.getByRole('button', { name: /\$864\.00/ }).click();
 
   await expect(page.getByRole('status')).toHaveText(t('billing.checkoutSuccess'));
   const badge = t('plans.seats', { plan: t('plans.school'), count: 12 });
