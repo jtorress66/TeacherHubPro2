@@ -57,6 +57,7 @@ import {
   rateLimiterContract,
   usedTicketRepositoryContract,
   referralRepositoryContract,
+  curriculumGuideRepositoryContract,
   approvalLogReaderContract,
   auditLogContract,
   gamePlayRepositoryContract,
@@ -125,6 +126,13 @@ withParents(parentsFor.teacher, () => {
 
 withParents(parentsFor.accounts, () => {
   referralRepositoryContract('PostgresReferralRepository', () => repos.referrals);
+});
+
+withParents(parentsFor.teacher, () => {
+  curriculumGuideRepositoryContract(
+    'PostgresCurriculumGuideRepository',
+    () => repos.curriculumGuides,
+  );
 });
 
 withParents(parentsFor.accounts, () => {

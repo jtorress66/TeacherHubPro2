@@ -147,6 +147,22 @@ export function schoolExportFiles(data: SchoolExport, t: Translate, timeZone: st
         yesNo(row.late),
       ]),
     ]),
+    file(t('schoolExport.file_curriculum'), [
+      [
+        t('schoolExport.col_subject'),
+        t('schoolExport.col_gradeLevel'),
+        t('schoolExport.col_title'),
+        t('schoolExport.col_source'),
+        t('schoolExport.col_text'),
+      ],
+      ...data.curriculum.map((row) => [
+        t(`assistant.subject_${row.subject}`),
+        row.grade === 'K' ? t('drafts.grade_K') : row.grade,
+        row.title,
+        text(row.sourceName),
+        row.text,
+      ]),
+    ]),
   ];
 }
 

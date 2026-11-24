@@ -1,10 +1,13 @@
 import {
+  byCurriculumOrder,
   canExportSchoolData,
   ok,
+  type AssistantSubject,
   type Assignment,
   type AttendanceStatus,
   type AuditEventId,
   type Class,
+  type GradeLevel,
   type GradeStatus,
   type Language,
   type LocalDate,
@@ -19,6 +22,7 @@ import type {
   AuditLog,
   ClassRepository,
   Clock,
+  CurriculumGuideRepository,
   GradeCategoryRepository,
   GradeRepository,
   IdGenerator,
@@ -86,6 +90,14 @@ export interface SchoolExport {
     submittedAt: Date;
     late: boolean;
   }[];
+  /** The school's own curriculum guides, as the AI reads them. */
+  readonly curriculum: readonly {
+    subject: AssistantSubject;
+    grade: GradeLevel;
+    title: string;
+    sourceName: string | null;
+    text: string;
+  }[];
 }
 
 type Tables = { -readonly [K in keyof SchoolExport]: SchoolExport[K][number][] };
@@ -100,6 +112,7 @@ export interface ExportSchoolDataDeps {
   readonly grades: GradeRepository;
   readonly attendanceSessions: AttendanceSessionRepository;
   readonly submissions: SubmissionRepository;
+  readonly curriculumGuides: CurriculumGuideRepository;
   readonly auditLog: AuditLog;
   readonly ids: IdGenerator;
   readonly clock: Clock;
@@ -111,7 +124,8 @@ const byName = (a: Student, b: Student) =>
 
 /**
  * All of a school's data for its admins or account owner to keep or take elsewhere: teachers,
- * classes (archived too), students, assignments, grades, attendance and handed-in answers. The
+ * classes (archived too), students, assignments, grades, attendance, handed-in answers and the
+ * school's curriculum guides. The
  * made-up sample class and teachers' private notes are left out. Each download is logged.
  */
 export class ExportSchoolData {
@@ -143,6 +157,15 @@ export class ExportSchoolData {
       grades: [],
       attendance: [],
       answers: [],
+      curriculum: [...(await this.deps.curriculumGuides.listBySchool(actor.schoolId))]
+        .sort(byCurriculumOrder)
+        .map(({ subject, grade, title, sourceName, text }) => ({
+          subject,
+          grade,
+          title,
+          sourceName,
+          text,
+        })),
     };
     const teacherName = new Map(users.map((user) => [user.id, user.name]));
     for (const cls of classes) {

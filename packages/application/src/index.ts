@@ -599,3 +599,13 @@ export {
   GetSchoolDeletion,
   RequestSchoolDeletion,
 } from './admin/school-deletion.ts';
+export {
+  CurriculumReadHandler,
+  ListCurriculumGuides,
+  RemoveCurriculumGuide,
+  UploadCurriculumGuide,
+  curriculumReadJobKind,
+  type CurriculumGuideEntry,
+  type CurriculumSource,
+  type UploadCurriculumGuideDeps,
+} from './curriculum/curriculum-guides.ts';

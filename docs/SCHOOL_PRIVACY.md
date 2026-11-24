@@ -32,7 +32,9 @@ These match the app as built. If a feature changes, update this list and the web
 
 Students have no accounts, so there is no student email address or password.
 
-**Where the data is stored:** one Postgres database in Virginia, USA, on Render. Uploaded files are stored in the same database. Uploaded PDFs are deleted once they are read.
+**School material (not student data):** a school's admins or account owner can upload the school's own curriculum guides (pacing guides, scope and sequence, unit plans) as PDF or Word files or pasted text. The upload page asks them not to include student information. The text is kept until they remove the guide, it is in the school data download, and it is deleted with the school.
+
+**Where the data is stored:** one Postgres database in Virginia, USA, on Render. Uploaded files are stored in the same database. Uploaded PDFs and curriculum files are deleted once their text is read.
 
 **Service providers (subprocessors):**
 
@@ -41,7 +43,7 @@ Students have no accounts, so there is no student email address or password.
 | Render | hosts the app and the database | all data, stored for the service |
 | Stripe | payments | the account holder's billing details, never student data |
 | Email provider (Resend) | account emails and messages teachers send families | email addresses and message text |
-| Anthropic (Claude) | AI drafts (plans, grading drafts, insights) | only the fields each task needs; student names are not sent where an ID or first name will do. Not used to train its models; deleted within 30 days (Anthropic's commercial terms) |
+| Anthropic (Claude) | AI drafts (plans, grading drafts, insights) | only the fields each task needs, plus the school's curriculum guide when a teacher asks the AI to follow it; student names are not sent where an ID or first name will do. Not used to train its models; deleted within 30 days (Anthropic's commercial terms) |
 | OpenAI | read-aloud audio | the text being read. Not used to train its models; kept at most 30 days (OpenAI API terms) |
 | Google | sign-in and Google Classroom, only when a teacher connects it | what the teacher syncs |
 | Canva | only when a teacher connects it | the presentation or worksheet the teacher opens there, never student data |
@@ -51,7 +53,7 @@ Students have no accounts, so there is no student email address or password.
 
 **Breach notice:** within 72 hours of discovering a breach that affects the school's data.
 
-**End of contract:** on request, return the school's data as files, then delete it from the service and confirm in writing. A school's admins (or the account owner) can also download everything themselves: Settings → **Download all school data** gives one ZIP of spreadsheets (teachers, classes, students, assignments, grades, attendance and student answers). Each download is recorded in the activity log. To delete, they use Settings → **Delete all school data** and type the school's name to confirm. A paid plan stops renewing straight away, everyone in the school sees the date the data will be deleted, and they can cancel during the 30-day hold. On that date everything is deleted (accounts, classes, students, work and files), and the only thing kept is a record of IDs and dates, so you can confirm the deletion in writing.
+**End of contract:** on request, return the school's data as files, then delete it from the service and confirm in writing. A school's admins (or the account owner) can also download everything themselves: Settings → **Download all school data** gives one ZIP of spreadsheets (teachers, classes, students, assignments, grades, attendance, student answers and curriculum guides). Each download is recorded in the activity log. To delete, they use Settings → **Delete all school data** and type the school's name to confirm. A paid plan stops renewing straight away, everyone in the school sees the date the data will be deleted, and they can cancel during the 30-day hold. On that date everything is deleted (accounts, classes, students, work and files), and the only thing kept is a record of IDs and dates, so you can confirm the deletion in writing.
 
 ## Questions for the lawyer
 

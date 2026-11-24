@@ -735,7 +735,7 @@ export const marketingDe: MarketingMessages = {
         'Diese Erklärung gilt für Lehrkräfte, Schulpersonal und Homeschooling-Eltern, die TeacherHubPro nutzen, sowie für die Schüler- und Familiendaten, die sie eingeben. Schülerinnen, Schüler und Familien legen keine Konten an; sie nutzen private Links, die eine Lehrkraft ihnen gibt.',
       s2Title: 'Was wir speichern',
       s2Text:
-        'Kontodaten (Name, E-Mail, Schule, Sprache), was Lehrkräfte erstellen (Klassen, Pläne, Aufgaben, Noten, Anwesenheit, Notizen) und was Schülerinnen und Schüler über ihre Links einreichen. Schülerdatensätze enthalten nur, was eine Funktion braucht: Namen, eine optionale Schülernummer, eine optionale E-Mail-Adresse der Eltern, optionale Nachteilsausgleiche und optional die Sprache, die die Familie liest.',
+        'Kontodaten (Name, E-Mail, Schule, Sprache), was Lehrkräfte erstellen (Klassen, Pläne, Aufgaben, Noten, Anwesenheit, Notizen) und was Schülerinnen und Schüler über ihre Links einreichen. Schülerdatensätze enthalten nur, was eine Funktion braucht: Namen, eine optionale Schülernummer, eine optionale E-Mail-Adresse der Eltern, optionale Nachteilsausgleiche und optional die Sprache, die die Familie liest. Eine Schule kann außerdem eigene Lehrpläne hochladen: Schulmaterial, keine Schülerdaten. Ihr Text bleibt gespeichert, bis die Schule sie entfernt (die hochgeladene Datei wird gelöscht, sobald ihr Text gelesen ist), und wird nur mit Anfragen, die ihn nutzen, an den KI-Anbieter gesendet.',
       s3Title: 'Wie wir sie verwenden',
       s3Text:
         'Nur, um den Dienst für die Schule oder Lehrkraft zu betreiben, die sie eingegeben hat. Wir verkaufen keine personenbezogenen Daten und verwenden Schülerdaten nicht für Werbung.',

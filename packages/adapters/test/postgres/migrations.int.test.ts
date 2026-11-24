@@ -47,6 +47,7 @@ describe('migrations', () => {
       'chat_turns',
       'classes',
       'classroom_connections',
+      'curriculum_guides',
       'email_confirmations',
       'forms_exports',
       'game_plays',
@@ -106,6 +107,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0041_curriculum_guides',
           '0040_family_languages',
           '0039_school_features',
           '0038_school_deletions',
@@ -195,10 +197,11 @@ describe('migrations', () => {
           '0038_school_deletions',
           '0039_school_features',
           '0040_family_languages',
+          '0041_curriculum_guides',
         ],
       },
     });
-    expect(await tableNames()).toHaveLength(64);
+    expect(await tableNames()).toHaveLength(65);
   });
 
   it('turns plans saved before step 8 into valid plans of their kind', async () => {

@@ -8,6 +8,7 @@ import {
   SaveQuestions,
   SubmitAnswers,
   SubmitAttendance,
+  UploadCurriculumGuide,
 } from '../src/index.ts';
 import { sampleText } from './sample-text.ts';
 import { colleagueOf, gradedClass, valueOf } from './classroom.ts';
@@ -166,6 +167,33 @@ describe('ExportSchoolData', () => {
     expect(data.attendance).toEqual([]);
   });
 
+  it("includes the school's curriculum guides, with their text", async () => {
+    const world = makeWorld();
+    const room = await gradedClass(world);
+    const text = 'Unit 1: Ecosystems and food webs. Unit 2: The water cycle and weather.';
+    valueOf(
+      await new UploadCurriculumGuide(world).execute({
+        actor: room.actor,
+        subject: 'science',
+        grade: '5',
+        title: 'Science 5 scope and sequence',
+        source: { kind: 'text', text },
+      }),
+    );
+
+    const data = valueOf(await new ExportSchoolData(world).execute({ actor: room.actor }));
+
+    expect(data.curriculum).toEqual([
+      {
+        subject: 'science',
+        grade: '5',
+        title: 'Science 5 scope and sequence',
+        sourceName: null,
+        text,
+      },
+    ]);
+  });
+
   it('never includes another school’s data', async () => {
     const world = makeWorld();
     const mine = await gradedClass(world);
@@ -181,6 +209,7 @@ describe('ExportSchoolData', () => {
     expect(data.grades).toEqual([]);
     expect(data.attendance).toEqual([]);
     expect(data.answers).toEqual([]);
+    expect(data.curriculum).toEqual([]);
   });
 
   it('is open to the school’s admins and refused to its other teachers', async () => {
