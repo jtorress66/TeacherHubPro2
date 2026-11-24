@@ -19,14 +19,20 @@ describe('planPrice', () => {
     expect(planPrice('individual_monthly', 'en')).toBe('$9.99 per month');
     expect(planPrice('individual_yearly', 'en')).toBe('$79.00 per year');
     expect(planPrice('school', 'en')).toBe('$6.00 per teacher per month, billed yearly');
-    expect(planPrice('district', 'es')).toBe('4,00 US$ por maestro al mes, facturado anualmente');
+    expect(planPrice('district', 'es')).toBe('$4.00 por maestro al mes, facturado anualmente');
+  });
+
+  it('writes Spanish prices as Puerto Rico does, and keeps the usual decimal comma in French', () => {
+    expect(planPrice('individual_monthly', 'es')).toBe('$9.99 al mes');
+    expect(planPrice('individual_monthly', 'fr')).toBe('9,99 $US par mois');
   });
 });
 
 describe('totalPrice', () => {
   it('shows what one invoice costs for the seats chosen', () => {
     expect(totalPrice('school', 12, 'en')).toBe('$864.00');
-    expect(totalPrice('individual_monthly', 1, 'es')).toBe('9,99 US$');
+    expect(totalPrice('individual_monthly', 1, 'es')).toBe('$9.99');
+    expect(totalPrice('school', 250, 'es')).toBe('$18,000.00');
   });
 });
 
