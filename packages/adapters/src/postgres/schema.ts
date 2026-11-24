@@ -442,6 +442,22 @@ export interface ReferralsTable {
   decided_at: Date | null;
 }
 
+export interface CurriculumGuidesTable {
+  id: string;
+  school_id: string;
+  subject: string;
+  grade: string;
+  title: string;
+  source_name: string | null;
+  status: string;
+  failure: string | null;
+  job_id: string | null;
+  text: string;
+  total_characters: number;
+  updated_by: string;
+  updated_at: Date;
+}
+
 export interface UsedTicketsTable {
   ticket_id: string;
   expires_at: Date;
@@ -759,6 +775,7 @@ export interface Database {
   used_tickets: UsedTicketsTable;
   referral_codes: ReferralCodesTable;
   referrals: ReferralsTable;
+  curriculum_guides: CurriculumGuidesTable;
   audit_events: AuditEventsTable;
   rubrics: RubricsTable;
   chat_sessions: ChatSessionsTable;

@@ -89,6 +89,16 @@ export default async function SchoolOverviewPage(props: LocaleParams) {
         </TableScroll>
       </section>
 
+      <section className="card stack" aria-labelledby="curriculum-heading">
+        <h2 id="curriculum-heading">{t('curriculum.title')}</h2>
+        <p className="hint">{t('curriculum.linkHint')}</p>
+        <p>
+          <a className="button secondary" href={`/${locale}/app/curriculum`}>
+            {t('curriculum.link')}
+          </a>
+        </p>
+      </section>
+
       <section className="card stack" aria-labelledby="switches-heading">
         <h2 id="switches-heading">{t('schoolOverview.switchesTitle')}</h2>
         <p className="hint">{t('schoolOverview.switchesIntro')}</p>

@@ -297,6 +297,8 @@ export const itAppA = {
     action_school_ai_turned_on: 'Ha acceso le funzioni dell’IA per la scuola',
     action_school_student_flags_turned_off: 'Ha spento avvisi e analisi sugli studenti',
     action_school_trial_extended: 'Ha esteso la prova gratuita della scuola',
+    action_curriculum_uploaded: 'Ha aggiunto una guida al curricolo',
+    action_curriculum_removed: 'Ha rimosso una guida al curricolo',
     action_school_student_flags_turned_on: 'Ha acceso avvisi e analisi sugli studenti',
     seeApprovals: 'Vedi tutte le approvazioni',
   },
@@ -586,6 +588,52 @@ export const itAppA = {
     save: 'Salva interruttori',
     saved: 'Interruttori salvati.',
   },
+  curriculum: {
+    title: 'Curricolo della scuola',
+    intro:
+      'Aggiungi il curricolo della tua scuola per ogni materia e classe: una programmazione, una scansione dei contenuti o i piani delle unità. Quando un insegnante lo chiede, l’IA segue le unità, l’ordine e il lessico della guida.',
+    readOnly:
+      'Gli amministratori e il titolare dell’account della tua scuola aggiungono e modificano queste guide.',
+    empty: 'Ancora nessuna guida al curricolo.',
+    listHeading: 'Guide',
+    addHeading: 'Aggiungi una guida',
+    replaceHint:
+      'Una nuova guida per una materia e una classe che ne hanno già una la sostituisce.',
+    guideTitle: 'Titolo',
+    file: 'File PDF o Word (.pdf, .docx)',
+    fileHint:
+      'Fino a 10 MB. Le pagine scansionate sono immagini e non si possono leggere. Per un vecchio file Word (.doc), aprilo e salvalo come .docx o PDF.',
+    text: 'Oppure incolla il testo',
+    privacy:
+      'Le guide al curricolo sono materiale della scuola: non includere nomi di studenti né altre informazioni sugli studenti. Quando un insegnante usa una guida, il suo testo viene inviato al nostro fornitore di IA insieme alla richiesta.',
+    upload: 'Salva guida',
+    saved: 'Guida salvata.',
+    reading: 'Guida caricata. Lettura del file…',
+    chooseOne: 'Scegli un file o incolla il testo.',
+    notBoth: 'Scegli un file o incolla il testo, non entrambi.',
+    fileKinds: 'Scegli un file PDF o Word (.docx).',
+    col_subject: 'Materia',
+    col_grade: 'Classe',
+    col_title: 'Titolo',
+    col_source: 'Origine',
+    col_status: 'Stato',
+    col_used: 'Cosa legge l’IA',
+    pasted: 'Testo incollato',
+    status_reading: 'Lettura del file…',
+    status_ready: 'Pronta',
+    status_failed: 'Non utilizzabile',
+    failure_unreadable:
+      'Non è stato possibile leggere il file. Salvalo di nuovo come PDF o .docx e caricalo.',
+    failure_no_text:
+      'Nessun testo trovato nel file. Le pagine scansionate sono immagini: carica un file con testo vero o incolla il testo.',
+    usedAll: 'Tutto ({total} caratteri)',
+    usedPart: 'I primi {used} di {total} caratteri',
+    remove: 'Rimuovi',
+    removeLabel: 'Rimuovi {title}',
+    removed: 'Guida rimossa.',
+    link: 'Curricolo della scuola',
+    linkHint: 'Le guide che l’IA segue per ogni materia e classe.',
+  },
   schoolDeletion: {
     title: 'Elimina tutti i dati della scuola',
     intro:
@@ -650,6 +698,11 @@ export const itAppA = {
     col_answer: 'Risposta',
     col_handedIn: 'Consegnato',
     col_late: 'In ritardo',
+    file_curriculum: 'curricolo',
+    col_title: 'Titolo',
+    col_source: 'File',
+    col_text: 'Testo',
+    curriculum: 'Sono incluse anche le guide al curricolo della scuola, come testo.',
   },
   sample: {
     tryTitle: 'Provalo con una classe di esempio',

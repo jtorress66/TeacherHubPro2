@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { FileStore, PdfTextExtractor } from '@thp/ports';
+import type { DocumentTextExtractor, FileStore, PdfTextExtractor } from '@thp/ports';
 
 const bytes = new Uint8Array([37, 80, 68, 70]);
 
@@ -52,6 +52,30 @@ export function pdfTextExtractorContract(
 
     it('reports bytes that are not a readable PDF', async () => {
       expect(await make(known).extract(new Uint8Array([1, 2, 3]))).toEqual({
+        ok: false,
+        error: { code: 'unreadable' },
+      });
+    });
+  });
+}
+
+export interface DocumentFixture {
+  readonly bytes: Uint8Array;
+  readonly text: string;
+}
+
+export function documentTextExtractorContract(
+  name: string,
+  make: () => DocumentTextExtractor,
+  known: DocumentFixture,
+): void {
+  describe(`${name} (DocumentTextExtractor contract)`, () => {
+    it('extracts the text', async () => {
+      expect(await make().extract(known.bytes)).toEqual({ ok: true, value: { text: known.text } });
+    });
+
+    it('reports bytes that are not a readable document', async () => {
+      expect(await make().extract(new Uint8Array([1, 2, 3]))).toEqual({
         ok: false,
         error: { code: 'unreadable' },
       });

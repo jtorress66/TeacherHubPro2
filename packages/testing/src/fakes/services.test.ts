@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import type { Email } from '@thp/domain';
-import { fileStoreContract, pdfTextExtractorContract } from '../contracts/files.contract.ts';
+import {
+  documentTextExtractorContract,
+  fileStoreContract,
+  pdfTextExtractorContract,
+} from '../contracts/files.contract.ts';
 import {
   classroomAuthorizationContract,
   classroomContract,
@@ -36,7 +40,7 @@ import {
   FakeCheckoutSessions,
   FakeSubscriptionRenewal,
 } from './billing.ts';
-import { InMemoryFileStore, FakePdfTextExtractor } from './files.ts';
+import { FakeDocumentTextExtractor, InMemoryFileStore, FakePdfTextExtractor } from './files.ts';
 import {
   FakeClassroom,
   FakeClassroomAuthorization,
@@ -98,6 +102,13 @@ fileStoreContract('InMemoryFileStore', () => new InMemoryFileStore());
 
 const pdf = { pdf: new Uint8Array([37, 80, 68, 70, 1]), text: 'Q1. 2 + 2 = __', pageCount: 2 };
 pdfTextExtractorContract('FakePdfTextExtractor', (known) => new FakePdfTextExtractor([known]), pdf);
+
+const word = { bytes: new Uint8Array([80, 75, 3, 4]), text: 'Unit 1: Place value' };
+documentTextExtractorContract(
+  'FakeDocumentTextExtractor',
+  () => new FakeDocumentTextExtractor([word]),
+  word,
+);
 
 mailerContract('FakeMailer', {
   accepting: () => new FakeMailer(),

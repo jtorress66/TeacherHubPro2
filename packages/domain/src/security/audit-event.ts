@@ -33,6 +33,8 @@ export const auditActions = [
   'school_student_flags_turned_off',
   'school_student_flags_turned_on',
   'school_trial_extended',
+  'curriculum_uploaded',
+  'curriculum_removed',
 ] as const;
 export type AuditAction = (typeof auditActions)[number];
 

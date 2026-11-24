@@ -297,6 +297,8 @@ export const deAppA = {
     action_school_student_flags_turned_off:
       'Hat Hinweise und Einschätzungen zu Schülern ausgeschaltet',
     action_school_trial_extended: 'Hat die kostenlose Testphase der Schule verlängert',
+    action_curriculum_uploaded: 'Hat einen Lehrplan hinzugefügt',
+    action_curriculum_removed: 'Hat einen Lehrplan entfernt',
     action_school_student_flags_turned_on:
       'Hat Hinweise und Einschätzungen zu Schülern eingeschaltet',
     seeApprovals: 'Alle Freigaben ansehen',
@@ -589,6 +591,52 @@ export const deAppA = {
     save: 'Schalter speichern',
     saved: 'Schalter gespeichert.',
   },
+  curriculum: {
+    title: 'Lehrplan der Schule',
+    intro:
+      'Fügen Sie den eigenen Lehrplan Ihrer Schule für jedes Fach und jede Klassenstufe hinzu: einen Stoffverteilungsplan, eine Jahresplanung oder Unterrichtseinheiten. Wenn eine Lehrkraft es wünscht, folgt die KI den Einheiten, der Reihenfolge und dem Fachwortschatz des Plans.',
+    readOnly:
+      'Die Administratoren und der Kontoinhaber Ihrer Schule fügen diese Lehrpläne hinzu und ändern sie.',
+    empty: 'Noch keine Lehrpläne.',
+    listHeading: 'Lehrpläne',
+    addHeading: 'Lehrplan hinzufügen',
+    replaceHint:
+      'Ein neuer Lehrplan für ein Fach und eine Klassenstufe, die schon einen haben, ersetzt ihn.',
+    guideTitle: 'Titel',
+    file: 'PDF- oder Word-Datei (.pdf, .docx)',
+    fileHint:
+      'Bis 10 MB. Gescannte Seiten sind Bilder und können nicht gelesen werden. Eine ältere Word-Datei (.doc) öffnen Sie und speichern sie als .docx oder PDF.',
+    text: 'Oder Text einfügen',
+    privacy:
+      'Lehrpläne sind Schulmaterial: Nehmen Sie keine Namen oder anderen Angaben zu Schülerinnen und Schülern auf. Wenn eine Lehrkraft einen Lehrplan nutzt, wird sein Text mit der Anfrage an unseren KI-Anbieter gesendet.',
+    upload: 'Lehrplan speichern',
+    saved: 'Lehrplan gespeichert.',
+    reading: 'Lehrplan hochgeladen. Die Datei wird gelesen…',
+    chooseOne: 'Wählen Sie eine Datei oder fügen Sie den Text ein.',
+    notBoth: 'Wählen Sie eine Datei oder fügen Sie Text ein, nicht beides.',
+    fileKinds: 'Wählen Sie eine PDF- oder Word-Datei (.docx).',
+    col_subject: 'Fach',
+    col_grade: 'Klassenstufe',
+    col_title: 'Titel',
+    col_source: 'Quelle',
+    col_status: 'Status',
+    col_used: 'Was die KI liest',
+    pasted: 'Eingefügter Text',
+    status_reading: 'Datei wird gelesen…',
+    status_ready: 'Bereit',
+    status_failed: 'Nicht nutzbar',
+    failure_unreadable:
+      'Die Datei konnte nicht gelesen werden. Speichern Sie sie erneut als PDF oder .docx und laden Sie sie hoch.',
+    failure_no_text:
+      'In der Datei wurde kein Text gefunden. Gescannte Seiten sind Bilder: Laden Sie eine Datei mit echtem Text hoch oder fügen Sie den Text ein.',
+    usedAll: 'Alles ({total} Zeichen)',
+    usedPart: 'Die ersten {used} von {total} Zeichen',
+    remove: 'Entfernen',
+    removeLabel: '{title} entfernen',
+    removed: 'Lehrplan entfernt.',
+    link: 'Lehrplan der Schule',
+    linkHint: 'Lehrpläne, denen die KI für jedes Fach und jede Klassenstufe folgt.',
+  },
   schoolDeletion: {
     title: 'Alle Schuldaten löschen',
     intro:
@@ -653,6 +701,11 @@ export const deAppA = {
     col_answer: 'Antwort',
     col_handedIn: 'Abgegeben',
     col_late: 'Verspätet',
+    file_curriculum: 'lehrplan',
+    col_title: 'Titel',
+    col_source: 'Datei',
+    col_text: 'Text',
+    curriculum: 'Die Lehrpläne der Schule sind ebenfalls enthalten, als Text.',
   },
   sample: {
     tryTitle: 'Probieren Sie es mit einer Beispielklasse aus',

@@ -90,6 +90,7 @@ export const schoolTables = [
   'ai_generations',
   'presentations',
   'rubrics',
+  'curriculum_guides',
   'students',
   'classes',
   'semesters',

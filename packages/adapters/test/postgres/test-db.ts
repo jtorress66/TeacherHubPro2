@@ -49,6 +49,7 @@ const tables = [
   'microsoft_connections',
   'canva_connections',
   'rubrics',
+  'curriculum_guides',
   'rate_limits',
   'audit_events',
   'chat_turns',

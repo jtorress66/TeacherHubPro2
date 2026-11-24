@@ -70,6 +70,16 @@ const data: SchoolExport = {
       late: false,
     },
   ],
+  curriculum: [
+    {
+      subject: 'science',
+      grade: 'K',
+      title: 'Science K',
+      sourceName: 'Guide.docx',
+      text: 'Unit 1: Weather',
+    },
+    { subject: 'math', grade: '5', title: 'Math 5', sourceName: null, text: 'Unit 1: Fractions' },
+  ],
 };
 
 const lines = (text: string | undefined) => (text ?? '').replace(/^\uFEFF/u, '').split('\r\n');
@@ -87,6 +97,7 @@ describe('schoolExportFiles', () => {
       'grades.csv',
       'attendance.csv',
       'student-answers.csv',
+      'curriculum.csv',
     ]);
     expect(lines(file('teachers.csv'))).toEqual([
       'Name,Email,Role',
@@ -100,6 +111,12 @@ describe('schoolExportFiles', () => {
     expect(lines(file('assignments.csv'))[1]).toBe('Ciencias 5,Quiz 1,Quizzes,10,2026-09-10');
     expect(lines(file('grades.csv'))[1]).toBe("Ciencias 5,Ben Acosta,Quiz 1,Graded,9.5,'=nice");
     expect(lines(file('attendance.csv'))[1]).toBe('Ciencias 5,Ben Acosta,2026-09-01,Tardy,5,');
+    expect(lines(file('curriculum.csv'))).toEqual([
+      'Subject,Grade level,Title,File,Text',
+      'Science,Kindergarten,Science K,Guide.docx,Unit 1: Weather',
+      'Mathematics,5,Math 5,,Unit 1: Fractions',
+      '',
+    ]);
     expect(file('student-answers.csv')).toContain(
       'Ciencias 5,Ben Acosta,Quiz 1,1,Why day and night?,"The Earth\nturns.",2026-09-02 10:05,No',
     );

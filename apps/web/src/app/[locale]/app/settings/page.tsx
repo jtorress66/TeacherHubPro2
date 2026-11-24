@@ -79,7 +79,9 @@ export default async function SettingsPage(
         {canExport ? (
           <section className="card stack" aria-labelledby="export-heading">
             <h2 id="export-heading">{t('schoolExport.title')}</h2>
-            <p>{t('schoolExport.intro')}</p>
+            <p>
+              {t('schoolExport.intro')} {t('schoolExport.curriculum')}
+            </p>
             <p className="muted">{t('schoolExport.notIncluded')}</p>
             <p className="muted">{t('schoolExport.privacy')}</p>
             <p>

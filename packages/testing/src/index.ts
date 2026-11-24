@@ -13,6 +13,8 @@ export * from './fakes/mailer.ts';
 export * from './fakes/billing.ts';
 export * from './fakes/referrals.ts';
 export * from './contracts/referrals.contract.ts';
+export * from './fakes/curriculum.ts';
+export * from './contracts/curriculum.contract.ts';
 export * from './fakes/school-deletion.ts';
 export * from './contracts/school-deletion.contract.ts';
 export * from './fakes/school-usage.ts';

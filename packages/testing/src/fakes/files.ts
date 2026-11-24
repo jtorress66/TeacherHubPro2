@@ -1,5 +1,8 @@
 import { err, ok, type Result } from '@thp/domain';
 import type {
+  DocumentText,
+  DocumentTextError,
+  DocumentTextExtractor,
   FileStore,
   FileStoreError,
   PdfText,
@@ -46,5 +49,19 @@ export class FakePdfTextExtractor implements PdfTextExtractor {
   extract(pdf: Uint8Array): Promise<Result<PdfText, PdfTextError>> {
     const text = this.known.get(pdf.join(','));
     return Promise.resolve(text === undefined ? err({ code: 'unreadable' }) : ok(text));
+  }
+}
+
+/** Knows the text of a few documents by their bytes; anything else is unreadable. */
+export class FakeDocumentTextExtractor implements DocumentTextExtractor {
+  private readonly known: Map<string, string>;
+
+  constructor(documents: readonly { readonly bytes: Uint8Array; readonly text: string }[]) {
+    this.known = new Map(documents.map(({ bytes, text }) => [bytes.join(','), text]));
+  }
+
+  extract(bytes: Uint8Array): Promise<Result<DocumentText, DocumentTextError>> {
+    const text = this.known.get(bytes.join(','));
+    return Promise.resolve(text === undefined ? err({ code: 'unreadable' }) : ok({ text }));
   }
 }

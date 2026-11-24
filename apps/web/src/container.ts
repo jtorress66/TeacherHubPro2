@@ -301,6 +301,9 @@ import {
   GetInvitePage,
   ExportSchoolData,
   GetSchoolOverview,
+  ListCurriculumGuides,
+  RemoveCurriculumGuide,
+  UploadCurriculumGuide,
   SetSchoolFeatures,
   CancelSchoolDeletion,
   GetSchoolDeletion,
@@ -590,6 +593,9 @@ export interface AppContainer {
   readonly getSchoolDeletion: GetSchoolDeletion;
   readonly getSchoolOverview: GetSchoolOverview;
   readonly setSchoolFeatures: SetSchoolFeatures;
+  readonly listCurriculumGuides: ListCurriculumGuides;
+  readonly uploadCurriculumGuide: UploadCurriculumGuide;
+  readonly removeCurriculumGuide: RemoveCurriculumGuide;
   /** Packs the school data download into one ZIP file. */
   readonly zipFiles: ZipWriter;
   readonly createClass: CreateClass;
@@ -1129,6 +1135,9 @@ export function createAppContainer(
     getSchoolDeletion: new GetSchoolDeletion(deps),
     getSchoolOverview: new GetSchoolOverview(deps),
     setSchoolFeatures: new SetSchoolFeatures(deps),
+    listCurriculumGuides: new ListCurriculumGuides(deps),
+    uploadCurriculumGuide: new UploadCurriculumGuide(deps),
+    removeCurriculumGuide: new RemoveCurriculumGuide(deps),
     zipFiles: new JsZipWriter(),
     createClass: new CreateClass(deps),
     updateClass: new UpdateClass(deps),
