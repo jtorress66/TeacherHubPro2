@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { createTranslator, type Locale } from '@thp/i18n';
 import { joinSchoolOf } from './database.ts';
 import { docxFile } from './docx.ts';
-import { signUp } from './helpers.ts';
+import { continueHere, logIn, signUp } from './helpers.ts';
 
 const guideLines = [
   'Grade 4 Mathematics Pacing Guide',
@@ -70,6 +70,11 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     const colleaguePage = await colleague.newPage();
     const colleagueEmail = await signUp(colleaguePage, locale);
     await joinSchoolOf(colleagueEmail, ownerEmail);
+    // A session keeps the school it signed in to, so the colleague signs in again.
+    await colleague.clearCookies();
+    await logIn(colleaguePage, locale, colleagueEmail);
+    await continueHere(colleaguePage, locale);
+    await expect(colleaguePage).toHaveURL(new RegExp(`/${locale}/app`));
     await colleaguePage.goto(`/${locale}/app/curriculum`);
     await expect(colleaguePage.getByTestId('curriculum-row')).toHaveCount(2);
     await expect(colleaguePage.getByText(t('curriculum.readOnly'))).toBeVisible();
