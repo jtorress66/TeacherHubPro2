@@ -74,6 +74,35 @@ export const deAppB = {
     subject_social_studies: 'Gesellschaftskunde',
   },
   standards: {
+    coverageOpen: 'Abdeckung der Standards',
+    coverageTitle: 'Abdeckung der Standards',
+    coverageIntro:
+      'Jeder Standard, den diese Klasse geplant oder geprüft hat, und wie die Klasse bei den Aufgaben abgeschnitten hat, die ihn prüfen.',
+    coverageEmpty:
+      'Noch keine Standards. Fügen Sie einem Unterrichtsplan dieser Klasse Standards hinzu oder markieren Sie bei einer Aufgabe die Standards, die sie prüft.',
+    coverageFilter: 'Standards anzeigen',
+    coverageAll: 'Alle',
+    coverageFilterEmpty: 'Keine Standards in dieser Gruppe.',
+    coverage_reteach: 'Wiederholen',
+    coverage_watch: 'Beobachten',
+    coverage_on_track: 'Auf Kurs',
+    coverage_not_tested: 'Noch nicht geprüft',
+    coverageStandard: 'Standard',
+    coveragePlanned: 'Geplante Wochen',
+    coverageAssignments: 'Aufgaben',
+    coverageAverage: 'Klassendurchschnitt',
+    coverageBelow: 'Schüler unter {percent} %',
+    coverageStatus: 'Status',
+    coverageNotPlanned: 'Nicht geplant',
+    coverageLegend:
+      'Auf Kurs: Klassendurchschnitt von {onTrack} % oder mehr. Beobachten: {watch} % bis {onTrack} %. Wiederholen: unter {watch} %.',
+    coverageNote:
+      'Nur Noten, die Sie bestätigt haben, zählen. KI-Entwürfe zählen erst, wenn Sie sie bestätigen.',
+    coverageSchoolTitle: 'Abdeckung der Standards nach Klasse',
+    coverageSchoolHint:
+      'Wie viele Standards jede Klasse in jeder Gruppe hat. Nur Zahlen, keine Schülernamen.',
+    coverageSchoolNone: 'Noch keine Klasse hat Standards geplant oder geprüft.',
+    coverageClass: 'Klasse',
     assignmentTitle: 'Standards',
     assignmentHint:
       'Fügen Sie die Standards hinzu, die diese Aufgabe prüft. Unten werden die Codes aus den Unterrichtsplänen dieser Klasse vorgeschlagen.',

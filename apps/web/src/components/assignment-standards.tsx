@@ -2,6 +2,7 @@ import type { StandardInfo } from '@thp/domain';
 import { createTranslator, type Locale } from '@thp/i18n';
 import { saveAssignmentStandardsAction } from '../app/_lib/assignment-standards-actions.ts';
 import type { StandardsProblem } from '../server/assignment-standards-form.ts';
+import { standardSourceName } from '../server/standard-source.ts';
 import { Field } from './forms.tsx';
 
 interface Props {
@@ -19,8 +20,7 @@ interface Props {
 export function AssignmentStandards(props: Props) {
   const t = createTranslator(props.locale);
   const { standards, suggestions, editable } = props;
-  const sourceName = (info: StandardInfo) =>
-    info.source === 'typed' ? t('standards.source_typed') : t(`standards.set_${info.source}`);
+  const sourceName = (info: StandardInfo) => standardSourceName(props.locale, info);
 
   const hidden = (
     <>

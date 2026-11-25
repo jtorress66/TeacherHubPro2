@@ -131,6 +131,7 @@ export {
   UpdateAssignment,
 } from './gradebook/assignments.ts';
 export * from './gradebook/assignment-standards.ts';
+export * from './gradebook/standards-coverage.ts';
 export {
   GetGradeEntry,
   SaveGrades,

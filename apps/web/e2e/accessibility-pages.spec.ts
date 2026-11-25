@@ -133,6 +133,7 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
       `${classPath}/gradebook`,
       `${classPath}/gradebook/report`,
       `${classPath}/report-cards`,
+      `${classPath}/standards`,
       `${classPath}/student-links`,
       `${classPath}/portal-links`,
       `${classPath}/sub-packet`,

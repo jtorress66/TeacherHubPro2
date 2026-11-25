@@ -73,6 +73,35 @@ export const frAppB = {
     subject_social_studies: 'Sciences sociales',
   },
   standards: {
+    coverageOpen: 'Couverture des standards',
+    coverageTitle: 'Couverture des standards',
+    coverageIntro:
+      'Chaque standard que cette classe a prévu ou évalué, et les résultats de la classe aux devoirs qui l’évaluent.',
+    coverageEmpty:
+      'Aucun standard pour l’instant. Ajoutez des standards à un plan de cette classe ou indiquez sur un devoir les standards qu’il évalue.',
+    coverageFilter: 'Afficher les standards',
+    coverageAll: 'Tous',
+    coverageFilterEmpty: 'Aucun standard dans ce groupe.',
+    coverage_reteach: 'À reprendre',
+    coverage_watch: 'À surveiller',
+    coverage_on_track: 'En bonne voie',
+    coverage_not_tested: 'Pas encore évalué',
+    coverageStandard: 'Standard',
+    coveragePlanned: 'Semaines prévues',
+    coverageAssignments: 'Devoirs',
+    coverageAverage: 'Moyenne de la classe',
+    coverageBelow: 'Élèves sous {percent} %',
+    coverageStatus: 'Statut',
+    coverageNotPlanned: 'Non prévu',
+    coverageLegend:
+      'En bonne voie : moyenne de la classe de {onTrack} % ou plus. À surveiller : de {watch} % à {onTrack} %. À reprendre : moins de {watch} %.',
+    coverageNote:
+      'Seules les notes que vous avez confirmées comptent. Les brouillons de l’IA ne comptent pas tant que vous ne les confirmez pas.',
+    coverageSchoolTitle: 'Couverture des standards par classe',
+    coverageSchoolHint:
+      'Combien de standards chaque classe compte dans chaque groupe. Des chiffres seulement, sans noms d’élèves.',
+    coverageSchoolNone: 'Aucune classe n’a encore prévu ni évalué de standards.',
+    coverageClass: 'Classe',
     assignmentTitle: 'Standards',
     assignmentHint:
       'Ajoutez les standards évalués par ce devoir. Les codes des plans de cette classe sont proposés ci-dessous.',

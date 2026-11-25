@@ -71,6 +71,9 @@ export default async function GradebookPage(props: Props) {
         <Link href={`${base}/report-cards`} className="button secondary">
           {t('gradebook.reportCards')}
         </Link>
+        <Link href={`${base}/standards`} className="button secondary">
+          {t('standards.coverageOpen')}
+        </Link>
       </p>
       {editable ? null : (
         <p role="status" className="notice">

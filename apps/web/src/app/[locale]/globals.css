@@ -153,6 +153,48 @@ h2 {
   overflow-wrap: anywhere;
 }
 
+/* Standards coverage: status words in the letter-grade colours, codes that wrap on phones. */
+.standards-coverage .standard-code {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.standards-coverage .standard-description {
+  display: block;
+  font-weight: normal;
+}
+
+.coverage {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.coverage-on_track {
+  color: #1b7a3d;
+}
+
+.coverage-watch {
+  color: #8a6100;
+}
+
+.coverage-reteach {
+  color: #b42318;
+}
+
+@media screen {
+  .coverage-on_track {
+    color: #6fdc8c;
+  }
+
+  .coverage-watch {
+    color: #f5c25b;
+  }
+
+  .coverage-reteach {
+    color: #ff8a80;
+  }
+}
+
 .standard-tags li > form {
   grid-column: 2;
   grid-row: 1 / span 2;

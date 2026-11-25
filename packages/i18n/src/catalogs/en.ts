@@ -1315,6 +1315,34 @@ export const en = {
     subject_social_studies: 'Social Studies',
   },
   standards: {
+    coverageOpen: 'Standards coverage',
+    coverageTitle: 'Standards coverage',
+    coverageIntro:
+      'Each standard this class planned or tested, and how the class did on the assignments that test it.',
+    coverageEmpty:
+      'No standards yet. Add standards to a lesson plan for this class, or tag an assignment with the standards it tests.',
+    coverageFilter: 'Show standards',
+    coverageAll: 'All',
+    coverageFilterEmpty: 'No standards in this group.',
+    coverage_reteach: 'Reteach',
+    coverage_watch: 'Watch',
+    coverage_on_track: 'On track',
+    coverage_not_tested: 'Not tested yet',
+    coverageStandard: 'Standard',
+    coveragePlanned: 'Planned weeks',
+    coverageAssignments: 'Assignments',
+    coverageAverage: 'Class average',
+    coverageBelow: 'Students below {percent}%',
+    coverageStatus: 'Status',
+    coverageNotPlanned: 'Not planned',
+    coverageLegend:
+      'On track: class average of {onTrack}% or more. Watch: {watch}% to {onTrack}%. Reteach: below {watch}%.',
+    coverageNote: 'Only grades you confirmed count. AI drafts are left out until you confirm them.',
+    coverageSchoolTitle: 'Standards coverage by class',
+    coverageSchoolHint:
+      'How many standards each class has in each group. Counts only, no student names.',
+    coverageSchoolNone: 'No class has planned or tested standards yet.',
+    coverageClass: 'Class',
     assignmentTitle: 'Standards',
     assignmentHint:
       'Add the standards this assignment tests. Codes from this class’s lesson plans are suggested below.',

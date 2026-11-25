@@ -1,6 +1,10 @@
 import { expect, test } from '@playwright/test';
 import { createTranslator, type Locale } from '@thp/i18n';
+import { formatPercent } from '../src/server/gradebook-display.ts';
 import { classWithStudents, signUp } from './helpers.ts';
+
+/** Spanish formats use a no-break space before "%"; compare text with plain spaces. */
+const plain = (text: string) => text.replace(/\u00a0/g, ' ');
 
 for (const locale of ['es', 'en'] as const satisfies readonly Locale[]) {
   const t = createTranslator(locale);
@@ -62,5 +66,45 @@ for (const locale of ['es', 'en'] as const satisfies readonly Locale[]) {
       .click();
     await expect(tags.getByRole('listitem')).toHaveCount(2);
     await expect(tags).not.toContainText('ESCUELA.7');
+
+    // Grades the teacher confirms feed the coverage report: Ana 90, Ben 50 → class average 70.
+    for (const [name, score] of [
+      ['Zayas, Ana', 90],
+      ['Acosta, Ben', 50],
+    ] as const) {
+      await page.getByLabel(t('gradebook.scoreFor', { name })).fill(String(score));
+      await page.getByLabel(t('gradebook.statusFor', { name })).selectOption('');
+    }
+    await page.getByRole('button', { name: t('gradebook.saveGrades') }).click();
+    await expect(page.getByText(t('gradebook.gradesSaved'))).toBeVisible();
+
+    await page.goto(classPath);
+    await page.getByRole('link', { name: t('standards.coverageOpen'), exact: true }).click();
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('Historia 6');
+    const table = page.getByRole('table', { name: t('standards.coverageTitle') });
+    const rows = table.getByRole('row').filter({ has: page.getByRole('rowheader') });
+    await expect(rows).toHaveCount(2);
+    const fractionsRow = rows.filter({ hasText: 'CCSS.Math.Content.4.NF.A.1' });
+    await expect(fractionsRow).toContainText(t('standards.coverage_watch'));
+    expect(plain((await fractionsRow.getByRole('cell').nth(2).textContent()) ?? '')).toBe(
+      plain(formatPercent(70, locale)),
+    );
+    await expect(fractionsRow.getByRole('cell').nth(3)).toHaveText('1');
+
+    // The filter shows one status at a time; no student names appear anywhere.
+    const filter = page.getByRole('navigation', { name: t('standards.coverageFilter') });
+    await filter.getByRole('link', { name: `${t('standards.coverage_on_track')} (0)` }).click();
+    await expect(page.getByText(t('standards.coverageFilterEmpty'))).toBeVisible();
+    await filter.getByRole('link', { name: `${t('standards.coverage_watch')} (2)` }).click();
+    await expect(rows).toHaveCount(2);
+    await expect(page.locator('main')).not.toContainText('Zayas');
+
+    // The school's owner sees each class counted by status.
+    await page.goto(`/${locale}/app/school`);
+    const card = page.getByRole('region', { name: t('standards.coverageSchoolTitle') });
+    const classRow = card.getByRole('row', { name: /Historia 6/u });
+    await expect(classRow.getByRole('cell').nth(1)).toHaveText('2');
+    await classRow.getByRole('link', { name: 'Historia 6' }).click();
+    await expect(page.getByRole('table', { name: t('standards.coverageTitle') })).toBeVisible();
   });
 }

@@ -71,6 +71,35 @@ export const ptAppB = {
     subject_social_studies: 'Estudos sociais',
   },
   standards: {
+    coverageOpen: 'Cobertura dos padrões',
+    coverageTitle: 'Cobertura dos padrões',
+    coverageIntro:
+      'Cada padrão que esta turma planejou ou avaliou, e como a turma foi nas tarefas que o avaliam.',
+    coverageEmpty:
+      'Ainda não há padrões. Adicione padrões a um plano desta turma ou marque numa tarefa os padrões que ela avalia.',
+    coverageFilter: 'Mostrar padrões',
+    coverageAll: 'Todos',
+    coverageFilterEmpty: 'Nenhum padrão neste grupo.',
+    coverage_reteach: 'Reensinar',
+    coverage_watch: 'Acompanhar',
+    coverage_on_track: 'No caminho certo',
+    coverage_not_tested: 'Ainda não avaliado',
+    coverageStandard: 'Padrão',
+    coveragePlanned: 'Semanas planejadas',
+    coverageAssignments: 'Tarefas',
+    coverageAverage: 'Média da turma',
+    coverageBelow: 'Alunos abaixo de {percent}%',
+    coverageStatus: 'Situação',
+    coverageNotPlanned: 'Não planejado',
+    coverageLegend:
+      'No caminho certo: média da turma de {onTrack}% ou mais. Acompanhar: de {watch}% a {onTrack}%. Reensinar: abaixo de {watch}%.',
+    coverageNote:
+      'Só contam as notas que você confirmou. Os rascunhos da IA não contam até que você os confirme.',
+    coverageSchoolTitle: 'Cobertura dos padrões por turma',
+    coverageSchoolHint:
+      'Quantos padrões cada turma tem em cada grupo. Apenas números, sem nomes de alunos.',
+    coverageSchoolNone: 'Nenhuma turma planejou ou avaliou padrões ainda.',
+    coverageClass: 'Turma',
     assignmentTitle: 'Padrões',
     assignmentHint:
       'Adicione os padrões que esta tarefa avalia. Os códigos dos planos desta turma são sugeridos abaixo.',

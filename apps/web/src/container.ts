@@ -120,6 +120,8 @@ import {
   ListSubmissions,
   GetAssignmentOverview,
   GetAssignmentStandards,
+  GetSchoolStandardsCoverage,
+  GetStandardsCoverage,
   RequestAiGrading,
   ConfirmGrade,
   GradeByHand,
@@ -484,6 +486,8 @@ export interface AppContainer {
   readonly getAssignmentOverview: GetAssignmentOverview;
   readonly getAssignmentStandards: GetAssignmentStandards;
   readonly setAssignmentStandards: SetAssignmentStandards;
+  readonly getStandardsCoverage: GetStandardsCoverage;
+  readonly getSchoolStandardsCoverage: GetSchoolStandardsCoverage;
   readonly requestAiGrading: RequestAiGrading;
   readonly confirmGrade: ConfirmGrade;
   readonly gradeByHand: GradeByHand;
@@ -983,6 +987,8 @@ export function createAppContainer(
     getAssignmentOverview: new GetAssignmentOverview(deps),
     getAssignmentStandards: new GetAssignmentStandards(deps),
     setAssignmentStandards: new SetAssignmentStandards(deps),
+    getStandardsCoverage: new GetStandardsCoverage(deps),
+    getSchoolStandardsCoverage: new GetSchoolStandardsCoverage(deps),
     requestAiGrading: new RequestAiGrading(deps),
     confirmGrade: new ConfirmGrade(deps),
     gradeByHand: new GradeByHand(deps),

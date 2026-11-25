@@ -61,6 +61,7 @@ for (const colorScheme of ['light', 'dark'] as const) {
         '/es/app/curriculum',
         '/es/app/settings',
         `${classPath}/gradebook`,
+        `${classPath}/standards`,
       ]) {
         await page.goto(path);
         expect(await violations(page), path).toEqual([]);
