@@ -107,6 +107,7 @@ describe('migrations', () => {
       ok: true,
       value: {
         applied: [
+          '0042_assignment_standards',
           '0041_curriculum_guides',
           '0040_family_languages',
           '0039_school_features',
@@ -197,6 +198,7 @@ describe('migrations', () => {
           '0038_school_deletions',
           '0039_school_features',
           '0040_family_languages',
+          '0042_assignment_standards',
           '0041_curriculum_guides',
         ],
       },

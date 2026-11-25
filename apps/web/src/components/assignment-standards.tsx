@@ -2,6 +2,7 @@ import type { StandardInfo } from '@thp/domain';
 import { createTranslator, type Locale } from '@thp/i18n';
 import { saveAssignmentStandardsAction } from '../app/_lib/assignment-standards-actions.ts';
 import type { StandardsProblem } from '../server/assignment-standards-form.ts';
+import { Field } from './forms.tsx';
 
 interface Props {
   readonly locale: Locale;
@@ -75,13 +76,13 @@ export function AssignmentStandards(props: Props) {
         <>
           <form action={saveAssignmentStandardsAction} className="stack">
             {hidden}
-            <label>
-              {t('standards.assignmentCode')}
-              <input name="add" autoComplete="off" aria-describedby="standards-code-hint" />
-            </label>
-            <p id="standards-code-hint" className="muted">
-              {t('standards.assignmentCodeHint')}
-            </p>
+            <Field
+              id="standards-add"
+              name="add"
+              label={t('standards.assignmentCode')}
+              hint={t('standards.assignmentCodeHint')}
+              autoComplete="off"
+            />
             <p>
               <button type="submit" className="button">
                 {t('standards.assignmentAdd')}

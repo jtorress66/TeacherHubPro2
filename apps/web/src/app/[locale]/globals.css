@@ -147,6 +147,12 @@ h2 {
   margin: 0;
 }
 
+/* Long codes such as CCSS.ELA-Literacy.RL.7.6 wrap instead of widening a phone screen. */
+.standard-tags strong,
+.standard-suggestions button {
+  overflow-wrap: anywhere;
+}
+
 .standard-tags li > form {
   grid-column: 2;
   grid-row: 1 / span 2;

@@ -11,7 +11,9 @@ for (const locale of ['es', 'en'] as const satisfies readonly Locale[]) {
 
     // A plan for the class covers one Common Core code and one Puerto Rico code.
     await page.goto(`/${locale}/app/plans/new?kind=weekly&start=2026-11-02`);
-    await page.getByLabel(t('planner.class')).selectOption({ label: 'Historia 6' });
+    await page
+      .getByLabel(t('planner.class'), { exact: true })
+      .selectOption({ label: 'Historia 6' });
     await page
       .getByLabel(t('planner.standards'), { exact: true })
       .fill('CCSS.Math.Content.4.NF.A.1');
