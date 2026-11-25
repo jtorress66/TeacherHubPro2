@@ -53,6 +53,7 @@ const anAssignment = (overrides: Partial<Assignment> = {}): Assignment => ({
   id: 'a-1' as AssignmentId,
   schoolId: 'school-1' as SchoolId,
   classId: 'class-1' as ClassId,
+  standards: [],
   categoryId: 'cat-1' as GradeCategoryId,
   title: 'Volcano quiz',
   points: 10,

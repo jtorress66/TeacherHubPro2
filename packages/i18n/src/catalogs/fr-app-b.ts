@@ -73,6 +73,20 @@ export const frAppB = {
     subject_social_studies: 'Sciences sociales',
   },
   standards: {
+    assignmentTitle: 'Standards',
+    assignmentHint:
+      'Ajoutez les standards évalués par ce devoir. Les codes des plans de cette classe sont proposés ci-dessous.',
+    assignmentNone: 'Aucun standard pour l’instant.',
+    assignmentCode: 'Codes des standards',
+    assignmentCodeHint: 'Séparez plusieurs codes par des virgules, par exemple 4.N.1.1, 4.N.1.2.',
+    assignmentAdd: 'Ajouter',
+    assignmentPlanned: 'Prévus pour cette classe',
+    assignmentAddPlanned: 'Ajouter {code}',
+    assignmentRemove: 'Retirer {code}',
+    assignmentSaved: 'Standards enregistrés.',
+    assignmentTooLong: 'Un code peut compter au maximum 40 caractères.',
+    assignmentTooMany: 'Un devoir peut évaluer au maximum 12 standards.',
+    source_typed: 'Votre propre code',
     title: 'Codes Common Core',
     intro:
       'Les normes officielles Common Core State Standards en mathématiques et en anglais (langue et littérature), avec les normes de littératie pour les sciences et les sciences sociales (niveaux 6 à 12).',

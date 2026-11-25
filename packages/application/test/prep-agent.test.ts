@@ -297,6 +297,7 @@ describe('PublishPrepBatch', () => {
       classId: cls.id,
       categoryId: category('Pruebas cortas'),
       dueDate: '2026-09-11',
+      standards: ['CCSS.Math.Content.4.NF.A.1'],
     });
     expect(quiz?.questions).toHaveLength(2);
 
@@ -308,6 +309,19 @@ describe('PublishPrepBatch', () => {
       error: { field: 'status', code: 'not_allowed' },
     });
     expect(world.mailer.outbox).toHaveLength(2);
+  });
+
+  it("tags the quiz with the kept plan's standards, and with none when the plan is dropped", async () => {
+    const world = makeWorld();
+    const { ref } = await readyBatch(world);
+    valueOf(await new UpdatePrepSelection(world).execute({ ...ref, keep: ['quiz'] }));
+
+    const published = valueOf(await new PublishPrepBatch(world).execute(ref));
+    const quiz = await world.assignments.findById(
+      ref.actor.schoolId,
+      published.published?.assignmentId ?? ('' as never),
+    );
+    expect(quiz?.standards).toEqual([]);
   });
 
   it('sends nothing without the email option, and counts refused emails', async () => {

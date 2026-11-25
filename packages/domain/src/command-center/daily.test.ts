@@ -82,6 +82,7 @@ const assignment = (n: number, dueDate: string | null): Assignment => ({
   id: `a${String(n)}` as AssignmentId,
   schoolId: 's1' as SchoolId,
   classId: 'c1' as ClassId,
+  standards: [],
   categoryId: 'cat' as GradeCategoryId,
   title: `Assignment ${String(n)}`,
   points: 10,

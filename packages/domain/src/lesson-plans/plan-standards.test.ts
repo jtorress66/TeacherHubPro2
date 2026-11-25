@@ -3,7 +3,12 @@ import type { LessonPlanId, SchoolId, UserId } from '../shared/ids.ts';
 import { errorOf, valueOf } from '../test-support.ts';
 import { createLessonPlan, type LessonPlanInput } from './lesson-plan.ts';
 import { planFormats, isPlanFormat, defaultPlanFormat } from './plan-format.ts';
-import { noDomainStandards, planBodyFromJson, standardDomainOf } from './plan-standards.ts';
+import {
+  noDomainStandards,
+  planBodyFromJson,
+  planStandardCodes,
+  standardDomainOf,
+} from './plan-standards.ts';
 import type { PlanWeekInput } from './weekly-plan.ts';
 
 const plan = (week: Partial<PlanWeekInput>): LessonPlanInput => ({
@@ -104,6 +109,40 @@ describe('planBodyFromJson', () => {
   it('leaves Conversational English plans as they are', () => {
     const body = { kind: 'conversational_english', lessonDate: '2026-11-03' };
     expect(planBodyFromJson(body)).toBe(body);
+  });
+});
+
+describe('planStandardCodes', () => {
+  it('lists every code a plan covers, Common Core and typed, once each in plan order', () => {
+    const input: LessonPlanInput = {
+      ...plan({}),
+      body: {
+        kind: 'weekly',
+        weeks: [
+          {
+            weekStart: '2026-11-02',
+            standards: ['CCSS.ELA-Literacy.RL.7.6'],
+            domainStandards: { reading: ['7.R.6.1'], writing: ['7.W.6'] },
+          },
+          {
+            weekStart: '2026-11-09',
+            standards: ['CCSS.ELA-Literacy.RL.7.6'],
+            domainStandards: { reading: ['7.R.4'] },
+          },
+        ],
+      },
+    };
+
+    expect(planStandardCodes(valueOf(createLessonPlan(input)).body)).toEqual([
+      'CCSS.ELA-Literacy.RL.7.6',
+      '7.R.6.1',
+      '7.W.6',
+      '7.R.4',
+    ]);
+  });
+
+  it('has none for a Conversational English plan', () => {
+    expect(planStandardCodes({ kind: 'conversational_english' } as never)).toEqual([]);
   });
 });
 

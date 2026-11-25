@@ -129,6 +129,47 @@ h2 {
   border-radius: 0.75rem;
 }
 
+/* An assignment's standards: each code with its description and a remove button. */
+.standard-tags {
+  list-style: none;
+  padding-left: 0;
+}
+
+.standard-tags li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.25rem 0.75rem;
+  align-items: start;
+}
+
+.standard-tags li > p {
+  grid-column: 1;
+  margin: 0;
+}
+
+/* Long codes such as CCSS.ELA-Literacy.RL.7.6 wrap instead of widening a phone screen. */
+.standard-tags strong,
+.standard-suggestions button {
+  overflow-wrap: anywhere;
+}
+
+.standard-tags li > form {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+}
+
+.standard-suggestions {
+  list-style: none;
+  padding-left: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.standard-suggestions li + li {
+  margin-top: 0;
+}
+
 .divider {
   color: var(--muted);
   text-align: center;

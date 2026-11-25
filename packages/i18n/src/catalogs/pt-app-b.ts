@@ -71,6 +71,20 @@ export const ptAppB = {
     subject_social_studies: 'Estudos sociais',
   },
   standards: {
+    assignmentTitle: 'Padrões',
+    assignmentHint:
+      'Adicione os padrões que esta tarefa avalia. Os códigos dos planos desta turma são sugeridos abaixo.',
+    assignmentNone: 'Ainda não há padrões.',
+    assignmentCode: 'Códigos dos padrões',
+    assignmentCodeHint: 'Separe vários códigos com vírgulas, por exemplo 4.N.1.1, 4.N.1.2.',
+    assignmentAdd: 'Adicionar',
+    assignmentPlanned: 'Planejados para esta turma',
+    assignmentAddPlanned: 'Adicionar {code}',
+    assignmentRemove: 'Remover {code}',
+    assignmentSaved: 'Padrões salvos.',
+    assignmentTooLong: 'Um código pode ter no máximo 40 caracteres.',
+    assignmentTooMany: 'Uma tarefa pode avaliar no máximo 12 padrões.',
+    source_typed: 'Código próprio',
     title: 'Códigos Common Core',
     intro:
       'Os padrões oficiais Common Core State Standards de matemática e de língua inglesa, com os padrões de letramento para ciências e estudos sociais (6º ao 12º ano).',

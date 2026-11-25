@@ -85,6 +85,19 @@ export function assignmentLookupContract(name: string, make: () => AssignmentRep
       expect(await repository.countByCategory(schoolA, 'category-9' as GradeCategoryId)).toBe(0);
       expect(await repository.countByCategory(schoolB, category)).toBe(0);
     });
+
+    it('keeps the standards an assignment tests', async () => {
+      const repository = make();
+      const tagged = anAssignment({
+        id: 'x3' as AssignmentId,
+        schoolId: schoolA,
+        standards: ['CCSS.Math.Content.4.OA.A.1', '7.R.6.1'],
+      });
+      await repository.save(tagged);
+
+      expect(await repository.findById(schoolA, tagged.id)).toEqual(tagged);
+      expect(await repository.findById(schoolB, tagged.id)).toBeNull();
+    });
   });
 }
 

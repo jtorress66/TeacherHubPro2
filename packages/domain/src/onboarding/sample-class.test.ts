@@ -74,6 +74,7 @@ describe('the sample roster', () => {
       id: id as AssignmentId,
       schoolId: 's1' as SchoolId,
       classId: 'c1' as ClassId,
+      standards: [],
       categoryId: category,
       title: id,
       points: 100,

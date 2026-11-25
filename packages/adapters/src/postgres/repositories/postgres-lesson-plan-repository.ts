@@ -1,5 +1,12 @@
 import type { Kysely } from 'kysely';
-import type { LessonPlan, LessonPlanId, PlanFolderId, SchoolId, UserId } from '@thp/domain';
+import type {
+  ClassId,
+  LessonPlan,
+  LessonPlanId,
+  PlanFolderId,
+  SchoolId,
+  UserId,
+} from '@thp/domain';
 import type { LessonPlanRepository } from '@thp/ports';
 import { lessonPlanMapper } from '../mappers/school-mappers.ts';
 import type { Database } from '../schema.ts';
@@ -36,6 +43,18 @@ export class PostgresLessonPlanRepository implements LessonPlanRepository {
       .selectAll()
       .where('school_id', '=', schoolId)
       .where('teacher_id', '=', teacherId)
+      .orderBy('created_at')
+      .orderBy('id')
+      .execute();
+    return rows.map(lessonPlanMapper.fromRow);
+  }
+
+  async listByClass(schoolId: SchoolId, classId: ClassId): Promise<readonly LessonPlan[]> {
+    const rows = await this.db
+      .selectFrom('lesson_plans')
+      .selectAll()
+      .where('school_id', '=', schoolId)
+      .where('class_id', '=', classId)
       .orderBy('created_at')
       .orderBy('id')
       .execute();

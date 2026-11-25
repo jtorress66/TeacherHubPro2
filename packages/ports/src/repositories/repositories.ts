@@ -99,6 +99,8 @@ export interface SemesterRepository extends ScopedRepository<Semester>, Deletabl
 
 export interface LessonPlanRepository extends ScopedRepository<LessonPlan>, Deletable<LessonPlan> {
   listByTeacher(schoolId: SchoolId, teacherId: UserId): Promise<readonly LessonPlan[]>;
+  /** The plans linked to a class, oldest first. */
+  listByClass(schoolId: SchoolId, classId: ClassId): Promise<readonly LessonPlan[]>;
   /** Moves the folder's plans to Unfiled. */
   unfileFolder(schoolId: SchoolId, folderId: PlanFolderId): Promise<void>;
 }

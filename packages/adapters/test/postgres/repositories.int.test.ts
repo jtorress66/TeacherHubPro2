@@ -226,11 +226,6 @@ withParents(parentsFor.teacher, () => {
   });
   deletableContract('PostgresClassRepository', classes);
 
-  plannerRepositoryContract('Postgres', () => ({
-    plans: repos.lessonPlans,
-    folders: repos.planFolders,
-    templates: repos.planTemplates,
-  }));
   jobQueueContract(
     'PostgresJobQueue',
     () => new PostgresJobQueue(db, new SequentialIdGenerator('job')),
@@ -369,6 +364,15 @@ withParents(parentsFor.grading, () => {
     ],
   });
   batchFindableContract('PostgresSubmissionRepository', submissions);
+});
+
+// Plans may name a class, so both of school A's classes exist.
+withParents(parentsFor.rosters, () => {
+  plannerRepositoryContract('Postgres', () => ({
+    plans: repos.lessonPlans,
+    folders: repos.planFolders,
+    templates: repos.planTemplates,
+  }));
 });
 
 withParents(parentsFor.none, () => {

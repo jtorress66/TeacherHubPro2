@@ -7,15 +7,22 @@ import {
   AssignmentForm,
   GradeEntryForm,
 } from '../../../../../../../components/gradebook-forms.tsx';
+import { AssignmentStandards } from '../../../../../../../components/assignment-standards.tsx';
 import { SendLtiGrades } from '../../../../../../../components/lti-grades.tsx';
 import { getAppContainer } from '../../../../../../../container.ts';
 import { requireUser } from '../../../../../../_lib/auth.ts';
+import { standardsProblem } from '../../../../../../../server/assignment-standards-form.ts';
 import { deleteAssignmentAction } from '../../../../../../_lib/gradebook-actions.ts';
 import { localeFrom, type LocaleParams } from '../../../../../locale-param.ts';
 
 type Props = LocaleParams & {
   readonly params: Promise<{ locale: string; classId: string; assignmentId: string }>;
-  readonly searchParams: Promise<{ ltiJob?: string; ltiGrades?: string }>;
+  readonly searchParams: Promise<{
+    ltiJob?: string;
+    ltiGrades?: string;
+    standards?: string;
+    standardsError?: string;
+  }>;
 };
 
 export const metadata: Metadata = { title: 'TeacherHubPro' };
@@ -39,6 +46,11 @@ export default async function AssignmentPage(props: Props) {
     assignmentId: assignmentId as AssignmentId,
   });
   if (!overview.ok) notFound();
+  const standards = await app.getAssignmentStandards.execute({
+    ...input,
+    assignmentId: assignmentId as AssignmentId,
+  });
+  if (!standards.ok) notFound();
   const { assignment, maxPoints, editable, rows } = entry.value;
   const steps = overview.value;
   const gradebook = `/${locale}/app/classes/${classId}/gradebook`;
@@ -92,6 +104,16 @@ export default async function AssignmentPage(props: Props) {
           </Link>
         </li>
       </ol>
+      <AssignmentStandards
+        locale={locale}
+        classId={classId}
+        assignmentId={assignment.id}
+        standards={standards.value.standards}
+        suggestions={standards.value.suggestions}
+        editable={editable}
+        saved={search.standards === 'saved'}
+        problem={standardsProblem(search.standardsError)}
+      />
       <SendLtiGrades
         locale={locale}
         user={user}

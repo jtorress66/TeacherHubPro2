@@ -25,6 +25,7 @@ const assignment = (
   id: `a${String(n)}` as AssignmentId,
   schoolId: 's1' as SchoolId,
   classId: 'c1' as ClassId,
+  standards: [],
   categoryId: category,
   title: `Assignment ${String(n)}`,
   points,

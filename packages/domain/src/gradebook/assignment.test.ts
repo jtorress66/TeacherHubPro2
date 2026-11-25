@@ -10,7 +10,9 @@ import { errorOf, valueOf } from '../test-support.ts';
 import {
   createAssignment,
   maxPoints,
+  maxAssignmentStandards,
   replaceQuestions,
+  setAssignmentStandards,
   setInstructions,
   updateAssignment,
 } from './assignment.ts';
@@ -37,6 +39,7 @@ describe('createAssignment', () => {
       dueDate: null,
       instructions: null,
       questions: [],
+      standards: [],
     });
   });
 
@@ -192,5 +195,43 @@ describe('standardCategories', () => {
       { key: 'test', weightPercent: 30 },
       { key: 'project', weightPercent: 20 },
     ]);
+  });
+});
+
+describe('setAssignmentStandards', () => {
+  const assignment = valueOf(createAssignment({ ...base, questions: [question('q1', 4)] }));
+
+  it('keeps the codes the teacher chose, trimmed and once each, with the other details', () => {
+    const tagged = valueOf(
+      setAssignmentStandards(assignment, [' 4.OA.A.1 ', '4.L.1', '4.OA.A.1', '']),
+    );
+
+    expect(tagged.standards).toEqual(['4.OA.A.1', '4.L.1']);
+    expect(tagged.questions).toEqual(assignment.questions);
+    expect(valueOf(setAssignmentStandards(tagged, [])).standards).toEqual([]);
+  });
+
+  it(`refuses codes with spaces, over 40 characters, or more than ${String(maxAssignmentStandards)}`, () => {
+    expect(errorOf(setAssignmentStandards(assignment, ['4 OA']))).toEqual({
+      field: 'standards',
+      code: 'invalid_format',
+    });
+    expect(errorOf(setAssignmentStandards(assignment, ['x'.repeat(41)]))).toEqual({
+      field: 'standards',
+      code: 'too_long',
+    });
+    const many = Array.from({ length: maxAssignmentStandards + 1 }, (_, i) => `C.${String(i)}`);
+    expect(errorOf(setAssignmentStandards(assignment, many))).toEqual({
+      field: 'standards',
+      code: 'out_of_range',
+    });
+  });
+
+  it('keeps its standards when the details or questions change', () => {
+    const tagged = valueOf(setAssignmentStandards(assignment, ['4.L.1']));
+    const details = { title: 'Quiz 2', categoryId: base.categoryId, points: 10, dueDate: null };
+
+    expect(valueOf(updateAssignment(tagged, details)).standards).toEqual(['4.L.1']);
+    expect(valueOf(replaceQuestions(tagged, [])).standards).toEqual(['4.L.1']);
   });
 });

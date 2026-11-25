@@ -3,6 +3,7 @@ import {
   createContentRequest,
   createGeneration,
   createLessonPlan,
+  planStandardCodes,
   createPresentation,
   dayTopic,
   draftedPlan,
@@ -16,6 +17,7 @@ import {
   type AssignmentId,
   type Class,
   type GenerationId,
+  type LessonPlan,
   type LessonPlanId,
   type PrepBatch,
   type PrepBatchId,
@@ -88,11 +90,13 @@ export class PublishPrepBatch {
     const cls = await findEditableClass(this.deps.classes, actor, batch.classId);
     if (!cls.ok) return cls;
     const items = publishable(batch);
-    const quiz = await this.saveQuiz(batch, cls.value, ofKind(items, 'quiz')[0]);
+    const plan = this.buildPlan(batch, ofKind(items, 'plan')[0]);
+    const standards = plan === null ? [] : planStandardCodes(plan.body);
+    const quiz = await this.saveQuiz(batch, cls.value, standards, ofKind(items, 'quiz')[0]);
     if (!quiz.ok) return quiz;
     const emails = await this.sendEmails(batch);
     const published: PrepPublished = {
-      planId: await this.savePlan(batch, ofKind(items, 'plan')[0]),
+      planId: await this.savePlan(plan),
       presentationIds: await this.saveDecks(batch, ofKind(items, 'presentation')),
       generationIds: await this.saveWorksheets(batch, ofKind(items, 'worksheet')),
       assignmentId: quiz.value,
@@ -112,7 +116,8 @@ export class PublishPrepBatch {
     return done;
   }
 
-  private async savePlan(batch: PrepBatch, item?: Item<'plan'>): Promise<LessonPlanId | null> {
+  /** The kept weekly plan, or null when it was dropped or is not valid. */
+  private buildPlan(batch: PrepBatch, item?: Item<'plan'>): LessonPlan | null {
     if (item?.content == null) return null;
     const plan = createLessonPlan({
       id: this.deps.ids.next() as LessonPlanId,
@@ -121,9 +126,13 @@ export class PublishPrepBatch {
       classId: batch.classId,
       ...draftedPlan(item.content, batch.request.weekStart),
     });
-    if (!plan.ok) return null;
-    await this.deps.lessonPlans.save(plan.value);
-    return plan.value.id;
+    return plan.ok ? plan.value : null;
+  }
+
+  private async savePlan(plan: LessonPlan | null): Promise<LessonPlanId | null> {
+    if (plan === null) return null;
+    await this.deps.lessonPlans.save(plan);
+    return plan.id;
   }
 
   private async saveDecks(
@@ -182,6 +191,7 @@ export class PublishPrepBatch {
   private async saveQuiz(
     batch: PrepBatch,
     cls: Class,
+    standards: readonly string[],
     item?: Item<'quiz'>,
   ): Promise<Result<AssignmentId | null, UseCaseError>> {
     const categoryId = batch.request.quizCategoryId;
@@ -197,6 +207,7 @@ export class PublishPrepBatch {
       dueDate: quizDay(batch.request),
       instructions: item.content.instructions,
       questions: item.content.questions,
+      standards,
     });
     if (!assignment.ok) return assignment;
     await this.deps.assignments.save(assignment.value);
