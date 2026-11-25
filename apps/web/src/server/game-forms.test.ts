@@ -54,6 +54,18 @@ describe('game forms', () => {
     expect(noClass.input.language).toBe('en');
   });
 
+  it('reads the question builder’s cards when it sends them, instead of the text box', () => {
+    const items = [{ prompt: 'Is 2 | 3 = 5?', options: ['Yes', 'No'], answer: 1 }];
+    const parsed = parseGameForm(
+      form({ title: 'T', mode: 'quiz', content: 'ignored', contentJson: JSON.stringify(items) }),
+    );
+
+    expect(parsed.input.content).toEqual({ kind: 'questions', items });
+    expect(
+      parseGameForm(form({ title: 'T', mode: 'quiz', contentJson: '{broken' })).input.content,
+    ).toEqual({ kind: 'questions', items: [] });
+  });
+
   it('puts an item’s error under the content, numbered from 1', () => {
     const t = createTranslator('en');
     expect(gameFormErrors({ field: 'items.2.term', code: 'duplicate' }, 'en')).toEqual({

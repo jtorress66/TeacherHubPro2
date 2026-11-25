@@ -13,17 +13,30 @@ import { SendLtiGrades } from '../../../../../components/lti-grades.tsx';
 import { getAppContainer } from '../../../../../container.ts';
 import { formatDuration } from '../../../../../server/game-forms.ts';
 import { contentText } from '../../../../../server/game-text.ts';
-import { deleteGameAction } from '../../../../_lib/game-actions.ts';
+import {
+  addItemsFromGameAction,
+  deleteGameAction,
+  duplicateGameAction,
+} from '../../../../_lib/game-actions.ts';
 import { requireUser } from '../../../../_lib/auth.ts';
 import { localeFrom, type LocaleParams } from '../../../locale-param.ts';
 import { TableScroll } from '../../../../../components/table-scroll.tsx';
 
 type Props = LocaleParams & {
   readonly params: Promise<{ locale: string; gameId: string }>;
-  readonly searchParams: Promise<{ ltiJob?: string; ltiGrades?: string }>;
+  readonly searchParams: Promise<{
+    ltiJob?: string;
+    ltiGrades?: string;
+    copied?: string;
+    added?: string;
+    skipped?: string;
+    addError?: string;
+  }>;
 };
 
 export const metadata: Metadata = { title: 'TeacherHubPro' };
+
+const addProblems = ['wrongKind', 'nothingNew', 'failed'] as const;
 
 /** One game: edit it, share it, grade it, and see how the class did. */
 export default async function GamePage(props: Props) {
@@ -50,6 +63,8 @@ export default async function GamePage(props: Props) {
   const results = await app.getGameResults.execute({ actor: user, gameId: game.id });
   const insights = await app.getLiveInsights.execute({ actor: user, gameId: game.id });
   const day = new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short' });
+  const otherGames = (await app.listGames.execute({ actor: user })).filter((g) => g.id !== game.id);
+  const addProblem = addProblems.find((problem) => problem === search.addError) ?? null;
 
   return (
     <section className="stack">
@@ -66,6 +81,19 @@ export default async function GamePage(props: Props) {
           {t('nav.live')}
         </Link>
       </p>
+      <form action={duplicateGameAction}>
+        <input type="hidden" name="locale" value={locale} />
+        <input type="hidden" name="gameId" value={game.id} />
+        <input type="hidden" name="title" value={game.title} />
+        <button type="submit" className="button secondary">
+          {t('games.duplicate')}
+        </button>
+      </form>
+      {search.copied === '1' ? (
+        <p role="status" className="notice">
+          {t('games.duplicated')}
+        </p>
+      ) : null}
       <GameEditor
         locale={locale}
         classes={classes}
@@ -75,6 +103,7 @@ export default async function GamePage(props: Props) {
           title: game.title,
           mode: game.mode,
           content: contentText(game.content),
+          items: game.content,
           classId: game.classId,
           language: game.language,
         }}
@@ -219,6 +248,47 @@ export default async function GamePage(props: Props) {
       <h2>{t('games.freshTitle')}</h2>
       <p>{t('games.freshIntro')}</p>
       <GameDraftForm locale={locale} gameId={game.id} mode={game.mode} topic={game.title} />
+
+      <section className="card stack" aria-labelledby="add-items-heading">
+        <h2 id="add-items-heading">{t('games.addFromTitle')}</h2>
+        <p className="hint">{t('games.addFromHint')}</p>
+        {search.added === undefined ? null : (
+          <p role="status" className="notice">
+            {t('games.addedItems', {
+              added: Number(search.added) || 0,
+              skipped: Number(search.skipped) || 0,
+            })}
+          </p>
+        )}
+        {addProblem === null ? null : (
+          <p role="alert" className="field-error">
+            {t(`games.addFrom_${addProblem}`)}
+          </p>
+        )}
+        {otherGames.length === 0 ? (
+          <p className="muted">{t('games.addFromNone')}</p>
+        ) : (
+          <form action={addItemsFromGameAction} className="stack">
+            <input type="hidden" name="locale" value={locale} />
+            <input type="hidden" name="gameId" value={game.id} />
+            <div className="field">
+              <label htmlFor="add-from-game">{t('games.addFromGame')}</label>
+              <select id="add-from-game" name="sourceId">
+                {otherGames.map((other) => (
+                  <option key={other.id} value={other.id}>
+                    {other.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <p>
+              <button type="submit" className="button secondary">
+                {t('games.addFromSubmit')}
+              </button>
+            </p>
+          </form>
+        )}
+      </section>
 
       <form action={deleteGameAction}>
         <input type="hidden" name="locale" value={locale} />

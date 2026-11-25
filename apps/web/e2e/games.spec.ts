@@ -245,7 +245,10 @@ async function createGame(page: Page, locale: Locale, title: string, mode: GameM
   await form.getByLabel(t('games.titleLabel')).fill(title);
   await form.getByLabel(t('games.mode')).selectOption(mode);
   await form.getByLabel(t('games.class')).selectOption({ label: 'Historia 6' });
-  await form.getByLabel(t('games.content'), { exact: false }).fill(content[kindOf[mode]]);
+  await form.getByRole('button', { name: t('games.builderAsText') }).click();
+  await form
+    .getByRole('textbox', { name: t('games.content'), exact: true })
+    .fill(content[kindOf[mode]]);
   await form.getByRole('button', { name: t('games.create') }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(title);
   return new URL(page.url()).pathname;
@@ -352,7 +355,10 @@ test('the AI writes a game the teacher reviews and saves', async ({ page }) => {
   await expect(editor).toBeVisible({ timeout: 30_000 });
   await expect(editor.getByLabel(t('games.titleLabel'))).toHaveValue('Space');
   await expect(editor.getByLabel(t('games.mode'))).toHaveValue('word_search');
-  await expect(editor.getByLabel(t('games.content'), { exact: false })).toHaveValue(/^Sun = /);
+  const firstPair = editor.getByRole('group', {
+    name: t('games.builderLegend_pairs', { number: 1 }),
+  });
+  await expect(firstPair.getByLabel(t('games.builderTerm'))).toHaveValue('Sun');
   await editor.getByRole('button', { name: t('games.create') }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Space');
 });

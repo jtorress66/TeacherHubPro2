@@ -1750,3 +1750,82 @@ tr[aria-current='true'] {
 .answer-line {
   display: block;
 }
+
+/* Game question builder: one card per item; answers in a row with their "right answer" circle. */
+.button.compact {
+  padding: 0.35rem 0.7rem;
+  font-size: 0.9rem;
+}
+
+.builder-content {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.builder-content > legend {
+  font-weight: 600;
+  padding: 0;
+}
+
+.builder-cards {
+  display: grid;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.builder-card {
+  min-width: 0;
+}
+
+.builder-card > legend {
+  font-weight: 600;
+  padding: 0 0.25rem;
+}
+
+.builder-options {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.builder-options > li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.builder-options .field {
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+
+.builder-correct {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+}
+
+.builder-correct input {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+.builder-truth {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.builder-card-actions {
+  margin: 0;
+}

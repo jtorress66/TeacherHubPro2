@@ -1,7 +1,14 @@
 'use client';
 
 import { useActionState, useState } from 'react';
-import { assistantSubjects, gameCountRange, gradeLevels, gradeMethods } from '@thp/domain';
+import {
+  assistantSubjects,
+  gameCountRange,
+  gradeLevels,
+  gradeMethods,
+  type ContentKind,
+  type GameContent,
+} from '@thp/domain';
 import { createTranslator, localeInfo, locales, type Locale } from '@thp/i18n';
 import {
   confirmGameGradesAction,
@@ -15,6 +22,16 @@ import { gameModeChoices, kindForMode } from '../server/game-forms.ts';
 import { Field, FormAlert, Submit } from './forms.tsx';
 import { Hidden, Select, type Option } from './form-fields.tsx';
 import { prefill, type Prefill } from '../server/form-values.ts';
+import {
+  builderContent,
+  builderItemsOf,
+  itemsAsText,
+  textAsItems,
+  withStartingCard,
+} from '../server/game-builder-state.ts';
+import { parseContentJson } from '../server/game-content-schema.ts';
+import { parseContentText } from '../server/game-text.ts';
+import { GameBuilder } from './game-builder.tsx';
 import { TableScroll } from './table-scroll.tsx';
 
 const initial: GameFormState = {};
@@ -66,9 +83,14 @@ function LanguageSelect({ locale, value }: { readonly locale: Locale; readonly v
 export interface GameEditorValues {
   readonly title: string;
   readonly mode: string;
+  /** The content as "Edit as text" shows it. */
   readonly content: string;
+  /** The content itself, for the cards (exact even when its text has | or =). */
+  readonly items?: GameContent | null;
   readonly classId: string | null;
   readonly language: string;
+  /** The teacher sent the text box last time, so it opens as text again. */
+  readonly asText?: boolean;
 }
 
 /** Creates a game, or saves changes to one (with `gameId`). Content is one item per line. */
@@ -95,12 +117,113 @@ export function GameEditor(props: {
         title: sent.text('title', props.values.title) ?? '',
         mode: sent.text('mode', props.values.mode) ?? props.values.mode,
         content: sent.text('content', props.values.content) ?? '',
+        items: sentItems(sent, props.values),
+        asText: sent.text('contentJson') === undefined && sent.text('content') !== undefined,
         classId: sent.text('classId', props.values.classId) ?? null,
         language: sent.text('language', props.values.language) ?? props.values.language,
       }}
     />
   );
 }
+
+/** The cards the teacher sent last time, else the game's own content. */
+function sentItems(sent: Prefill, values: GameEditorValues): GameContent | null {
+  const json = sent.text('contentJson');
+  if (json === undefined) return values.items ?? null;
+  return parseContentJson(kindForMode(sent.text('mode', values.mode) ?? values.mode), json);
+}
+
+/** The game's items: question cards, or one text box for fast typing and pasting. */
+function ContentField(props: {
+  readonly locale: Locale;
+  readonly kind: ContentKind;
+  readonly values: GameEditorValues;
+  readonly error: string | undefined;
+}) {
+  const t = createTranslator(props.locale);
+  const { kind } = props;
+  const [asText, setAsText] = useState(props.values.asText === true);
+  const [text, setText] = useState(props.values.content);
+  const [cards, setCards] = useState(() =>
+    builderItemsOf(
+      props.values.items ??
+        (props.values.content === ''
+          ? null
+          : parseContentText(kindOf(props.values), props.values.content)),
+    ),
+  );
+  const shown = withStartingCard(cards, kind);
+  // The text the cards became; back to cards with it unchanged keeps the cards exactly (text
+  // cannot hold every character the cards can, such as "|" inside a question).
+  const [shownAsText, setShownAsText] = useState<string | null>(null);
+  const toggle = () => {
+    if (asText) {
+      if (text !== shownAsText) setCards({ ...cards, [kind]: textAsItems(kind, text) });
+    } else {
+      const written = itemsAsText(kind, shown[kind]);
+      setText(written);
+      setShownAsText(written);
+    }
+    setAsText(!asText);
+  };
+  const describedBy = props.error ? 'game-content-error' : 'game-content-hint';
+  return (
+    <fieldset className="stack builder-content" aria-describedby={describedBy}>
+      <legend>
+        {t('games.content')} ({t(`games.kind_${kind}`)})
+      </legend>
+      <p>
+        <button type="button" className="button secondary compact" onClick={toggle}>
+          {asText ? t('games.builderAsCards') : t('games.builderAsText')}
+        </button>
+      </p>
+      {asText ? (
+        <div className="field">
+          <label htmlFor="game-content">{t('games.content')}</label>
+          <textarea
+            id="game-content"
+            name="content"
+            rows={10}
+            value={text}
+            aria-invalid={props.error ? true : undefined}
+            aria-describedby={describedBy}
+            onChange={(event) => {
+              setText(event.target.value);
+            }}
+          />
+        </div>
+      ) : (
+        <>
+          <GameBuilder
+            locale={props.locale}
+            kind={kind}
+            items={shown[kind]}
+            onChange={(items) => {
+              setCards({ ...cards, [kind]: items });
+            }}
+          />
+          <input
+            type="hidden"
+            name="contentJson"
+            value={JSON.stringify(builderContent(kind, shown[kind]).items)}
+          />
+        </>
+      )}
+      {props.error ? (
+        <p id="game-content-error" className="field-error">
+          {props.error}
+        </p>
+      ) : (
+        <p id="game-content-hint" className="hint">
+          {asText ? t(`games.contentHint_${kind}`) : t('games.builderHint')}
+        </p>
+      )}
+    </fieldset>
+  );
+}
+
+const kindOf = (values: GameEditorValues): ContentKind =>
+  values.items?.kind ?? kindForMode(values.mode);
 
 function EditorForm(
   props: Omit<Parameters<typeof GameEditor>[0], 'values'> & {
@@ -155,28 +278,12 @@ function EditorForm(
         />
         <LanguageSelect locale={props.locale} value={props.values.language} />
       </div>
-      <div className="field">
-        <label htmlFor="game-content">
-          {t('games.content')} ({t(`games.kind_${kind}`)})
-        </label>
-        <textarea
-          id="game-content"
-          name="content"
-          rows={10}
-          defaultValue={props.values.content}
-          aria-invalid={errors?.content ? true : undefined}
-          aria-describedby={errors?.content ? 'game-content-error' : 'game-content-hint'}
-        />
-        {errors?.content ? (
-          <p id="game-content-error" className="field-error">
-            {errors.content}
-          </p>
-        ) : (
-          <p id="game-content-hint" className="hint">
-            {t(`games.contentHint_${kind}`)}
-          </p>
-        )}
-      </div>
+      <ContentField
+        locale={props.locale}
+        kind={kind}
+        values={props.values}
+        error={errors?.content}
+      />
       <Submit label={props.gameId === undefined ? t('games.create') : t('games.save')} />
     </form>
   );
