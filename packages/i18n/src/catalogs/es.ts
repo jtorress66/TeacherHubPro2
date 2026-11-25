@@ -1332,6 +1332,35 @@ export const es: Messages = {
     subject_social_studies: 'Estudios sociales',
   },
   standards: {
+    coverageOpen: 'Cobertura de estándares',
+    coverageTitle: 'Cobertura de estándares',
+    coverageIntro:
+      'Cada estándar que esta clase planificó o evaluó, y cómo le fue a la clase en las asignaciones que lo evalúan.',
+    coverageEmpty:
+      'Aún no hay estándares. Añada estándares a un plan de esta clase o marque en una asignación los estándares que evalúa.',
+    coverageFilter: 'Mostrar estándares',
+    coverageAll: 'Todos',
+    coverageFilterEmpty: 'No hay estándares en este grupo.',
+    coverage_reteach: 'Volver a enseñar',
+    coverage_watch: 'Vigilar',
+    coverage_on_track: 'Encaminado',
+    coverage_not_tested: 'Aún sin evaluar',
+    coverageStandard: 'Estándar',
+    coveragePlanned: 'Semanas planificadas',
+    coverageAssignments: 'Asignaciones',
+    coverageAverage: 'Promedio de la clase',
+    coverageBelow: 'Estudiantes bajo {percent}%',
+    coverageStatus: 'Estado',
+    coverageNotPlanned: 'No planificado',
+    coverageLegend:
+      'Encaminado: promedio de la clase de {onTrack}% o más. Vigilar: de {watch}% a {onTrack}%. Volver a enseñar: menos de {watch}%.',
+    coverageNote:
+      'Solo cuentan las notas que usted confirmó. Los borradores de la IA no cuentan hasta que los confirme.',
+    coverageSchoolTitle: 'Cobertura de estándares por clase',
+    coverageSchoolHint:
+      'Cuántos estándares tiene cada clase en cada grupo. Solo cifras, sin nombres de estudiantes.',
+    coverageSchoolNone: 'Ninguna clase ha planificado ni evaluado estándares todavía.',
+    coverageClass: 'Clase',
     assignmentTitle: 'Estándares',
     assignmentHint:
       'Añada los estándares que evalúa esta asignación. Abajo se sugieren los códigos de los planes de esta clase.',

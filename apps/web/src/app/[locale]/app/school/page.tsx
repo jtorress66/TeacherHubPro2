@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { usageWindowDays } from '@thp/domain';
+import { coverageStatuses, usageWindowDays } from '@thp/domain';
 import { createTranslator } from '@thp/i18n';
 import { SchoolFeaturesForm } from '../../../../components/school-features-form.tsx';
 import { TableScroll } from '../../../../components/table-scroll.tsx';
@@ -16,8 +16,12 @@ export default async function SchoolOverviewPage(props: LocaleParams) {
   const locale = await localeFrom(props);
   const t = createTranslator(locale);
   const { user, school } = await requireUser(locale, { needsAccess: false });
-  const overview = await getAppContainer().getSchoolOverview.execute({ actor: user });
-  if (!overview.ok) notFound();
+  const app = getAppContainer();
+  const [overview, coverage] = await Promise.all([
+    app.getSchoolOverview.execute({ actor: user }),
+    app.getSchoolStandardsCoverage.execute({ actor: user }),
+  ]);
+  if (!overview.ok || !coverage.ok) notFound();
   const { teachers, totals, features } = overview.value;
   const day = new Intl.DateTimeFormat(locale, {
     dateStyle: 'medium',
@@ -87,6 +91,41 @@ export default async function SchoolOverviewPage(props: LocaleParams) {
             </tbody>
           </table>
         </TableScroll>
+      </section>
+
+      <section className="card stack" aria-labelledby="coverage-heading">
+        <h2 id="coverage-heading">{t('standards.coverageSchoolTitle')}</h2>
+        <p className="hint">{t('standards.coverageSchoolHint')}</p>
+        {coverage.value.classes.length === 0 ? (
+          <p className="muted">{t('standards.coverageSchoolNone')}</p>
+        ) : (
+          <TableScroll>
+            <table className="roster" aria-label={t('standards.coverageSchoolTitle')}>
+              <thead>
+                <tr>
+                  <th scope="col">{t('standards.coverageClass')}</th>
+                  {coverageStatuses.map((status) => (
+                    <th scope="col" key={status}>
+                      {t(`standards.coverage_${status}`)}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {coverage.value.classes.map((row) => (
+                  <tr key={row.classId}>
+                    <th scope="row">
+                      <a href={`/${locale}/app/classes/${row.classId}/standards`}>{row.name}</a>
+                    </th>
+                    {coverageStatuses.map((status) => (
+                      <td key={status}>{row.summary[status]}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </TableScroll>
+        )}
       </section>
 
       <section className="card stack" aria-labelledby="curriculum-heading">

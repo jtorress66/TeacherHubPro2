@@ -81,6 +81,9 @@ export default async function ClassPage(props: Props) {
         <Link href={`/${locale}/app/classes/${cls.id}/report-cards`} className="button secondary">
           {t('gradebook.reportCards')}
         </Link>
+        <Link href={`/${locale}/app/classes/${cls.id}/standards`} className="button secondary">
+          {t('standards.coverageOpen')}
+        </Link>
         <Link href={`/${locale}/app/classes/${cls.id}/student-links`} className="button secondary">
           {t('studentLinks.open')}
         </Link>

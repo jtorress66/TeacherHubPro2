@@ -71,6 +71,35 @@ export const itAppB = {
     subject_social_studies: 'Studi sociali',
   },
   standards: {
+    coverageOpen: 'Copertura degli standard',
+    coverageTitle: 'Copertura degli standard',
+    coverageIntro:
+      'Ogni standard che questa classe ha pianificato o valutato, e come è andata la classe nei compiti che lo valutano.',
+    coverageEmpty:
+      'Ancora nessuno standard. Aggiunga standard a un piano di questa classe o indichi in un compito gli standard che valuta.',
+    coverageFilter: 'Mostra standard',
+    coverageAll: 'Tutti',
+    coverageFilterEmpty: 'Nessuno standard in questo gruppo.',
+    coverage_reteach: 'Da rispiegare',
+    coverage_watch: 'Da seguire',
+    coverage_on_track: 'In linea',
+    coverage_not_tested: 'Non ancora valutato',
+    coverageStandard: 'Standard',
+    coveragePlanned: 'Settimane pianificate',
+    coverageAssignments: 'Compiti',
+    coverageAverage: 'Media della classe',
+    coverageBelow: 'Studenti sotto il {percent}%',
+    coverageStatus: 'Stato',
+    coverageNotPlanned: 'Non pianificato',
+    coverageLegend:
+      'In linea: media della classe del {onTrack}% o più. Da seguire: dal {watch}% al {onTrack}%. Da rispiegare: sotto il {watch}%.',
+    coverageNote:
+      'Contano solo i voti che ha confermato. Le bozze dell’IA non contano finché non le conferma.',
+    coverageSchoolTitle: 'Copertura degli standard per classe',
+    coverageSchoolHint:
+      'Quanti standard ha ogni classe in ogni gruppo. Solo numeri, senza nomi di studenti.',
+    coverageSchoolNone: 'Nessuna classe ha ancora pianificato o valutato standard.',
+    coverageClass: 'Classe',
     assignmentTitle: 'Standard',
     assignmentHint:
       'Aggiunga gli standard che questo compito valuta. Qui sotto sono suggeriti i codici dei piani di questa classe.',

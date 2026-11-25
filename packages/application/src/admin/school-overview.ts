@@ -1,5 +1,4 @@
 import {
-  canManageSchool,
   ok,
   setSchoolFeatures,
   summarizeUsage,
@@ -12,15 +11,8 @@ import {
   type UsageTotals,
   type User,
 } from '@thp/domain';
-import type {
-  AuditLog,
-  Clock,
-  IdGenerator,
-  SchoolRepository,
-  SchoolUsageReport,
-  SubscriptionRepository,
-} from '@thp/ports';
-import { findSchoolSubscription } from '../accounts/school-subscription.ts';
+import type { AuditLog, Clock, IdGenerator, SchoolRepository, SchoolUsageReport } from '@thp/ports';
+import { mayManageSchool, type SchoolAccessDeps } from './school-access.ts';
 import { gradingJobKind } from '../assignments/grading.ts';
 import { pdfImportJobKind } from '../assignments/pdf-import.ts';
 import { generationJobKind } from '../assistant/assistant.ts';
@@ -58,19 +50,10 @@ export interface SchoolOverview {
   readonly features: SchoolFeatures;
 }
 
-interface AccessDeps {
-  readonly subscriptions: SubscriptionRepository;
-}
-
-async function mayManage(deps: AccessDeps, actor: User): Promise<boolean> {
-  const subscription = await findSchoolSubscription(deps.subscriptions, actor.schoolId);
-  return canManageSchool(actor, subscription);
-}
-
 /** For the school's admins and owner: how the school uses the app, and its switches. */
 export class GetSchoolOverview {
   constructor(
-    private readonly deps: AccessDeps & {
+    private readonly deps: SchoolAccessDeps & {
       readonly schools: SchoolRepository;
       readonly schoolUsage: SchoolUsageReport;
       readonly clock: Clock;
@@ -78,7 +61,7 @@ export class GetSchoolOverview {
   ) {}
 
   isOpenTo(actor: User): Promise<boolean> {
-    return mayManage(this.deps, actor);
+    return mayManageSchool(this.deps, actor);
   }
 
   async execute(input: { readonly actor: User }): Promise<Result<SchoolOverview, UseCaseError>> {
@@ -99,7 +82,7 @@ export class GetSchoolOverview {
 /** Turns AI drafting, or student flags and insights, on or off for everyone in the school. */
 export class SetSchoolFeatures {
   constructor(
-    private readonly deps: AccessDeps & {
+    private readonly deps: SchoolAccessDeps & {
       readonly schools: SchoolRepository;
       readonly auditLog: AuditLog;
       readonly ids: IdGenerator;
@@ -112,7 +95,7 @@ export class SetSchoolFeatures {
     readonly features: SchoolFeatures;
   }): Promise<Result<SchoolFeatures, UseCaseError>> {
     const { actor, features } = input;
-    if (!(await mayManage(this.deps, actor))) return fail('forbidden');
+    if (!(await mayManageSchool(this.deps, actor))) return fail('forbidden');
     const school = await this.deps.schools.findById(actor.schoolId);
     if (school === null) return fail('not_found');
 

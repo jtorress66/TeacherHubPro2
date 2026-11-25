@@ -151,3 +151,4 @@ export * from './lti/lti-course.ts';
 export * from './lti/lti-membership.ts';
 export * from './lti/lti-grades.ts';
 export * from './lti/lti-placement.ts';
+export * from './standards/standards-coverage.ts';

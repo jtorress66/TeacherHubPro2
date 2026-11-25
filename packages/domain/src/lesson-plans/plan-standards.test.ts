@@ -7,6 +7,7 @@ import {
   noDomainStandards,
   planBodyFromJson,
   planStandardCodes,
+  planStandardWeeks,
   standardDomainOf,
 } from './plan-standards.ts';
 import type { PlanWeekInput } from './weekly-plan.ts';
@@ -143,6 +144,29 @@ describe('planStandardCodes', () => {
 
   it('has none for a Conversational English plan', () => {
     expect(planStandardCodes({ kind: 'conversational_english' } as never)).toEqual([]);
+    expect(planStandardWeeks({ kind: 'conversational_english' } as never)).toEqual([]);
+  });
+
+  it('lists the codes each week covers, with the week it starts', () => {
+    const input: LessonPlanInput = {
+      ...plan({}),
+      body: {
+        kind: 'weekly',
+        weeks: [
+          {
+            weekStart: '2026-11-02',
+            standards: ['CCSS.ELA-Literacy.RL.7.6'],
+            domainStandards: { reading: ['7.R.6.1'] },
+          },
+          { weekStart: '2026-11-09', standards: [] },
+        ],
+      },
+    };
+
+    expect(planStandardWeeks(valueOf(createLessonPlan(input)).body)).toEqual([
+      { weekStart: '2026-11-02', codes: ['CCSS.ELA-Literacy.RL.7.6', '7.R.6.1'] },
+      { weekStart: '2026-11-09', codes: [] },
+    ]);
   });
 });
 

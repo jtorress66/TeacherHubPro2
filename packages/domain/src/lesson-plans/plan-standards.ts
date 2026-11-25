@@ -1,3 +1,4 @@
+import type { LocalDate } from '../shared/local-date.ts';
 import { ok, type Result } from '../shared/result.ts';
 import { invalid, type ValidationError } from '../shared/validation.ts';
 import type { PlanBody } from './lesson-plan.ts';
@@ -92,12 +93,27 @@ export function planBodyFromJson(json: unknown): PlanBody {
   };
 }
 
-/** Every code a plan covers (Common Core, then each category's), once each, in plan order. */
-export function planStandardCodes(body: PlanBody): string[] {
+/** The codes one week of a plan covers. */
+export interface PlannedWeek {
+  readonly weekStart: LocalDate;
+  readonly codes: readonly string[];
+}
+
+/** Each week's codes (Common Core, then each category's), in plan order. */
+export function planStandardWeeks(body: PlanBody): PlannedWeek[] {
   if (body.kind !== 'weekly') return [];
-  const codes = body.weeks.flatMap((week) => [
-    ...week.standards,
-    ...standardDomains.flatMap((domain) => week.domainStandards[domain]),
-  ]);
-  return [...new Set(codes)];
+  return body.weeks.map((week) => ({
+    weekStart: week.weekStart,
+    codes: [
+      ...new Set([
+        ...week.standards,
+        ...standardDomains.flatMap((domain) => week.domainStandards[domain]),
+      ]),
+    ],
+  }));
+}
+
+/** Every code a plan covers, once each, in plan order. */
+export function planStandardCodes(body: PlanBody): string[] {
+  return [...new Set(planStandardWeeks(body).flatMap((week) => week.codes))];
 }
