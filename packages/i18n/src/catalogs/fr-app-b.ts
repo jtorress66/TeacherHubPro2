@@ -73,6 +73,14 @@ export const frAppB = {
     subject_social_studies: 'Sciences sociales',
   },
   standards: {
+    reteachLesson: 'Planifier une reprise',
+    reteachQuiz: 'Créer un quiz de vérification',
+    reteachLessonFor: 'Planifier une reprise de {code}',
+    reteachQuizFor: 'Créer un quiz de vérification sur {code}',
+    reteachLessonInstructions:
+      'Reprendre {code}. La moyenne de la classe était de {average} %, et {below} élèves sur {scored} ont obtenu moins de {percent} %. Enseignez-le autrement que la première fois : exemples résolus, erreurs fréquentes et vérifications rapides de la compréhension.',
+    reteachQuizInstructions:
+      'Un court quiz de vérification sur {code}, après la reprise. Mélangez des questions faciles et moyennes, et utilisez les erreurs fréquentes comme mauvaises réponses.',
     coverageOpen: 'Couverture des standards',
     coverageTitle: 'Couverture des standards',
     coverageIntro:
@@ -143,6 +151,8 @@ export const frAppB = {
     level_high: 'Lycée',
   },
   assistant: {
+    prefilled:
+      'Rempli à partir de votre couverture des standards. Vérifiez-le et modifiez ce que vous voulez, puis cliquez sur « Rédiger ».',
     blank: 'espace à compléter',
     title: 'Assistant IA',
     intro: "L'IA rédige un premier brouillon. Relisez-le avant de l'utiliser en classe.",

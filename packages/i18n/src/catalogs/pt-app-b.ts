@@ -71,6 +71,14 @@ export const ptAppB = {
     subject_social_studies: 'Estudos sociais',
   },
   standards: {
+    reteachLesson: 'Planejar uma retomada',
+    reteachQuiz: 'Criar um quiz de verificação',
+    reteachLessonFor: 'Planejar uma retomada de {code}',
+    reteachQuizFor: 'Criar um quiz de verificação sobre {code}',
+    reteachLessonInstructions:
+      'Retome {code}. A média da turma foi {average}%, e {below} de {scored} alunos ficaram abaixo de {percent}%. Ensine de um jeito diferente da primeira vez: exemplos resolvidos, erros comuns e verificações rápidas de compreensão.',
+    reteachQuizInstructions:
+      'Um quiz curto de verificação sobre {code}, depois da retomada. Misture perguntas fáceis e médias, e use os erros comuns como alternativas erradas.',
     coverageOpen: 'Cobertura dos padrões',
     coverageTitle: 'Cobertura dos padrões',
     coverageIntro:
@@ -141,6 +149,8 @@ export const ptAppB = {
     level_high: 'Ensino médio',
   },
   assistant: {
+    prefilled:
+      'Preenchido a partir da sua cobertura dos padrões. Confira e mude o que quiser; depois clique em “Escrever”.',
     blank: 'espaço em branco',
     title: 'Assistente de IA',
     intro: 'A IA escreve um primeiro rascunho. Revise-o antes de usá-lo em aula.',

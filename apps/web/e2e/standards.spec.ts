@@ -99,6 +99,42 @@ for (const locale of ['es', 'en'] as const satisfies readonly Locale[]) {
     await expect(rows).toHaveCount(2);
     await expect(page.locator('main')).not.toContainText('Zayas');
 
+    // A standard to watch can be retaught: the assistant opens filled in, and writes on request.
+    const standardsPage = page.url();
+    await page
+      .getByRole('link', {
+        name: t('standards.reteachLessonFor', { code: 'CCSS.Math.Content.4.NF.A.1' }),
+      })
+      .click();
+    await expect(page.getByRole('status')).toHaveText(t('assistant.prefilled'));
+    const assistant = page.getByRole('form', { name: t('assistant.title') });
+    await expect(assistant.getByLabel(t('assistant.type'))).toHaveValue('lesson_plan');
+    await expect(assistant.getByLabel(t('assistant.topic'))).toHaveValue(
+      /^CCSS\.Math\.Content\.4\.NF\.A\.1: /u,
+    );
+    await expect(assistant.getByLabel(t('assistant.language'))).toHaveValue(locale);
+    await expect(assistant.getByLabel(t('assistant.instructions'))).toHaveValue(
+      t('standards.reteachLessonInstructions', {
+        code: 'CCSS.Math.Content.4.NF.A.1',
+        average: 70,
+        below: 1,
+        scored: 2,
+        percent: 70,
+      }),
+    );
+    await assistant.getByRole('button', { name: t('assistant.submit') }).click();
+    await expect(page).toHaveURL(/\/assistant\/[^/]+$/, { timeout: 30_000 });
+
+    await page.goto(standardsPage);
+    await page
+      .getByRole('link', {
+        name: t('standards.reteachQuizFor', { code: 'CCSS.Math.Content.4.NF.A.1' }),
+      })
+      .click();
+    await expect(assistant.getByLabel(t('assistant.type'))).toHaveValue('quiz');
+    await expect(assistant.getByLabel(t('assistant.questionCount'))).toHaveValue('5');
+    await page.goto(standardsPage);
+
     // The school's owner sees each class counted by status.
     await page.goto(`/${locale}/app/school`);
     const card = page.getByRole('region', { name: t('standards.coverageSchoolTitle') });

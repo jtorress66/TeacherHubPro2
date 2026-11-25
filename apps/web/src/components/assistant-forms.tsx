@@ -26,7 +26,7 @@ import { EslSwitch, Hidden, Select, TextArea, type Option } from './form-fields.
 import { CurriculumSwitch } from './curriculum-forms.tsx';
 import { ScheduleFields } from './schedule-fields.tsx';
 import type { CurriculumChoice } from '../server/curriculum-choices.ts';
-import { prefill, type Prefill } from '../server/form-values.ts';
+import { prefill, type Prefill, type SubmittedValues } from '../server/form-values.ts';
 
 const initial: AssistantFormState = {};
 const option = (id: string, name: string): Option => ({ id, name });
@@ -76,12 +76,18 @@ function LanguageSelect({ locale, sent }: { readonly locale: Locale; readonly se
 export function ContentForm({
   locale,
   curriculum,
+  start,
 }: {
   readonly locale: Locale;
   readonly curriculum: readonly CurriculumChoice[];
+  /** Starting values from a link, such as a reteach link from standards coverage. */
+  readonly start?: SubmittedValues | undefined;
 }) {
   const t = createTranslator(locale);
-  const [state, action] = useActionState(requestGenerationAction, initial);
+  const [state, action] = useActionState(
+    requestGenerationAction,
+    start === undefined ? initial : { values: start },
+  );
   const errors = state.errors;
   const sent = prefill(state.values);
   return (

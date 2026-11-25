@@ -13,6 +13,7 @@ import { PrintButton } from '../../../../../../components/browser-helpers.tsx';
 import { TableScroll } from '../../../../../../components/table-scroll.tsx';
 import { getAppContainer } from '../../../../../../container.ts';
 import { formatPercent } from '../../../../../../server/gradebook-display.ts';
+import { reteachHref } from '../../../../../../server/reteach-prefill.ts';
 import { standardSourceName } from '../../../../../../server/standard-source.ts';
 import {
   coverageFilter,
@@ -106,6 +107,9 @@ export default async function StandardsCoveragePage(props: Props) {
                     <th scope="col">{t('standards.coverageAverage')}</th>
                     <th scope="col">{t('standards.coverageBelow', { percent: watchPercent })}</th>
                     <th scope="col">{t('standards.coverageStatus')}</th>
+                    <th scope="col" className="no-print">
+                      <span className="visually-hidden">{t('standards.reteachLesson')}</span>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -134,6 +138,30 @@ export default async function StandardsCoveragePage(props: Props) {
                         <span className={`coverage coverage-${row.status}`}>
                           {t(`standards.coverage_${row.status}`)}
                         </span>
+                      </td>
+                      <td className="no-print">
+                        {row.status === 'reteach' || row.status === 'watch' ? (
+                          <span className="actions">
+                            <Link
+                              className="button secondary"
+                              href={reteachHref(locale, row, cls, 'lesson')}
+                              aria-label={t('standards.reteachLessonFor', {
+                                code: row.standard.code,
+                              })}
+                            >
+                              {t('standards.reteachLesson')}
+                            </Link>
+                            <Link
+                              className="button secondary"
+                              href={reteachHref(locale, row, cls, 'quiz')}
+                              aria-label={t('standards.reteachQuizFor', {
+                                code: row.standard.code,
+                              })}
+                            >
+                              {t('standards.reteachQuiz')}
+                            </Link>
+                          </span>
+                        ) : null}
                       </td>
                     </tr>
                   ))}
