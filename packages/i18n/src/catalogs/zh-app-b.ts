@@ -518,6 +518,10 @@ export const zhAppB = {
         text: '在 D2L Brightspace 课程中打开 TeacherHubPro，并把已确认的成绩发送到 D2L Brightspace 成绩册。',
       },
       clever: { name: 'Clever', text: '使用 Clever 登录，并从学校的 Clever 账号导入班级名单。' },
+      classlink: {
+        name: 'ClassLink',
+        text: '使用 ClassLink 登录，并从学校的 ClassLink 账号导入班级名单。',
+      },
     },
   },
   calendarFeed: {

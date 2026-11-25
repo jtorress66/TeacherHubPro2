@@ -545,6 +545,10 @@ export const itAppB = {
         name: 'Clever',
         text: 'Acceda con Clever e importi gli elenchi delle classi dall’account Clever della Sua scuola.',
       },
+      classlink: {
+        name: 'ClassLink',
+        text: 'Acceda con ClassLink e importi gli elenchi delle classi dall’account ClassLink della Sua scuola.',
+      },
     },
   },
   calendarFeed: {

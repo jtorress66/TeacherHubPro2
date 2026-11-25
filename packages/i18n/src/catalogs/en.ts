@@ -1782,6 +1782,10 @@ export const en = {
         name: 'Clever',
         text: 'Sign in with Clever and bring in class lists from your school’s Clever account.',
       },
+      classlink: {
+        name: 'ClassLink',
+        text: 'Sign in with ClassLink and bring in class lists from your school’s ClassLink account.',
+      },
     },
   },
   calendarFeed: {
