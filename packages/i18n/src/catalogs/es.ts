@@ -1805,6 +1805,10 @@ export const es: Messages = {
         name: 'Clever',
         text: 'Inicia sesión con Clever y trae las listas de clase de la cuenta de Clever de tu escuela.',
       },
+      classlink: {
+        name: 'ClassLink',
+        text: 'Inicia sesión con ClassLink y trae las listas de clase de la cuenta de ClassLink de tu escuela.',
+      },
     },
   },
   calendarFeed: {

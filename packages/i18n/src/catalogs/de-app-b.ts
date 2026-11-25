@@ -554,6 +554,10 @@ export const deAppB = {
         name: 'Clever',
         text: 'Mit Clever anmelden und Klassenlisten aus dem Clever-Konto Ihrer Schule übernehmen.',
       },
+      classlink: {
+        name: 'ClassLink',
+        text: 'Mit ClassLink anmelden und Klassenlisten aus dem ClassLink-Konto Ihrer Schule übernehmen.',
+      },
     },
   },
   calendarFeed: {

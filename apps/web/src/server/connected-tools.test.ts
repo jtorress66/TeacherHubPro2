@@ -37,13 +37,15 @@ describe('connected tools', () => {
       'moodle',
       'brightspace',
       'clever',
+      'classlink',
     ]);
   });
 
-  it('offers Teams, Clever and the LTI school systems on request, never as self-serve', () => {
+  it('offers Teams, Clever, ClassLink and the LTI school systems on request, never as self-serve', () => {
     expect([...onRequest].sort()).toEqual([
       'brightspace',
       'canvas',
+      'classlink',
       'clever',
       'moodle',
       'schoology',

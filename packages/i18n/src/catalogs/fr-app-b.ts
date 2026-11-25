@@ -549,6 +549,10 @@ export const frAppB = {
         name: 'Clever',
         text: 'Connectez-vous avec Clever et importez les listes de classe du compte Clever de votre école.',
       },
+      classlink: {
+        name: 'ClassLink',
+        text: 'Connectez-vous avec ClassLink et importez les listes de classe du compte ClassLink de votre école.',
+      },
     },
   },
   calendarFeed: {

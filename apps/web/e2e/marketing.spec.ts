@@ -163,6 +163,14 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     await expect(tool(t('connectedTools.tool.clever.name'))).toContainText(
       t('connectedTools.onRequest'),
     );
+    await expect(tool(t('connectedTools.tool.classlink.name'))).toContainText(
+      t('connectedTools.onRequest'),
+    );
+    await expect(
+      tool('ClassLink').getByRole('link', {
+        name: t('connectedTools.askAbout', { tool: 'ClassLink' }),
+      }),
+    ).toHaveAttribute('href', `/${locale}/contact?tool=classlink`);
     await expect(tool(t('connectedTools.tool.canva.name'))).toHaveCount(0);
     await page.goto(`/${locale}/use-cases/schools`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(

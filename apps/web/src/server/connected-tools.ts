@@ -18,6 +18,7 @@ export const tools = [
   { id: 'moodle', group: 'schoolSystems' },
   { id: 'brightspace', group: 'schoolSystems' },
   { id: 'clever', group: 'schoolSystems' },
+  { id: 'classlink', group: 'schoolSystems' },
 ] as const satisfies readonly { readonly id: string; readonly group: ToolGroup }[];
 
 export type Tool = (typeof tools)[number];
@@ -35,10 +36,15 @@ export const ltiTools: ReadonlySet<ToolId> = new Set<ToolId>([
 ]);
 
 /**
- * Turned on for schools that ask: Teams (its IT approves it), the LTI systems, and Clever (built
- * when the first school asks). Nothing is ever shown as "coming soon".
+ * Turned on for schools that ask: Teams (its IT approves it), the LTI systems, and Clever and
+ * ClassLink (built when the first school asks). Nothing is ever shown as "coming soon".
  */
-export const onRequest: ReadonlySet<ToolId> = new Set<ToolId>(['teams', 'clever', ...ltiTools]);
+export const onRequest: ReadonlySet<ToolId> = new Set<ToolId>([
+  'teams',
+  'clever',
+  'classlink',
+  ...ltiTools,
+]);
 
 const isOneOf = <T extends string>(options: readonly T[], value: unknown): value is T =>
   typeof value === 'string' && (options as readonly string[]).includes(value);

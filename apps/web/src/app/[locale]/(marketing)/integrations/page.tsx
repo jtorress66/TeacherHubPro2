@@ -18,7 +18,7 @@ export async function generateMetadata(props: LocaleParams): Promise<Metadata> {
 
 /**
  * The services the app works with today: Teams and the school systems (Canvas, Schoology, Moodle,
- * Brightspace) are turned on for schools that ask; Clever is coming.
+ * Brightspace), Clever and ClassLink are turned on for schools that ask.
  */
 export default async function IntegrationsPage(
   props: LocaleParams & { readonly searchParams: Promise<{ group?: string }> },

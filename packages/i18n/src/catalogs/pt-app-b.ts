@@ -545,6 +545,10 @@ export const ptAppB = {
         name: 'Clever',
         text: 'Entre com o Clever e traga as listas de turma da conta Clever da sua escola.',
       },
+      classlink: {
+        name: 'ClassLink',
+        text: 'Entre com o ClassLink e traga as listas de turma da conta ClassLink da sua escola.',
+      },
     },
   },
   calendarFeed: {
