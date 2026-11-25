@@ -7,8 +7,17 @@ import {
 } from '@thp/domain';
 import { createTranslator, type Locale } from '@thp/i18n';
 
+/**
+ * Prices follow each language's usual style, except Spanish: our Spanish readers are in Puerto
+ * Rico and the US, who write $9.99, not Spain's 9,99 US$.
+ */
+const moneyLocales: Partial<Record<Locale, string>> = { es: 'es-PR' };
+
 const money = (cents: number, locale: Locale): string =>
-  new Intl.NumberFormat(locale, { style: 'currency', currency: 'USD' }).format(cents / 100);
+  new Intl.NumberFormat(moneyLocales[locale] ?? locale, {
+    style: 'currency',
+    currency: 'USD',
+  }).format(cents / 100);
 
 /** "$9.99 per month", "$6.00 per teacher per month, billed yearly", in the page language. */
 export function planPrice(planId: PlanId, locale: Locale): string {
