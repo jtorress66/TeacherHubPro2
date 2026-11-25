@@ -40,6 +40,7 @@ import * as schoolDeletions from './0038_school_deletions.ts';
 import * as schoolFeatures from './0039_school_features.ts';
 import * as familyLanguages from './0040_family_languages.ts';
 import * as curriculumGuides from './0041_curriculum_guides.ts';
+import * as assignmentStandards from './0042_assignment_standards.ts';
 
 /** Ordered list of migrations, bundled with the code (no filesystem lookups at runtime). */
 const migrations: Readonly<Record<string, Migration>> = {
@@ -84,6 +85,7 @@ const migrations: Readonly<Record<string, Migration>> = {
   '0039_school_features': schoolFeatures,
   '0040_family_languages': familyLanguages,
   '0041_curriculum_guides': curriculumGuides,
+  '0042_assignment_standards': assignmentStandards,
 };
 
 export const migrationProvider: MigrationProvider = {

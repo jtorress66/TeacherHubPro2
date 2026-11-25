@@ -19,6 +19,7 @@ const assignmentWith = (
   id: 'a1' as AssignmentId,
   schoolId: 's1' as SchoolId,
   classId: 'c1' as ClassId,
+  standards: [],
   categoryId: 'g1' as GradeCategoryId,
   title: 'Fractions quiz',
   points: 100,

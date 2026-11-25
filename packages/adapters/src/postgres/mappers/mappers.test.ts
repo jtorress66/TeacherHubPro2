@@ -181,9 +181,15 @@ describe('row mappers round-trip every entity unchanged', () => {
         correctOption: 1,
       }),
     );
-    const assignment = anAssignment({ dueDate: '2026-09-18', questions: [question] });
+    const assignment = anAssignment({
+      dueDate: '2026-09-18',
+      questions: [question],
+      standards: ['4.OA.A.1', 'K.LS.1'],
+    });
     expect(
-      assignmentMapper.fromRow(stored(assignmentMapper.toRow(assignment), ['questions'])),
+      assignmentMapper.fromRow(
+        stored(assignmentMapper.toRow(assignment), ['questions', 'standards']),
+      ),
     ).toEqual(assignment);
   });
 

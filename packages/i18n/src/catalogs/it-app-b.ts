@@ -71,6 +71,20 @@ export const itAppB = {
     subject_social_studies: 'Studi sociali',
   },
   standards: {
+    assignmentTitle: 'Standard',
+    assignmentHint:
+      'Aggiunga gli standard che questo compito valuta. Qui sotto sono suggeriti i codici dei piani di questa classe.',
+    assignmentNone: 'Ancora nessuno standard.',
+    assignmentCode: 'Codici degli standard',
+    assignmentCodeHint: 'Separi più codici con virgole, per esempio 4.N.1.1, 4.N.1.2.',
+    assignmentAdd: 'Aggiungi',
+    assignmentPlanned: 'Pianificati per questa classe',
+    assignmentAddPlanned: 'Aggiungi {code}',
+    assignmentRemove: 'Rimuovi {code}',
+    assignmentSaved: 'Standard salvati.',
+    assignmentTooLong: 'Un codice può avere al massimo 40 caratteri.',
+    assignmentTooMany: 'Un compito può valutare al massimo 12 standard.',
+    source_typed: 'Codice proprio',
     title: 'Codici Common Core',
     intro:
       'I Common Core State Standards ufficiali di matematica e lingua inglese, con gli standard di literacy per scienze e studi sociali (classi 6–12).',

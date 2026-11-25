@@ -1315,6 +1315,20 @@ export const en = {
     subject_social_studies: 'Social Studies',
   },
   standards: {
+    assignmentTitle: 'Standards',
+    assignmentHint:
+      'Add the standards this assignment tests. Codes from this class’s lesson plans are suggested below.',
+    assignmentNone: 'No standards yet.',
+    assignmentCode: 'Standard codes',
+    assignmentCodeHint: 'Separate several codes with commas, for example 4.N.1.1, 4.N.1.2.',
+    assignmentAdd: 'Add',
+    assignmentPlanned: 'Planned for this class',
+    assignmentAddPlanned: 'Add {code}',
+    assignmentRemove: 'Remove {code}',
+    assignmentSaved: 'Standards saved.',
+    assignmentTooLong: 'A code can be at most 40 characters long.',
+    assignmentTooMany: 'An assignment can test at most 12 standards.',
+    source_typed: 'Your own code',
     title: 'Common Core codes',
     intro:
       'The official Common Core State Standards for mathematics and English language arts, with the literacy standards for science and social studies (grades 6–12).',

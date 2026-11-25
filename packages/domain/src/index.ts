@@ -138,6 +138,7 @@ export * from './marketing/lead.ts';
 export * from './marketing/chat.ts';
 export * from './marketing/facts.ts';
 export * from './standards/puerto-rico.ts';
+export * from './standards/standard-info.ts';
 export * from './security/audit-event.ts';
 export * from './security/rate-rules.ts';
 export * from './calendar/calendar-feed.ts';

@@ -2,6 +2,7 @@ import type { AssignmentId, ClassId, GradeCategoryId, SchoolId } from '../shared
 import { parseLocalDate, type LocalDate } from '../shared/local-date.ts';
 import { ok, type Result } from '../shared/result.ts';
 import { invalid, optionalText, requiredText, type ValidationError } from '../shared/validation.ts';
+import { typedStandardCodes } from '../lesson-plans/plan-standards.ts';
 import type { Question } from './question.ts';
 
 /** Points for an assignment without questions (as in the original app). */
@@ -18,9 +19,12 @@ export interface Assignment {
   /** General instructions shown to students above the questions. */
   readonly instructions: string | null;
   readonly questions: readonly Question[];
+  /** The standards it tests, as the teacher chose them (Common Core, Puerto Rico or typed). */
+  readonly standards: readonly string[];
 }
 
 export const maxAssignmentInstructionsLength = 5000;
+export const maxAssignmentStandards = 12;
 
 export interface AssignmentInput {
   readonly id: AssignmentId;
@@ -32,6 +36,7 @@ export interface AssignmentInput {
   readonly dueDate?: string | null;
   readonly instructions?: string | null;
   readonly questions?: readonly Question[];
+  readonly standards?: readonly string[];
 }
 
 export function createAssignment(input: AssignmentInput): Result<Assignment, ValidationError> {
@@ -55,6 +60,8 @@ export function createAssignment(input: AssignmentInput): Result<Assignment, Val
   if (new Set(questions.map((question) => question.id)).size !== questions.length) {
     return invalid('questions', 'duplicate');
   }
+  const standards = typedStandardCodes('standards', input.standards ?? [], maxAssignmentStandards);
+  if (!standards.ok) return standards;
 
   return ok({
     id: input.id,
@@ -66,6 +73,7 @@ export function createAssignment(input: AssignmentInput): Result<Assignment, Val
     dueDate,
     instructions: instructions.value,
     questions,
+    standards: standards.value,
   });
 }
 
@@ -85,6 +93,7 @@ export function updateAssignment(
     classId: assignment.classId,
     questions: assignment.questions,
     instructions: assignment.instructions,
+    standards: assignment.standards,
     ...details,
   });
 }
@@ -102,6 +111,12 @@ export const setInstructions = (
   assignment: Assignment,
   instructions: string | null,
 ): Result<Assignment, ValidationError> => rebuild(assignment, { instructions });
+
+/** The standards the assignment tests; an empty list clears them. */
+export const setAssignmentStandards = (
+  assignment: Assignment,
+  standards: readonly string[],
+): Result<Assignment, ValidationError> => rebuild(assignment, { standards });
 
 /** The maximum score: the sum of question points, or `points` when there are no questions. */
 export function maxPoints(assignment: Pick<Assignment, 'points' | 'questions'>): number {

@@ -119,6 +119,7 @@ import {
   GetStudentAttachment,
   ListSubmissions,
   GetAssignmentOverview,
+  GetAssignmentStandards,
   RequestAiGrading,
   ConfirmGrade,
   GradeByHand,
@@ -181,6 +182,7 @@ import {
   SetUpFirstSuperAdmin,
   RequestPasswordReset,
   SetPassword,
+  SetAssignmentStandards,
   ConfirmEmail,
   ResendEmailConfirmation,
   SuspendUser,
@@ -480,6 +482,8 @@ export interface AppContainer {
   readonly getStudentAttachment: GetStudentAttachment;
   readonly listSubmissions: ListSubmissions;
   readonly getAssignmentOverview: GetAssignmentOverview;
+  readonly getAssignmentStandards: GetAssignmentStandards;
+  readonly setAssignmentStandards: SetAssignmentStandards;
   readonly requestAiGrading: RequestAiGrading;
   readonly confirmGrade: ConfirmGrade;
   readonly gradeByHand: GradeByHand;
@@ -977,6 +981,8 @@ export function createAppContainer(
     getStudentAttachment: new GetStudentAttachment(deps),
     listSubmissions: new ListSubmissions(deps),
     getAssignmentOverview: new GetAssignmentOverview(deps),
+    getAssignmentStandards: new GetAssignmentStandards(deps),
+    setAssignmentStandards: new SetAssignmentStandards(deps),
     requestAiGrading: new RequestAiGrading(deps),
     confirmGrade: new ConfirmGrade(deps),
     gradeByHand: new GradeByHand(deps),

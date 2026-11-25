@@ -281,6 +281,10 @@ export class InMemoryLessonPlanRepository
     return this.listWhere(schoolId, (plan) => plan.teacherId === teacherId);
   }
 
+  listByClass(schoolId: SchoolId, classId: ClassId): Promise<readonly LessonPlan[]> {
+    return this.listWhere(schoolId, (plan) => plan.classId === classId);
+  }
+
   unfileFolder(schoolId: SchoolId, folderId: PlanFolderId): Promise<void> {
     for (const plan of this.rows.values()) {
       if (plan.schoolId === schoolId && plan.folderId === folderId) {

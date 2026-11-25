@@ -74,6 +74,20 @@ export const deAppB = {
     subject_social_studies: 'Gesellschaftskunde',
   },
   standards: {
+    assignmentTitle: 'Standards',
+    assignmentHint:
+      'Fügen Sie die Standards hinzu, die diese Aufgabe prüft. Unten werden die Codes aus den Unterrichtsplänen dieser Klasse vorgeschlagen.',
+    assignmentNone: 'Noch keine Standards.',
+    assignmentCode: 'Standard-Codes',
+    assignmentCodeHint: 'Trennen Sie mehrere Codes mit Kommas, zum Beispiel 4.N.1.1, 4.N.1.2.',
+    assignmentAdd: 'Hinzufügen',
+    assignmentPlanned: 'Für diese Klasse geplant',
+    assignmentAddPlanned: '{code} hinzufügen',
+    assignmentRemove: '{code} entfernen',
+    assignmentSaved: 'Standards gespeichert.',
+    assignmentTooLong: 'Ein Code darf höchstens 40 Zeichen lang sein.',
+    assignmentTooMany: 'Eine Aufgabe kann höchstens 12 Standards prüfen.',
+    source_typed: 'Eigener Code',
     title: 'Common-Core-Codes',
     intro:
       'Die offiziellen Common Core State Standards für Mathematik und Englisch (Sprache und Literatur), mit den Lese- und Schreibstandards für Naturwissenschaften und Gesellschaftskunde (Klassenstufen 6–12).',

@@ -38,11 +38,16 @@ export const maxTypedCodeLength = 40;
 const isDomain = (value: string): value is StandardDomain =>
   (standardDomains as readonly string[]).includes(value);
 
-function codes(field: string, values: readonly string[]): Result<string[], ValidationError> {
+/** Codes a teacher typed, trimmed and once each: no spaces, not too long, not too many. */
+export function typedStandardCodes(
+  field: string,
+  values: readonly string[],
+  max: number = maxCodesPerDomain,
+): Result<string[], ValidationError> {
   const kept = [...new Set(values.map((code) => code.trim()).filter(Boolean))];
   if (kept.some((code) => /\s/u.test(code))) return invalid(field, 'invalid_format');
   if (kept.some((code) => code.length > maxTypedCodeLength)) return invalid(field, 'too_long');
-  return kept.length > maxCodesPerDomain ? invalid(field, 'out_of_range') : ok(kept);
+  return kept.length > max ? invalid(field, 'out_of_range') : ok(kept);
 }
 
 export function domainStandardsOf(
@@ -52,7 +57,7 @@ export function domainStandardsOf(
   const result: Record<StandardDomain, readonly string[]> = { ...noDomainStandards };
   for (const [domain, values] of Object.entries(input ?? {})) {
     if (!isDomain(domain)) return invalid(field, 'not_allowed');
-    const checked = codes(`${field}.${domain}`, values);
+    const checked = typedStandardCodes(`${field}.${domain}`, values);
     if (!checked.ok) return checked;
     result[domain] = checked.value;
   }
@@ -85,4 +90,14 @@ export function planBodyFromJson(json: unknown): PlanBody {
       },
     })),
   };
+}
+
+/** Every code a plan covers (Common Core, then each category's), once each, in plan order. */
+export function planStandardCodes(body: PlanBody): string[] {
+  if (body.kind !== 'weekly') return [];
+  const codes = body.weeks.flatMap((week) => [
+    ...week.standards,
+    ...standardDomains.flatMap((domain) => week.domainStandards[domain]),
+  ]);
+  return [...new Set(codes)];
 }

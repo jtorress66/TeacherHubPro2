@@ -130,6 +130,7 @@ export {
   ListAssignments,
   UpdateAssignment,
 } from './gradebook/assignments.ts';
+export * from './gradebook/assignment-standards.ts';
 export {
   GetGradeEntry,
   SaveGrades,

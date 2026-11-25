@@ -1332,6 +1332,20 @@ export const es: Messages = {
     subject_social_studies: 'Estudios sociales',
   },
   standards: {
+    assignmentTitle: 'Estándares',
+    assignmentHint:
+      'Añada los estándares que evalúa esta asignación. Abajo se sugieren los códigos de los planes de esta clase.',
+    assignmentNone: 'Aún no hay estándares.',
+    assignmentCode: 'Códigos de estándares',
+    assignmentCodeHint: 'Separe varios códigos con comas, por ejemplo 4.N.1.1, 4.N.1.2.',
+    assignmentAdd: 'Añadir',
+    assignmentPlanned: 'Planificados para esta clase',
+    assignmentAddPlanned: 'Añadir {code}',
+    assignmentRemove: 'Quitar {code}',
+    assignmentSaved: 'Estándares guardados.',
+    assignmentTooLong: 'Un código puede tener como máximo 40 caracteres.',
+    assignmentTooMany: 'Una asignación puede evaluar como máximo 12 estándares.',
+    source_typed: 'Código propio',
     title: 'Códigos Common Core',
     intro:
       'Los estándares oficiales Common Core de matemáticas y artes del lenguaje en inglés, con los estándares de lectoescritura para ciencias y estudios sociales (grados 6–12).',

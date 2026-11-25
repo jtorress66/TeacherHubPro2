@@ -2,6 +2,8 @@ import type { ColumnType, Generated } from 'kysely';
 
 /** jsonb: read back already parsed; written as JSON text. */
 export type Json = ColumnType<unknown, string, string>;
+/** jsonb with a default: may be left out when inserting. */
+type JsonWithDefault = ColumnType<unknown, string | undefined, string>;
 
 /** `date` columns are read as YYYY-MM-DD strings (see database.ts). */
 type DateText = string;
@@ -188,6 +190,7 @@ export interface AssignmentsTable {
   due_date: DateText | null;
   instructions: string | null;
   questions: Json;
+  standards: JsonWithDefault;
   created_at: CreatedAt;
 }
 

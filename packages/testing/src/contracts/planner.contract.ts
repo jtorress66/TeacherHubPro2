@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { LessonPlanId, PlanFolderId, PlanTemplateId, SchoolId } from '@thp/domain';
+import type { ClassId, LessonPlanId, PlanFolderId, PlanTemplateId, SchoolId } from '@thp/domain';
 import type {
   LessonPlanRepository,
   PlanFolderRepository,
@@ -15,12 +15,14 @@ export interface PlannerRepositories {
 }
 
 const schoolA = 'school-a' as SchoolId;
+const classOne = 'class-1' as ClassId;
 
 /** Shared suites for the lesson plan, folder and template repositories. */
 export function plannerRepositoryContract(name: string, make: () => PlannerRepositories): void {
   const plans = {
     make: () => make().plans,
-    sample: (schoolId: SchoolId, id: string) => aLessonPlan({ schoolId, id: id as LessonPlanId }),
+    sample: (schoolId: SchoolId, id: string) =>
+      aLessonPlan({ schoolId, id: id as LessonPlanId, classId: classOne }),
   };
   scopedRepositoryContract(`${name} plans`, {
     ...plans,
@@ -30,9 +32,27 @@ export function plannerRepositoryContract(name: string, make: () => PlannerRepos
         name: 'listByTeacher',
         call: (repo, schoolId, plan) => repo.listByTeacher(schoolId, plan.teacherId),
       },
+      {
+        name: 'listByClass',
+        call: (repo, schoolId, plan) => repo.listByClass(schoolId, plan.classId ?? classOne),
+      },
     ],
   });
   deletableContract(`${name} plans`, plans);
+
+  describe(`${name} (LessonPlanRepository.listByClass)`, () => {
+    it('lists only the plans for that class', async () => {
+      const repos = make();
+      const mine = aLessonPlan({ schoolId: schoolA, id: 'p1' as LessonPlanId, classId: classOne });
+      await repos.plans.save(mine);
+      await repos.plans.save(
+        aLessonPlan({ schoolId: schoolA, id: 'p2' as LessonPlanId, classId: 'class-2' as ClassId }),
+      );
+      await repos.plans.save(aLessonPlan({ schoolId: schoolA, id: 'p3' as LessonPlanId }));
+
+      expect(await repos.plans.listByClass(schoolA, classOne)).toEqual([mine]);
+    });
+  });
 
   const folders = {
     make: () => make().folders,

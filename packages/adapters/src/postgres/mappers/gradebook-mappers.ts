@@ -57,6 +57,7 @@ export const assignmentMapper: RowMapper<Assignment, AssignmentsTable> = {
     due_date: assignment.dueDate,
     instructions: assignment.instructions,
     questions: toJson(assignment.questions),
+    standards: toJson(assignment.standards),
   }),
   fromRow: (row) => ({
     id: row.id as AssignmentId,
@@ -68,6 +69,7 @@ export const assignmentMapper: RowMapper<Assignment, AssignmentsTable> = {
     dueDate: row.due_date === null ? null : localDate(row.due_date, 'assignments.due_date'),
     instructions: row.instructions,
     questions: readJson(row.questions) as readonly Question[],
+    standards: readJson(row.standards) as readonly string[],
   }),
 };
 
