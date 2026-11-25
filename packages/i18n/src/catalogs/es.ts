@@ -583,6 +583,10 @@ export const es: Messages = {
     saved: 'Interruptores guardados.',
   },
   curriculum: {
+    follow: 'Seguir el currículo de nuestra escuela',
+    followUses: 'La IA sigue «{title}».',
+    followNone:
+      'Su escuela aún no tiene una guía para esta materia y grado, así que la IA escribe como de costumbre.',
     title: 'Currículo de la escuela',
     intro:
       'Añada el currículo propio de su escuela para cada materia y grado: una guía de pareo, el alcance y secuencia o los planes de unidad. Cuando un maestro lo pide, la IA sigue las unidades, el orden y el vocabulario de la guía.',

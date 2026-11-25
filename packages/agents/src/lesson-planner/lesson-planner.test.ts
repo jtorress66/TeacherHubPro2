@@ -6,6 +6,7 @@ import {
   type DraftRequestInput,
 } from '@thp/domain';
 import { FakeLlmClient, unwrap } from '@thp/testing';
+import { curriculumBlock } from '../drafting/curriculum.ts';
 import { LessonPlanner } from './lesson-planner.ts';
 import { allowedStandards } from './plan-formats.ts';
 
@@ -50,6 +51,29 @@ const weeklyReply = (overrides: Record<string, unknown> = {}) =>
     days: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'].map(day),
     ...overrides,
   });
+
+describe("LessonPlanner and the school's curriculum guide", () => {
+  const guide = { title: 'Math 4 pacing', text: 'Unit 3: Fractions and decimals, weeks 9-14.' };
+
+  it('puts the guide first, as a cacheable prefix, when one is given', async () => {
+    const llm = new FakeLlmClient().replyWith(weeklyReply());
+    await new LessonPlanner(llm).draft({ ...request(), curriculum: guide });
+
+    const message = llm.requests[0]?.messages[0];
+    expect(message?.stablePrefix).toContain(curriculumBlock(guide));
+    expect(message?.content.startsWith(message.stablePrefix ?? '')).toBe(true);
+    expect(message?.content).toContain('Topic: Comparing fractions');
+  });
+
+  it('sends the same request as before when there is no guide', async () => {
+    const llm = new FakeLlmClient().replyWith(weeklyReply());
+    await new LessonPlanner(llm).draft({ ...request(), curriculum: null });
+
+    const message = llm.requests[0]?.messages[0];
+    expect(message?.stablePrefix).toBeUndefined();
+    expect(message?.content).not.toContain('curriculum_guide');
+  });
+});
 
 describe('LessonPlanner (weekly)', () => {
   it('asks only for what the plan needs, in the teacher’s language, with the official codes', async () => {

@@ -16,6 +16,7 @@ import {
 import type {
   ClassRepository,
   Clock,
+  CurriculumGuideRepository,
   JobQueue,
   LessonPlanDrafter,
   SubscriptionRepository,
@@ -23,6 +24,7 @@ import type {
 } from '@thp/ports';
 import { checkAiAccess } from '../accounts/ai-access.ts';
 import { fail, type UseCaseError } from '../errors.ts';
+import { curriculumFor } from '../curriculum/curriculum-for.ts';
 import type { JobHandler } from '../jobs/jobs.ts';
 import { checkClass } from './plan-access.ts';
 
@@ -68,16 +70,25 @@ export class RequestLessonPlanDraft {
   }
 }
 
-/** Runs a draft job through the lesson planner agent. */
+/** Runs a draft job through the lesson planner agent, with the school's guide when asked for. */
 export class LessonPlanDraftHandler implements JobHandler {
   readonly kind = draftJobKind;
 
-  constructor(private readonly drafter: LessonPlanDrafter) {}
+  constructor(
+    private readonly deps: {
+      readonly drafter: LessonPlanDrafter;
+      readonly curriculumGuides: CurriculumGuideRepository;
+    },
+  ) {}
 
   async handle(job: Job): Promise<Result<DraftJobResult, { readonly code: JobFailure }>> {
     const request = createDraftRequest(job.payload as DraftRequestInput);
     if (!request.ok) return err({ code: 'failed' });
-    const draft = await this.drafter.draft(request.value);
+    const curriculum = await curriculumFor(this.deps.curriculumGuides, {
+      ...request.value,
+      schoolId: job.schoolId,
+    });
+    const draft = await this.deps.drafter.draft({ ...request.value, curriculum });
     if (!draft.ok) return draft;
     return ok({ start: request.value.start, draft: draft.value });
   }

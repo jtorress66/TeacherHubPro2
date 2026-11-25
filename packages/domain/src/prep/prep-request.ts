@@ -43,6 +43,8 @@ export interface PrepRequest {
   readonly quizCategoryId: GradeCategoryId | null;
   readonly language: Language;
   readonly emailTemplate: EmailTemplate;
+  /** Follow the school's curriculum guide for this subject and grade, when it has one. */
+  readonly followCurriculum: boolean;
 }
 
 export interface PrepRequestInput {
@@ -56,6 +58,7 @@ export interface PrepRequestInput {
   readonly quizCategoryId: GradeCategoryId | null;
   readonly language: string;
   readonly emailTemplate: EmailTemplate;
+  readonly followCurriculum?: boolean;
 }
 
 const isStandardSubject = (value: string): value is StandardSubject =>
@@ -88,6 +91,7 @@ export function createPrepRequest(input: PrepRequestInput): Result<PrepRequest, 
     quizCategoryId: input.options.quiz ? input.quizCategoryId : null,
     language: input.language,
     emailTemplate: template.value,
+    followCurriculum: input.followCurriculum === true,
   });
 }
 

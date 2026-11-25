@@ -5,10 +5,12 @@ import {
   standardSubjectOf,
   standardsFor,
   type ContentRequest,
+  type Guided,
   type JobProgress,
   type Result,
 } from '@thp/domain';
 import type { ContentWriter as ContentWriterPort, DraftError, LlmClient } from '@thp/ports';
+import { curriculumBlock } from '../drafting/curriculum.ts';
 import { draftWithReview } from '../drafting/draft-with-review.ts';
 import { eslGuidance } from '../drafting/esl.ts';
 import { languageNames } from '../drafting/language.ts';
@@ -45,8 +47,11 @@ function standardsLines(request: ContentRequest): string {
   return `Common Core codes you may cite (at most 3 that fit the topic):\n${lines.join('\n')}`;
 }
 
-/** What every request for this type, subject and grade repeats: format, language, standards, ESL. */
-function sharedPrefix(request: ContentRequest): string {
+/**
+ * What every request for this type, subject and grade repeats: format, language, standards, ESL
+ * and the school's curriculum guide.
+ */
+function sharedPrefix(request: Guided<ContentRequest>): string {
   return [
     contentFormats[request.type](request),
     [
@@ -56,6 +61,7 @@ function sharedPrefix(request: ContentRequest): string {
     ].join('\n'),
     standardsLines(request),
     ...(request.esl ? [eslGuidance] : []),
+    ...(request.curriculum ? [curriculumBlock(request.curriculum)] : []),
   ].join('\n\n');
 }
 
@@ -75,7 +81,7 @@ function details(request: ContentRequest): string {
  * The prompt in two parts: what every request for this subject and grade repeats first, so it can
  * be cached, then this request's topic and details.
  */
-function prompt(request: ContentRequest): { stablePrefix: string; text: string } {
+function prompt(request: Guided<ContentRequest>): { stablePrefix: string; text: string } {
   const stablePrefix = sharedPrefix(request);
   return { stablePrefix, text: `${stablePrefix}\n\n${details(request)}\n` };
 }
@@ -118,7 +124,7 @@ export class ContentWriter implements ContentWriterPort {
   constructor(private readonly llm: LlmClient) {}
 
   write(
-    request: ContentRequest,
+    request: Guided<ContentRequest>,
     onProgress?: (progress: JobProgress) => Promise<void>,
   ): Promise<Result<string, DraftError>> {
     const total = request.questionCount ?? 0;
@@ -141,7 +147,7 @@ export class ContentWriter implements ContentWriterPort {
    * when unusable. Any part that still fails fails the whole quiz; it is never cut short.
    */
   private async writeInParts(
-    request: ContentRequest,
+    request: Guided<ContentRequest>,
     total: number,
     onProgress?: (progress: JobProgress) => Promise<void>,
   ): Promise<Result<string, DraftError>> {

@@ -81,6 +81,7 @@ describe('AI drafts', () => {
       instructions: null,
       start: '2026-09-07',
       classId: null,
+      followCurriculum: false,
     });
   });
 
@@ -133,7 +134,7 @@ describe('AI drafts', () => {
     const actor = await teacher(world);
     const drafter = new FakeLessonPlanDrafter(ok(aWeeklyDraft()));
     const job = valueOf(await new RequestLessonPlanDraft(world).execute({ actor, ...draftInput }));
-    const handlers = new JobHandlerRegistry([new LessonPlanDraftHandler(drafter)]);
+    const handlers = new JobHandlerRegistry([new LessonPlanDraftHandler({ ...world, drafter })]);
 
     expect(await new RunNextJob({ jobs: world.jobs, handlers }).execute()).toBe('completed');
     expect(drafter.requests[0]).toMatchObject({ topic: 'Fractions', language: 'es' });
@@ -154,9 +155,10 @@ describe('AI drafts', () => {
   it('stores the drafter’s failure, and fails a job with a broken request', async () => {
     const world = makeWorld();
     const actor = await teacher(world);
-    const failing = new LessonPlanDraftHandler(
-      new FakeLessonPlanDrafter(err({ code: 'invalid_output' })),
-    );
+    const failing = new LessonPlanDraftHandler({
+      ...world,
+      drafter: new FakeLessonPlanDrafter(err({ code: 'invalid_output' })),
+    });
     const job = valueOf(await new RequestLessonPlanDraft(world).execute({ actor, ...draftInput }));
 
     expect(await failing.handle(job)).toEqual(err({ code: 'invalid_output' }));
@@ -176,7 +178,10 @@ describe('AI drafts', () => {
     await new RunNextJob({
       jobs: world.jobs,
       handlers: new JobHandlerRegistry([
-        new LessonPlanDraftHandler(new FakeLessonPlanDrafter(ok(aWeeklyDraft()))),
+        new LessonPlanDraftHandler({
+          ...world,
+          drafter: new FakeLessonPlanDrafter(ok(aWeeklyDraft())),
+        }),
       ]),
     }).execute();
     expect((await drafted(actor)).ok).toBe(true);

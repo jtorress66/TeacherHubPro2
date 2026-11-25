@@ -57,6 +57,7 @@ export function parsePrepForm(data: FormData): { locale: Locale; input: PrepForm
       options,
       quizCategoryId: category === '' ? null : (category as GradeCategoryId),
       language: isLanguage(language) ? language : locale,
+      followCurriculum: data.get('followCurriculum') === 'on',
     },
   };
 }

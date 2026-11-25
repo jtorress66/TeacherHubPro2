@@ -23,7 +23,9 @@ import {
 } from '../app/_lib/assistant-actions.ts';
 import { Field, FormAlert, Submit } from './forms.tsx';
 import { EslSwitch, Hidden, Select, TextArea, type Option } from './form-fields.tsx';
+import { CurriculumSwitch } from './curriculum-forms.tsx';
 import { ScheduleFields } from './schedule-fields.tsx';
+import type { CurriculumChoice } from '../server/curriculum-choices.ts';
 import { prefill, type Prefill } from '../server/form-values.ts';
 
 const initial: AssistantFormState = {};
@@ -70,8 +72,14 @@ function LanguageSelect({ locale, sent }: { readonly locale: Locale; readonly se
   );
 }
 
-/** What the teacher asks the assistant to write. */
-export function ContentForm({ locale }: { readonly locale: Locale }) {
+/** What the teacher asks the assistant to write, and whether to follow the school's guide. */
+export function ContentForm({
+  locale,
+  curriculum,
+}: {
+  readonly locale: Locale;
+  readonly curriculum: readonly CurriculumChoice[];
+}) {
   const t = createTranslator(locale);
   const [state, action] = useActionState(requestGenerationAction, initial);
   const errors = state.errors;
@@ -153,6 +161,11 @@ export function ContentForm({ locale }: { readonly locale: Locale }) {
         label={t('esl.label')}
         help={t('esl.assistantHelp')}
         defaultChecked={sent.checked('esl')}
+      />
+      <CurriculumSwitch
+        locale={locale}
+        choices={curriculum}
+        defaultChecked={sent.checked('followCurriculum', true)}
       />
       <Submit label={t('assistant.submit')} />
     </form>

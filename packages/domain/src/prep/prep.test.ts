@@ -119,7 +119,14 @@ describe('createPrepRequest', () => {
       weekStart: '2026-11-09',
       days: 3,
       quizCategoryId: 'cat1',
+      followCurriculum: false,
     });
+  });
+
+  it("keeps the teacher's choice to follow the school's curriculum guide", () => {
+    const created = createPrepRequest({ ...input, followCurriculum: true });
+
+    expect(created.ok && created.value.followCurriculum).toBe(true);
   });
 
   it('needs a Monday, 1 to 5 days, a prompt up to 500 characters and known values', () => {

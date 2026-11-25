@@ -4,6 +4,7 @@ import { createTranslator } from '@thp/i18n';
 import { ContentForm } from '../../../../components/assistant-forms.tsx';
 import { PostWordForm } from '../../../../components/assignment-tools.tsx';
 import { getAppContainer } from '../../../../container.ts';
+import { curriculumChoices } from '../../../../server/curriculum-choices.ts';
 import { requireUser } from '../../../_lib/auth.ts';
 import { localeFrom, type LocaleParams } from '../../locale-param.ts';
 
@@ -22,6 +23,7 @@ export default async function AssistantPage(props: LocaleParams) {
   const courses = await app.listClassroomCourses.execute({ actor: user });
   const teamsClasses = (await app.teams?.listClasses.execute({ actor: user })) ?? null;
   const items = history.ok ? history.value : [];
+  const { guides } = await app.listCurriculumGuides.execute({ actor: user });
   const day = new Intl.DateTimeFormat(locale, { dateStyle: 'medium' });
   const connect = `/api/classroom/connect?locale=${locale}`;
 
@@ -29,7 +31,7 @@ export default async function AssistantPage(props: LocaleParams) {
     <section className="stack">
       <h1>{t('assistant.title')}</h1>
       <p>{t('assistant.intro')}</p>
-      <ContentForm locale={locale} />
+      <ContentForm locale={locale} curriculum={curriculumChoices(guides)} />
       <section id="word-post-card" className="card stack" aria-labelledby="word-post-heading">
         <h2 id="word-post-heading">{t('wordPost.title')}</h2>
         <p>{t('wordPost.intro')}</p>

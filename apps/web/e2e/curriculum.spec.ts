@@ -65,6 +65,29 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     await expect(form.getByText(t('curriculum.fileKinds'))).toBeVisible();
     await expect(rows).toHaveCount(2);
 
+    // The AI tools offer to follow the guide for the subject and grade chosen.
+    const follows = t('curriculum.followUses', { title: 'Math 4 pacing guide' });
+    await page.goto(`/${locale}/app/assistant`);
+    const assistant = page.getByRole('form', { name: t('assistant.title') });
+    const follow = assistant.getByRole('checkbox', { name: t('curriculum.follow') });
+    await expect(follow).toBeChecked();
+    await expect(assistant.getByText(follows)).toBeVisible();
+    await assistant.getByLabel(t('assistant.grade')).selectOption('5');
+    await expect(assistant.getByText(t('curriculum.followNone'))).toBeVisible();
+    await assistant.getByLabel(t('assistant.grade')).selectOption('4');
+    await assistant.getByLabel(t('assistant.type')).selectOption('worksheet');
+    await assistant.getByLabel(t('assistant.topic')).fill('Fracciones');
+    await assistant.getByRole('button', { name: t('assistant.submit') }).click();
+    await expect(page).toHaveURL(/\/assistant\/[^/]+$/, { timeout: 30_000 });
+    await expect(page).not.toHaveURL(/\/jobs\//);
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('Fracciones');
+
+    await page.goto(`/${locale}/app/plans/draft`);
+    const draft = page.getByRole('form', { name: t('drafts.title') });
+    await expect(draft.getByRole('checkbox', { name: t('curriculum.follow') })).toBeChecked();
+    await expect(draft.getByText(follows)).toBeVisible();
+    await page.goto(`/${locale}/app/curriculum`);
+
     // A colleague in the same school sees the guides but cannot change them.
     const colleague = await browser.newContext();
     const colleaguePage = await colleague.newPage();

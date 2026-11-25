@@ -562,6 +562,9 @@ export const zhAppA = {
     saved: '开关已保存。',
   },
   curriculum: {
+    follow: '遵循本校课程',
+    followUses: 'AI 将遵循“{title}”。',
+    followNone: '贵校尚未为该学科和年级上传指南，因此 AI 将照常撰写。',
     title: '学校课程',
     intro:
       '为每个科目和年级添加学校自己的课程：进度指南、范围与顺序或单元计划。教师提出要求时，AI 会按照指南的单元、顺序和术语来写。',

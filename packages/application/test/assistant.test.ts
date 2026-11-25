@@ -89,6 +89,7 @@ describe('AI assistant', () => {
       language: 'es',
       instructions: null,
       esl: false,
+      followCurriculum: false,
     });
   });
 

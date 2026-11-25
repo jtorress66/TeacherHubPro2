@@ -158,6 +158,7 @@ export async function requestDraftAction(
     instructions: text(data, 'instructions') || null,
     start: text(data, 'start'),
     classId: classId === '' ? null : (classId as ClassId),
+    followCurriculum: data.get('followCurriculum') === 'on',
   });
   if (!job.ok) return { errors: planErrors(job.error, locale), values: submittedValues(data) };
   redirect(`${plansPath(locale)}/draft/${job.value.id}`);

@@ -575,6 +575,10 @@ export const en = {
     saved: 'Switches saved.',
   },
   curriculum: {
+    follow: "Follow our school's curriculum",
+    followUses: 'The AI follows “{title}”.',
+    followNone:
+      'Your school has no guide for this subject and grade yet, so the AI writes as usual.',
     title: 'School curriculum',
     intro:
       "Add your school's own curriculum for each subject and grade: a pacing guide, scope and sequence or unit plans. When a teacher asks, the AI follows the guide's units, order and vocabulary.",

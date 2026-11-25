@@ -16,6 +16,7 @@ import type {
   AiGenerationRepository,
   Clock,
   ContentWriter,
+  CurriculumGuideRepository,
   IdGenerator,
   JobProgressReporter,
   JobQueue,
@@ -24,6 +25,7 @@ import type {
 } from '@thp/ports';
 import { checkAiAccess } from '../accounts/ai-access.ts';
 import type { UseCaseError } from '../errors.ts';
+import { curriculumFor } from '../curriculum/curriculum-for.ts';
 import type { JobHandler } from '../jobs/jobs.ts';
 import { findOwned } from './owned.ts';
 
@@ -65,13 +67,17 @@ export class RequestGeneration {
   }
 }
 
-/** Runs a generation job through the content writer and keeps the result in the history. */
+/**
+ * Runs a generation job through the content writer, with the school's guide when the teacher asked
+ * for it, and keeps the result in the history.
+ */
 export class GenerationHandler implements JobHandler {
   readonly kind = generationJobKind;
 
   constructor(
     private readonly deps: {
       readonly writer: ContentWriter;
+      readonly curriculumGuides: CurriculumGuideRepository;
       readonly generations: AiGenerationRepository;
       readonly ids: IdGenerator;
       readonly clock: Clock;
@@ -82,7 +88,11 @@ export class GenerationHandler implements JobHandler {
   async handle(job: Job): Promise<Result<GenerationJobResult, { readonly code: JobFailure }>> {
     const request = createContentRequest(job.payload as ContentRequestInput);
     if (!request.ok) return err({ code: 'failed' });
-    const content = await this.deps.writer.write(request.value, (progress) =>
+    const curriculum = await curriculumFor(this.deps.curriculumGuides, {
+      ...request.value,
+      schoolId: job.schoolId,
+    });
+    const content = await this.deps.writer.write({ ...request.value, curriculum }, (progress) =>
       this.deps.jobs.reportProgress(job.id, progress),
     );
     if (!content.ok) return content;

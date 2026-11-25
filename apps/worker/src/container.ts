@@ -175,8 +175,18 @@ export function createJobRunner(
   const { generations, assignments, submissions, classes, learningPaths } = repos;
   const files = new PostgresFileStore(db);
   const handlers = new JobHandlerRegistry([
-    new LessonPlanDraftHandler(new LessonPlanner(model)),
-    new GenerationHandler({ writer: new ContentWriter(model), generations, ids, clock, jobs }),
+    new LessonPlanDraftHandler({
+      drafter: new LessonPlanner(model),
+      curriculumGuides: repos.curriculumGuides,
+    }),
+    new GenerationHandler({
+      writer: new ContentWriter(model),
+      curriculumGuides: repos.curriculumGuides,
+      generations,
+      ids,
+      clock,
+      jobs,
+    }),
     new PresentationDraftHandler(new PresentationWriter(model)),
     new RubricDraftHandler(new RubricWriter(model)),
     new SpeechHandler({ tts: textToSpeech(tts), files }),
@@ -213,6 +223,7 @@ export function createJobRunner(
         contentWriter: new ContentWriter(model),
         quizWriter: new QuizWriter(model),
         lessonPlans: repos.lessonPlans,
+        curriculumGuides: repos.curriculumGuides,
       }),
     }),
     ...ltiHandlers(lti, db, { ...repos, ids, clock }),
