@@ -35,7 +35,7 @@ export type LegalSlug = keyof typeof legalPages;
 
 /** How many titled sections each legal page has in the catalogs. */
 export const legalSections: Readonly<Record<LegalSlug, number>> = {
-  privacy: 10,
+  privacy: 11,
   terms: 6,
   cookies: 3,
   accessibility: 5,

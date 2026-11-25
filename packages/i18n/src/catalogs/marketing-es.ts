@@ -745,8 +745,11 @@ export const marketingEs: MarketingMessages = {
       s9Title: 'Para escuelas y distritos',
       s9Text:
         'Las escuelas y los distritos pueden firmar con nosotros el National Data Privacy Agreement (NDPA) del Student Data Privacy Consortium, el acuerdo estándar que ya usan muchos distritos de EE. UU. Si su distrito tiene su propio acuerdo, envíenoslo y lo revisaremos. Escriba a privacy@teacherhubpro.com para empezar.',
-      s10Title: 'Contacto',
+      s10Title: 'Datos de usuario de Google',
       s10Text:
+        'El uso y la transferencia que TeacherHubPro hace de la información recibida de las API de Google cumplen la Google API Services User Data Policy (Política de datos de usuario de los servicios de API de Google), incluidos los requisitos de uso limitado (Limited Use). Usamos los datos de Google (su nombre y correo para iniciar sesión con Google, sus cursos y listas de Google Classroom, y los archivos de Google Drive y Google Forms que la app crea para usted) solo para ofrecer las funciones que usted pide, y nunca los vendemos ni los usamos para publicidad. No usamos los datos de usuario de Google para desarrollar, mejorar ni entrenar modelos generales de IA o de aprendizaje automático.',
+      s11Title: 'Contacto',
+      s11Text:
         'Preguntas de privacidad, acuerdos y solicitudes de datos: privacy@teacherhubpro.com.',
     },
     terms: {

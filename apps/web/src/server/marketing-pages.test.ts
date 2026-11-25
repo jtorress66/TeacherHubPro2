@@ -163,6 +163,21 @@ describe('the privacy policy', () => {
     }
   });
 
+  it('states the Google Limited Use promise and that Google data never trains AI, in every language', async () => {
+    const { catalogs, locales } = await import('@thp/i18n');
+    for (const locale of locales) {
+      const google = catalogs[locale].legal.privacy.s10Text;
+      // Google's reviewers look for the policy by its English name, so it stays in English.
+      expect(google, locale).toContain('Google API Services User Data Policy');
+      expect(google, locale).toContain('Limited Use');
+      expect(google, locale).toMatch(/AI|IA|KI|人工智能/u);
+    }
+    expect(catalogs.en.legal.privacy.s10Text).toContain(
+      'We do not use Google user data to develop, improve or train generalized AI or machine-learning models.',
+    );
+    expect(catalogs.en.legal.privacy.s11Title).toBe('Contact');
+  });
+
   it('is pointed to from the trust center in every language', async () => {
     const { catalogs, locales } = await import('@thp/i18n');
     for (const locale of locales) {

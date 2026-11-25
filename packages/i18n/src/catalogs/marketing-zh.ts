@@ -658,8 +658,11 @@ export const marketingZh: MarketingMessages = {
       s9Title: '面向学校和学区',
       s9Text:
         '学校和学区可以与我们签署 Student Data Privacy Consortium 的 National Data Privacy Agreement（NDPA），这是许多美国学区已在使用的标准协议。如果您的学区有自己的协议，请发给我们，我们会进行审阅。请写信至 privacy@teacherhubpro.com 开始。',
-      s10Title: '联系方式',
-      s10Text: '隐私问题、协议和数据请求：privacy@teacherhubpro.com。',
+      s10Title: 'Google 用户数据',
+      s10Text:
+        'TeacherHubPro 对从 Google API 获得的信息的使用和传输遵守 Google API Services User Data Policy（Google API 服务用户数据政策），包括其中的有限使用（Limited Use）要求。我们使用 Google 数据（用于 Google 登录的姓名和电子邮件、您的 Google Classroom 课程和名单，以及应用为您创建的 Google Drive 和 Google Forms 文件）仅为提供您所要求的功能，绝不出售，也不用于广告。我们不会使用 Google 用户数据来开发、改进或训练通用的人工智能（AI）或机器学习模型。',
+      s11Title: '联系方式',
+      s11Text: '隐私问题、协议和数据请求：privacy@teacherhubpro.com。',
     },
     terms: {
       title: '使用条款',
