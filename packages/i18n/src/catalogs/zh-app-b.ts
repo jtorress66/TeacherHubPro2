@@ -68,6 +68,14 @@ export const zhAppB = {
     subject_social_studies: '社会研究',
   },
   standards: {
+    reteachLesson: '规划重教',
+    reteachQuiz: '生成复查小测',
+    reteachLessonFor: '规划重教：{code}',
+    reteachQuizFor: '生成复查小测：{code}',
+    reteachLessonInstructions:
+      '重教 {code}。全班在该标准上的平均分为 {average}%，{scored} 名学生中有 {below} 名低于 {percent}%。请用与第一次不同的方式讲授：示范例题、常见错误和快速理解检查。',
+    reteachQuizInstructions:
+      '重教后关于 {code} 的简短复查小测。混合简单和中等难度的题目，并把常见错误用作错误选项。',
     coverageOpen: '标准覆盖情况',
     coverageTitle: '标准覆盖情况',
     coverageIntro: '本班计划或考查过的每项标准，以及全班在考查该标准的作业中的表现。',
@@ -132,6 +140,7 @@ export const zhAppB = {
     level_high: '高中',
   },
   assistant: {
+    prefilled: '已根据您的标准覆盖情况填写。请检查并按需修改，然后点击“开始生成”。',
     blank: '空白',
     title: 'AI 助手',
     intro: 'AI 会写出初稿。在课堂上使用前请先审阅。',

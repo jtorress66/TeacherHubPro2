@@ -74,6 +74,14 @@ export const deAppB = {
     subject_social_studies: 'Gesellschaftskunde',
   },
   standards: {
+    reteachLesson: 'Wiederholung planen',
+    reteachQuiz: 'Kontrollquiz erstellen',
+    reteachLessonFor: 'Wiederholung planen: {code}',
+    reteachQuizFor: 'Kontrollquiz erstellen: {code}',
+    reteachLessonInstructions:
+      'Wiederholen Sie {code}. Der Klassendurchschnitt lag bei {average} %, und {below} von {scored} Schülern lagen unter {percent} %. Erklären Sie es anders als beim ersten Mal: Musterbeispiele, häufige Fehler und kurze Verständnisfragen.',
+    reteachQuizInstructions:
+      'Ein kurzes Kontrollquiz zu {code} nach der Wiederholung. Mischen Sie leichte und mittlere Fragen und nutzen Sie häufige Fehler als falsche Antworten.',
     coverageOpen: 'Abdeckung der Standards',
     coverageTitle: 'Abdeckung der Standards',
     coverageIntro:
@@ -144,6 +152,8 @@ export const deAppB = {
     level_high: 'Oberstufe',
   },
   assistant: {
+    prefilled:
+      'Aus Ihrer Standardabdeckung ausgefüllt. Prüfen Sie es und ändern Sie, was Sie möchten; klicken Sie dann auf „Erstellen“.',
     blank: 'Lücke',
     title: 'KI-Assistent',
     intro:

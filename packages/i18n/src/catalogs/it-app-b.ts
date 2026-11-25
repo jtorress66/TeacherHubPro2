@@ -71,6 +71,14 @@ export const itAppB = {
     subject_social_studies: 'Studi sociali',
   },
   standards: {
+    reteachLesson: 'Pianifica un ripasso',
+    reteachQuiz: 'Crea un quiz di verifica',
+    reteachLessonFor: 'Pianifica un ripasso di {code}',
+    reteachQuizFor: 'Crea un quiz di verifica su {code}',
+    reteachLessonInstructions:
+      'Rispieghi {code}. La media della classe è stata del {average}% e {below} studenti su {scored} sono rimasti sotto il {percent}%. Lo spieghi in modo diverso dalla prima volta: esempi svolti, errori comuni e brevi verifiche di comprensione.',
+    reteachQuizInstructions:
+      'Un breve quiz di verifica su {code}, dopo averlo rispiegato. Alterni domande facili e medie e usi gli errori comuni come risposte sbagliate.',
     coverageOpen: 'Copertura degli standard',
     coverageTitle: 'Copertura degli standard',
     coverageIntro:
@@ -141,6 +149,8 @@ export const itAppB = {
     level_high: 'Scuola superiore',
   },
   assistant: {
+    prefilled:
+      'Compilato dalla sua copertura degli standard. Lo controlli e cambi ciò che vuole, poi prema “Scrivi”.',
     blank: 'spazio vuoto',
     title: 'Assistente IA',
     intro: "L'IA scrive una prima bozza. La riveda prima di usarla in classe.",

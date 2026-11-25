@@ -1332,6 +1332,14 @@ export const es: Messages = {
     subject_social_studies: 'Estudios sociales',
   },
   standards: {
+    reteachLesson: 'Planificar un repaso',
+    reteachQuiz: 'Crear una prueba de verificación',
+    reteachLessonFor: 'Planificar un repaso de {code}',
+    reteachQuizFor: 'Crear una prueba de verificación de {code}',
+    reteachLessonInstructions:
+      'Vuelva a enseñar {code}. El promedio de la clase fue {average}% y {below} de {scored} estudiantes obtuvieron menos de {percent}%. Enséñelo de otra manera que la primera vez: ejemplos resueltos, errores comunes y comprobaciones rápidas de comprensión.',
+    reteachQuizInstructions:
+      'Una prueba corta de verificación de {code}, después de volver a enseñarlo. Combine preguntas fáciles y medianas, y use los errores comunes como opciones incorrectas.',
     coverageOpen: 'Cobertura de estándares',
     coverageTitle: 'Cobertura de estándares',
     coverageIntro:
@@ -1402,6 +1410,8 @@ export const es: Messages = {
     level_high: 'Escuela superior',
   },
   assistant: {
+    prefilled:
+      'Completado a partir de su cobertura de estándares. Revíselo y cambie lo que quiera; luego pulse “Escribirlo”.',
     blank: 'espacio en blanco',
     title: 'Asistente de IA',
     intro: 'La IA escribe un primer borrador. Revísalo antes de usarlo en clase.',

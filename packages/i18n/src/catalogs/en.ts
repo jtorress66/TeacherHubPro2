@@ -1315,6 +1315,14 @@ export const en = {
     subject_social_studies: 'Social Studies',
   },
   standards: {
+    reteachLesson: 'Plan a reteach',
+    reteachQuiz: 'Make a re-check quiz',
+    reteachLessonFor: 'Plan a reteach of {code}',
+    reteachQuizFor: 'Make a re-check quiz on {code}',
+    reteachLessonInstructions:
+      'Reteach {code}. The class average on it was {average}%, and {below} of {scored} students scored below {percent}%. Teach it a different way than the first time: worked examples, common mistakes and quick checks for understanding.',
+    reteachQuizInstructions:
+      'A short re-check quiz on {code}, after reteaching it. Mix easy and medium questions, and use common mistakes as wrong answer choices.',
     coverageOpen: 'Standards coverage',
     coverageTitle: 'Standards coverage',
     coverageIntro:
@@ -1384,6 +1392,8 @@ export const en = {
     level_high: 'High school',
   },
   assistant: {
+    prefilled:
+      'Filled in from your standards coverage. Check it and change anything you like, then press “Write it”.',
     blank: 'blank',
     title: 'AI assistant',
     intro: 'The AI writes a first draft. Review it before you use it in class.',
