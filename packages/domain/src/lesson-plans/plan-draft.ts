@@ -40,6 +40,8 @@ export interface DraftRequest {
   /** The week's Monday for a weekly plan; the lesson date for Conversational English. */
   readonly start: LocalDate;
   readonly classId: ClassId | null;
+  /** Follow the school's curriculum guide for this subject and grade, when it has one. */
+  readonly followCurriculum: boolean;
 }
 
 export interface DraftRequestInput {
@@ -53,6 +55,7 @@ export interface DraftRequestInput {
   readonly instructions?: string | null;
   readonly start: string;
   readonly classId?: ClassId | null;
+  readonly followCurriculum?: boolean;
 }
 
 const kindNeeds: Readonly<Record<LessonPlanKind, { subject: boolean; monday: boolean }>> = {
@@ -100,6 +103,7 @@ export function createDraftRequest(
     instructions: instructions.value,
     start: start.value,
     classId: input.classId ?? null,
+    followCurriculum: input.followCurriculum === true,
   });
 }
 

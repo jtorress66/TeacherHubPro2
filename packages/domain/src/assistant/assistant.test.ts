@@ -34,8 +34,15 @@ describe('createContentRequest', () => {
         language: 'en',
         instructions: null,
         esl: false,
+        followCurriculum: false,
       },
     });
+  });
+
+  it("keeps the teacher's choice to follow the school's curriculum guide", () => {
+    const request = createContentRequest(input({ followCurriculum: true }));
+
+    expect(request.ok && request.value.followCurriculum).toBe(true);
   });
 
   it('keeps the ESL switch for material written for English learners', () => {

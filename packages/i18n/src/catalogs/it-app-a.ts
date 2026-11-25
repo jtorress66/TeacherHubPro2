@@ -589,6 +589,10 @@ export const itAppA = {
     saved: 'Interruttori salvati.',
   },
   curriculum: {
+    follow: 'Seguire il curricolo della nostra scuola',
+    followUses: 'L’IA segue «{title}».',
+    followNone:
+      'La sua scuola non ha ancora una guida per questa materia e classe, quindi l’IA scrive come di consueto.',
     title: 'Curricolo della scuola',
     intro:
       'Aggiungi il curricolo della tua scuola per ogni materia e classe: una programmazione, una scansione dei contenuti o i piani delle unità. Quando un insegnante lo chiede, l’IA segue le unità, l’ordine e il lessico della guida.',

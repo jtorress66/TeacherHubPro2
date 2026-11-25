@@ -58,6 +58,7 @@ export function parseContentForm(data: FormData): {
       language: languageOf(data, locale),
       instructions: optional(data, 'instructions'),
       esl: data.get('esl') === 'on',
+      followCurriculum: data.get('followCurriculum') === 'on',
     },
   };
 }

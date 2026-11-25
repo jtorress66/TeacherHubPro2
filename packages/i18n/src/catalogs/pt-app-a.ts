@@ -583,6 +583,10 @@ export const ptAppA = {
     saved: 'Opções salvas.',
   },
   curriculum: {
+    follow: 'Seguir o currículo da nossa escola',
+    followUses: 'A IA segue “{title}”.',
+    followNone:
+      'Sua escola ainda não tem um guia para esta matéria e série, então a IA escreve como de costume.',
     title: 'Currículo da escola',
     intro:
       'Adicione o currículo próprio da sua escola para cada disciplina e ano: um guia de ritmo, o escopo e sequência ou os planos de unidade. Quando um professor pede, a IA segue as unidades, a ordem e o vocabulário do guia.',

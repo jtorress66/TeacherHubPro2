@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { createTranslator } from '@thp/i18n';
 import { DraftForm } from '../../../../../components/planner-forms.tsx';
 import { getAppContainer } from '../../../../../container.ts';
+import { curriculumChoices } from '../../../../../server/curriculum-choices.ts';
 import { nextMonday } from '../../../../../server/lesson-plan-display.ts';
 import { requireUser } from '../../../../_lib/auth.ts';
 import { teacherTimeZone } from '../../../../_lib/time-zone.ts';
@@ -16,6 +17,7 @@ export default async function DraftPlanPage(props: LocaleParams) {
   const { user } = await requireUser(locale);
   const app = getAppContainer();
   const classes = await app.listClasses.execute({ actor: user });
+  const { guides } = await app.listCurriculumGuides.execute({ actor: user });
 
   return (
     <section className="stack">
@@ -28,6 +30,7 @@ export default async function DraftPlanPage(props: LocaleParams) {
         locale={locale}
         classes={classes.map((c) => ({ id: c.id, name: c.name }))}
         nextMonday={nextMonday(app.today(await teacherTimeZone()))}
+        curriculum={curriculumChoices(guides)}
       />
     </section>
   );

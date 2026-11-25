@@ -8,6 +8,7 @@ import {
   type GradingRequest,
   type Language,
   type DraftRequest,
+  type Guided,
   type LessonPlanDraft,
   type ParentEmail,
   type PresentationDraft,
@@ -84,11 +85,11 @@ export class FakeTextToSpeech implements TextToSpeech {
 
 /** A scripted drafter: returns the given draft (or error) and records each request. */
 export class FakeLessonPlanDrafter implements LessonPlanDrafter {
-  readonly requests: DraftRequest[] = [];
+  readonly requests: Guided<DraftRequest>[] = [];
 
   constructor(private readonly outcome: Result<LessonPlanDraft, DraftError>) {}
 
-  draft(request: DraftRequest): Promise<Result<LessonPlanDraft, DraftError>> {
+  draft(request: Guided<DraftRequest>): Promise<Result<LessonPlanDraft, DraftError>> {
     this.requests.push(request);
     return Promise.resolve(this.outcome);
   }
@@ -109,7 +110,7 @@ export const aWeeklyDraft = (overrides: Partial<LessonPlanDraft> = {}): LessonPl
 
 /** A scripted content writer: returns the given Markdown (or error) and records each request. */
 export class FakeContentWriter implements ContentWriter {
-  readonly requests: ContentRequest[] = [];
+  readonly requests: Guided<ContentRequest>[] = [];
   /** Called after each progress report, so a test can look at the job meanwhile. */
   onReport: () => Promise<void> = () => Promise.resolve();
 
@@ -120,7 +121,7 @@ export class FakeContentWriter implements ContentWriter {
   ) {}
 
   async write(
-    request: ContentRequest,
+    request: Guided<ContentRequest>,
     onProgress?: (progress: JobProgress) => Promise<void>,
   ): Promise<Result<string, DraftError>> {
     this.requests.push(request);

@@ -1,5 +1,6 @@
-import type { DraftRequest, LessonPlanDraft, Result } from '@thp/domain';
+import type { DraftRequest, Guided, LessonPlanDraft, Result } from '@thp/domain';
 import type { DraftError, LessonPlanDrafter, LlmClient } from '@thp/ports';
+import { withCurriculum } from '../drafting/curriculum.ts';
 import { draftWithReview } from '../drafting/draft-with-review.ts';
 import { planFormats, type PlanFormat } from './plan-formats.ts';
 import { systemPrompt } from './prompts.ts';
@@ -21,11 +22,11 @@ export class LessonPlanner implements LessonPlanDrafter {
     private readonly formats: Readonly<Record<DraftRequest['kind'], PlanFormat>> = planFormats,
   ) {}
 
-  draft(request: DraftRequest): Promise<Result<LessonPlanDraft, DraftError>> {
+  draft(request: Guided<DraftRequest>): Promise<Result<LessonPlanDraft, DraftError>> {
     const format = this.formats[request.kind];
     return draftWithReview(this.llm, {
       system: systemPrompt,
-      prompt: format.prompt(request),
+      ...withCurriculum(format.prompt(request), request.curriculum),
       maxTokens,
       review: (reply) => reviewReply(format, request, reply),
       retry: retryMessage,

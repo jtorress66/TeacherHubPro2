@@ -158,6 +158,13 @@ describe('AI draft requests', () => {
       instructions: null,
       start: '2026-09-07',
       classId: null,
+      followCurriculum: false,
+    });
+  });
+
+  it("keeps the teacher's choice to follow the school's curriculum guide", () => {
+    expect(valueOf(createDraftRequest({ ...request, followCurriculum: true }))).toMatchObject({
+      followCurriculum: true,
     });
   });
 

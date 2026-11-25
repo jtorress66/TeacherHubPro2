@@ -16,12 +16,14 @@ import {
 } from '@thp/domain';
 import type {
   ContentWriter,
+  CurriculumGuideRepository,
   DraftError,
   LessonPlanDrafter,
   LessonPlanRepository,
   PresentationDrafter,
   QuizWriter,
 } from '@thp/ports';
+import { curriculumFor } from '../curriculum/curriculum-for.ts';
 
 /** Drafts one kind of prep item. A new kind of item is a new runner, registered once. */
 export interface PrepItemRunner<K extends PrepItemKind> {
@@ -36,6 +38,10 @@ const topicOf = (batch: PrepBatch, day: number): string =>
   dayTopic(batch, day).slice(0, maxTopicLength);
 
 const invalidRequest = () => err<DraftError>({ code: 'invalid_output' });
+
+/** The school's guide for the batch's subject and grade, when the teacher asked to follow it. */
+const batchCurriculum = (guides: CurriculumGuideRepository, batch: PrepBatch) =>
+  curriculumFor(guides, { ...batch.request, schoolId: batch.schoolId });
 
 /** The class's latest weekly plan that starts before this week, as one line for the planner. */
 function lastWeekLine(plans: readonly LessonPlan[], batch: PrepBatch): string | null {
@@ -52,13 +58,17 @@ function lastWeekLine(plans: readonly LessonPlan[], batch: PrepBatch): string | 
   return parts.length === 0 ? null : `Last week: ${parts.join(' — ')}`;
 }
 
-/** The runners for every kind of prep item. They send the AI no student or class data. */
+/**
+ * The runners for every kind of prep item. They send the AI no student or class data. The plan and
+ * worksheets follow the school's guide when asked; the slides and quiz follow the plan's topics.
+ */
 export function makePrepRunners(deps: {
   readonly drafter: LessonPlanDrafter;
   readonly presentationDrafter: PresentationDrafter;
   readonly contentWriter: ContentWriter;
   readonly quizWriter: QuizWriter;
   readonly lessonPlans: LessonPlanRepository;
+  readonly curriculumGuides: CurriculumGuideRepository;
 }): PrepRunners {
   return {
     plan: {
@@ -82,7 +92,8 @@ export function makePrepRunners(deps: {
           classId: null,
         });
         if (!draft.ok) return invalidRequest();
-        const plan = await deps.drafter.draft(draft.value);
+        const curriculum = await batchCurriculum(deps.curriculumGuides, batch);
+        const plan = await deps.drafter.draft({ ...draft.value, curriculum });
         if (!plan.ok) return plan;
         return plan.value.kind === 'weekly' ? ok(plan.value) : invalidRequest();
       },
@@ -107,7 +118,9 @@ export function makePrepRunners(deps: {
           topic: topicOf(batch, item.day ?? 1),
           language: batch.request.language,
         });
-        return request.ok ? deps.contentWriter.write(request.value) : invalidRequest();
+        if (!request.ok) return invalidRequest();
+        const curriculum = await batchCurriculum(deps.curriculumGuides, batch);
+        return deps.contentWriter.write({ ...request.value, curriculum });
       },
     },
     quiz: {

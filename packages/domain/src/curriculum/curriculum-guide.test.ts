@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { JobId, SchoolId, UserId } from '../shared/ids.ts';
 import {
   byCurriculumOrder,
+  curriculumExcerptOf,
   curriculumFileKindOf,
   curriculumGuideRead,
   curriculumGuideUnreadable,
@@ -182,6 +183,26 @@ describe('guideExcerpt and guideUsage', () => {
 
     expect(guideExcerpt(reading)).toBe('');
     expect(guideUsage(reading)).toEqual({ used: 0, total: 0 });
+  });
+});
+
+describe('curriculumExcerptOf', () => {
+  it("gives the AI a ready guide's title and the part of it the AI reads", () => {
+    const guide = curriculumGuideRead(
+      valueOf(uploadedCurriculumGuide({ ...base, sourceName: 'g.pdf' })),
+      unit,
+      now,
+    );
+
+    expect(curriculumExcerptOf(guide)).toEqual({ title: 'Grade 4 math pacing guide', text: unit });
+  });
+
+  it('gives nothing when there is no guide or it is not ready', () => {
+    const reading = valueOf(uploadedCurriculumGuide({ ...base, sourceName: 'g.pdf' }));
+
+    expect(curriculumExcerptOf(null)).toBeNull();
+    expect(curriculumExcerptOf(reading)).toBeNull();
+    expect(curriculumExcerptOf(curriculumGuideUnreadable(reading, now))).toBeNull();
   });
 });
 

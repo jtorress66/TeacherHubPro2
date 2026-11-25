@@ -187,6 +187,21 @@ export function guideExcerpt(guide: CurriculumGuide): string {
   return (lastSpace > 0 ? cut.slice(0, lastSpace) : cut.slice(0, maxCurriculumExcerpt)).trimEnd();
 }
 
+/** What the AI is given of a school's guide: its title and the part it reads. */
+export interface CurriculumExcerpt {
+  readonly title: string;
+  readonly text: string;
+}
+
+/** A request for the AI, with the school's guide to follow when the teacher asked for it. */
+export type Guided<T> = T & { readonly curriculum?: CurriculumExcerpt | null };
+
+/** The guide as the AI reads it; null when there is no guide or it is not ready. */
+export function curriculumExcerptOf(guide: CurriculumGuide | null): CurriculumExcerpt | null {
+  const text = guide === null ? '' : guideExcerpt(guide);
+  return guide === null || text === '' ? null : { title: guide.title, text };
+}
+
 /** How many characters the AI reads, of how many the guide has; shown beside each guide. */
 export function guideUsage(guide: CurriculumGuide): { used: number; total: number } {
   if (guide.status !== 'ready') return { used: 0, total: 0 };

@@ -4,6 +4,7 @@ import { addDays, localDateIn, type LocalDate } from '@thp/domain';
 import { createTranslator } from '@thp/i18n';
 import { NewPrepForm, type PrepClass } from '../../../../components/prep-forms.tsx';
 import { getAppContainer } from '../../../../container.ts';
+import { curriculumChoices } from '../../../../server/curriculum-choices.ts';
 import { formatDate } from '../../../../server/lesson-plan-display.ts';
 import { classDefaults } from '../../../../server/prep-forms.ts';
 import { requireUser } from '../../../_lib/auth.ts';
@@ -24,6 +25,7 @@ export default async function PrepPage(props: LocaleParams) {
   const t = createTranslator(locale);
   const { user } = await requireUser(locale);
   const container = getAppContainer();
+  const { guides } = await container.listCurriculumGuides.execute({ actor: user });
   const [classes, batches] = await Promise.all([
     container.listClasses.execute({ actor: user }),
     container.listPrepBatches.execute({ actor: user }),
@@ -57,7 +59,12 @@ export default async function PrepPage(props: LocaleParams) {
             <Link href={`/${locale}/app/classes`}>{t('prep.noClasses')}</Link>
           </p>
         ) : (
-          <NewPrepForm locale={locale} classes={prepClasses} weekStart={nextMonday(today)} />
+          <NewPrepForm
+            locale={locale}
+            classes={prepClasses}
+            weekStart={nextMonday(today)}
+            curriculum={curriculumChoices(guides)}
+          />
         )}
       </section>
       <h2>{t('prep.history')}</h2>

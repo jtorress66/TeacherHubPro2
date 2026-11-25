@@ -40,8 +40,13 @@ describe('parseContentForm', () => {
         language: 'es',
         instructions: null,
         esl: false,
+        followCurriculum: false,
       },
     });
+  });
+
+  it("follows the school's curriculum when the switch is checked", () => {
+    expect(parseContentForm(form([['followCurriculum', 'on']])).input.followCurriculum).toBe(true);
   });
 
   it('turns on ESL support when the switch is checked', () => {

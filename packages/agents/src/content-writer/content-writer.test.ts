@@ -3,8 +3,10 @@ import { maxGenerationLength, type ContentRequestInput } from '@thp/domain';
 import { FakeLlmClient, aContentRequest } from '@thp/testing';
 import { ContentWriter } from './content-writer.ts';
 import { reviewContent } from './content-review.ts';
+import { curriculumBlock } from '../drafting/curriculum.ts';
 import { eslGuidance } from '../drafting/esl.ts';
 
+const guide = { title: 'Math 4 pacing', text: 'Unit 3: Fractions and decimals, weeks 9-14.' };
 const request = (overrides: Partial<ContentRequestInput> = {}) => aContentRequest(overrides);
 
 const worksheet = [
@@ -49,6 +51,21 @@ describe('ContentWriter', () => {
     expect(monday?.stablePrefix).toBe(tuesday?.stablePrefix);
     expect(monday?.content.startsWith(monday.stablePrefix ?? '')).toBe(true);
     expect(monday?.content).toContain('Topic: Monday: fractions');
+  });
+
+  it("puts the school's curriculum guide in the cacheable prefix when one is given", async () => {
+    const llm = new FakeLlmClient().replyWith(worksheet).replyWith(worksheet).replyWith(worksheet);
+    const writer = new ContentWriter(llm);
+    await writer.write({ ...request({ topic: 'Monday: fractions' }), curriculum: guide });
+    await writer.write({ ...request({ topic: 'Tuesday: decimals' }), curriculum: guide });
+    await writer.write(request());
+
+    const [monday, tuesday, plain] = llm.requests.map((sent) => sent.messages[0]);
+    expect(monday?.stablePrefix).toContain(curriculumBlock(guide));
+    expect(monday?.stablePrefix).toBe(tuesday?.stablePrefix);
+    expect(monday?.content.startsWith(monday.stablePrefix ?? '')).toBe(true);
+    expect(plain?.content).not.toContain('curriculum_guide');
+    expect(llm.requests[0]?.system).toBe(llm.requests[2]?.system);
   });
 
   it('adds the ESL guidance to the request only when the switch is on', async () => {
@@ -113,7 +130,10 @@ describe('reviewContent', () => {
     [{ text: 'x', stopReason: 'max_tokens' as const }, /cut off/],
     [{ text: '   ', stopReason: 'end' as const }, /empty/],
     [{ text: 'No heading here', stopReason: 'end' as const }, /# heading/],
-    [{ text: `# T\n\n${'x'.repeat(maxGenerationLength + 1)}`, stopReason: 'end' as const }, /too long/],
+    [
+      { text: `# T\n\n${'x'.repeat(maxGenerationLength + 1)}`, stopReason: 'end' as const },
+      /too long/,
+    ],
   ])('rejects %o', (reply, problem) => {
     const result = reviewContent(reply);
     expect(result.ok).toBe(false);

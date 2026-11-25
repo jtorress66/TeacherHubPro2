@@ -592,6 +592,10 @@ export const deAppA = {
     saved: 'Schalter gespeichert.',
   },
   curriculum: {
+    follow: 'Lehrplan unserer Schule befolgen',
+    followUses: 'Die KI folgt „{title}“.',
+    followNone:
+      'Ihre Schule hat für dieses Fach und diese Klassenstufe noch keinen Lehrplan, daher schreibt die KI wie gewohnt.',
     title: 'Lehrplan der Schule',
     intro:
       'Fügen Sie den eigenen Lehrplan Ihrer Schule für jedes Fach und jede Klassenstufe hinzu: einen Stoffverteilungsplan, eine Jahresplanung oder Unterrichtseinheiten. Wenn eine Lehrkraft es wünscht, folgt die KI den Einheiten, der Reihenfolge und dem Fachwortschatz des Plans.',

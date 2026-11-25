@@ -589,6 +589,10 @@ export const frAppA = {
     saved: 'Réglages enregistrés.',
   },
   curriculum: {
+    follow: 'Suivre le programme de notre école',
+    followUses: 'L’IA suit « {title} ».',
+    followNone:
+      'Votre école n’a pas encore de guide pour cette matière et ce niveau : l’IA écrit comme d’habitude.',
     title: 'Programme de l’école',
     intro:
       'Ajoutez le programme propre à votre école pour chaque matière et niveau : une progression, un plan de séquences ou des plans d’unité. Quand un enseignant le demande, l’IA suit les unités, l’ordre et le vocabulaire du guide.',

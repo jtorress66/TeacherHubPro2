@@ -120,7 +120,8 @@ h2 {
   align-items: center;
 }
 
-.esl-switch {
+.esl-switch,
+.curriculum-switch {
   display: grid;
   gap: 0.25rem;
   padding: 0.75rem 1rem;

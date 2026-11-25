@@ -21,8 +21,10 @@ import {
 } from '../app/_lib/prep-actions.ts';
 import { Field, FormAlert, Submit } from './forms.tsx';
 import { Hidden, Select, TextArea, type Option } from './form-fields.tsx';
+import { CurriculumSwitch } from './curriculum-forms.tsx';
 import { Markdown } from './markdown.tsx';
 import { PrepTranslations } from './prep-translations.tsx';
+import type { CurriculumChoice } from '../server/curriculum-choices.ts';
 import { prefill, type Prefill } from '../server/form-values.ts';
 
 const initial: PrepFormState = {};
@@ -44,6 +46,7 @@ export function NewPrepForm(props: {
   readonly locale: Locale;
   readonly classes: readonly PrepClass[];
   readonly weekStart: string;
+  readonly curriculum: readonly CurriculumChoice[];
 }) {
   const [state, action] = useActionState(startPrepAction, initial);
   const sent = prefill(state.values);
@@ -164,6 +167,11 @@ function NewPrepFields(
           error={errors?.quizCategoryId}
         />
       </div>
+      <CurriculumSwitch
+        locale={locale}
+        choices={props.curriculum}
+        defaultChecked={sent.checked('followCurriculum', true)}
+      />
       <Submit label={t('prep.start')} />
     </form>
   );

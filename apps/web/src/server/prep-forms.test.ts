@@ -24,6 +24,7 @@ describe('parsePrepForm', () => {
           ['options', 'parentEmail'],
           ['quizCategoryId', 'cat1'],
           ['language', 'es'],
+          ['followCurriculum', 'on'],
         ]),
       ),
     ).toEqual({
@@ -38,6 +39,7 @@ describe('parsePrepForm', () => {
         options: { presentations: false, worksheets: false, quiz: true, parentEmail: true },
         quizCategoryId: 'cat1',
         language: 'es',
+        followCurriculum: true,
       },
     });
   });

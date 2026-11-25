@@ -65,6 +65,8 @@ export interface ContentRequest {
   readonly instructions: string | null;
   /** Written for English learners (WIDA levels, vocabulary, sentence frames). */
   readonly esl: boolean;
+  /** Follow the school's curriculum guide for this subject and grade, when it has one. */
+  readonly followCurriculum: boolean;
 }
 
 export interface ContentRequestInput {
@@ -78,6 +80,7 @@ export interface ContentRequestInput {
   readonly language: string;
   readonly instructions?: string | null;
   readonly esl?: boolean;
+  readonly followCurriculum?: boolean;
 }
 
 interface Range {
@@ -143,6 +146,7 @@ export function createContentRequest(
     language: input.language,
     instructions: instructions.value,
     esl: input.esl === true,
+    followCurriculum: input.followCurriculum === true,
   });
 }
 

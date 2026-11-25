@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useEffect } from 'react';
+import { useActionState, useEffect, useRef, useState, type RefObject } from 'react';
 import { useRouter } from 'next/navigation';
 import { assistantSubjects, gradeLevels } from '@thp/domain';
 import { createTranslator, type Locale } from '@thp/i18n';
@@ -8,6 +8,7 @@ import {
   uploadCurriculumAction,
   type CurriculumFormState,
 } from '../app/_lib/curriculum-actions.ts';
+import { guideFor, type CurriculumChoice } from '../server/curriculum-choices.ts';
 import { prefill } from '../server/form-values.ts';
 import { ErrorText, Hidden, Select, TextArea, type Option } from './form-fields.tsx';
 import { Field, FormAlert, Submit } from './forms.tsx';
@@ -107,4 +108,73 @@ export function RefreshWhileReading({ intervalMs = 2000 }: { readonly intervalMs
     };
   }, [router, intervalMs]);
   return null;
+}
+
+/** The subject and grade chosen in the form around this element, as the teacher changes them. */
+function useChosenSubjectAndGrade(
+  ref: RefObject<HTMLElement | null>,
+): { readonly subject: string; readonly grade: string } | null {
+  const [chosen, setChosen] = useState<{ subject: string; grade: string } | null>(null);
+  useEffect(() => {
+    const form = ref.current?.closest('form');
+    if (!form) return undefined;
+    const read = () => {
+      const data = new FormData(form);
+      const text = (name: string) => {
+        const value = data.get(name);
+        return typeof value === 'string' ? value : '';
+      };
+      const subject = text('subject');
+      const grade = text('grade');
+      setChosen((now) =>
+        now?.subject === subject && now.grade === grade ? now : { subject, grade },
+      );
+    };
+    read();
+    form.addEventListener('change', read);
+    // A form can also change its fields itself (another class picked), with no change event.
+    const observer = new MutationObserver(read);
+    observer.observe(form, { childList: true, subtree: true });
+    return () => {
+      form.removeEventListener('change', read);
+      observer.disconnect();
+    };
+  }, [ref]);
+  return chosen;
+}
+
+/**
+ * "Follow our school's curriculum", on by default, with the guide the AI will follow for the
+ * subject and grade chosen. Shown only when the school has a guide ready.
+ */
+export function CurriculumSwitch(props: {
+  readonly locale: Locale;
+  readonly choices: readonly CurriculumChoice[];
+  readonly defaultChecked?: boolean;
+}) {
+  const t = createTranslator(props.locale);
+  const ref = useRef<HTMLDivElement>(null);
+  const chosen = useChosenSubjectAndGrade(ref);
+  if (props.choices.length === 0) return null;
+  const guide = chosen && guideFor(props.choices, chosen.subject, chosen.grade);
+  return (
+    <div className="curriculum-switch" ref={ref}>
+      <label className="checkbox">
+        <input
+          type="checkbox"
+          name="followCurriculum"
+          aria-describedby="follow-curriculum-help"
+          defaultChecked={props.defaultChecked ?? true}
+        />{' '}
+        {t('curriculum.follow')}
+      </label>
+      <p id="follow-curriculum-help" className="hint" aria-live="polite">
+        {chosen === null
+          ? null
+          : guide
+            ? t('curriculum.followUses', { title: guide.title })
+            : t('curriculum.followNone')}
+      </p>
+    </div>
+  );
 }

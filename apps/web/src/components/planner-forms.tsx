@@ -31,8 +31,10 @@ import {
   type PlannerFormState,
 } from '../app/_lib/planner-actions.ts';
 import { Field, FormAlert, Submit } from './forms.tsx';
+import { CurriculumSwitch } from './curriculum-forms.tsx';
 import { JobProgress } from './job-progress.tsx';
 import { PrCodesPicker, type PrSelection } from './pr-codes-picker.tsx';
+import type { CurriculumChoice } from '../server/curriculum-choices.ts';
 import type { PrOptions } from '../server/plan-standards-options.ts';
 import { prefill } from '../server/form-values.ts';
 import {
@@ -707,6 +709,7 @@ export function DraftForm(props: {
   readonly locale: Locale;
   readonly classes: readonly Option[];
   readonly nextMonday: string;
+  readonly curriculum: readonly CurriculumChoice[];
 }) {
   const t = createTranslator(props.locale);
   const [state, action] = useActionState(requestDraftAction, initial);
@@ -803,6 +806,11 @@ export function DraftForm(props: {
         label={t('drafts.instructions')}
         defaultValue={sent.text('instructions')}
         error={errors?.instructions}
+      />
+      <CurriculumSwitch
+        locale={props.locale}
+        choices={props.curriculum}
+        defaultChecked={sent.checked('followCurriculum', true)}
       />
       <Submit label={t('drafts.submit')} />
     </form>
