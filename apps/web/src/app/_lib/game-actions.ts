@@ -73,6 +73,49 @@ export async function updateGameAction(
   return done(state, createTranslator(locale)('games.saved'));
 }
 
+const field = (data: FormData, name: string): string => {
+  const value = data.get(name);
+  return typeof value === 'string' ? value : '';
+};
+
+/** Saves a copy of the game, then opens it. */
+export async function duplicateGameAction(data: FormData): Promise<void> {
+  const locale = localeOf(data);
+  const { user } = await requireUser(locale);
+  const title = createTranslator(locale)('games.copyTitle', { title: field(data, 'title') });
+  const copy = await getAppContainer().duplicateGame.execute({
+    actor: user,
+    gameId: gameIdOf(data),
+    title,
+  });
+  if (!copy.ok) redirect(gamesPath(locale));
+  redirect(`${gamesPath(locale)}/${copy.value.id}?copied=1`);
+}
+
+/** Why items could not be added, as the page names it. */
+function addProblem(error: { readonly code: string; readonly field?: string }): string {
+  if (error.field === 'source') return error.code === 'duplicate' ? 'nothingNew' : 'wrongKind';
+  return 'failed';
+}
+
+/** Adds another game's items to this one, then says how many. */
+export async function addItemsFromGameAction(data: FormData): Promise<void> {
+  const locale = localeOf(data);
+  const { user } = await requireUser(locale);
+  const gameId = gameIdOf(data);
+  const result = await getAppContainer().addItemsFromGame.execute({
+    actor: user,
+    gameId,
+    sourceId: field(data, 'sourceId') as GameId,
+  });
+  const page = `${gamesPath(locale)}/${gameId}`;
+  revalidatePath(page);
+  const query = result.ok
+    ? `added=${String(result.value.added)}&skipped=${String(result.value.skipped)}`
+    : `addError=${addProblem(result.error)}`;
+  redirect(`${page}?${query}#add-items-heading`);
+}
+
 export async function deleteGameAction(data: FormData): Promise<void> {
   const locale = localeOf(data);
   const { user } = await requireUser(locale);

@@ -75,6 +75,7 @@ export default async function GameDraftPage(props: Props) {
             title: existing.value.game.title,
             mode: existing.value.game.mode,
             content: contentText(content),
+            items: content,
             classId: existing.value.game.classId,
             language: existing.value.game.language,
           }}
@@ -91,6 +92,7 @@ export default async function GameDraftPage(props: Props) {
                 ? allModes
                 : (defaultGameModes.modesFor(content.kind)[0]?.id ?? 'quiz')),
             content: contentText(content),
+            items: content,
             classId: null,
             language: request.language,
           }}

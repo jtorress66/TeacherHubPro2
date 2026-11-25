@@ -78,7 +78,8 @@ const genericTitles = new Set([
   'cuestionario',
 ]);
 
-const noGrading: GameGrading = {
+/** A game that does not count as a grade (new games, copies, and games moved to another class). */
+export const noGrading: GameGrading = {
   countAsGrade: false,
   method: 'best',
   points: 100,

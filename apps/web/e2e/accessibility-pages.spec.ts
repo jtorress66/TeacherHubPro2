@@ -121,6 +121,7 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
       new RegExp(`/assignments/${id}$`),
     );
     const plan = await firstLink(page, `${app}/plans`, new RegExp(`/plans/${id}$`));
+    const game = await firstLink(page, `${app}/games`, new RegExp(`/games/${id}$`));
 
     for (const path of [
       app,
@@ -153,6 +154,7 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
       `${app}/templates`,
       `${app}/standards`,
       `${app}/games`,
+      game,
       `${app}/live`,
       `${app}/learning`,
       `${app}/approvals`,

@@ -88,6 +88,8 @@ import {
   OpenLearnerLesson,
   SubmitLessonCheck,
   UpdateGame,
+  DuplicateGame,
+  AddItemsFromGame,
   ListGames,
   GetGame,
   DeleteGame,
@@ -566,6 +568,8 @@ export interface AppContainer {
   readonly findFormsQuiz: FindFormsQuiz;
   readonly createGame: CreateGame;
   readonly updateGame: UpdateGame;
+  readonly duplicateGame: DuplicateGame;
+  readonly addItemsFromGame: AddItemsFromGame;
   readonly listGames: ListGames;
   readonly getGame: GetGame;
   readonly deleteGame: DeleteGame;
@@ -1112,6 +1116,8 @@ export function createAppContainer(
     findFormsQuiz: new FindFormsQuiz(deps),
     createGame: new CreateGame(deps),
     updateGame: new UpdateGame(deps),
+    duplicateGame: new DuplicateGame(deps),
+    addItemsFromGame: new AddItemsFromGame(deps),
     listGames: new ListGames(deps),
     getGame: new GetGame(deps),
     deleteGame: new DeleteGame(deps),

@@ -65,6 +65,7 @@ export * from './attendance/attendance-session.ts';
 export * from './attendance/attendance-calculations.ts';
 export * from './attendance/attendance-report.ts';
 export * from './games/game.ts';
+export * from './games/game-reuse.ts';
 export * from './games/game-play.ts';
 export * from './games/game-request.ts';
 export * from './live/live-session.ts';

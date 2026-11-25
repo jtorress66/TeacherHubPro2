@@ -12,6 +12,7 @@ import {
 import type { GameDraftInput, UseCaseError } from '@thp/application';
 import { createTranslator, defaultLocale, isLocale, type Locale } from '@thp/i18n';
 import { formErrors, messageFor } from './error-messages.ts';
+import { parseContentJson } from './game-content-schema.ts';
 import { parseContentText } from './game-text.ts';
 
 // Form shapes for games. Only the shape is read here: the domain checks the values.
@@ -49,6 +50,13 @@ export interface GameFormInput {
   readonly language: string;
 }
 
+/** The builder's cards when it sent them (as JSON), else the "Edit as text" box. */
+function contentOf(data: FormData, kind: ContentKind): GameContent {
+  const json = field(data, 'contentJson');
+  if (json === '') return parseContentText(kind, field(data, 'content'));
+  return parseContentJson(kind, json) ?? { kind, items: [] };
+}
+
 export function parseGameForm(data: FormData): { locale: Locale; input: GameFormInput } {
   const locale = pageLocale(data);
   const mode = field(data, 'mode');
@@ -58,7 +66,7 @@ export function parseGameForm(data: FormData): { locale: Locale; input: GameForm
     input: {
       title: field(data, 'title'),
       mode,
-      content: parseContentText(kindForMode(mode), field(data, 'content')),
+      content: contentOf(data, kindForMode(mode)),
       classId: classId === '' ? null : (classId as ClassId),
       language: languageOf(data, locale),
     },

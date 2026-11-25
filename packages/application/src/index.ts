@@ -313,6 +313,7 @@ export {
   type CreateGameInput,
   type GameDetails,
 } from './games/games.ts';
+export * from './games/game-reuse.ts';
 export {
   RequestGameDraft,
   GameDraftHandler,
