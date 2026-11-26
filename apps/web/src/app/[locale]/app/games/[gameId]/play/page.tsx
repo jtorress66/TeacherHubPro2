@@ -38,6 +38,7 @@ export default async function GamePreviewPage(props: Props) {
         locale={locale}
         initial={round.value}
         preview
+        pictures={{ base: `/api/games/${encodeURIComponent(gameId)}/pictures` }}
         start={startPreviewRoundAction.bind(null, locale)}
         finish={finishPreviewRoundAction.bind(null, locale)}
       />

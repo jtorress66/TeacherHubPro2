@@ -38,6 +38,9 @@ describe('jobStatusReply', () => {
       job({ status: 'failed', error: 'invalid_output', progress: { from: 1, to: 25, total: 50 } }),
       'es',
     );
-    expect(reply).toEqual({ status: 'failed', message: draftFailureMessage('invalid_output', 'es') });
+    expect(reply).toEqual({
+      status: 'failed',
+      message: draftFailureMessage('invalid_output', 'es'),
+    });
   });
 });

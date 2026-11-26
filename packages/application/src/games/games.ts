@@ -2,6 +2,8 @@ import {
   createGame,
   ok,
   playableModes,
+  picturesOf,
+  removedPictures,
   updateGame,
   type ClassId,
   type Game,
@@ -16,6 +18,7 @@ import {
 import type {
   ClassRepository,
   Clock,
+  FileStore,
   GamePlayRepository,
   GameRepository,
   IdGenerator,
@@ -23,6 +26,7 @@ import type {
 import { findManagedClass } from '../classes/managed-class.ts';
 import type { UseCaseError } from '../errors.ts';
 import { findOwnGame, type GameRef } from './game-access.ts';
+import { deletePictures } from './game-pictures.ts';
 
 interface GameDeps {
   readonly games: GameRepository;
@@ -78,8 +82,9 @@ export class CreateGame {
   }
 }
 
+/** Saves the teacher's changes; pictures the edit took out are deleted with their files. */
 export class UpdateGame {
-  constructor(private readonly deps: GameDeps) {}
+  constructor(private readonly deps: GameDeps & { readonly files: FileStore }) {}
 
   async execute(
     input: GameRef & { readonly changes: GameChanges },
@@ -91,6 +96,8 @@ export class UpdateGame {
     const game = updateGame(found.value, input.changes, this.deps.clock.now(), this.deps.gameModes);
     if (!game.ok) return game;
     await this.deps.games.save(game.value);
+    const removed = removedPictures(found.value.content, game.value.content);
+    await deletePictures(this.deps.files, game.value.schoolId, removed);
     return game;
   }
 }
@@ -121,12 +128,13 @@ export class GetGame {
   }
 }
 
-/** Deletes the game and its plays; grades already confirmed stay in the gradebook. */
+/** Deletes the game, its plays and its pictures; grades already confirmed stay in the gradebook. */
 export class DeleteGame {
   constructor(
     private readonly deps: {
       readonly games: GameRepository;
       readonly gamePlays: GamePlayRepository;
+      readonly files: FileStore;
     },
   ) {}
 
@@ -135,6 +143,8 @@ export class DeleteGame {
     if (!game.ok) return game;
     await this.deps.gamePlays.deleteByGame(game.value.schoolId, game.value.id);
     await this.deps.games.delete(game.value.schoolId, game.value.id);
+    const pictures = picturesOf(game.value.content).map((picture) => picture.id);
+    await deletePictures(this.deps.files, game.value.schoolId, pictures);
     return ok(true);
   }
 }

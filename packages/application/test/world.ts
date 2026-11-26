@@ -24,6 +24,8 @@ import {
   FixedClock,
   InMemoryAssignmentRepository,
   InMemoryFileStore,
+  FakePictureCleaner,
+  pictureSamples,
   InMemoryJobQueue,
   InMemoryLessonPlanRepository,
   InMemoryPlanFolderRepository,
@@ -150,6 +152,7 @@ export const makeWorld = () => {
     mailer: new FakeMailer(),
     mailTemplates: fakeMailTemplates,
     files: new InMemoryFileStore(),
+    pictureCleaner: new FakePictureCleaner(pictureSamples),
     google: new FakeGoogleIdentity({
       'good-code': googleProfile,
       'unverified-code': {

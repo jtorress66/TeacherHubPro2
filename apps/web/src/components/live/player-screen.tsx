@@ -10,6 +10,7 @@ import {
 import { GamePlayer } from '../game-player.tsx';
 import { AnswerOptions } from './answer-options.tsx';
 import { useCountdown, useLiveSocket } from './use-live-socket.ts';
+import { LivePicture } from '../game-picture.tsx';
 
 /** A self-paced session: the student plays the game with the regular player. */
 function SelfPaced(props: {
@@ -30,6 +31,7 @@ function SelfPaced(props: {
       locale={props.locale}
       initial={round}
       preview={false}
+      pictures={{ ticket: props.ticket }}
       start={startSelfPacedRoundAction.bind(null, props.ticket)}
       finish={async (input) => {
         const reply = await finishSelfPacedRoundAction(props.ticket, input);
@@ -89,6 +91,7 @@ export function PlayerScreen(props: {
             {t('live.timeLeft', { seconds })}
           </p>
           <h2 className="live-question">{view.question.prompt}</h2>
+          <LivePicture picture={view.question.picture} ticket={props.ticket} />
           {view.you?.answeredCurrent ? (
             <p role="status">{t('play.answered')}</p>
           ) : (

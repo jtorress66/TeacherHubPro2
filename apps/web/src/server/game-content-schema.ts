@@ -3,6 +3,7 @@ import {
   maxGameItems,
   maxItemTextLength,
   maxOptions,
+  maxPictureAltLength,
   type ContentKind,
   type GameContent,
 } from '@thp/domain';
@@ -12,16 +13,18 @@ import {
 
 const text = z.string().max(maxItemTextLength * 2);
 const list = <T extends z.ZodType>(item: T) => z.array(item).max(maxGameItems * 2);
+const picture = z.object({ id: z.string().max(64), alt: z.string().max(maxPictureAltLength * 2) });
 
 const itemSchemas = {
   questions: z.object({
     prompt: text,
     options: z.array(text).max(maxOptions * 2),
     answer: z.number().int(),
+    picture: picture.optional(),
   }),
-  statements: z.object({ statement: text, isTrue: z.boolean() }),
-  sentences: z.object({ text, answer: text }),
-  pairs: z.object({ term: text, definition: text }),
+  statements: z.object({ statement: text, isTrue: z.boolean(), picture: picture.optional() }),
+  sentences: z.object({ text, answer: text, picture: picture.optional() }),
+  pairs: z.object({ term: text, definition: text, picture: picture.optional() }),
   steps: text,
   groups: z.object({ name: text, members: z.array(text).max(maxGameItems * 2) }),
 } as const satisfies Record<ContentKind, z.ZodType>;

@@ -810,6 +810,18 @@ export const deAppB = {
     openDoc: 'Datei öffnen',
   },
   games: {
+    pictureAdd: 'Bild hinzufügen',
+    pictureHint:
+      'PNG, JPEG, WebP oder GIF, bis 2 MB. Große Fotos werden verkleinert und ihre Standortdaten entfernt. Laden Sie keine Fotos hoch, auf denen Schülerinnen oder Schüler zu sehen sind.',
+    pictureSending: 'Bild wird hochgeladen…',
+    pictureFailed: 'Das Bild konnte nicht hochgeladen werden. Versuchen Sie es erneut.',
+    pictureTooLarge: 'Das Bild ist größer als 2 MB. Wählen Sie ein kleineres.',
+    pictureInvalid: 'Verwenden Sie ein PNG-, JPEG-, WebP- oder GIF-Bild.',
+    pictureAlt: 'Bildbeschreibung',
+    pictureAltHint:
+      'Beschreiben Sie, was es zeigt, für Lernende, die es nicht sehen können. Beispiel: Eine Karte von Puerto Rico, auf der Ponce markiert ist.',
+    pictureAltRequired: 'Fügen Sie eine Beschreibung des Bildes hinzu.',
+    pictureRemove: 'Bild entfernen',
     builderLegend_questions: 'Frage {number}',
     builderLegend_statements: 'Aussage {number}',
     builderLegend_sentences: 'Satz {number}',

@@ -1,9 +1,11 @@
 import {
+  contentLabels,
   maxGameItems,
   maxOptions,
   minOptions,
   type ContentKind,
   type GameContent,
+  type GamePicture,
   type GroupItem,
   type ItemOf,
   type PairItem,
@@ -96,13 +98,50 @@ export const itemsAsText = <K extends ContentKind>(kind: K, items: readonly Item
 export const textAsItems = <K extends ContentKind>(kind: K, text: string): readonly ItemOf<K>[] =>
   parseContentText(kind, text).items as readonly ItemOf<K>[];
 
+/** The card with this picture, or with none. */
+export function setPicture<T extends { readonly picture?: GamePicture }>(
+  item: T,
+  picture: GamePicture | undefined,
+): T {
+  if (picture !== undefined) return { ...item, picture };
+  return Object.fromEntries(Object.entries(item).filter(([key]) => key !== 'picture')) as T;
+}
+
+const labelsOf = <K extends ContentKind>(kind: K, items: readonly ItemOf<K>[]) =>
+  contentLabels({ kind, items } as GameContent).map((label) => label.trim().toLocaleLowerCase());
+
+/**
+ * Cards read back from the text box, with the pictures the cards had before put back on the
+ * items whose question (or term, or statement) is unchanged; the text box cannot show pictures.
+ */
+export function keepPictures<K extends ContentKind>(
+  kind: K,
+  before: readonly ItemOf<K>[],
+  after: readonly ItemOf<K>[],
+): readonly ItemOf<K>[] {
+  const old = labelsOf(kind, before);
+  const pictures = new Map<string, GamePicture>();
+  before.forEach((item, index) => {
+    const label = old[index];
+    const picture = typeof item === 'object' && 'picture' in item ? item.picture : undefined;
+    if (picture !== undefined && label !== undefined) pictures.set(label, picture);
+  });
+  const labels = labelsOf(kind, after);
+  return after.map((item, index) => {
+    const picture = pictures.get(labels[index] ?? '');
+    return (
+      picture === undefined || typeof item !== 'object' ? item : { ...item, picture }
+    ) as ItemOf<K>;
+  });
+}
+
 const allBlank = (...texts: readonly string[]) => texts.every((text) => text.trim() === '');
 
 const blanks: { readonly [K in ContentKind]: (item: ItemOf<K>) => boolean } = {
-  questions: (item) => allBlank(item.prompt, ...item.options),
-  statements: (item) => allBlank(item.statement),
-  sentences: (item) => allBlank(item.text, item.answer),
-  pairs: (item) => allBlank(item.term, item.definition),
+  questions: (item) => !item.picture && allBlank(item.prompt, ...item.options),
+  statements: (item) => !item.picture && allBlank(item.statement),
+  sentences: (item) => !item.picture && allBlank(item.text, item.answer),
+  pairs: (item) => !item.picture && allBlank(item.term, item.definition),
   steps: (item) => allBlank(item),
   groups: (item) => allBlank(item.name, ...item.members),
 };

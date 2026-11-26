@@ -315,6 +315,13 @@ export {
 } from './games/games.ts';
 export * from './games/game-reuse.ts';
 export {
+  GetGamePicture,
+  GetLiveGamePicture,
+  GetStudentGamePicture,
+  UploadGamePicture,
+  type UploadedPicture,
+} from './games/game-pictures.ts';
+export {
   RequestGameDraft,
   GameDraftHandler,
   GetGameDraft,

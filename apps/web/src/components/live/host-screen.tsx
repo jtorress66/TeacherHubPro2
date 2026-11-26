@@ -5,6 +5,7 @@ import { createTranslator, type Locale } from '@thp/i18n';
 import { AnswerOptions, optionLabel } from './answer-options.tsx';
 import { useCountdown, useLiveSocket } from './use-live-socket.ts';
 import { TableScroll } from '../table-scroll.tsx';
+import { LivePicture } from '../game-picture.tsx';
 
 function Leaderboard({ view, locale }: { readonly view: LiveView; readonly locale: Locale }) {
   const t = createTranslator(locale);
@@ -138,6 +139,7 @@ export function HostScreen(props: {
             {t('live.questionOf', { n: view.current + 1, total: view.questionCount })}
           </p>
           <h2 className="live-question">{view.question.prompt}</h2>
+          <LivePicture picture={view.question.picture} ticket={props.ticket} />
           {view.status === 'question' ? (
             <p role="timer" className="chip">
               {t('live.timeLeft', { seconds })} ·{' '}

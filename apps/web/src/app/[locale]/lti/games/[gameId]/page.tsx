@@ -48,6 +48,7 @@ export default async function LtiStudentGamePage(props: Props) {
         locale={locale}
         initial={round.value}
         preview={false}
+        pictures={{ base: `/api/lti/games/${encodeURIComponent(id)}/pictures` }}
         start={startPassRoundAction}
         finish={finishPassRoundAction}
       />

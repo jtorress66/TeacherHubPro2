@@ -1,10 +1,12 @@
 import { blank } from '../content.ts';
+import type { GamePicture } from '../game-picture.ts';
 import { defineMode, listOf, sameAnswer, scored } from '../game-mode.ts';
 import { shuffle } from '../random.ts';
 
 export interface ShownSentence {
   readonly before: string;
   readonly after: string;
+  readonly picture?: GamePicture;
 }
 
 export interface FillBlanksView {
@@ -24,7 +26,9 @@ export const fillBlanksMode = defineMode({
       mode: 'fill_blanks',
       sentences: items.map((item) => {
         const [before = '', after = ''] = item.text.split(blank);
-        return { before, after };
+        return item.picture === undefined
+          ? { before, after }
+          : { before, after, picture: item.picture };
       }),
       wordBank: shuffle(
         items.map((item) => item.answer),

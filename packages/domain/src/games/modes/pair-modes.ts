@@ -1,9 +1,11 @@
+import type { PairItem } from '../content.ts';
 import { defineMode, listOf, scored } from '../game-mode.ts';
 import { shuffle } from '../random.ts';
 
 export interface FlashcardsView {
   readonly mode: 'flashcards';
-  readonly cards: readonly { readonly term: string; readonly definition: string }[];
+  /** Each card's term (with its picture, if any) and definition. */
+  readonly cards: readonly PairItem[];
 }
 
 /** Flip each card; answers say per card whether the student knew it. */

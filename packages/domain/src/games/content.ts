@@ -1,27 +1,33 @@
 import { ok, type Result } from '../shared/result.ts';
 import { invalid, requiredText, type ValidationError } from '../shared/validation.ts';
+import { checkPicture, type GamePicture } from './game-picture.ts';
 
 export interface QuestionItem {
   readonly prompt: string;
   readonly options: readonly string[];
   /** The index of the correct option. */
   readonly answer: number;
+  readonly picture?: GamePicture;
 }
 
 export interface StatementItem {
   readonly statement: string;
   readonly isTrue: boolean;
+  readonly picture?: GamePicture;
 }
 
 /** A sentence with one `___` blank for the answer. */
 export interface SentenceItem {
   readonly text: string;
   readonly answer: string;
+  readonly picture?: GamePicture;
 }
 
 export interface PairItem {
   readonly term: string;
   readonly definition: string;
+  /** Shown with the term. */
+  readonly picture?: GamePicture;
 }
 
 export interface GroupItem {
@@ -99,6 +105,17 @@ function distinctTexts(field: string, values: readonly string[]): Checked<string
   return ok(texts);
 }
 
+/** The checked item, with its picture (if it has one) checked too. */
+function withPicture<T extends object>(
+  field: string,
+  checked: T,
+  picture: GamePicture | undefined,
+): Checked<T & { picture?: GamePicture }> {
+  const shown = checkPicture(field, picture);
+  if (!shown.ok) return shown;
+  return ok(shown.value === undefined ? checked : { ...checked, picture: shown.value });
+}
+
 interface KindRules<K extends ContentKind> {
   readonly minItems: number;
   /** Checks one item; `others` are the items already accepted. */
@@ -117,7 +134,11 @@ const questionRules: KindRules<'questions'> = {
     if (!Number.isInteger(item.answer) || item.answer < 0 || item.answer >= options.value.length) {
       return invalid(`${field}.answer`, 'out_of_range');
     }
-    return ok({ prompt: prompt.value, options: options.value, answer: item.answer });
+    return withPicture(
+      field,
+      { prompt: prompt.value, options: options.value, answer: item.answer },
+      item.picture,
+    );
   },
 };
 
@@ -125,7 +146,8 @@ const statementRules: KindRules<'statements'> = {
   minItems: 3,
   check(field, item) {
     const statement = itemText(field, item.statement);
-    return statement.ok ? ok({ statement: statement.value, isTrue: item.isTrue }) : statement;
+    if (!statement.ok) return statement;
+    return withPicture(field, { statement: statement.value, isTrue: item.isTrue }, item.picture);
   },
 };
 
@@ -140,7 +162,7 @@ const sentenceRules: KindRules<'sentences'> = {
     if (sameText(text.value).includes(sameText(answer.value))) {
       return invalid(`${field}.answer`, 'not_allowed');
     }
-    return ok({ text: text.value, answer: answer.value });
+    return withPicture(field, { text: text.value, answer: answer.value }, item.picture);
   },
 };
 
@@ -153,7 +175,8 @@ const pairRules: KindRules<'pairs'> = {
       return invalid(`${field}.term`, 'duplicate');
     }
     const definition = itemText(`${field}.definition`, item.definition);
-    return definition.ok ? ok({ term: term.value, definition: definition.value }) : definition;
+    if (!definition.ok) return definition;
+    return withPicture(field, { term: term.value, definition: definition.value }, item.picture);
   },
 };
 

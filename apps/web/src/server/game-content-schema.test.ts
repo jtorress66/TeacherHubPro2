@@ -15,6 +15,19 @@ describe('parseContentJson', () => {
     });
   });
 
+  it('keeps a picture on the kinds that can show one', () => {
+    const picture = { id: 'pic-1', alt: 'A map of Ponce' };
+    const items = [{ statement: 'Ponce is in the south', isTrue: true, picture }];
+
+    expect(parseContentJson('statements', JSON.stringify(items))).toEqual({
+      kind: 'statements',
+      items,
+    });
+    expect(
+      parseContentJson('pairs', JSON.stringify([{ term: 'Sun', definition: 'Star', picture: {} }])),
+    ).toBeNull();
+  });
+
   it('refuses JSON of another shape, or that is not JSON at all', () => {
     expect(parseContentJson('questions', '[{"term":"Sun","definition":"Star"}]')).toBeNull();
     expect(parseContentJson('pairs', '{"kind":"pairs"}')).toBeNull();

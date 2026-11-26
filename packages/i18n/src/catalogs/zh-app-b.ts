@@ -749,6 +749,17 @@ export const zhAppB = {
     openDoc: '打开文件',
   },
   games: {
+    pictureAdd: '添加图片',
+    pictureHint:
+      'PNG、JPEG、WebP 或 GIF，最大 2 MB。大照片会被缩小，并删除其中的位置信息。请勿上传拍到学生的照片。',
+    pictureSending: '正在上传图片…',
+    pictureFailed: '图片上传失败，请重试。',
+    pictureTooLarge: '这张图片超过 2 MB，请选择更小的图片。',
+    pictureInvalid: '请使用 PNG、JPEG、WebP 或 GIF 图片。',
+    pictureAlt: '图片描述',
+    pictureAltHint: '说明图片内容，供看不见图片的学生了解。例如：一张标出庞塞的波多黎各地图。',
+    pictureAltRequired: '请为图片添加描述。',
+    pictureRemove: '移除图片',
     builderLegend_questions: '问题 {number}',
     builderLegend_statements: '陈述 {number}',
     builderLegend_sentences: '句子 {number}',

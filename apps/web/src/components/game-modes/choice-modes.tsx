@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import type { QuizView, TimeAttackView, TrueFalseView } from '@thp/domain';
+import type { GamePicture, QuizView, TimeAttackView, TrueFalseView } from '@thp/domain';
 import { createTranslator } from '@thp/i18n';
+import { GamePictureImage } from '../game-picture.tsx';
 import type { RendererProps } from './renderer.ts';
 
 /** One question at a time; each click answers and moves on. */
@@ -10,6 +11,7 @@ function OneAtATime(props: {
   readonly total: number;
   readonly locale: RendererProps<QuizView>['locale'];
   readonly prompt: (index: number) => string;
+  readonly picture: (index: number) => GamePicture | null | undefined;
   readonly choices: (index: number) => readonly { label: string; value: unknown }[];
   readonly onDone: (answers: unknown[]) => void;
   /** Called with the answers so far after each one. */
@@ -23,6 +25,7 @@ function OneAtATime(props: {
     <div className="stack game-question">
       <p className="muted small">{t('gamePlay.progress', { n: index + 1, total: props.total })}</p>
       <h2>{props.prompt(index)}</h2>
+      <GamePictureImage picture={props.picture(index)} />
       <div className="button-row">
         {props.choices(index).map((choice) => (
           <button
@@ -50,6 +53,7 @@ export function QuizRound({ view, locale, onDone }: RendererProps<QuizView>) {
       locale={locale}
       total={view.questions.length}
       prompt={(i) => view.questions[i]?.prompt ?? ''}
+      picture={(i) => view.questions[i]?.picture}
       choices={(i) => (view.questions[i]?.options ?? []).map((label, value) => ({ label, value }))}
       onDone={onDone}
     />
@@ -87,6 +91,7 @@ export function TimeAttackRound({ view, locale, onDone }: RendererProps<TimeAtta
         locale={locale}
         total={view.questions.length}
         prompt={(i) => view.questions[i]?.prompt ?? ''}
+        picture={(i) => view.questions[i]?.picture}
         choices={(i) =>
           (view.questions[i]?.options ?? []).map((label, value) => ({ label, value }))
         }
@@ -106,6 +111,7 @@ export function TrueFalseRound({ view, locale, onDone }: RendererProps<TrueFalse
       locale={locale}
       total={view.statements.length}
       prompt={(i) => view.statements[i] ?? ''}
+      picture={(i) => view.pictures[i]}
       choices={() => [
         { label: t('gamePlay.true'), value: true },
         { label: t('gamePlay.false'), value: false },

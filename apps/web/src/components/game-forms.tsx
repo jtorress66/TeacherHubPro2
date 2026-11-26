@@ -26,12 +26,14 @@ import {
   builderContent,
   builderItemsOf,
   itemsAsText,
+  keepPictures,
   textAsItems,
   withStartingCard,
 } from '../server/game-builder-state.ts';
 import { parseContentJson } from '../server/game-content-schema.ts';
 import { parseContentText } from '../server/game-text.ts';
 import { GameBuilder } from './game-builder.tsx';
+import { PictureSourceProvider, uploadedPicture } from './game-picture.tsx';
 import { TableScroll } from './table-scroll.tsx';
 
 const initial: GameFormState = {};
@@ -139,9 +141,16 @@ function ContentField(props: {
   readonly kind: ContentKind;
   readonly values: GameEditorValues;
   readonly error: string | undefined;
+  /** A saved game, whose pictures are served from it. */
+  readonly gameId?: string | undefined;
 }) {
   const t = createTranslator(props.locale);
-  const { kind } = props;
+  const { kind, gameId } = props;
+  const pictureSource = (id: string) =>
+    uploadedPicture(id) ??
+    (gameId === undefined
+      ? null
+      : `/api/games/${encodeURIComponent(gameId)}/pictures/${encodeURIComponent(id)}`);
   const [asText, setAsText] = useState(props.values.asText === true);
   const [text, setText] = useState(props.values.content);
   const [cards, setCards] = useState(() =>
@@ -158,7 +167,9 @@ function ContentField(props: {
   const [shownAsText, setShownAsText] = useState<string | null>(null);
   const toggle = () => {
     if (asText) {
-      if (text !== shownAsText) setCards({ ...cards, [kind]: textAsItems(kind, text) });
+      if (text !== shownAsText) {
+        setCards({ ...cards, [kind]: keepPictures(kind, shown[kind], textAsItems(kind, text)) });
+      }
     } else {
       const written = itemsAsText(kind, shown[kind]);
       setText(written);
@@ -194,14 +205,16 @@ function ContentField(props: {
         </div>
       ) : (
         <>
-          <GameBuilder
-            locale={props.locale}
-            kind={kind}
-            items={shown[kind]}
-            onChange={(items) => {
-              setCards({ ...cards, [kind]: items });
-            }}
-          />
+          <PictureSourceProvider access={{ src: pictureSource }}>
+            <GameBuilder
+              locale={props.locale}
+              kind={kind}
+              items={shown[kind]}
+              onChange={(items) => {
+                setCards({ ...cards, [kind]: items });
+              }}
+            />
+          </PictureSourceProvider>
           <input
             type="hidden"
             name="contentJson"
@@ -283,6 +296,7 @@ function EditorForm(
         kind={kind}
         values={props.values}
         error={errors?.content}
+        gameId={props.gameId}
       />
       <Submit label={props.gameId === undefined ? t('games.create') : t('games.save')} />
     </form>

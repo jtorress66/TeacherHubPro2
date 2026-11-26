@@ -83,9 +83,11 @@ export function gameFormErrors(error: UseCaseError, locale: Locale): Record<stri
       content: error.code === 'too_short' ? t('games.tooFewItems') : t('games.tooManyItems'),
     };
   }
-  return {
-    content: t('games.itemError', { item: Number(item) + 1, message: messageFor(error, locale) }),
-  };
+  const message =
+    error.field.endsWith('.picture.alt') && error.code === 'required'
+      ? t('games.pictureAltRequired')
+      : messageFor(error, locale);
+  return { content: t('games.itemError', { item: Number(item) + 1, message }) };
 }
 
 export function parseGradingForm(data: FormData) {

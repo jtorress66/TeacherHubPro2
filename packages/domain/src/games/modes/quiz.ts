@@ -1,10 +1,12 @@
 import type { ContentOf } from '../content.ts';
+import type { GamePicture } from '../game-picture.ts';
 import { defineMode, listOf, scored, type PreparedRound } from '../game-mode.ts';
 import { shuffle, type Random } from '../random.ts';
 
 export interface ShownQuestion {
   readonly prompt: string;
   readonly options: readonly string[];
+  readonly picture?: GamePicture;
 }
 
 export interface QuizView {
@@ -32,7 +34,11 @@ function questionRound(
       random,
     );
     return {
-      question: { prompt: item.prompt, options: order.map((index) => item.options[index] ?? '') },
+      question: {
+        prompt: item.prompt,
+        options: order.map((index) => item.options[index] ?? ''),
+        ...(item.picture === undefined ? {} : { picture: item.picture }),
+      },
       answer: order.indexOf(item.answer),
     };
   });

@@ -1,6 +1,7 @@
 import { sql } from 'kysely';
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import {
+  pictureKeyFor,
   requestSchoolDeletion,
   type AssignmentId,
   type AttendanceSessionId,
@@ -87,6 +88,7 @@ async function seed(schoolId: SchoolId): Promise<void> {
   const file = { bytes: new Uint8Array([1, 2, 3]), contentType: 'image/png' };
   await files.put(`schools/${schoolId}/logo`, file);
   await files.put(`attachments/${schoolId}/${assignmentId}/a1`, file);
+  await files.put(pictureKeyFor(schoolId, 'pic-1'), file);
 }
 
 const count = async (table: string, column: string, value: string): Promise<number> => {
@@ -103,6 +105,7 @@ async function hasData(schoolId: SchoolId): Promise<boolean> {
     count('attendance_entries', 'student_id', `student-${schoolId}`),
     count('stored_files', 'key', `schools/${schoolId}/logo`),
     count('stored_files', 'key', `attachments/${schoolId}/assignment-${schoolId}/a1`),
+    count('stored_files', 'key', pictureKeyFor(schoolId, 'pic-1')),
   ]);
   return counts.some((n) => n > 0);
 }

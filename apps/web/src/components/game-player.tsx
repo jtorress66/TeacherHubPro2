@@ -17,6 +17,7 @@ import {
   MemoryRound,
 } from './game-modes/card-modes.tsx';
 import { QuizRound, TimeAttackRound, TrueFalseRound } from './game-modes/choice-modes.tsx';
+import { accessFor, PictureSourceProvider, type PicturePlace } from './game-picture.tsx';
 import { CrosswordRound, WordSearchRound } from './game-modes/grid-modes.tsx';
 import { DragDropRound, SequenceRound } from './game-modes/order-modes.tsx';
 import type { RendererProps } from './game-modes/renderer.ts';
@@ -51,6 +52,8 @@ export function GamePlayer(props: {
   readonly locale: Locale;
   readonly initial: GameRound;
   readonly preview: boolean;
+  /** Where this player opens the game's pictures (their link's or account's address, or ticket). */
+  readonly pictures: PicturePlace;
   readonly start: (input: StartRoundInput) => Promise<RoundReply>;
   readonly finish: (input: FinishRoundInput) => Promise<FinishReply>;
 }) {
@@ -88,64 +91,66 @@ export function GamePlayer(props: {
   };
 
   return (
-    <div className="stack game-player" lang={round.language}>
-      {props.preview ? <p className="chip">{t('gamePlay.previewNote')}</p> : null}
-      {round.modes.length > 1 ? (
-        <div className="field">
-          <label htmlFor="game-mode">{t('gamePlay.chooseMode')}</label>
-          <select
-            id="game-mode"
-            value={round.mode}
-            disabled={busy}
-            onChange={(event) => {
-              void begin(event.target.value as GameModeId);
-            }}
-          >
-            {round.modes.map((mode) => (
-              <option key={mode} value={mode}>
-                {modeName(mode)}
-              </option>
-            ))}
-          </select>
-        </div>
-      ) : (
-        <p className="muted">{modeName(round.mode)}</p>
-      )}
-      {failed ? (
-        <p role="alert" className="alert">
-          {t('gamePlay.error')}
-        </p>
-      ) : null}
-      {result === null ? (
-        <Round
-          key={`${round.mode}-${String(round.seed)}`}
-          view={round.view}
-          locale={props.locale}
-          onDone={(answers) => {
-            if (!busy) void done(answers);
-          }}
-        />
-      ) : (
-        <div className="stack">
-          <p role="status" className="game-result">
-            {t('gamePlay.result', {
-              score: result.score,
-              total: result.total,
-              percent: result.percent,
-            })}
+    <PictureSourceProvider access={accessFor(props.pictures)}>
+      <div className="stack game-player" lang={round.language}>
+        {props.preview ? <p className="chip">{t('gamePlay.previewNote')}</p> : null}
+        {round.modes.length > 1 ? (
+          <div className="field">
+            <label htmlFor="game-mode">{t('gamePlay.chooseMode')}</label>
+            <select
+              id="game-mode"
+              value={round.mode}
+              disabled={busy}
+              onChange={(event) => {
+                void begin(event.target.value as GameModeId);
+              }}
+            >
+              {round.modes.map((mode) => (
+                <option key={mode} value={mode}>
+                  {modeName(mode)}
+                </option>
+              ))}
+            </select>
+          </div>
+        ) : (
+          <p className="muted">{modeName(round.mode)}</p>
+        )}
+        {failed ? (
+          <p role="alert" className="alert">
+            {t('gamePlay.error')}
           </p>
-          <button
-            type="button"
-            className="button"
-            disabled={busy}
-            onClick={() => {
-              void begin(round.mode);
+        ) : null}
+        {result === null ? (
+          <Round
+            key={`${round.mode}-${String(round.seed)}`}
+            view={round.view}
+            locale={props.locale}
+            onDone={(answers) => {
+              if (!busy) void done(answers);
             }}
-          >
-            {t('gamePlay.playAgain')}
-          </button>
-        </div>
-      )}
-    </div>
+          />
+        ) : (
+          <div className="stack">
+            <p role="status" className="game-result">
+              {t('gamePlay.result', {
+                score: result.score,
+                total: result.total,
+                percent: result.percent,
+              })}
+            </p>
+            <button
+              type="button"
+              className="button"
+              disabled={busy}
+              onClick={() => {
+                void begin(round.mode);
+              }}
+            >
+              {t('gamePlay.playAgain')}
+            </button>
+          </div>
+        )}
+      </div>
+    </PictureSourceProvider>
   );
 }

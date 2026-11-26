@@ -102,7 +102,7 @@ export function scoreOf(
 export const clampDuration = (ms: number): number =>
   Number.isFinite(ms) ? Math.min(maxDurationMs, Math.max(0, Math.round(ms))) : 0;
 
-interface StudentGameDeps extends LinkDeps {
+export interface StudentGameDeps extends LinkDeps {
   readonly games: GameRepository;
   readonly gameModes: GameModeRegistry;
 }

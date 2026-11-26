@@ -71,6 +71,9 @@ describe('game forms', () => {
     expect(gameFormErrors({ field: 'items.2.term', code: 'duplicate' }, 'en')).toEqual({
       content: t('games.itemError', { item: 3, message: t('errors.duplicate') }),
     });
+    expect(gameFormErrors({ field: 'items.1.picture.alt', code: 'required' }, 'en')).toEqual({
+      content: t('games.itemError', { item: 2, message: t('games.pictureAltRequired') }),
+    });
     expect(gameFormErrors({ field: 'items', code: 'too_short' }, 'en')).toEqual({
       content: t('games.tooFewItems'),
     });

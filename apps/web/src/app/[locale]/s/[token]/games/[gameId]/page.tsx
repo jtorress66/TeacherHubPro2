@@ -51,6 +51,9 @@ export default async function StudentGamePage(props: Props) {
         locale={locale}
         initial={round.value}
         preview={false}
+        pictures={{
+          base: `/api/s/${encodeURIComponent(token)}/games/${encodeURIComponent(gameId)}/pictures`,
+        }}
         start={startStudentRoundAction.bind(null, token)}
         finish={finishStudentRoundAction.bind(null, token)}
       />
