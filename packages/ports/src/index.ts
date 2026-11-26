@@ -22,6 +22,7 @@ export type * from './ai/quiz-writer.ts';
 export type * from './files/file-store.ts';
 export type * from './files/pdf-text-extractor.ts';
 export type * from './files/document-text-extractor.ts';
+export type * from './files/picture-cleaner.ts';
 export type * from './curriculum/curriculum-guides.ts';
 export type * from './documents/report-card-renderer.ts';
 export type * from './documents/office-files.ts';

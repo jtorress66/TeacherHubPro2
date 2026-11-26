@@ -2059,6 +2059,18 @@ export const es: Messages = {
     openDoc: 'Abrir el archivo',
   },
   games: {
+    pictureAdd: 'Añadir una imagen',
+    pictureHint:
+      'PNG, JPEG, WebP o GIF, hasta 2 MB. Las fotos grandes se reducen y se les quitan los datos de ubicación. No suba fotos en las que aparezcan estudiantes.',
+    pictureSending: 'Subiendo la imagen…',
+    pictureFailed: 'No se pudo subir la imagen. Inténtelo de nuevo.',
+    pictureTooLarge: 'Esa imagen pesa más de 2 MB. Elija una más pequeña.',
+    pictureInvalid: 'Use una imagen PNG, JPEG, WebP o GIF.',
+    pictureAlt: 'Descripción de la imagen',
+    pictureAltHint:
+      'Diga qué muestra, para los estudiantes que no pueden verla. Ejemplo: Un mapa de Puerto Rico con Ponce marcado.',
+    pictureAltRequired: 'Añada una descripción de la imagen.',
+    pictureRemove: 'Quitar la imagen',
     builderLegend_questions: 'Pregunta {number}',
     builderLegend_statements: 'Afirmación {number}',
     builderLegend_sentences: 'Oración {number}',

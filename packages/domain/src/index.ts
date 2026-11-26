@@ -8,6 +8,7 @@ export * from './shared/time-of-day.ts';
 export * from './shared/weekday.ts';
 export * from './shared/language.ts';
 export * from './shared/url.ts';
+export * from './shared/image-type.ts';
 export * from './shared/schedule.ts';
 export {
   parseInline,
@@ -81,6 +82,8 @@ export * from './portals/portal-link.ts';
 export * from './portals/family-report.ts';
 export * from './billing/trial-reminders.ts';
 export * from './games/content.ts';
+export * from './games/game-picture.ts';
+export * from './games/content-pictures.ts';
 export * from './games/random.ts';
 export * from './games/game-mode.ts';
 export * from './games/mode-registry.ts';

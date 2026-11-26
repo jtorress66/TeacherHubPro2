@@ -799,6 +799,18 @@ export const itAppB = {
     openDoc: 'Apri il file',
   },
   games: {
+    pictureAdd: 'Aggiungi un’immagine',
+    pictureHint:
+      'PNG, JPEG, WebP o GIF, fino a 2 MB. Le foto grandi vengono ridotte e i dati di posizione rimossi. Non caricare foto in cui compaiono studenti.',
+    pictureSending: 'Caricamento dell’immagine…',
+    pictureFailed: 'Non è stato possibile caricare l’immagine. Riprova.',
+    pictureTooLarge: 'L’immagine supera i 2 MB. Scegline una più piccola.',
+    pictureInvalid: 'Usa un’immagine PNG, JPEG, WebP o GIF.',
+    pictureAlt: 'Descrizione dell’immagine',
+    pictureAltHint:
+      'Di’ cosa mostra, per gli studenti che non possono vederla. Esempio: Una mappa di Porto Rico con Ponce segnata.',
+    pictureAltRequired: 'Aggiungi una descrizione dell’immagine.',
+    pictureRemove: 'Rimuovi l’immagine',
     builderLegend_questions: 'Domanda {number}',
     builderLegend_statements: 'Affermazione {number}',
     builderLegend_sentences: 'Frase {number}',

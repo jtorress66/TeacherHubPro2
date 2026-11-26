@@ -201,7 +201,9 @@ describe('the accessibility statement', () => {
 describe('the AI governance page', () => {
   it('says the AI providers do not train on what we send and keep it at most 30 days', async () => {
     const { catalogs, locales } = await import('@thp/i18n');
-    expect(catalogs.en.legal.aiGovernance.s5Text).toContain('do not use what we send them to train their models');
+    expect(catalogs.en.legal.aiGovernance.s5Text).toContain(
+      'do not use what we send them to train their models',
+    );
     for (const locale of locales) {
       expect(catalogs[locale].legal.aiGovernance.s5Text, locale).toContain('30');
     }

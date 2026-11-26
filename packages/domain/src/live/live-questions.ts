@@ -1,3 +1,4 @@
+import type { GamePicture } from '../games/game-picture.ts';
 import { playableModes, type Game } from '../games/game.ts';
 import type { GameModeId, GameModeRegistry, RoundView } from '../games/mode-registry.ts';
 
@@ -7,6 +8,7 @@ export interface LiveQuestion {
   readonly options: readonly string[];
   /** `true_false` options are the words "true" and "false", translated on screen. */
   readonly style: 'choices' | 'true_false';
+  readonly picture: GamePicture | null;
 }
 
 /** How a question mode's round becomes live questions, and how a tapped choice is answered. */
@@ -19,7 +21,12 @@ interface LiveFormat {
 const choiceFormat: LiveFormat = {
   questions: (view) =>
     'questions' in view
-      ? view.questions.map((q) => ({ prompt: q.prompt, options: q.options, style: 'choices' }))
+      ? view.questions.map((q) => ({
+          prompt: q.prompt,
+          options: q.options,
+          style: 'choices',
+          picture: q.picture ?? null,
+        }))
       : [],
   answerFor: (choice) => choice,
 };
@@ -27,10 +34,11 @@ const choiceFormat: LiveFormat = {
 const trueFalseFormat: LiveFormat = {
   questions: (view) =>
     'statements' in view
-      ? view.statements.map((statement) => ({
+      ? view.statements.map((statement, index) => ({
           prompt: statement,
           options: ['true', 'false'],
           style: 'true_false',
+          picture: view.pictures[index] ?? null,
         }))
       : [],
   answerFor: (choice) => choice === 0,

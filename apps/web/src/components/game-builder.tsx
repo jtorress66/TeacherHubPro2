@@ -22,7 +22,9 @@ import {
   removeMember,
   removeOption,
   replaceItem,
+  setPicture,
 } from '../server/game-builder-state.ts';
+import { PictureField } from './game-picture.tsx';
 
 type T = ReturnType<typeof createTranslator>;
 
@@ -89,6 +91,13 @@ function QuestionCard({
         value={item.prompt}
         onChange={(prompt) => {
           onChange({ ...item, prompt });
+        }}
+      />
+      <PictureField
+        t={t}
+        picture={item.picture}
+        onChange={(picture) => {
+          onChange(setPicture(item, picture));
         }}
       />
       <ul className="builder-options">
@@ -162,6 +171,13 @@ function StatementCard({
           onChange({ ...item, statement });
         }}
       />
+      <PictureField
+        t={t}
+        picture={item.picture}
+        onChange={(picture) => {
+          onChange(setPicture(item, picture));
+        }}
+      />
       <fieldset className="builder-truth">
         <legend>{t('games.builderTruth')}</legend>
         {([true, false] as const).map((truth) => (
@@ -208,6 +224,13 @@ function SentenceCard({
           onChange({ ...item, answer });
         }}
       />
+      <PictureField
+        t={t}
+        picture={item.picture}
+        onChange={(picture) => {
+          onChange(setPicture(item, picture));
+        }}
+      />
     </>
   );
 }
@@ -222,22 +245,31 @@ function PairCard({
   readonly onChange: (item: PairItem) => void;
 }) {
   return (
-    <div className="field-row">
-      <CardText
-        label={t('games.builderTerm')}
-        value={item.term}
-        onChange={(term) => {
-          onChange({ ...item, term });
+    <>
+      <div className="field-row">
+        <CardText
+          label={t('games.builderTerm')}
+          value={item.term}
+          onChange={(term) => {
+            onChange({ ...item, term });
+          }}
+        />
+        <CardText
+          label={t('games.builderDefinition')}
+          value={item.definition}
+          onChange={(definition) => {
+            onChange({ ...item, definition });
+          }}
+        />
+      </div>
+      <PictureField
+        t={t}
+        picture={item.picture}
+        onChange={(picture) => {
+          onChange(setPicture(item, picture));
         }}
       />
-      <CardText
-        label={t('games.builderDefinition')}
-        value={item.definition}
-        onChange={(definition) => {
-          onChange({ ...item, definition });
-        }}
-      />
-    </div>
+    </>
   );
 }
 

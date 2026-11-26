@@ -2031,6 +2031,18 @@ export const en = {
     openDoc: 'Open the file',
   },
   games: {
+    pictureAdd: 'Add a picture',
+    pictureHint:
+      'PNG, JPEG, WebP or GIF, up to 2 MB. Big photos are made smaller, and their location data is removed. Don’t upload photos that show students.',
+    pictureSending: 'Uploading the picture…',
+    pictureFailed: 'The picture couldn’t be uploaded. Try again.',
+    pictureTooLarge: 'That picture is over 2 MB. Choose a smaller one.',
+    pictureInvalid: 'Use a PNG, JPEG, WebP or GIF picture.',
+    pictureAlt: 'Picture description',
+    pictureAltHint:
+      'Say what it shows, for students who can’t see it. Example: A map of Puerto Rico with Ponce marked.',
+    pictureAltRequired: 'Add a description of the picture.',
+    pictureRemove: 'Remove picture',
     builderLegend_questions: 'Question {number}',
     builderLegend_statements: 'Statement {number}',
     builderLegend_sentences: 'Sentence {number}',

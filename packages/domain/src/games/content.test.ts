@@ -218,3 +218,77 @@ describe('contentLabels', () => {
     ]);
   });
 });
+
+describe('validateContent with pictures', () => {
+  const map = { id: 'pic-1', alt: ' A map with Ponce marked ' };
+  const kept = { picture: { id: 'pic-1', alt: 'A map with Ponce marked' } };
+  const planets = [
+    { prompt: 'Largest planet?', options: ['Mars', 'Jupiter'], answer: 1 },
+    { prompt: 'The red planet?', options: ['Saturn', 'Mars'], answer: 1 },
+  ];
+
+  it('keeps a question’s, statement’s, sentence’s and pair’s picture with its trimmed description', () => {
+    const quiz = valueOf(
+      validateContent({
+        kind: 'questions',
+        items: [
+          { prompt: 'Where is Ponce?', options: ['South', 'North'], answer: 0, picture: map },
+          ...planets,
+        ],
+      }),
+    );
+    expect(quiz.items[0]).toMatchObject(kept);
+    expect(quiz.items[1]).not.toHaveProperty('picture');
+
+    const statements: GameContent = {
+      kind: 'statements',
+      items: [
+        { statement: 'Ponce is on the south coast', isTrue: true, picture: map },
+        { statement: 'San Juan is inland', isTrue: false },
+        { statement: 'Mayagüez is in the west', isTrue: true },
+      ],
+    };
+    expect(valueOf(validateContent(statements)).items[0]).toMatchObject(kept);
+
+    const sentences: GameContent = {
+      kind: 'sentences',
+      items: [
+        { text: 'Ponce is on the ___ coast', answer: 'south', picture: map },
+        { text: 'Water boils at ___ degrees', answer: '100' },
+        { text: 'The ___ is our star', answer: 'Sun' },
+      ],
+    };
+    expect(valueOf(validateContent(sentences)).items[0]).toMatchObject(kept);
+
+    const pictured: GameContent = {
+      kind: 'pairs',
+      items: [
+        { term: 'Ponce', definition: 'A city on the south coast', picture: map },
+        { term: 'Moon', definition: 'Earth’s natural satellite' },
+        { term: 'Comet', definition: 'Ice that grows a tail' },
+        { term: 'Orbit', definition: 'A curved path around a body' },
+      ],
+    };
+    expect(valueOf(validateContent(pictured)).items[0]).toMatchObject(kept);
+  });
+
+  it('refuses a picture with no description, naming the item it is on', () => {
+    const content: GameContent = {
+      kind: 'questions',
+      items: [
+        planets[0] ?? { prompt: '', options: [], answer: 0 },
+        {
+          prompt: 'Where is Ponce?',
+          options: ['South', 'North'],
+          answer: 0,
+          picture: { id: 'pic-2', alt: '' },
+        },
+        planets[1] ?? { prompt: '', options: [], answer: 0 },
+      ],
+    };
+    expect(errorOf(validateContent(content))).toEqual({
+      field: 'items.1.picture.alt',
+      code: 'required',
+    });
+  });
+});

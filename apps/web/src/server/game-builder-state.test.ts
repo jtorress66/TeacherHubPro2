@@ -13,6 +13,8 @@ import {
   removeMember,
   removeOption,
   replaceItem,
+  keepPictures,
+  setPicture,
   textAsItems,
   withStartingCard,
 } from './game-builder-state.ts';
@@ -88,5 +90,32 @@ describe('the question builder', () => {
 
     expect(text).toBe('Capital of Peru | A | *B | C\nCapital of Chile | *A | B | C');
     expect(textAsItems('questions', text)).toEqual(cards);
+  });
+
+  it('keeps each picture on its question when the text is edited and read back', () => {
+    const map = { id: 'pic-1', alt: 'A map of Peru' };
+    const cards = [{ ...q('Capital of Peru', 1), picture: map }, q('Capital of Chile')];
+    const edited = textAsItems('questions', 'Capital of Chile | *A | B\nCapital of Peru | A | *B');
+
+    expect(keepPictures('questions', cards, edited)).toEqual([
+      { prompt: 'Capital of Chile', options: ['A', 'B'], answer: 0 },
+      { prompt: 'Capital of Peru', options: ['A', 'B'], answer: 1, picture: map },
+    ]);
+    expect(keepPictures('steps', ['Mix'], ['Mix', 'Bake'])).toEqual(['Mix', 'Bake']);
+  });
+});
+
+describe('pictures on cards', () => {
+  const map = { id: 'pic-1', alt: 'A map' };
+
+  it('puts a picture on a card and takes it off again', () => {
+    const pictured = setPicture(q('Where?'), map);
+    expect(pictured.picture).toEqual(map);
+    expect(setPicture(pictured, undefined)).toEqual(q('Where?'));
+  });
+
+  it('sends a card that has only a picture, so the teacher is told what is missing', () => {
+    const onlyPicture = { prompt: '', options: ['', ''], answer: 0, picture: map };
+    expect(builderContent('questions', [onlyPicture]).items).toEqual([onlyPicture]);
   });
 });

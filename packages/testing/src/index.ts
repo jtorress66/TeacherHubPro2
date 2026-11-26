@@ -37,6 +37,7 @@ export * from './contracts/repository-lookups.contract.ts';
 export * from './contracts/security.contract.ts';
 export * from './contracts/files.contract.ts';
 export * from './contracts/zip-writer.contract.ts';
+export * from './contracts/picture-cleaner.contract.ts';
 export * from './contracts/services.contract.ts';
 export * from './contracts/google.contract.ts';
 export * from './contracts/canva.contract.ts';

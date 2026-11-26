@@ -1829,3 +1829,33 @@ tr[aria-current='true'] {
 .builder-card-actions {
   margin: 0;
 }
+
+/* Pictures on game items: never wider than their column, never taller than a phone screen. */
+.game-picture {
+  display: block;
+  max-width: 100%;
+  max-height: min(50vh, 420px);
+  width: auto;
+  height: auto;
+  margin: 0.5rem 0;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+.builder-picture .game-picture {
+  max-height: 180px;
+}
+
+.flashcard .game-picture {
+  margin-inline: auto;
+}
+
+.builder-picture {
+  min-width: 0;
+}
+
+.builder-picture input[type='file'] {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}

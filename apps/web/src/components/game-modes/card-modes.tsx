@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import type { FillBlanksView, FlashcardsView, MatchingView, MemoryView } from '@thp/domain';
 import { createTranslator } from '@thp/i18n';
+import { GamePictureImage } from '../game-picture.tsx';
 import type { RendererProps } from './renderer.ts';
 
 const textOf = (data: FormData, name: string): string => {
@@ -30,6 +31,7 @@ export function FillBlanksRound({ view, locale, onDone }: RendererProps<FillBlan
             <label htmlFor={`blank-${String(i)}`} className="visually-hidden">
               {t('gamePlay.answerFor', { n: i + 1 })}
             </label>
+            <GamePictureImage picture={sentence.picture} />
             {sentence.before}
             <input id={`blank-${String(i)}`} name={`blank-${String(i)}`} className="blank-input" />
             {sentence.after}
@@ -64,6 +66,7 @@ export function FlashcardsRound({ view, locale, onDone }: RendererProps<Flashcar
         {t('gamePlay.progress', { n: index + 1, total: view.cards.length })}
       </p>
       <div className="flashcard" aria-live="polite">
+        <GamePictureImage picture={card.picture} />
         <p className="flashcard-term">{card.term}</p>
         {flipped ? <p>{card.definition}</p> : null}
       </div>

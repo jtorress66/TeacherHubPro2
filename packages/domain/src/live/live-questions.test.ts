@@ -65,6 +65,33 @@ describe('liveModes', () => {
 });
 
 describe('liveQuestions', () => {
+  it('shows a question’s or statement’s picture to everyone, and null where there is none', () => {
+    const map = { id: 'map', alt: 'A map with Ponce marked' };
+    const quiz: GameContent = {
+      kind: 'questions',
+      items: [
+        {
+          prompt: 'Largest planet?',
+          options: ['Mars', 'Jupiter', 'Venus'],
+          answer: 1,
+          picture: map,
+        },
+        { prompt: 'Closest to the Sun?', options: ['Mercury', 'Earth'], answer: 0 },
+        { prompt: 'The red planet?', options: ['Saturn', 'Mars'], answer: 1 },
+      ],
+    };
+    const shown = liveQuestions(gameOf(quiz, 'quiz'), 'quiz', 3, defaultGameModes) ?? [];
+    expect(shown.find((q) => q.prompt === 'Largest planet?')?.picture).toEqual(map);
+    expect(shown.find((q) => q.prompt === 'The red planet?')?.picture).toBeNull();
+
+    const pictured: GameContent = {
+      kind: 'statements',
+      items: statementItems.map((s, i) => (i === 2 ? { ...s, picture: map } : s)),
+    };
+    const said = liveQuestions(gameOf(pictured, 'true_false'), 'true_false', 1, defaultGameModes);
+    expect(said?.find((q) => q.prompt === 'Mars is red')?.picture).toEqual(map);
+  });
+
   it('shows each quiz question with its options and no answer', () => {
     const shown = liveQuestions(gameOf(questions, 'quiz'), 'quiz', 3, defaultGameModes) ?? [];
     expect(shown.map((q) => q.prompt).sort()).toEqual([

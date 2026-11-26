@@ -4,6 +4,7 @@ import {
   CanvaConnectDesigns,
   DocxDocumentWriter,
   JsZipWriter,
+  MetadataPictureCleaner,
   LocalCanvaAuthorization,
   LocalCanvaDesigns,
   LocalMicrosoftAuthorization,
@@ -90,6 +91,10 @@ import {
   UpdateGame,
   DuplicateGame,
   AddItemsFromGame,
+  GetGamePicture,
+  GetLiveGamePicture,
+  GetStudentGamePicture,
+  UploadGamePicture,
   ListGames,
   GetGame,
   DeleteGame,
@@ -570,6 +575,10 @@ export interface AppContainer {
   readonly updateGame: UpdateGame;
   readonly duplicateGame: DuplicateGame;
   readonly addItemsFromGame: AddItemsFromGame;
+  readonly uploadGamePicture: UploadGamePicture;
+  readonly getGamePicture: GetGamePicture;
+  readonly getStudentGamePicture: GetStudentGamePicture;
+  readonly getLiveGamePicture: GetLiveGamePicture;
   readonly listGames: ListGames;
   readonly getGame: GetGame;
   readonly deleteGame: DeleteGame;
@@ -877,6 +886,7 @@ export function createAppContainer(
     tokenHasher: new Sha256TokenHasher(),
     passwordHasher: new ScryptPasswordHasher(),
     files: new PostgresFileStore(db),
+    pictureCleaner: new MetadataPictureCleaner(),
     jobs: new PostgresJobQueue(db, new UuidIdGenerator()),
     seeds: new CryptoSeedSource(),
     ticketSigner: new HmacTicketSigner(config.realtime.ticketSecret),
@@ -1118,6 +1128,10 @@ export function createAppContainer(
     updateGame: new UpdateGame(deps),
     duplicateGame: new DuplicateGame(deps),
     addItemsFromGame: new AddItemsFromGame(deps),
+    uploadGamePicture: new UploadGamePicture(deps),
+    getGamePicture: new GetGamePicture(deps),
+    getStudentGamePicture: new GetStudentGamePicture(deps),
+    getLiveGamePicture: new GetLiveGamePicture(deps),
     listGames: new ListGames(deps),
     getGame: new GetGame(deps),
     deleteGame: new DeleteGame(deps),

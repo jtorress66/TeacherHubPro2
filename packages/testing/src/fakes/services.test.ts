@@ -40,7 +40,13 @@ import {
   FakeCheckoutSessions,
   FakeSubscriptionRenewal,
 } from './billing.ts';
-import { FakeDocumentTextExtractor, InMemoryFileStore, FakePdfTextExtractor } from './files.ts';
+import {
+  FakeDocumentTextExtractor,
+  FakePictureCleaner,
+  InMemoryFileStore,
+  FakePdfTextExtractor,
+} from './files.ts';
+import { pictureCleanerContract } from '../contracts/picture-cleaner.contract.ts';
 import {
   FakeClassroom,
   FakeClassroomAuthorization,
@@ -99,6 +105,8 @@ textToSpeechContract('FakeTextToSpeech', {
 });
 
 fileStoreContract('InMemoryFileStore', () => new InMemoryFileStore());
+
+pictureCleanerContract('FakePictureCleaner', (samples) => new FakePictureCleaner(samples));
 
 const pdf = { pdf: new Uint8Array([37, 80, 68, 70, 1]), text: 'Q1. 2 + 2 = __', pageCount: 2 };
 pdfTextExtractorContract('FakePdfTextExtractor', (known) => new FakePdfTextExtractor([known]), pdf);

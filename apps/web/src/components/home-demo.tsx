@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react';
 import type { DemoText } from './home-demo-text.ts';
 
-
 const tabs = ['prep', 'grade', 'game', 'family'] as const;
 type Tab = (typeof tabs)[number];
 

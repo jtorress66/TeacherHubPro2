@@ -323,3 +323,67 @@ describe('sequence and drag and drop', () => {
     expect(view.items).toHaveLength(4);
   });
 });
+
+describe('pictures in rounds', () => {
+  const map = { id: 'map', alt: 'A map with Ponce marked' };
+
+  it('shows each question’s picture with it, after shuffling', () => {
+    const questions: ContentOf<'questions'> = {
+      kind: 'questions',
+      items: [
+        { prompt: 'Where is Ponce?', options: ['South', 'North'], answer: 0, picture: map },
+        { prompt: 'Closest?', options: ['Mercury', 'Earth'], answer: 0 },
+        { prompt: 'Red?', options: ['Saturn', 'Mars'], answer: 1 },
+      ],
+    };
+    for (const seed of [1, 2, 3]) {
+      const shown = quizMode.prepare(questions, seed).questions;
+      expect(shown.find((q) => q.prompt === 'Where is Ponce?')?.picture).toEqual(map);
+      expect(shown.find((q) => q.prompt === 'Red?')).not.toHaveProperty('picture');
+    }
+  });
+
+  it('a pair’s picture goes with its term in a quiz and on its flashcard', () => {
+    const pictured: ContentOf<'pairs'> = {
+      kind: 'pairs',
+      items: pairs.items.map((pair) => (pair.term === 'Sun' ? { ...pair, picture: map } : pair)),
+    };
+    expect(
+      quizMode.prepare(pictured, 4).questions.find((q) => q.prompt === 'Sun')?.picture,
+    ).toEqual(map);
+    expect(
+      flashcardsMode.prepare(pictured, 4).cards.find((c) => c.term === 'Sun')?.picture,
+    ).toEqual(map);
+  });
+
+  it('lines true or false pictures up with their statements', () => {
+    const statements: ContentOf<'statements'> = {
+      kind: 'statements',
+      items: [
+        { statement: 'Ponce is in the south', isTrue: true, picture: map },
+        { statement: 'The Moon is a planet', isTrue: false },
+        { statement: 'Mars is red', isTrue: true },
+      ],
+    };
+    const view = trueFalseMode.prepare(statements, 5);
+    const at = view.statements.indexOf('Ponce is in the south');
+    expect(view.pictures[at]).toEqual(map);
+    expect(view.pictures.filter((p) => p === null)).toHaveLength(2);
+  });
+
+  it('shows a sentence’s picture with its blank', () => {
+    const sentences: ContentOf<'sentences'> = {
+      kind: 'sentences',
+      items: [
+        { text: 'Ponce is on the ___ coast.', answer: 'south', picture: map },
+        { text: '___ is red.', answer: 'Mars' },
+        { text: 'Water ___ at 100 degrees.', answer: 'boils' },
+      ],
+    };
+    expect(fillBlanksMode.prepare(sentences, 2).sentences).toContainEqual({
+      before: 'Ponce is on the ',
+      after: ' coast.',
+      picture: map,
+    });
+  });
+});
