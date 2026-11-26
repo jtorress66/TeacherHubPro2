@@ -125,6 +125,21 @@ describe('standardsCoverage', () => {
     expect(statusFor(69)).toBe('reteach');
   });
 
+  it('counts the games that practise each standard, after the codes plans and assignments name', () => {
+    const rows = standardsCoverage({
+      plannedWeeks: [{ weekStart: week('2026-11-02'), codes: ['4.N.1.1'] }],
+      assignments: [assignment('a1', ['4.N.1.1'])],
+      grades: [grade(ana, 'a1', 9)],
+      studentIds: [ana],
+      games: [{ standards: ['4.N.1.1', 'GAME.ONLY'] }, { standards: ['GAME.ONLY'] }],
+    });
+
+    expect(rows.map((row) => [row.standard.code, row.games, row.status])).toEqual([
+      ['4.N.1.1', 1, 'on_track'],
+      ['GAME.ONLY', 2, 'practised'],
+    ]);
+  });
+
   it('has nothing to report for a class with no plans or tagged assignments', () => {
     expect(
       standardsCoverage({
@@ -146,11 +161,12 @@ describe('summarizeCoverage', () => {
       studentIds: [ana],
     });
 
-    expect(coverageStatuses).toEqual(['reteach', 'watch', 'on_track', 'not_tested']);
+    expect(coverageStatuses).toEqual(['reteach', 'watch', 'on_track', 'practised', 'not_tested']);
     expect(summarizeCoverage(rows)).toEqual({
       reteach: 1,
       watch: 0,
       on_track: 1,
+      practised: 0,
       not_tested: 1,
     });
   });

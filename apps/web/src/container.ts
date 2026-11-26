@@ -92,6 +92,7 @@ import {
   DuplicateGame,
   AddItemsFromGame,
   GetGamePicture,
+  ListPlannedStandards,
   GetLiveGamePicture,
   GetStudentGamePicture,
   UploadGamePicture,
@@ -576,6 +577,7 @@ export interface AppContainer {
   readonly duplicateGame: DuplicateGame;
   readonly addItemsFromGame: AddItemsFromGame;
   readonly uploadGamePicture: UploadGamePicture;
+  readonly listPlannedStandards: ListPlannedStandards;
   readonly getGamePicture: GetGamePicture;
   readonly getStudentGamePicture: GetStudentGamePicture;
   readonly getLiveGamePicture: GetLiveGamePicture;
@@ -1129,6 +1131,7 @@ export function createAppContainer(
     duplicateGame: new DuplicateGame(deps),
     addItemsFromGame: new AddItemsFromGame(deps),
     uploadGamePicture: new UploadGamePicture(deps),
+    listPlannedStandards: new ListPlannedStandards(deps),
     getGamePicture: new GetGamePicture(deps),
     getStudentGamePicture: new GetStudentGamePicture(deps),
     getLiveGamePicture: new GetLiveGamePicture(deps),

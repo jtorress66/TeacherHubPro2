@@ -8,6 +8,7 @@ import {
   gradeMethods,
   type ContentKind,
   type GameContent,
+  type StandardInfo,
 } from '@thp/domain';
 import { createTranslator, localeInfo, locales, type Locale } from '@thp/i18n';
 import {
@@ -26,7 +27,7 @@ import {
   builderContent,
   builderItemsOf,
   itemsAsText,
-  keepPictures,
+  keepExtras,
   textAsItems,
   withStartingCard,
 } from '../server/game-builder-state.ts';
@@ -102,6 +103,8 @@ export function GameEditor(props: {
   readonly values: GameEditorValues;
   readonly gameId?: string;
   readonly label?: string;
+  /** Codes from the teacher's lesson plans, offered for every card. */
+  readonly suggestions?: readonly StandardInfo[];
 }) {
   const [state, action] = useActionState(
     props.gameId === undefined ? createGameAction : updateGameAction,
@@ -143,6 +146,7 @@ function ContentField(props: {
   readonly error: string | undefined;
   /** A saved game, whose pictures are served from it. */
   readonly gameId?: string | undefined;
+  readonly suggestions?: readonly StandardInfo[] | undefined;
 }) {
   const t = createTranslator(props.locale);
   const { kind, gameId } = props;
@@ -168,7 +172,7 @@ function ContentField(props: {
   const toggle = () => {
     if (asText) {
       if (text !== shownAsText) {
-        setCards({ ...cards, [kind]: keepPictures(kind, shown[kind], textAsItems(kind, text)) });
+        setCards({ ...cards, [kind]: keepExtras(kind, shown[kind], textAsItems(kind, text)) });
       }
     } else {
       const written = itemsAsText(kind, shown[kind]);
@@ -210,6 +214,7 @@ function ContentField(props: {
               locale={props.locale}
               kind={kind}
               items={shown[kind]}
+              suggestions={props.suggestions ?? []}
               onChange={(items) => {
                 setCards({ ...cards, [kind]: items });
               }}
@@ -297,6 +302,7 @@ function EditorForm(
         values={props.values}
         error={errors?.content}
         gameId={props.gameId}
+        suggestions={props.suggestions}
       />
       <Submit label={props.gameId === undefined ? t('games.create') : t('games.save')} />
     </form>

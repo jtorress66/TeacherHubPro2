@@ -104,6 +104,7 @@ export default async function StandardsCoveragePage(props: Props) {
                     <th scope="col">{t('standards.coverageStandard')}</th>
                     <th scope="col">{t('standards.coveragePlanned')}</th>
                     <th scope="col">{t('standards.coverageAssignments')}</th>
+                    <th scope="col">{t('standards.coverageGames')}</th>
                     <th scope="col">{t('standards.coverageAverage')}</th>
                     <th scope="col">{t('standards.coverageBelow', { percent: watchPercent })}</th>
                     <th scope="col">{t('standards.coverageStatus')}</th>
@@ -132,6 +133,7 @@ export default async function StandardsCoveragePage(props: Props) {
                               .join(', ')}
                       </td>
                       <td>{row.assignments}</td>
+                      <td>{row.games}</td>
                       <td>{formatPercent(row.average, locale)}</td>
                       <td>{row.average === null ? '—' : row.studentsBelow}</td>
                       <td>
@@ -172,6 +174,7 @@ export default async function StandardsCoveragePage(props: Props) {
           <p className="hint">
             {t('standards.coverageLegend', { onTrack: onTrackPercent, watch: watchPercent })}
           </p>
+          <p className="hint">{t('standards.coverageLegendPractised')}</p>
           <p className="muted">{t('standards.coverageNote')}</p>
         </>
       )}

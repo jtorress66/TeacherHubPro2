@@ -5,6 +5,7 @@ import {
   setAssignmentStandards,
   type Result,
   type StandardInfo,
+  type User,
 } from '@thp/domain';
 import type { AssignmentRepository, ClassRepository, LessonPlanRepository } from '@thp/ports';
 import { findManagedClass } from '../classes/managed-class.ts';
@@ -57,5 +58,26 @@ export class SetAssignmentStandards {
     if (!tagged.ok) return tagged;
     await this.deps.assignments.save(tagged.value);
     return ok(true);
+  }
+}
+
+/** The most planned codes offered as suggestions in the game builder. */
+export const maxPlannedSuggestions = 40;
+
+/**
+ * The standards in the lesson plans of the actor's own classes, once each, for the game builder
+ * to suggest. Only the actor's school and classes are read.
+ */
+export class ListPlannedStandards {
+  constructor(private readonly deps: Pick<AssignmentStandardsDeps, 'classes' | 'lessonPlans'>) {}
+
+  async execute(input: { readonly actor: User }): Promise<readonly StandardInfo[]> {
+    const { actor } = input;
+    const classes = await this.deps.classes.listByTeacher(actor.schoolId, actor.id);
+    const plans = await Promise.all(
+      classes.map((cls) => this.deps.lessonPlans.listByClass(actor.schoolId, cls.id)),
+    );
+    const codes = new Set(plans.flat().flatMap((plan) => planStandardCodes(plan.body)));
+    return [...codes].slice(0, maxPlannedSuggestions).map(describeStandard);
   }
 }

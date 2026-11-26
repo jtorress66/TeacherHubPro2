@@ -1,5 +1,6 @@
 import { ok, type Result } from '../shared/result.ts';
 import { invalid, requiredText, type ValidationError } from '../shared/validation.ts';
+import { typedStandardCodes } from '../lesson-plans/plan-standards.ts';
 import { checkPicture, type GamePicture } from './game-picture.ts';
 
 export interface QuestionItem {
@@ -8,12 +9,16 @@ export interface QuestionItem {
   /** The index of the correct option. */
   readonly answer: number;
   readonly picture?: GamePicture;
+  /** The standards this item practises (codes the teacher typed). */
+  readonly standards?: readonly string[];
 }
 
 export interface StatementItem {
   readonly statement: string;
   readonly isTrue: boolean;
   readonly picture?: GamePicture;
+  /** The standards this item practises (codes the teacher typed). */
+  readonly standards?: readonly string[];
 }
 
 /** A sentence with one `___` blank for the answer. */
@@ -21,6 +26,8 @@ export interface SentenceItem {
   readonly text: string;
   readonly answer: string;
   readonly picture?: GamePicture;
+  /** The standards this item practises (codes the teacher typed). */
+  readonly standards?: readonly string[];
 }
 
 export interface PairItem {
@@ -28,11 +35,14 @@ export interface PairItem {
   readonly definition: string;
   /** Shown with the term. */
   readonly picture?: GamePicture;
+  /** The standards this item practises (codes the teacher typed). */
+  readonly standards?: readonly string[];
 }
 
 export interface GroupItem {
   readonly name: string;
   readonly members: readonly string[];
+  readonly standards?: readonly string[];
 }
 
 /** What a game is made of. Each game mode plays one kind. */
@@ -105,15 +115,29 @@ function distinctTexts(field: string, values: readonly string[]): Checked<string
   return ok(texts);
 }
 
-/** The checked item, with its picture (if it has one) checked too. */
-function withPicture<T extends object>(
+/** The most standards one item can be tagged with. */
+export const maxItemStandards = 5;
+
+interface Extras {
+  readonly picture?: GamePicture | undefined;
+  readonly standards?: readonly string[] | undefined;
+}
+
+/** The checked item, with its picture and standards (if it has them) checked too. */
+function withExtras<T extends object>(
   field: string,
   checked: T,
-  picture: GamePicture | undefined,
-): Checked<T & { picture?: GamePicture }> {
-  const shown = checkPicture(field, picture);
+  item: Extras,
+): Checked<T & { picture?: GamePicture; standards?: readonly string[] }> {
+  const shown = checkPicture(field, item.picture);
   if (!shown.ok) return shown;
-  return ok(shown.value === undefined ? checked : { ...checked, picture: shown.value });
+  const codes = typedStandardCodes(`${field}.standards`, item.standards ?? [], maxItemStandards);
+  if (!codes.ok) return codes;
+  return ok({
+    ...checked,
+    ...(shown.value === undefined ? {} : { picture: shown.value }),
+    ...(codes.value.length === 0 ? {} : { standards: codes.value }),
+  });
 }
 
 interface KindRules<K extends ContentKind> {
@@ -134,10 +158,10 @@ const questionRules: KindRules<'questions'> = {
     if (!Number.isInteger(item.answer) || item.answer < 0 || item.answer >= options.value.length) {
       return invalid(`${field}.answer`, 'out_of_range');
     }
-    return withPicture(
+    return withExtras(
       field,
       { prompt: prompt.value, options: options.value, answer: item.answer },
-      item.picture,
+      item,
     );
   },
 };
@@ -147,7 +171,7 @@ const statementRules: KindRules<'statements'> = {
   check(field, item) {
     const statement = itemText(field, item.statement);
     if (!statement.ok) return statement;
-    return withPicture(field, { statement: statement.value, isTrue: item.isTrue }, item.picture);
+    return withExtras(field, { statement: statement.value, isTrue: item.isTrue }, item);
   },
 };
 
@@ -162,7 +186,7 @@ const sentenceRules: KindRules<'sentences'> = {
     if (sameText(text.value).includes(sameText(answer.value))) {
       return invalid(`${field}.answer`, 'not_allowed');
     }
-    return withPicture(field, { text: text.value, answer: answer.value }, item.picture);
+    return withExtras(field, { text: text.value, answer: answer.value }, item);
   },
 };
 
@@ -176,7 +200,7 @@ const pairRules: KindRules<'pairs'> = {
     }
     const definition = itemText(`${field}.definition`, item.definition);
     if (!definition.ok) return definition;
-    return withPicture(field, { term: term.value, definition: definition.value }, item.picture);
+    return withExtras(field, { term: term.value, definition: definition.value }, item);
   },
 };
 
@@ -203,7 +227,11 @@ const groupRules: KindRules<'groups'> = {
     const taken = others.flatMap((other) => other.members);
     const members = distinctTexts(`${field}.members`, [...taken, ...item.members]);
     if (!members.ok) return members;
-    return ok({ name: name.value, members: members.value.slice(taken.length) });
+    return withExtras(
+      field,
+      { name: name.value, members: members.value.slice(taken.length) },
+      item,
+    );
   },
 };
 

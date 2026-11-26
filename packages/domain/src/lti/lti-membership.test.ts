@@ -32,7 +32,9 @@ describe('learnersFrom', () => {
       [`${lis}/institution/person#Student`],
       ['urn:lti:role:ims/lis/Learner'],
     ];
-    const members = roles.map((list, index) => member({ user_id: `lms-${String(index)}`, roles: list }));
+    const members = roles.map((list, index) =>
+      member({ user_id: `lms-${String(index)}`, roles: list }),
+    );
 
     expect(learnersFrom(members).learners.map((found) => found.subject)).toEqual([
       'lms-0',
@@ -56,7 +58,9 @@ describe('learnersFrom', () => {
       'Learner',
       [42],
     ];
-    const members = roles.map((list, index) => member({ user_id: `lms-${String(index)}`, roles: list }));
+    const members = roles.map((list, index) =>
+      member({ user_id: `lms-${String(index)}`, roles: list }),
+    );
 
     expect(learnersFrom(members)).toEqual({ learners: [], noName: 0 });
   });

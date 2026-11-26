@@ -4,9 +4,11 @@ import { aUser } from '@thp/testing';
 import {
   ArchiveClass,
   CreateClass,
+  CreateGame,
   CreatePlan,
   GetSchoolStandardsCoverage,
   GetStandardsCoverage,
+  ListPlannedStandards,
   SetAssignmentStandards,
 } from '../src/index.ts';
 import { colleagueOf, gradedClass, valueOf } from './classroom.ts';
@@ -75,7 +77,49 @@ describe('GetStandardsCoverage', () => {
       average: null,
       status: 'not_tested',
     });
-    expect(report.summary).toEqual({ reteach: 0, watch: 1, on_track: 0, not_tested: 1 });
+    expect(report.summary).toEqual({
+      reteach: 0,
+      watch: 1,
+      on_track: 0,
+      practised: 0,
+      not_tested: 1,
+    });
+  });
+
+  it("counts the class's games that practise each standard; one only a game practises is practised", async () => {
+    const { world, setup, base } = await coveredClass();
+    const quiz = (standards: string[]) => ({
+      kind: 'questions' as const,
+      items: ['Half?', 'Third?', 'Quarter?'].map((prompt, index) => ({
+        prompt,
+        options: ['Yes', 'No'],
+        answer: 0,
+        ...(index === 0 ? { standards } : {}),
+      })),
+    });
+    for (const [title, classId, standards] of [
+      ['Fractions race', setup.cls.id, [fractions, '4.N.2.3']],
+      ['Unshared', null, ['NOT.SHARED']],
+    ] as const) {
+      valueOf(
+        await new CreateGame(world).execute({
+          actor: setup.actor,
+          title,
+          mode: 'quiz',
+          content: quiz([...standards]),
+          classId,
+        }),
+      );
+    }
+
+    const report = valueOf(await new GetStandardsCoverage(world).execute(base));
+
+    expect(report.rows.map((row) => [row.standard.code, row.games, row.status])).toEqual([
+      [fractions, 1, 'watch'],
+      ['4.N.1.1', 0, 'not_tested'],
+      ['4.N.2.3', 1, 'practised'],
+    ]);
+    expect(report.summary.practised).toBe(1);
   });
 
   it('lets a school admin see it, but not another teacher or another school', async () => {
@@ -118,7 +162,7 @@ describe('GetSchoolStandardsCoverage', () => {
       {
         classId: setup.cls.id,
         name: 'Ciencias 5',
-        summary: { reteach: 0, watch: 1, on_track: 0, not_tested: 1 },
+        summary: { reteach: 0, watch: 1, on_track: 0, practised: 0, not_tested: 1 },
       },
     ]);
     expect(school.classes.map((c) => c.classId)).not.toContain(empty.id);
@@ -136,5 +180,16 @@ describe('GetSchoolStandardsCoverage', () => {
     );
     expect(mine.classes.map((c) => c.classId)).toEqual([setup.cls.id]);
     expect(otherSchool.setup.actor.schoolId).not.toBe(setup.actor.schoolId);
+  });
+});
+
+describe('ListPlannedStandards', () => {
+  it("offers the codes in the teacher's own lesson plans, and nothing to another school", async () => {
+    const { world, setup } = await coveredClass();
+
+    const codes = await new ListPlannedStandards(world).execute({ actor: setup.actor });
+
+    expect(codes.map((info) => info.code)).toEqual([fractions, '4.N.1.1']);
+    expect(await new ListPlannedStandards(world).execute({ actor: outsider })).toEqual([]);
   });
 });

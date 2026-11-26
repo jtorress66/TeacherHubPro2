@@ -74,6 +74,10 @@ export const deAppB = {
     subject_social_studies: 'Gesellschaftskunde',
   },
   standards: {
+    coverage_practised: 'Geübt, nicht geprüft',
+    coverageGames: 'Spiele',
+    coverageLegendPractised:
+      'Geübt, nicht geprüft: Ein Spiel übt ihn, aber noch keine bewertete Aufgabe prüft ihn.',
     reteachLesson: 'Wiederholung planen',
     reteachQuiz: 'Kontrollquiz erstellen',
     reteachLessonFor: 'Wiederholung planen: {code}',
@@ -810,6 +814,17 @@ export const deAppB = {
     openDoc: 'Datei öffnen',
   },
   games: {
+    builderStandards: 'Standards',
+    builderStandardsHint: 'Codes, die diese Karte übt, durch Kommas getrennt.',
+    builderAllStandards: 'Standards für alle Karten',
+    builderAllStandardsHint:
+      'Codes, die allen Karten auf einmal hinzugefügt werden, durch Kommas getrennt.',
+    builderAllAdd: 'Allen Karten hinzufügen',
+    builderAllAddCode: '{code} allen Karten hinzufügen',
+    builderPlanned: 'Aus Ihren Unterrichtsplänen:',
+    standardsTooMany: 'Eine Karte kann höchstens 5 Standards haben.',
+    standardsSpaces: 'Trennen Sie die Codes durch Kommas.',
+    practisesTitle: 'Standards, die dieses Spiel übt',
     pictureAdd: 'Bild hinzufügen',
     pictureHint:
       'PNG, JPEG, WebP oder GIF, bis 2 MB. Große Fotos werden verkleinert und ihre Standortdaten entfernt. Laden Sie keine Fotos hoch, auf denen Schülerinnen oder Schüler zu sehen sind.',

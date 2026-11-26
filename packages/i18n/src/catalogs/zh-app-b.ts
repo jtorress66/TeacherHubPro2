@@ -68,6 +68,9 @@ export const zhAppB = {
     subject_social_studies: '社会研究',
   },
   standards: {
+    coverage_practised: '已练习，未测验',
+    coverageGames: '游戏',
+    coverageLegendPractised: '已练习，未测验：有游戏练习它，但还没有已评分的作业测验它。',
     reteachLesson: '规划重教',
     reteachQuiz: '生成复查小测',
     reteachLessonFor: '规划重教：{code}',
@@ -749,6 +752,16 @@ export const zhAppB = {
     openDoc: '打开文件',
   },
   games: {
+    builderStandards: '标准',
+    builderStandardsHint: '这张卡片练习的代码，用逗号分隔。',
+    builderAllStandards: '所有卡片的标准',
+    builderAllStandardsHint: '一次添加到所有卡片的代码，用逗号分隔。',
+    builderAllAdd: '添加到所有卡片',
+    builderAllAddCode: '将 {code} 添加到所有卡片',
+    builderPlanned: '来自你的课程计划：',
+    standardsTooMany: '一张卡片最多可以有 5 个标准。',
+    standardsSpaces: '请用逗号分隔代码。',
+    practisesTitle: '本游戏练习的标准',
     pictureAdd: '添加图片',
     pictureHint:
       'PNG、JPEG、WebP 或 GIF，最大 2 MB。大照片会被缩小，并删除其中的位置信息。请勿上传拍到学生的照片。',

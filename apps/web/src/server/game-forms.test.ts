@@ -74,6 +74,12 @@ describe('game forms', () => {
     expect(gameFormErrors({ field: 'items.1.picture.alt', code: 'required' }, 'en')).toEqual({
       content: t('games.itemError', { item: 2, message: t('games.pictureAltRequired') }),
     });
+    expect(gameFormErrors({ field: 'items.0.standards', code: 'out_of_range' }, 'en')).toEqual({
+      content: t('games.itemError', { item: 1, message: t('games.standardsTooMany') }),
+    });
+    expect(gameFormErrors({ field: 'items.4.standards', code: 'invalid_format' }, 'en')).toEqual({
+      content: t('games.itemError', { item: 5, message: t('games.standardsSpaces') }),
+    });
     expect(gameFormErrors({ field: 'items', code: 'too_short' }, 'en')).toEqual({
       content: t('games.tooFewItems'),
     });

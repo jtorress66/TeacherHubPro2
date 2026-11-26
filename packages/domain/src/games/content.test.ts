@@ -292,3 +292,43 @@ describe('validateContent with pictures', () => {
     });
   });
 });
+
+describe('validateContent with standards', () => {
+  it('keeps each item’s standards trimmed, once each, and drops an empty list', () => {
+    const checked = valueOf(
+      validateContent({
+        kind: 'questions',
+        items: [
+          {
+            prompt: 'Where is Ponce?',
+            options: ['South', 'North'],
+            answer: 0,
+            standards: [' 6.G.1 ', '6.G.1', '', 'CCSS.Math.Content.6.RP.A.1'],
+          },
+          { prompt: 'Largest planet?', options: ['Mars', 'Jupiter'], answer: 1, standards: ['  '] },
+          { prompt: 'The red planet?', options: ['Saturn', 'Mars'], answer: 1 },
+        ],
+      }),
+    );
+    expect(checked.items[0]).toMatchObject({ standards: ['6.G.1', 'CCSS.Math.Content.6.RP.A.1'] });
+    expect(checked.items[1]).not.toHaveProperty('standards');
+  });
+
+  it('refuses more than five standards on an item, or a code with a space', () => {
+    const tagged = (standards: string[]): GameContent => ({
+      kind: 'groups',
+      items: [
+        { name: 'Birds', members: ['Owl', 'Hawk'], standards },
+        { name: 'Fish', members: ['Cod', 'Eel'] },
+      ],
+    });
+    expect(errorOf(validateContent(tagged(['1', '2', '3', '4', '5', '6'])))).toEqual({
+      field: 'items.0.standards',
+      code: 'out_of_range',
+    });
+    expect(errorOf(validateContent(tagged(['6.G.1 6.G.2'])))).toEqual({
+      field: 'items.0.standards',
+      code: 'invalid_format',
+    });
+  });
+});

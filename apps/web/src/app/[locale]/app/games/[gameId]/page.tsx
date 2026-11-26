@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import type { GameId } from '@thp/domain';
+import { describeStandard, standardsOf, type GameId } from '@thp/domain';
 import { createTranslator } from '@thp/i18n';
 import {
   GameDraftForm,
@@ -13,6 +13,7 @@ import { SendLtiGrades } from '../../../../../components/lti-grades.tsx';
 import { getAppContainer } from '../../../../../container.ts';
 import { formatDuration } from '../../../../../server/game-forms.ts';
 import { contentText } from '../../../../../server/game-text.ts';
+import { standardSourceName } from '../../../../../server/standard-source.ts';
 import {
   addItemsFromGameAction,
   deleteGameAction,
@@ -64,6 +65,8 @@ export default async function GamePage(props: Props) {
   const insights = await app.getLiveInsights.execute({ actor: user, gameId: game.id });
   const day = new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short' });
   const otherGames = (await app.listGames.execute({ actor: user })).filter((g) => g.id !== game.id);
+  const suggestions = await app.listPlannedStandards.execute({ actor: user });
+  const practised = standardsOf(game.content).map(describeStandard);
   const addProblem = addProblems.find((problem) => problem === search.addError) ?? null;
 
   return (
@@ -81,6 +84,20 @@ export default async function GamePage(props: Props) {
           {t('nav.live')}
         </Link>
       </p>
+      {practised.length === 0 ? null : (
+        <section className="card stack" aria-labelledby="practises-heading">
+          <h2 id="practises-heading">{t('games.practisesTitle')}</h2>
+          <ul className="list standard-tags">
+            {practised.map((info) => (
+              <li key={info.code}>
+                <strong>{info.code}</strong>{' '}
+                <span className="muted">· {standardSourceName(locale, info)}</span>
+                {info.description === null ? null : <p className="muted">{info.description}</p>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
       <form action={duplicateGameAction}>
         <input type="hidden" name="locale" value={locale} />
         <input type="hidden" name="gameId" value={game.id} />
@@ -99,6 +116,7 @@ export default async function GamePage(props: Props) {
         classes={classes}
         gameId={game.id}
         label={t('games.save')}
+        suggestions={suggestions}
         values={{
           title: game.title,
           mode: game.mode,

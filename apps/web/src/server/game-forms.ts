@@ -8,6 +8,7 @@ import {
   type GameId,
   type GameModeChoice,
   type GradeCategoryId,
+  type ValidationError,
 } from '@thp/domain';
 import type { GameDraftInput, UseCaseError } from '@thp/application';
 import { createTranslator, defaultLocale, isLocale, type Locale } from '@thp/i18n';
@@ -73,6 +74,18 @@ export function parseGameForm(data: FormData): { locale: Locale; input: GameForm
   };
 }
 
+/** The message for an item's picture or standards problem, said the game builder's way. */
+function itemMessage(error: ValidationError, locale: Locale): string | null {
+  const t = createTranslator(locale);
+  if (error.field.endsWith('.picture.alt') && error.code === 'required') {
+    return t('games.pictureAltRequired');
+  }
+  if (!error.field.endsWith('.standards')) return null;
+  if (error.code === 'out_of_range') return t('games.standardsTooMany');
+  if (error.code === 'too_long') return t('standards.assignmentTooLong');
+  return t('games.standardsSpaces');
+}
+
 /** Errors for the game form: an item's problem goes under the content, numbered from 1. */
 export function gameFormErrors(error: UseCaseError, locale: Locale): Record<string, string> {
   if (!('field' in error) || !error.field.startsWith('items')) return formErrors(error, locale);
@@ -83,10 +96,7 @@ export function gameFormErrors(error: UseCaseError, locale: Locale): Record<stri
       content: error.code === 'too_short' ? t('games.tooFewItems') : t('games.tooManyItems'),
     };
   }
-  const message =
-    error.field.endsWith('.picture.alt') && error.code === 'required'
-      ? t('games.pictureAltRequired')
-      : messageFor(error, locale);
+  const message = itemMessage(error, locale) ?? messageFor(error, locale);
   return { content: t('games.itemError', { item: Number(item) + 1, message }) };
 }
 

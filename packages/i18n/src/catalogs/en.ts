@@ -1315,6 +1315,10 @@ export const en = {
     subject_social_studies: 'Social Studies',
   },
   standards: {
+    coverage_practised: 'Practised, not tested',
+    coverageGames: 'Games',
+    coverageLegendPractised:
+      'Practised, not tested: a game practises it, but no graded assignment tests it yet.',
     reteachLesson: 'Plan a reteach',
     reteachQuiz: 'Make a re-check quiz',
     reteachLessonFor: 'Plan a reteach of {code}',
@@ -2031,6 +2035,16 @@ export const en = {
     openDoc: 'Open the file',
   },
   games: {
+    builderStandards: 'Standards',
+    builderStandardsHint: 'Codes this card practises, separated by commas.',
+    builderAllStandards: 'Standards for every card',
+    builderAllStandardsHint: 'Codes to add to every card at once, separated by commas.',
+    builderAllAdd: 'Add to every card',
+    builderAllAddCode: 'Add {code} to every card',
+    builderPlanned: 'From your lesson plans:',
+    standardsTooMany: 'A card can have at most 5 standards.',
+    standardsSpaces: 'Separate codes with commas.',
+    practisesTitle: 'Standards this game practises',
     pictureAdd: 'Add a picture',
     pictureHint:
       'PNG, JPEG, WebP or GIF, up to 2 MB. Big photos are made smaller, and their location data is removed. Don’t upload photos that show students.',

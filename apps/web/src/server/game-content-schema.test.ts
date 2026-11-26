@@ -28,6 +28,11 @@ describe('parseContentJson', () => {
     ).toBeNull();
   });
 
+  it('keeps the standards a card is tagged with', () => {
+    const items = [{ name: 'Birds', members: ['Owl', 'Hawk'], standards: ['5.L.1', ' 5.L.2'] }];
+    expect(parseContentJson('groups', JSON.stringify(items))).toEqual({ kind: 'groups', items });
+  });
+
   it('refuses JSON of another shape, or that is not JSON at all', () => {
     expect(parseContentJson('questions', '[{"term":"Sun","definition":"Star"}]')).toBeNull();
     expect(parseContentJson('pairs', '{"kind":"pairs"}')).toBeNull();

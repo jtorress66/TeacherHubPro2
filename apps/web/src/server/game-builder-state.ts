@@ -110,29 +110,73 @@ export function setPicture<T extends { readonly picture?: GamePicture }>(
 const labelsOf = <K extends ContentKind>(kind: K, items: readonly ItemOf<K>[]) =>
   contentLabels({ kind, items } as GameContent).map((label) => label.trim().toLocaleLowerCase());
 
+interface Extras {
+  readonly picture?: GamePicture;
+  readonly standards?: readonly string[];
+}
+
+const extrasOf = (item: unknown): Extras => {
+  if (typeof item !== 'object' || item === null) return {};
+  const { picture, standards } = item as Extras;
+  return {
+    ...(picture === undefined ? {} : { picture }),
+    ...(standards === undefined ? {} : { standards }),
+  };
+};
+
 /**
- * Cards read back from the text box, with the pictures the cards had before put back on the
- * items whose question (or term, or statement) is unchanged; the text box cannot show pictures.
+ * Cards read back from the text box, with the pictures and standards the cards had before put
+ * back on the items whose question (or term, or statement) is unchanged; the text box cannot
+ * show them.
  */
-export function keepPictures<K extends ContentKind>(
+export function keepExtras<K extends ContentKind>(
   kind: K,
   before: readonly ItemOf<K>[],
   after: readonly ItemOf<K>[],
 ): readonly ItemOf<K>[] {
   const old = labelsOf(kind, before);
-  const pictures = new Map<string, GamePicture>();
+  const kept = new Map<string, Extras>();
   before.forEach((item, index) => {
     const label = old[index];
-    const picture = typeof item === 'object' && 'picture' in item ? item.picture : undefined;
-    if (picture !== undefined && label !== undefined) pictures.set(label, picture);
+    if (label !== undefined) kept.set(label, extrasOf(item));
   });
   const labels = labelsOf(kind, after);
   return after.map((item, index) => {
-    const picture = pictures.get(labels[index] ?? '');
+    const extras = kept.get(labels[index] ?? '');
     return (
-      picture === undefined || typeof item !== 'object' ? item : { ...item, picture }
+      extras === undefined || typeof item !== 'object' ? item : { ...item, ...extras }
     ) as ItemOf<K>;
   });
+}
+
+/** A card's codes as its text box shows them. */
+export const standardsText = (standards: readonly string[] | undefined): string =>
+  (standards ?? []).join(',');
+
+/** The text box's codes, kept as typed (so a comma being typed stays) until the card is sent. */
+export const textAsStandards = (text: string): readonly string[] =>
+  text === '' ? [] : text.split(',');
+
+const cleanCodes = (codes: readonly string[]): string[] => [
+  ...new Set(codes.map((code) => code.trim()).filter((code) => code !== '')),
+];
+
+/** The card with these codes added to its own, once each; cards of steps have no codes. */
+export function addStandardsToAll<T>(items: readonly T[], codes: readonly string[]): readonly T[] {
+  const adding = cleanCodes(codes);
+  return items.map((item) => {
+    if (typeof item !== 'object' || item === null) return item;
+    const own = (item as Extras).standards ?? [];
+    return { ...item, standards: cleanCodes([...own, ...adding]) };
+  });
+}
+
+/** The card as sent: its codes trimmed and once each, and no codes field when it has none. */
+function withCleanStandards<T>(item: T): T {
+  if (typeof item !== 'object' || item === null || !('standards' in item)) return item;
+  const codes = cleanCodes((item as Extras).standards ?? []);
+  if (codes.length > 0) return { ...item, standards: codes };
+  return Object.fromEntries(Object.entries(item).filter(([key]) => key !== 'standards')) as T;
 }
 
 const allBlank = (...texts: readonly string[]) => texts.every((text) => text.trim() === '');
@@ -169,5 +213,5 @@ export function builderContent<K extends ContentKind>(
 ): GameContent {
   const tidy = tidies[kind] as (item: ItemOf<K>) => ItemOf<K>;
   const kept = items.filter((item) => !isBlank(kind, item));
-  return { kind, items: kept.map(tidy) } as GameContent;
+  return { kind, items: kept.map((item) => withCleanStandards(tidy(item))) } as GameContent;
 }

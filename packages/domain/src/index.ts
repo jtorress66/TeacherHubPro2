@@ -84,6 +84,7 @@ export * from './billing/trial-reminders.ts';
 export * from './games/content.ts';
 export * from './games/game-picture.ts';
 export * from './games/content-pictures.ts';
+export * from './games/content-standards.ts';
 export * from './games/random.ts';
 export * from './games/game-mode.ts';
 export * from './games/mode-registry.ts';
