@@ -5,6 +5,10 @@ import type { MarketingMessages } from './marketing-types.ts';
 
 export const marketingDe: MarketingMessages = {
   marketing: {
+    marketplace: {
+      badgeAlt: 'Erhältlich im Google Workspace Marketplace',
+      trademark: 'Google Workspace Marketplace und das Google Workspace Marketplace-Logo sind Marken von Google LLC.',
+    },
     nav: {
       label: 'Hauptmenü',
       features: 'Funktionen',

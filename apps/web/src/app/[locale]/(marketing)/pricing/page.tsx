@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { trialDays } from '@thp/domain';
 import { createTranslator } from '@thp/i18n';
 import { Faq, PageIntro, PlanCards } from '../../../../components/marketing-sections.tsx';
+import { MarketplaceBadge } from '../../../../components/marketplace-badge.tsx';
 import { StructuredData } from '../../../../components/site-facts.tsx';
 import { MarketingShell } from '../../../../components/marketing-shell.tsx';
 import { marketingMetadata } from '../../../../server/marketing-metadata.ts';
@@ -40,6 +41,7 @@ export default async function PricingPage(props: LocaleParams) {
             {t('marketing.pricingPage.contactSales')}
           </Link>
         </p>
+        <MarketplaceBadge locale={locale} />
       </section>
       <Faq
         title={t('marketing.pricingPage.faqTitle')}

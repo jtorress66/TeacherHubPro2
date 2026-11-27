@@ -1787,6 +1787,26 @@ progress {
   gap: 0.75rem;
 }
 
+/* Google's guidelines: clear space of a quarter of the badge's height on every side. */
+.marketplace-badge a {
+  display: inline-block;
+  padding: 10px;
+  line-height: 0;
+}
+
+.marketplace-badge img {
+  display: block;
+  width: 243px;
+  max-width: 100%;
+  height: auto;
+}
+
+.marketplace-note {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
 .m-faq {
   display: grid;
   gap: 0.75rem;

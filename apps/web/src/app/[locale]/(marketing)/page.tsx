@@ -20,6 +20,7 @@ import {
 import { HomeSticky } from '../../../components/home-sticky.tsx';
 import { IntroVideo } from '../../../components/intro-video.tsx';
 import { MarketingArt } from '../../../components/marketing-art.tsx';
+import { MarketplaceBadge } from '../../../components/marketplace-badge.tsx';
 import { Faq, PlanCards, TrialCta, UseCaseCards } from '../../../components/marketing-sections.tsx';
 import { StructuredData } from '../../../components/site-facts.tsx';
 import { MarketingShell } from '../../../components/marketing-shell.tsx';
@@ -139,6 +140,7 @@ export default async function HomePage({
                 {t('marketing.home.seeItWork')}
               </a>
             </p>
+            <MarketplaceBadge locale={locale} />
             <HeroFacts locale={locale} />
             <LanguagePicker current={locale} label={t('language.label')} />
           </div>

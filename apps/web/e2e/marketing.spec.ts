@@ -243,3 +243,28 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     await expect(leads).toContainText(t('marketing.leads.score_high'));
   });
 }
+
+test.describe('Google Workspace Marketplace badge', () => {
+  for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
+    test(`the home and pricing pages link Google's badge to the listing (${locale})`, async ({
+      page,
+    }) => {
+      const t = createTranslator(locale);
+      for (const path of ['', '/pricing']) {
+        await page.goto(`/${locale}${path}`);
+        const badge = page.getByRole('link', { name: t('marketing.marketplace.badgeAlt') });
+        await expect(badge).toHaveAttribute(
+          'href',
+          'https://workspace.google.com/marketplace/app/teacherhubpro/248264130178',
+        );
+        const image = badge.getByRole('img');
+        await expect(image).toHaveAttribute('src', `/brand/marketplace/${locale}.svg`);
+        await expect
+          .poll(() => image.evaluate((img: HTMLImageElement) => img.naturalWidth))
+          .toBeGreaterThan(0);
+        await expect(page.getByText(t('marketing.marketplace.trademark'))).toBeVisible();
+        expect(await axe(page)).toEqual([]);
+      }
+    });
+  }
+});

@@ -3,6 +3,10 @@
 
 export const marketingEn = {
   marketing: {
+    marketplace: {
+      badgeAlt: 'Get it from the Google Workspace Marketplace',
+      trademark: 'Google Workspace Marketplace and the Google Workspace Marketplace logo are trademarks of Google LLC.',
+    },
     nav: {
       label: 'Main',
       features: 'Features',
