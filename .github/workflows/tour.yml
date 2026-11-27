@@ -1,0 +1,70 @@
+name: Retake demo tour
+
+# Retakes the /demo tour's screenshots in every language, with the AI screens drafted by real
+# Claude, and offers them as a download ("tour-screenshots") to commit. Costs money: it runs only
+# when started by hand (Actions → Retake demo tour → Run workflow), or when a pull request gets
+# the "retake-tour" label.
+
+on:
+  workflow_dispatch:
+    inputs:
+      locales:
+        description: 'Only these languages (e.g. "en es"); empty takes all seven'
+        required: false
+        default: ''
+  pull_request:
+    types: [labeled]
+
+concurrency:
+  group: tour-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  capture:
+    name: Retake the tour's screenshots
+    if: github.event_name == 'workflow_dispatch' || github.event.label.name == 'retake-tour'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      DATABASE_URL: postgres://teacherhub:teacherhub@localhost:5432/teacherhub
+      TOUR_AI: claude
+      TOUR_LOCALES: ${{ inputs.locales }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: teacherhub
+          POSTGRES_PASSWORD: teacherhub
+          POSTGRES_DB: teacherhub
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U teacherhub" --health-interval 5s --health-retries 10
+    steps:
+      - name: Require the Claude key
+        if: env.ANTHROPIC_API_KEY == ''
+        run: |
+          echo "::error::Add the ANTHROPIC_API_KEY repository secret to retake the tour."
+          exit 1
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @thp/web exec playwright install --with-deps chromium
+      - run: pnpm db:migrate
+      - run: pnpm tour:capture
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tour-screenshots
+          path: apps/web/public/tour/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: tour-report
+          path: apps/web/test-results/
+          retention-days: 7

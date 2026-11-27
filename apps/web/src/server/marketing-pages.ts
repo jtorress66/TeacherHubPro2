@@ -60,6 +60,7 @@ export const isLegalSlug = oneOf(legalSlugs);
 const staticPaths = [
   '',
   '/features',
+  '/demo',
   '/ai',
   '/use-cases',
   '/pricing',

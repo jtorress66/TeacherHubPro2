@@ -155,6 +155,11 @@ export default async function HomePage({
         <h2 id="demo-heading">{t('marketing.home.demoTitle')}</h2>
         <p className="tagline">{t('marketing.home.demoIntro')}</p>
         <HomeDemo text={demoText(locale)} />
+        <p>
+          <Link href={`/${locale}/demo`} className="button large ghost">
+            {t('marketing.home.fullTour')}
+          </Link>
+        </p>
       </section>
 
       <IntroVideo locale={locale} />

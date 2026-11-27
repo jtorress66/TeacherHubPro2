@@ -25,6 +25,7 @@ export function MarketingShell(props: {
         </Link>
         <nav aria-label={t('marketing.nav.label')} className="m-nav">
           <Link href={`${base}/features`}>{t('marketing.nav.features')}</Link>
+          <Link href={`${base}/demo`}>{t('marketing.nav.demo')}</Link>
           <Link href={`${base}/use-cases`}>{t('marketing.nav.useCases')}</Link>
           <Link href={`${base}/pricing`}>{t('marketing.nav.pricing')}</Link>
           <Link href={`${base}/free-tools`}>{t('marketing.nav.freeTools')}</Link>

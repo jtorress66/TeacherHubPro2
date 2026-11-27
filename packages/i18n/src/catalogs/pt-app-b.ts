@@ -220,7 +220,7 @@ export const ptAppB = {
     updated: 'Atualizada em {date}',
     newBlank: 'Começar uma apresentação em branco',
     name: 'Nome',
-    theme: 'Tema',
+    theme: 'Estilo visual',
     theme_ocean: 'Oceano',
     theme_sunset: 'Pôr do sol',
     theme_forest: 'Floresta',

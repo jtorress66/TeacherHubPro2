@@ -11,6 +11,7 @@ export const marketingPt: MarketingMessages = {
     },
     nav: {
       label: 'Principal',
+      demo: 'Demonstração',
       features: 'Recursos',
       useCases: 'Casos de uso',
       pricing: 'Preços',
@@ -155,6 +156,7 @@ export const marketingPt: MarketingMessages = {
     },
     home: {
       seeItWork: 'Veja funcionando',
+      fullTour: 'Veja o tour completo, passo a passo',
       factTrial: 'Teste grátis de {days} dias',
       factNoCard: 'Sem cartão de pagamento',
       factLanguages: '7 idiomas',

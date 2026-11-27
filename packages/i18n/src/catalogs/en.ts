@@ -1,7 +1,9 @@
+import { demoEn } from './demo-en.ts';
 import { marketingEn } from './marketing-en.ts';
 
 export const en = {
   ...marketingEn,
+  ...demoEn,
   app: {
     name: 'TeacherHubPro',
   },

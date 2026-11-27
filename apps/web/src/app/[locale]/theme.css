@@ -2220,3 +2220,133 @@ progress {
     grid-column: 1 / -1;
   }
 }
+
+/* The product tour on /demo: chapters beside a contents list, a screenshot for each step. */
+.demo-tour {
+  display: grid;
+  grid-template-columns: 15rem minmax(0, 1fr);
+  gap: 2rem;
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: 0 1.5rem 2rem;
+}
+
+.demo-tour-contents {
+  position: sticky;
+  top: 1rem;
+  align-self: start;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+}
+
+.demo-tour-contents h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+.demo-tour-contents ol {
+  margin: 0;
+  padding-left: 1.4rem;
+  line-height: 1.9;
+}
+
+.demo-tour-chapters > section {
+  padding: 1.5rem 0 2rem;
+  border-top: 1px solid var(--border);
+  scroll-margin-top: 1rem;
+}
+
+.demo-tour-chapters > section:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.demo-tour-chapters h2 {
+  margin: 0 0 0.4rem;
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+}
+
+.demo-tour-kicker {
+  margin: 0;
+  color: var(--accent);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.8rem;
+}
+
+.demo-tour-steps {
+  display: grid;
+  gap: 2rem;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.demo-tour-step h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 0.4rem;
+  font-size: 1.2rem;
+}
+
+.demo-tour-number {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 0.95rem;
+}
+
+.demo-tour-step p {
+  margin: 0 0 0.8rem;
+  max-width: 48rem;
+}
+
+.demo-tour-shot {
+  display: block;
+  line-height: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.demo-tour-shot img {
+  width: 100%;
+  height: auto;
+}
+
+.demo-tour-shot:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.demo-tour-note {
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+@media (max-width: 56rem) {
+  .demo-tour {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 0 1rem 2rem;
+  }
+
+  .demo-tour-contents {
+    position: static;
+    max-height: none;
+  }
+}
+
+.demo-tour-step-phone .demo-tour-shot {
+  max-width: 20rem;
+  border-radius: 1.6rem;
+  border-width: 6px;
+  border-color: var(--heading);
+}

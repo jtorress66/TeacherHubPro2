@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit",
     "test:e2e": "playwright test",
     "test:e2e:stripe": "playwright test -c playwright.stripe.config.ts",
+    "tour:capture": "playwright test -c playwright.tour.config.ts",
     "test:smoke": "playwright test -c playwright.smoke.config.ts"
   },
   "dependencies": {
