@@ -752,6 +752,11 @@ export const zhAppB = {
     openDoc: '打开文件',
   },
   games: {
+    explainTitle: 'AI 撰写解释',
+    explainIntro: '没有“原因”的卡片：{count} 张。AI 为每张卡片起草一条解释；保存前由你审阅和修改。你自己写的解释会保留。',
+    explainButton: '让 AI 撰写解释',
+    explainWorking: '正在撰写解释…',
+    explainReview: 'AI 已为没有“原因”的卡片添加了解释。请逐条阅读、修改或删除，然后保存。',
     builderExplanation: '为什么这是答案（可选）',
     builderExplanationHint: '一句话。学生作答后会看到它，现场游戏公布答案时也会显示。',
     builderStandards: '标准',
@@ -1304,6 +1309,7 @@ export const zhAppB = {
     noLink: '此页面需要您邮件中的链接。如果链接无效，请登录并使用“重新发送”获取新链接。',
   },
   errors: {
+    nothing_to_explain: '每张卡片都已有解释。',
     school_is_paying: '这所学校已有或曾有付费方案，因此没有可延长的试用。',
     translations_outdated:
       '邮件翻译后你又修改了它。请再次点击“为家庭翻译”，让每个家庭都收到新的内容。',

@@ -2063,6 +2063,11 @@ export const es: Messages = {
     openDoc: 'Abrir el archivo',
   },
   games: {
+    explainTitle: 'Explicaciones con IA',
+    explainIntro: 'Tarjetas sin «Por qué»: {count}. La IA redacta una para cada una; usted las revisa y edita antes de guardar. Sus propias explicaciones se conservan.',
+    explainButton: 'Pedir a la IA que escriba explicaciones',
+    explainWorking: 'Escribiendo explicaciones…',
+    explainReview: 'La IA añadió un «Por qué» a las tarjetas que no lo tenían. Lea cada uno, edítelo o bórrelo y luego guarde.',
     builderExplanation: 'Por qué esta es la respuesta (opcional)',
     builderExplanationHint: 'Una oración. Los estudiantes la ven después de responder y al mostrar la respuesta en un juego en vivo.',
     builderStandards: 'Estándares',
@@ -2637,6 +2642,7 @@ export const es: Messages = {
       'Esta página necesita el enlace de su correo. Si no funciona, inicie sesión y use Reenviar para recibir uno nuevo.',
   },
   errors: {
+    nothing_to_explain: 'Todas las tarjetas ya tienen una explicación.',
     school_is_paying:
       'Esta escuela tiene o tuvo un plan pagado, así que no tiene prueba que extender.',
     translations_outdated:

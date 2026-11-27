@@ -1,5 +1,6 @@
 import {
   contentSystemPrompt,
+  explanationSystemPrompt,
   extractorSystemPrompt,
   gameFormats,
   gameWriterSystemPrompt,
@@ -236,6 +237,27 @@ function gameReply(request: LlmRequest): string {
   return JSON.stringify({ items: localGameItems[kind](count) });
 }
 
+/** One sentence per language, so the reply passes the language check in every language. */
+const localWhy: readonly (readonly [string, (answer: string) => string])[] = [
+  ['Spanish', (a) => `Es correcto porque la respuesta es ${a}, como muestra la lección.`],
+  ['French', (a) => `C’est juste parce que la réponse est ${a}, comme le montre la leçon.`],
+  ['Portuguese', (a) => `Está certo porque a resposta é ${a}, como mostra a lição.`],
+  ['German', (a) => `Das ist richtig, weil die Antwort ${a} ist, wie die Stunde zeigt.`],
+  ['Italian', (a) => `È giusto perché il risultato che cerchiamo è ${a}, come lo spiega il libro.`],
+  ['Chinese', (a) => `这是对的，因为答案是${a}，课上讲过。`],
+];
+
+/** One explanation per item sent, in the language asked for. */
+function explanationReply(request: LlmRequest): string {
+  const prompt = promptOf(request);
+  const items = JSON.parse(prompt.split('The items:\n')[1] ?? '[]') as { answer?: string }[];
+  const language = /Write in ([^\n]+)/.exec(prompt)?.[1] ?? '';
+  const why =
+    localWhy.find(([name]) => language.includes(name))?.[1] ??
+    ((a: string) => `This is right because the answer is ${a}, as the lesson shows.`);
+  return JSON.stringify({ explanations: items.map((item) => why(item.answer ?? '')) });
+}
+
 /** The lessons asked for; every check asks which of two numbers is larger, so tests know the answer. */
 function pathReply(request: LlmRequest): string {
   const count = Number(/Write (\d+) lessons\./.exec(promptOf(request))?.[1] ?? 3);
@@ -349,6 +371,7 @@ const repliesBySystem: ReadonlyMap<string, (request: LlmRequest) => string> = ne
   [quizSystemPrompt, quizReply],
   [chatbotSystemPrompt, chatbotReply],
   [gameWriterSystemPrompt, gameReply],
+  [explanationSystemPrompt, explanationReply],
   [pathWriterSystemPrompt, pathReply],
   [translatorSystemPrompt, translationReply],
 ]);

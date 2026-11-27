@@ -31,6 +31,7 @@ import {
   LessonPlanner,
   PresentationWriter,
   RubricWriter,
+  ExplanationWriter,
   GameWriter,
   PathWriter,
   QuestionExtractor,
@@ -42,6 +43,7 @@ import {
 } from '@thp/agents';
 import {
   GameDraftHandler,
+  GameExplanationsHandler,
   LearningPathHandler,
   GenerationHandler,
   GradingHandler,
@@ -203,6 +205,10 @@ export function createJobRunner(
     }),
     new GradingHandler({ assignments, submissions, classes, grader: new SubmissionGrader(model) }),
     new GameDraftHandler({ gameWriter: new GameWriter(model) }),
+    new GameExplanationsHandler({
+      games: repos.games,
+      explanationWriter: new ExplanationWriter(model),
+    }),
     new StudentInsightHandler({
       ...repos,
       insightWriter: new InsightWriter(model),

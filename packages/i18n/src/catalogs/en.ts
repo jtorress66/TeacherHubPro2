@@ -2035,6 +2035,11 @@ export const en = {
     openDoc: 'Open the file',
   },
   games: {
+    explainTitle: 'Explanations by AI',
+    explainIntro: 'Cards without a “Why”: {count}. The AI drafts one for each; you review and edit them before saving. Your own explanations are kept.',
+    explainButton: 'Ask AI to write explanations',
+    explainWorking: 'Writing explanations…',
+    explainReview: 'The AI added a “Why” to the cards that had none. Read each one, edit or delete it, then save.',
     builderExplanation: 'Why this is the answer (optional)',
     builderExplanationHint: 'One sentence. Students see it after they answer, and at the reveal in a live game.',
     builderStandards: 'Standards',
@@ -2605,6 +2610,7 @@ export const en = {
       'This page needs the link from your email. If it does not work, log in and use Resend to get a new one.',
   },
   errors: {
+    nothing_to_explain: 'Every card already has an explanation.',
     school_is_paying: 'This school has or had a paid plan, so it has no trial to extend.',
     translations_outdated:
       'You changed the email after it was translated. Press Translate for families again so every family gets the new text.',

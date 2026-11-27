@@ -135,6 +135,19 @@ export async function requestGameDraftAction(
   redirect(`${gamesPath(locale)}/jobs/${job.value.id}?mode=${encodeURIComponent(mode)}`);
 }
 
+/** Queues the AI's explanations for the game's unexplained items and opens their review page. */
+export async function requestGameExplanationsAction(
+  _state: GameFormState,
+  data: FormData,
+): Promise<GameFormState> {
+  const locale = localeOf(data);
+  const { user } = await requireUser(locale);
+  const gameId = gameIdOf(data);
+  const job = await getAppContainer().requestGameExplanations.execute({ actor: user, gameId });
+  if (!job.ok) return rejectedForm(job.error, locale, data);
+  redirect(`${gamesPath(locale)}/${gameId}/explanations/${job.value.id}`);
+}
+
 export async function saveGameGradingAction(
   state: GameFormState,
   data: FormData,
