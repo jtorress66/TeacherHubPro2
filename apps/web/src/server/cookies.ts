@@ -2,6 +2,8 @@ import { defaultLocale, isLocale, type Locale } from '@thp/i18n';
 
 export const SESSION_COOKIE = 'thp_session';
 export const OAUTH_STATE_COOKIE = 'thp_oauth_state';
+/** The visitor's chosen language, set on every page visit. */
+export const LANGUAGE_COOKIE = 'teacherhub_language';
 
 const secureFor = (appUrl: string) => appUrl.startsWith('https://');
 
