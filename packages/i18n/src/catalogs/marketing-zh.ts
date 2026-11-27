@@ -4,6 +4,10 @@ import type { MarketingMessages } from './marketing-types.ts';
 
 export const marketingZh: MarketingMessages = {
   marketing: {
+    marketplace: {
+      badgeAlt: '前往 Google Workspace Marketplace 即可获取',
+      trademark: 'Google Workspace Marketplace 和 Google Workspace Marketplace 徽标是 Google LLC 的商标。',
+    },
     nav: {
       label: '主导航',
       features: '功能',
