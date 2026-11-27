@@ -60,7 +60,11 @@ for (const locale of ['en', 'es'] as const satisfies readonly Locale[]) {
     const student = await (await browser.newContext()).newPage();
     await student.goto(url);
     await student.getByRole('link', { name: 'Space facts' }).click();
-    for (let index = 0; index < statements.length; index += 1) {
+    for (const [index] of statements.entries()) {
+      const total = statements.length;
+      await expect(
+        student.getByText(t('gamePlay.progress', { n: index + 1, total })),
+      ).toBeVisible();
       await student.getByRole('button', { name: t('gamePlay.true'), exact: true }).click();
     }
     const review = student.getByRole('region', { name: t('gamePlay.reviewTitle') });
