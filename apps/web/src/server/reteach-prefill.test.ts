@@ -8,6 +8,7 @@ const row = (overrides: Partial<StandardCoverage> = {}): StandardCoverage => ({
   standard: describeStandard(fractions),
   plannedWeeks: [],
   assignments: 2,
+  games: 0,
   average: 62,
   studentsScored: 20,
   studentsBelow: 9,

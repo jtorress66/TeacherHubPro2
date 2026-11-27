@@ -54,6 +54,7 @@ export default async function GameDraftPage(props: Props) {
   const draft = await app.getGameDraft.execute({ actor: user, jobId: job.value.id });
   if (!draft.ok) notFound();
   const { content, request, gameId } = draft.value;
+  const suggestions = await app.listPlannedStandards.execute({ actor: user });
   const classes = (await app.listClasses.execute({ actor: user })).map((cls) => ({
     id: cls.id,
     name: cls.name,
@@ -67,6 +68,7 @@ export default async function GameDraftPage(props: Props) {
       <p>{t('games.reviewDraft')}</p>
       {existing?.ok ? (
         <GameEditor
+          suggestions={suggestions}
           locale={locale}
           classes={classes}
           gameId={existing.value.game.id}
@@ -82,6 +84,7 @@ export default async function GameDraftPage(props: Props) {
         />
       ) : (
         <GameEditor
+          suggestions={suggestions}
           locale={locale}
           classes={classes}
           values={{

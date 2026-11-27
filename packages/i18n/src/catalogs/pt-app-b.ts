@@ -71,6 +71,10 @@ export const ptAppB = {
     subject_social_studies: 'Estudos sociais',
   },
   standards: {
+    coverage_practised: 'Praticado, não avaliado',
+    coverageGames: 'Jogos',
+    coverageLegendPractised:
+      'Praticado, não avaliado: um jogo o pratica, mas nenhuma tarefa com nota o avalia ainda.',
     reteachLesson: 'Planejar uma retomada',
     reteachQuiz: 'Criar um quiz de verificação',
     reteachLessonFor: 'Planejar uma retomada de {code}',
@@ -799,6 +803,17 @@ export const ptAppB = {
     openDoc: 'Abrir o arquivo',
   },
   games: {
+    builderStandards: 'Padrões',
+    builderStandardsHint: 'Códigos que este cartão pratica, separados por vírgulas.',
+    builderAllStandards: 'Padrões para todos os cartões',
+    builderAllStandardsHint:
+      'Códigos para adicionar a todos os cartões de uma vez, separados por vírgulas.',
+    builderAllAdd: 'Adicionar a todos os cartões',
+    builderAllAddCode: 'Adicionar {code} a todos os cartões',
+    builderPlanned: 'Dos seus planos de aula:',
+    standardsTooMany: 'Um cartão pode ter no máximo 5 padrões.',
+    standardsSpaces: 'Separe os códigos com vírgulas.',
+    practisesTitle: 'Padrões que este jogo pratica',
     pictureAdd: 'Adicionar uma imagem',
     pictureHint:
       'PNG, JPEG, WebP ou GIF, até 2 MB. As fotos grandes são reduzidas e os dados de localização são removidos. Não envie fotos que mostrem alunos.',

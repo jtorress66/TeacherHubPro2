@@ -73,6 +73,10 @@ export const frAppB = {
     subject_social_studies: 'Sciences sociales',
   },
   standards: {
+    coverage_practised: 'Travaillé, non évalué',
+    coverageGames: 'Jeux',
+    coverageLegendPractised:
+      'Travaillé, non évalué : un jeu le travaille, mais aucun devoir noté ne l’évalue encore.',
     reteachLesson: 'Planifier une reprise',
     reteachQuiz: 'Créer un quiz de vérification',
     reteachLessonFor: 'Planifier une reprise de {code}',
@@ -808,6 +812,17 @@ export const frAppB = {
     openDoc: 'Ouvrir le fichier',
   },
   games: {
+    builderStandards: 'Normes',
+    builderStandardsHint: 'Codes travaillés par cette carte, séparés par des virgules.',
+    builderAllStandards: 'Normes pour toutes les cartes',
+    builderAllStandardsHint:
+      'Codes à ajouter à toutes les cartes d’un coup, séparés par des virgules.',
+    builderAllAdd: 'Ajouter à toutes les cartes',
+    builderAllAddCode: 'Ajouter {code} à toutes les cartes',
+    builderPlanned: 'De vos plans de cours :',
+    standardsTooMany: 'Une carte peut avoir au plus 5 normes.',
+    standardsSpaces: 'Séparez les codes par des virgules.',
+    practisesTitle: 'Normes travaillées par ce jeu',
     pictureAdd: 'Ajouter une image',
     pictureHint:
       'PNG, JPEG, WebP ou GIF, jusqu’à 2 Mo. Les grandes photos sont réduites et leurs données de localisation sont supprimées. N’envoyez pas de photos montrant des élèves.',

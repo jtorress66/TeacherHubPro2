@@ -16,6 +16,7 @@ export default async function GamesPage(props: LocaleParams) {
   const app = getAppContainer();
   const games = await app.listGames.execute({ actor: user });
   const classes = await app.listClasses.execute({ actor: user });
+  const suggestions = await app.listPlannedStandards.execute({ actor: user });
 
   return (
     <section className="stack">
@@ -36,6 +37,7 @@ export default async function GamesPage(props: LocaleParams) {
       )}
       <h2>{t('games.newGame')}</h2>
       <GameEditor
+        suggestions={suggestions}
         locale={locale}
         classes={classes.map((cls) => ({ id: cls.id, name: cls.name }))}
         values={{ title: '', mode: 'quiz', content: '', classId: null, language: locale }}

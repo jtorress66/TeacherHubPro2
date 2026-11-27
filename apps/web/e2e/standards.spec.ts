@@ -86,10 +86,10 @@ for (const locale of ['es', 'en'] as const satisfies readonly Locale[]) {
     await expect(rows).toHaveCount(2);
     const fractionsRow = rows.filter({ hasText: 'CCSS.Math.Content.4.NF.A.1' });
     await expect(fractionsRow).toContainText(t('standards.coverage_watch'));
-    expect(plain((await fractionsRow.getByRole('cell').nth(2).textContent()) ?? '')).toBe(
+    expect(plain((await fractionsRow.getByRole('cell').nth(3).textContent()) ?? '')).toBe(
       plain(formatPercent(70, locale)),
     );
-    await expect(fractionsRow.getByRole('cell').nth(3)).toHaveText('1');
+    await expect(fractionsRow.getByRole('cell').nth(4)).toHaveText('1');
 
     // The filter shows one status at a time; no student names appear anywhere.
     const filter = page.getByRole('navigation', { name: t('standards.coverageFilter') });

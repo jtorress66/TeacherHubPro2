@@ -16,7 +16,11 @@ const pairsToQuestions: Conversion = (content, random) => {
     ).slice(0, wrongOptions);
     const options = shuffle([pair.definition, ...others], random);
     const question = { prompt: pair.term, options, answer: options.indexOf(pair.definition) };
-    return pair.picture === undefined ? question : { ...question, picture: pair.picture };
+    return {
+      ...question,
+      ...(pair.picture === undefined ? {} : { picture: pair.picture }),
+      ...(pair.standards === undefined ? {} : { standards: pair.standards }),
+    };
   });
   return { kind: 'questions', items };
 };

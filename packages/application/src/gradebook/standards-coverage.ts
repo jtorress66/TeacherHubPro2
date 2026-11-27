@@ -2,6 +2,7 @@ import {
   ok,
   planStandardWeeks,
   standardsCoverage,
+  standardsOf,
   summarizeCoverage,
   type Class,
   type ClassId,
@@ -13,6 +14,7 @@ import {
 import type {
   AssignmentRepository,
   ClassRepository,
+  GameRepository,
   GradeRepository,
   LessonPlanRepository,
   StudentRepository,
@@ -28,6 +30,7 @@ export interface StandardsCoverageDeps {
   readonly assignments: AssignmentRepository;
   readonly grades: GradeRepository;
   readonly students: StudentRepository;
+  readonly games: GameRepository;
 }
 
 export type CoverageSummary = Record<CoverageStatus, number>;
@@ -37,15 +40,19 @@ export interface ClassStandardsCoverage {
   readonly summary: CoverageSummary;
 }
 
-/** Reads one class's plans, tagged assignments and confirmed grades into the coverage report. */
+/**
+ * Reads one class's plans, tagged assignments, confirmed grades and shared games into the
+ * coverage report.
+ */
 async function coverageOf(
   deps: StandardsCoverageDeps,
   cls: Class,
 ): Promise<ClassStandardsCoverage> {
-  const [plans, assignments, students] = await Promise.all([
+  const [plans, assignments, students, games] = await Promise.all([
     deps.lessonPlans.listByClass(cls.schoolId, cls.id),
     deps.assignments.listByClass(cls.schoolId, cls.id),
     deps.students.listByClass(cls.schoolId, cls.id),
+    deps.games.listByClass(cls.schoolId, cls.id),
   ]);
   const tagged = assignments.filter((assignment) => assignment.standards.length > 0);
   const grades =
@@ -60,6 +67,7 @@ async function coverageOf(
     assignments: tagged,
     grades,
     studentIds: students.map((student) => student.id),
+    games: games.map((game) => ({ standards: standardsOf(game.content) })),
   });
   return { rows, summary: summarizeCoverage(rows) };
 }

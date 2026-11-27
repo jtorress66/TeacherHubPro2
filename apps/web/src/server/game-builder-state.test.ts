@@ -13,7 +13,10 @@ import {
   removeMember,
   removeOption,
   replaceItem,
-  keepPictures,
+  addStandardsToAll,
+  keepExtras,
+  standardsText,
+  textAsStandards,
   setPicture,
   textAsItems,
   withStartingCard,
@@ -92,16 +95,25 @@ describe('the question builder', () => {
     expect(textAsItems('questions', text)).toEqual(cards);
   });
 
-  it('keeps each picture on its question when the text is edited and read back', () => {
+  it('keeps each picture and standard on its question when the text is edited and read back', () => {
     const map = { id: 'pic-1', alt: 'A map of Peru' };
-    const cards = [{ ...q('Capital of Peru', 1), picture: map }, q('Capital of Chile')];
+    const cards = [
+      { ...q('Capital of Peru', 1), picture: map, standards: ['6.G.1'] },
+      q('Capital of Chile'),
+    ];
     const edited = textAsItems('questions', 'Capital of Chile | *A | B\nCapital of Peru | A | *B');
 
-    expect(keepPictures('questions', cards, edited)).toEqual([
+    expect(keepExtras('questions', cards, edited)).toEqual([
       { prompt: 'Capital of Chile', options: ['A', 'B'], answer: 0 },
-      { prompt: 'Capital of Peru', options: ['A', 'B'], answer: 1, picture: map },
+      {
+        prompt: 'Capital of Peru',
+        options: ['A', 'B'],
+        answer: 1,
+        picture: map,
+        standards: ['6.G.1'],
+      },
     ]);
-    expect(keepPictures('steps', ['Mix'], ['Mix', 'Bake'])).toEqual(['Mix', 'Bake']);
+    expect(keepExtras('steps', ['Mix'], ['Mix', 'Bake'])).toEqual(['Mix', 'Bake']);
   });
 });
 
@@ -117,5 +129,26 @@ describe('pictures on cards', () => {
   it('sends a card that has only a picture, so the teacher is told what is missing', () => {
     const onlyPicture = { prompt: '', options: ['', ''], answer: 0, picture: map };
     expect(builderContent('questions', [onlyPicture]).items).toEqual([onlyPicture]);
+  });
+});
+
+describe('standards on cards', () => {
+  it('edits a card’s codes as typed, commas and spaces kept until it is sent', () => {
+    const typed = textAsStandards('6.G.1, ');
+    expect(standardsText(typed)).toBe('6.G.1, ');
+    const sent = builderContent('questions', [{ ...q('Where?'), standards: typed }]);
+    expect(sent.items[0]).toEqual({ ...q('Where?'), standards: ['6.G.1'] });
+    expect(builderContent('questions', [{ ...q('Where?'), standards: [' '] }]).items[0]).toEqual(
+      q('Where?'),
+    );
+  });
+
+  it('adds codes to every card once, keeping what each card already has', () => {
+    const cards = [{ ...q('One'), standards: ['A.1'] }, q('Two')];
+    expect(addStandardsToAll(cards, ['A.1', ' B.2 ', ''])).toEqual([
+      { ...q('One'), standards: ['A.1', 'B.2'] },
+      { ...q('Two'), standards: ['A.1', 'B.2'] },
+    ]);
+    expect(addStandardsToAll(['Mix', 'Bake'], ['A.1'])).toEqual(['Mix', 'Bake']);
   });
 });

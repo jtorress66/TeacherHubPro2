@@ -71,6 +71,10 @@ export const itAppB = {
     subject_social_studies: 'Studi sociali',
   },
   standards: {
+    coverage_practised: 'Esercitato, non verificato',
+    coverageGames: 'Giochi',
+    coverageLegendPractised:
+      'Esercitato, non verificato: un gioco lo esercita, ma nessun compito valutato lo verifica ancora.',
     reteachLesson: 'Pianifica un ripasso',
     reteachQuiz: 'Crea un quiz di verifica',
     reteachLessonFor: 'Pianifica un ripasso di {code}',
@@ -799,6 +803,17 @@ export const itAppB = {
     openDoc: 'Apri il file',
   },
   games: {
+    builderStandards: 'Standard',
+    builderStandardsHint: 'Codici che questa scheda esercita, separati da virgole.',
+    builderAllStandards: 'Standard per tutte le schede',
+    builderAllStandardsHint:
+      'Codici da aggiungere a tutte le schede in una volta, separati da virgole.',
+    builderAllAdd: 'Aggiungi a tutte le schede',
+    builderAllAddCode: 'Aggiungi {code} a tutte le schede',
+    builderPlanned: 'Dai tuoi piani di lezione:',
+    standardsTooMany: 'Una scheda può avere al massimo 5 standard.',
+    standardsSpaces: 'Separa i codici con virgole.',
+    practisesTitle: 'Standard che questo gioco esercita',
     pictureAdd: 'Aggiungi un’immagine',
     pictureHint:
       'PNG, JPEG, WebP o GIF, fino a 2 MB. Le foto grandi vengono ridotte e i dati di posizione rimossi. Non caricare foto in cui compaiono studenti.',

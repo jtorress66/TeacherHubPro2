@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, type ReactNode } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import {
   maxGameItems,
   maxOptions,
@@ -10,6 +10,7 @@ import {
   type PairItem,
   type QuestionItem,
   type SentenceItem,
+  type StandardInfo,
   type StatementItem,
 } from '@thp/domain';
 import { createTranslator, type Locale } from '@thp/i18n';
@@ -17,12 +18,15 @@ import {
   addItem,
   addMember,
   addOption,
+  addStandardsToAll,
   moveItem,
   removeItem,
   removeMember,
   removeOption,
   replaceItem,
   setPicture,
+  standardsText,
+  textAsStandards,
 } from '../server/game-builder-state.ts';
 import { PictureField } from './game-picture.tsx';
 
@@ -340,6 +344,61 @@ function GroupCard({
   );
 }
 
+/** Codes to add to every card at once, typed or picked from the teacher's lesson plans. */
+function EveryCardStandards<Item>(props: {
+  readonly t: T;
+  readonly items: readonly Item[];
+  readonly suggestions: readonly StandardInfo[];
+  readonly onChange: (items: readonly Item[]) => void;
+}) {
+  const { t, items, suggestions, onChange } = props;
+  const [typed, setTyped] = useState('');
+  return (
+    <fieldset className="card stack builder-every-card">
+      <legend>{t('games.builderAllStandards')}</legend>
+      <CardText
+        label={t('games.builderStandards')}
+        hint={t('games.builderAllStandardsHint')}
+        value={typed}
+        onChange={setTyped}
+      />
+      <p>
+        <SmallButton
+          disabled={typed.trim() === ''}
+          onClick={() => {
+            onChange(addStandardsToAll(items, textAsStandards(typed)));
+            setTyped('');
+          }}
+        >
+          {t('games.builderAllAdd')}
+        </SmallButton>
+      </p>
+      {suggestions.length === 0 ? null : (
+        <>
+          <p className="muted">{t('games.builderPlanned')}</p>
+          <ul className="list standard-suggestions">
+            {suggestions.map((info) => (
+              <li key={info.code}>
+                <button
+                  type="button"
+                  className="button secondary compact"
+                  aria-label={t('games.builderAllAddCode', { code: info.code })}
+                  title={info.description ?? undefined}
+                  onClick={() => {
+                    onChange(addStandardsToAll(items, [info.code]));
+                  }}
+                >
+                  + {info.code}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </fieldset>
+  );
+}
+
 /** One card's fields, by the kind of content (a new kind adds an entry here). */
 const cards: {
   readonly [K in ContentKind]: (props: {
@@ -365,6 +424,8 @@ export function GameBuilder<K extends ContentKind>(props: {
   readonly kind: K;
   readonly items: readonly ItemOf<K>[];
   readonly onChange: (items: readonly ItemOf<K>[]) => void;
+  /** Codes from the teacher's lesson plans, offered for every card. */
+  readonly suggestions?: readonly StandardInfo[];
 }) {
   const t = createTranslator(props.locale);
   const { kind, items, onChange } = props;
@@ -389,6 +450,17 @@ export function GameBuilder<K extends ContentKind>(props: {
                     onChange(replaceItem(items, index, changed));
                   }}
                 />
+                {typeof item === 'object' ? (
+                  <CardText
+                    label={t('games.builderStandards')}
+                    hint={t('games.builderStandardsHint')}
+                    value={standardsText(item.standards)}
+                    onChange={(text) => {
+                      const tagged = { ...item, standards: textAsStandards(text) } as ItemOf<K>;
+                      onChange(replaceItem(items, index, tagged));
+                    }}
+                  />
+                ) : null}
                 <p className="actions builder-card-actions">
                   <SmallButton
                     disabled={index === 0}
@@ -432,6 +504,14 @@ export function GameBuilder<K extends ContentKind>(props: {
           {t('games.builderCount', { count: items.length, max: maxGameItems })}
         </span>
       </p>
+      {kind === 'steps' ? null : (
+        <EveryCardStandards
+          t={t}
+          items={items}
+          suggestions={props.suggestions ?? []}
+          onChange={onChange}
+        />
+      )}
     </div>
   );
 }

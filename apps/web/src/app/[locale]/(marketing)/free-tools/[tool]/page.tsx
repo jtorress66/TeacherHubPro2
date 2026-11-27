@@ -38,9 +38,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   );
 }
 
-const tools: Readonly<
-  Record<FreeToolSlug, (props: { readonly locale: Locale }) => ReactNode>
-> = {
+const tools: Readonly<Record<FreeToolSlug, (props: { readonly locale: Locale }) => ReactNode>> = {
   'grade-calculator': GradeCalculator,
   'group-maker': GroupMaker,
   'rubric-maker': RubricMaker,

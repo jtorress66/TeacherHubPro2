@@ -137,3 +137,18 @@ describe('appendGameItems', () => {
     });
   });
 });
+
+describe('reuse keeps standards', () => {
+  it('carries each item’s standards into the game it is added to', () => {
+    const own: GameContent = {
+      kind: 'questions',
+      items: [{ prompt: 'One?', options: ['A', 'B'], answer: 0 }],
+    };
+    const tagged: GameContent = {
+      kind: 'questions',
+      items: [{ prompt: 'Two?', options: ['A', 'B'], answer: 1, standards: ['6.G.1'] }],
+    };
+    const appended = appendGameItems(own, tagged, seededRandom(1));
+    expect(appended.ok && appended.value.content.items[1]).toMatchObject({ standards: ['6.G.1'] });
+  });
+});

@@ -1332,6 +1332,10 @@ export const es: Messages = {
     subject_social_studies: 'Estudios sociales',
   },
   standards: {
+    coverage_practised: 'Practicado, sin evaluar',
+    coverageGames: 'Juegos',
+    coverageLegendPractised:
+      'Practicado, sin evaluar: un juego lo practica, pero ninguna tarea calificada lo evalúa todavía.',
     reteachLesson: 'Planificar un repaso',
     reteachQuiz: 'Crear una prueba de verificación',
     reteachLessonFor: 'Planificar un repaso de {code}',
@@ -2059,6 +2063,17 @@ export const es: Messages = {
     openDoc: 'Abrir el archivo',
   },
   games: {
+    builderStandards: 'Estándares',
+    builderStandardsHint: 'Códigos que practica esta tarjeta, separados por comas.',
+    builderAllStandards: 'Estándares para todas las tarjetas',
+    builderAllStandardsHint:
+      'Códigos para añadir a todas las tarjetas a la vez, separados por comas.',
+    builderAllAdd: 'Añadir a todas las tarjetas',
+    builderAllAddCode: 'Añadir {code} a todas las tarjetas',
+    builderPlanned: 'De sus planes de lección:',
+    standardsTooMany: 'Una tarjeta puede tener como máximo 5 estándares.',
+    standardsSpaces: 'Separe los códigos con comas.',
+    practisesTitle: 'Estándares que practica este juego',
     pictureAdd: 'Añadir una imagen',
     pictureHint:
       'PNG, JPEG, WebP o GIF, hasta 2 MB. Las fotos grandes se reducen y se les quitan los datos de ubicación. No suba fotos en las que aparezcan estudiantes.',
