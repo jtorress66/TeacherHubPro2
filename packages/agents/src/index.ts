@@ -59,3 +59,9 @@ export {
   saysItIsAi,
 } from './chatbot/chatbot.ts';
 export * from './chatbot/chatbot-scorecard.ts';
+export {
+  ExplanationWriter,
+  explanationSystemPrompt,
+  reviewExplanations,
+} from './explanation-writer/explanation-writer.ts';
+export * from './explanation-writer/explanation-scorecard.ts';

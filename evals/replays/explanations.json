@@ -1,0 +1,5 @@
+{
+  "Which planet is closest to the Sun?": "{\"explanations\": [\"Mercury travels on the smallest path around the Sun, so it is always the nearest planet.\", \"The Moon only reflects light from the Sun; it does not shine by itself.\", \"Plants use the energy in sunlight to turn water and air into sugar for food.\"]}",
+  "¿Qué fracción es igual a 2/4?": "{\"explanations\": [\"Si divides el 2 y el 4 entre 2, te queda 1/2, que es la misma cantidad.\", \"Las dos fracciones tienen el mismo denominador, y 3 partes son más que 1 parte.\"]}",
+  "太阳照射海洋，水受热变成___。": "{\"explanations\": [\"水受热会蒸发，变成看不见的水蒸气，升到空中。\", \"水蒸气在高空遇冷，凝结成很多小水滴，聚在一起就成了云。\"]}"
+}

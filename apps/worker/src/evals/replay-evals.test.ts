@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type {
   ContentMetric,
   ExtractorMetric,
+  ExplanationMetric,
   GameMetric,
   PathMetric,
   InsightMetric,
@@ -14,6 +15,7 @@ import type {
 } from '@thp/agents';
 import { assistantCases, runAssistantEvals } from './assistant-evals.ts';
 import { formatReport } from './eval-report.ts';
+import { explanationCases, runExplanationEvals } from './explanation-evals.ts';
 import { gameCases, runGameEvals } from './game-evals.ts';
 import { pathCases, runPathEvals } from './path-evals.ts';
 import { extractorCases, graderCases, runExtractorEvals, runGraderEvals } from './grading-evals.ts';
@@ -37,6 +39,7 @@ const thresholds = JSON.parse(
   'question-extractor': Record<ExtractorMetric, number>;
   grader: Record<GraderMetric, number>;
   'game-writer': Record<GameMetric, number>;
+  'explanation-writer': Record<ExplanationMetric, number>;
   'path-writer': Record<PathMetric, number>;
   'insight-writer': Record<InsightMetric, number>;
   'quiz-writer': Record<QuizMetric, number>;
@@ -110,6 +113,16 @@ describe('replay evals (saved replies, no API calls)', () => {
       playable: 1,
       explained: 1,
     });
+  });
+
+  it('the explanation writer has a saved reply for every case and meets its thresholds', async () => {
+    expect(Object.keys(loadReplays('explanations'))).toHaveLength(explanationCases.length);
+    const report = await runExplanationEvals(
+      replay('explanations'),
+      thresholds['explanation-writer'],
+    );
+    expect(report.failing, formatReport(report)).toEqual([]);
+    expect(report.average).toEqual({ structure: 1, count: 1, language: 1, explains: 1 });
   });
 
   it('the path writer meets its thresholds', async () => {

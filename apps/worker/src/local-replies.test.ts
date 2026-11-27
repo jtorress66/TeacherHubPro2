@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   ContentWriter,
+  ExplanationWriter,
   GameWriter,
   PathWriter,
   PresentationWriter,
@@ -117,6 +118,17 @@ describe('the local stand-in replies', () => {
     const draft = unwrap(await new RubricWriter(local()).draft(request));
     expect(draft.criteria).toHaveLength(3);
     expect(draft.levels.map((level) => level.points)).toEqual([5, 4, 3, 2, 1]);
+  });
+
+  it('explains every item sent, in each language, passing the writer’s checks', async () => {
+    const items = [
+      { index: 0, question: 'Largest planet?', options: ['Mars', 'Jupiter'], answer: 'Jupiter' },
+      { index: 4, question: 'The Moon is a planet', answer: 'false' },
+    ];
+    for (const language of languages) {
+      const explained = unwrap(await new ExplanationWriter(local()).explain({ language, items }));
+      expect(explained, language).toHaveLength(2);
+    }
   });
 
   it("translates the family email into each language, passing the translator's checks", async () => {

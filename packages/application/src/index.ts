@@ -329,6 +329,13 @@ export {
   type GameDraft,
   type GameDraftInput,
 } from './games/game-drafts.ts';
+export {
+  RequestGameExplanations,
+  GameExplanationsHandler,
+  GetExplanationsDraft,
+  gameExplanationsJobKind,
+  type ExplanationsDraft,
+} from './games/game-explanations.ts';
 export { SaveGameGrading, type GameGradingInput } from './games/grade-settings.ts';
 export {
   StartGameRound,

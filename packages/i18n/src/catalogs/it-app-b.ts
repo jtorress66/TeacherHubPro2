@@ -803,6 +803,11 @@ export const itAppB = {
     openDoc: 'Apri il file',
   },
   games: {
+    explainTitle: 'Spiegazioni con l’IA',
+    explainIntro: 'Schede senza “Perché”: {count}. L’IA ne scrive una per ciascuna; tu le controlli e modifichi prima di salvare. Le tue spiegazioni restano.',
+    explainButton: 'Chiedi all’IA di scrivere le spiegazioni',
+    explainWorking: 'Scrittura delle spiegazioni…',
+    explainReview: 'L’IA ha aggiunto un “Perché” alle schede che non l’avevano. Leggi ciascuno, modificalo o eliminalo, poi salva.',
     builderExplanation: 'Perché questa è la risposta (facoltativo)',
     builderExplanationHint: 'Una frase. Gli studenti la vedono dopo aver risposto e alla rivelazione in un gioco dal vivo.',
     builderStandards: 'Standard',
@@ -1379,6 +1384,7 @@ export const itAppB = {
       'Questa pagina richiede il link della Sua email. Se non funziona, acceda e usi Invia di nuovo per riceverne uno nuovo.',
   },
   errors: {
+    nothing_to_explain: 'Ogni scheda ha già una spiegazione.',
     school_is_paying:
       'Questa scuola ha o ha avuto un piano a pagamento, quindi non ha una prova da estendere.',
     translations_outdated:

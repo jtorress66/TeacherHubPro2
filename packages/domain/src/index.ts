@@ -85,6 +85,7 @@ export * from './games/content.ts';
 export * from './games/game-picture.ts';
 export * from './games/content-pictures.ts';
 export * from './games/content-standards.ts';
+export * from './games/content-explanations.ts';
 export * from './games/random.ts';
 export * from './games/game-mode.ts';
 export * from './games/game-review.ts';

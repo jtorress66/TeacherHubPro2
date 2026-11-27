@@ -3,6 +3,7 @@ import { AnthropicLlmClient } from '@thp/adapters';
 import type {
   ContentMetric,
   ExtractorMetric,
+  ExplanationMetric,
   GameMetric,
   PathMetric,
   InsightMetric,
@@ -14,6 +15,7 @@ import type {
 } from '@thp/agents';
 import { runAssistantEvals } from './evals/assistant-evals.ts';
 import { formatReport, type EvalReport } from './evals/eval-report.ts';
+import { runExplanationEvals } from './evals/explanation-evals.ts';
 import { runGameEvals } from './evals/game-evals.ts';
 import { runInsightEvals } from './evals/insight-evals.ts';
 import { runQuizEvals } from './evals/quiz-evals.ts';
@@ -44,6 +46,7 @@ const thresholds = JSON.parse(
   'question-extractor': Record<ExtractorMetric, number>;
   grader: Record<GraderMetric, number>;
   'game-writer': Record<GameMetric, number>;
+  'explanation-writer': Record<ExplanationMetric, number>;
   'path-writer': Record<PathMetric, number>;
   'insight-writer': Record<InsightMetric, number>;
   'quiz-writer': Record<QuizMetric, number>;
@@ -69,6 +72,10 @@ const suites: readonly [string, () => Promise<EvalReport<string>>][] = [
   ['Question extractor evals', () => runExtractorEvals(llm, thresholds['question-extractor'])],
   ['Grader evals', () => runGraderEvals(llm, thresholds.grader)],
   ['Game writer evals', () => runGameEvals(llm, thresholds['game-writer'])],
+  [
+    'Explanation writer evals',
+    () => runExplanationEvals(llm, thresholds['explanation-writer']),
+  ],
   ['Path writer evals', () => runPathEvals(llm, thresholds['path-writer'])],
   ['Insight writer evals', () => runInsightEvals(llm, thresholds['insight-writer'])],
   ['Quiz writer evals', () => runQuizEvals(llm, thresholds['quiz-writer'])],

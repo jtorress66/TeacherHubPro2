@@ -43,6 +43,7 @@ export type ApplicationErrorCode =
   | 'course_system_refused'
   | 'course_system_unavailable'
   | 'grading_off'
+  | 'nothing_to_explain'
   | 'name_taken'
   | 'email_failed'
   | 'google_reconnect'

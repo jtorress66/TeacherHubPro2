@@ -803,6 +803,11 @@ export const ptAppB = {
     openDoc: 'Abrir o arquivo',
   },
   games: {
+    explainTitle: 'Explicações com IA',
+    explainIntro: 'Cartões sem “Por quê”: {count}. A IA escreve uma para cada um; você as revisa e edita antes de salvar. Suas próprias explicações são mantidas.',
+    explainButton: 'Pedir à IA para escrever explicações',
+    explainWorking: 'Escrevendo explicações…',
+    explainReview: 'A IA adicionou um “Por quê” aos cartões que não tinham. Leia cada um, edite ou apague e depois salve.',
     builderExplanation: 'Por que esta é a resposta (opcional)',
     builderExplanationHint: 'Uma frase. Os alunos a veem depois de responder e na revelação de um jogo ao vivo.',
     builderStandards: 'Padrões',
@@ -1373,6 +1378,7 @@ export const ptAppB = {
       'Esta página precisa do link do seu e-mail. Se não funcionar, entre na sua conta e use Reenviar para receber um novo.',
   },
   errors: {
+    nothing_to_explain: 'Todos os cartões já têm uma explicação.',
     school_is_paying: 'Esta escola tem ou teve um plano pago, então não tem teste para estender.',
     translations_outdated:
       'Você alterou o e-mail depois da tradução. Clique em Traduzir para as famílias de novo para que cada família receba o novo texto.',

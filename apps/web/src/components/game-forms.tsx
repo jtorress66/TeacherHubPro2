@@ -15,6 +15,7 @@ import {
   confirmGameGradesAction,
   createGameAction,
   requestGameDraftAction,
+  requestGameExplanationsAction,
   saveGameGradingAction,
   updateGameAction,
   type GameFormState,
@@ -385,6 +386,19 @@ function DraftForm(
         />
       </div>
       <Submit label={t('games.generate')} />
+    </form>
+  );
+}
+
+/** One click: the AI drafts "why this is the answer" for the cards that have none. */
+export function ExplainForm(props: { readonly locale: Locale; readonly gameId: string }) {
+  const t = createTranslator(props.locale);
+  const [state, action] = useActionState(requestGameExplanationsAction, initial);
+  return (
+    <form action={action} className="stack" noValidate aria-label={t('games.explainTitle')}>
+      <Hidden values={{ locale: props.locale, gameId: props.gameId }} />
+      <FormAlert message={state.errors?.form} />
+      <Submit label={t('games.explainButton')} />
     </form>
   );
 }

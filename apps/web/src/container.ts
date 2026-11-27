@@ -101,6 +101,8 @@ import {
   DeleteGame,
   RequestGameDraft,
   GetGameDraft,
+  RequestGameExplanations,
+  GetExplanationsDraft,
   SaveGameGrading,
   StartGameRound,
   FinishGameRound,
@@ -586,6 +588,8 @@ export interface AppContainer {
   readonly deleteGame: DeleteGame;
   readonly requestGameDraft: RequestGameDraft;
   readonly getGameDraft: GetGameDraft;
+  readonly requestGameExplanations: RequestGameExplanations;
+  readonly getExplanationsDraft: GetExplanationsDraft;
   readonly saveGameGrading: SaveGameGrading;
   readonly startGameRound: StartGameRound;
   readonly finishGameRound: FinishGameRound;
@@ -1140,6 +1144,8 @@ export function createAppContainer(
     deleteGame: new DeleteGame(deps),
     requestGameDraft: new RequestGameDraft(deps),
     getGameDraft: new GetGameDraft(deps),
+    requestGameExplanations: new RequestGameExplanations(deps),
+    getExplanationsDraft: new GetExplanationsDraft(deps),
     saveGameGrading: new SaveGameGrading(deps),
     startGameRound: new StartGameRound(deps),
     finishGameRound: new FinishGameRound(deps),

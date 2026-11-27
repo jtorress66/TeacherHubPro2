@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { describeStandard, standardsOf, type GameId } from '@thp/domain';
+import { describeStandard, standardsOf, unexplainedItems, type GameId } from '@thp/domain';
 import { createTranslator } from '@thp/i18n';
 import {
+  ExplainForm,
   GameDraftForm,
   GameEditor,
   GradingForm,
@@ -50,6 +51,7 @@ export default async function GamePage(props: Props) {
   const details = await app.getGame.execute({ actor: user, gameId: gameId as GameId });
   if (!details.ok) notFound();
   const { game, modes } = details.value;
+  const unexplained = unexplainedItems(game.content).length;
   const classes = (await app.listClasses.execute({ actor: user })).map((cls) => ({
     id: cls.id,
     name: cls.name,
@@ -261,6 +263,14 @@ export default async function GamePage(props: Props) {
             </table>
           </TableScroll>
         </>
+      )}
+
+      {unexplained === 0 ? null : (
+        <section className="card stack" aria-labelledby="explain-heading">
+          <h2 id="explain-heading">{t('games.explainTitle')}</h2>
+          <p className="hint">{t('games.explainIntro', { count: unexplained })}</p>
+          <ExplainForm locale={locale} gameId={game.id} />
+        </section>
       )}
 
       <h2>{t('games.freshTitle')}</h2>

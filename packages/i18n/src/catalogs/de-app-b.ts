@@ -814,6 +814,11 @@ export const deAppB = {
     openDoc: 'Datei öffnen',
   },
   games: {
+    explainTitle: 'Erklärungen per KI',
+    explainIntro: 'Karten ohne „Warum“: {count}. Die KI entwirft für jede eine; Sie prüfen und bearbeiten sie vor dem Speichern. Ihre eigenen Erklärungen bleiben erhalten.',
+    explainButton: 'KI Erklärungen schreiben lassen',
+    explainWorking: 'Erklärungen werden geschrieben…',
+    explainReview: 'Die KI hat den Karten ohne „Warum“ eines hinzugefügt. Lesen Sie jedes, bearbeiten oder löschen Sie es und speichern Sie dann.',
     builderExplanation: 'Warum das die Antwort ist (optional)',
     builderExplanationHint: 'Ein Satz. Schüler sehen ihn nach ihrer Antwort und bei der Auflösung im Live-Spiel.',
     builderStandards: 'Standards',
@@ -1391,6 +1396,7 @@ export const deAppB = {
       'Diese Seite braucht den Link aus Ihrer E-Mail. Falls er nicht funktioniert, melden Sie sich an und fordern Sie mit „Erneut senden“ einen neuen an.',
   },
   errors: {
+    nothing_to_explain: 'Jede Karte hat bereits eine Erklärung.',
     school_is_paying:
       'Diese Schule hat oder hatte einen bezahlten Tarif und daher keine Testphase zum Verlängern.',
     translations_outdated:
