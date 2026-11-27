@@ -945,6 +945,37 @@ input[type='radio'] {
   font-weight: 800;
 }
 
+/* After a round: each missed item, the right answer and the teacher's "why". */
+.round-review-list {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.round-review-list p {
+  margin: 0;
+}
+
+.round-review-prompt {
+  font-weight: 700;
+  color: var(--heading);
+}
+
+.round-review-right {
+  color: var(--green-text);
+  font-weight: 700;
+}
+
+.round-review-why,
+.reveal-explanation {
+  padding: 0.5rem 0.75rem;
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+
 .flashcard {
   border-color: var(--border);
   border-radius: var(--radius-lg);

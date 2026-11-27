@@ -1,5 +1,6 @@
 import {
   isCorrectLiveAnswer,
+  liveExplanation,
   liveLeaderboard,
   liveQuestions,
   ok,
@@ -61,7 +62,12 @@ export interface LiveView {
   /** How many have answered the question on screen. */
   readonly answered: number;
   readonly players: readonly { readonly id: LivePlayerId; readonly firstName: string }[];
-  readonly reveal: { readonly correctChoice: number; readonly stats: QuestionStats } | null;
+  readonly reveal: {
+    readonly correctChoice: number;
+    readonly stats: QuestionStats;
+    /** Why the answer is right, if the teacher wrote it; sent only at the reveal. */
+    readonly explanation: string | null;
+  } | null;
   readonly leaderboard: readonly LiveBoardRow[];
   /** The player's own standing (players only). */
   readonly you: {
@@ -107,7 +113,11 @@ function revealOf(
   const correctChoice = question.options.findIndex((_, choice) =>
     isCorrectLiveAnswer(game, session.mode, session.seed, session.current, choice, modes),
   );
-  return { correctChoice, stats: questionStats(answers, session.current, question.options.length) };
+  return {
+    correctChoice,
+    stats: questionStats(answers, session.current, question.options.length),
+    explanation: liveExplanation(game, session.mode, session.seed, session.current, modes),
+  };
 }
 
 async function selfPacedBoard(

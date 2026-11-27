@@ -2063,6 +2063,8 @@ export const es: Messages = {
     openDoc: 'Abrir el archivo',
   },
   games: {
+    builderExplanation: 'Por qué esta es la respuesta (opcional)',
+    builderExplanationHint: 'Una oración. Los estudiantes la ven después de responder y al mostrar la respuesta en un juego en vivo.',
     builderStandards: 'Estándares',
     builderStandardsHint: 'Códigos que practica esta tarjeta, separados por comas.',
     builderAllStandards: 'Estándares para todas las tarjetas',
@@ -2234,6 +2236,12 @@ export const es: Messages = {
     drag_drop: 'Arrastrar y soltar',
   },
   gamePlay: {
+    reviewTitle: 'Repasa tus respuestas',
+    reviewHidden: 'Este juego cuenta para tu nota, así que las respuestas correctas no se muestran. Pregúntale a tu maestro por las que fallaste.',
+    reviewNoAnswer: 'No respondiste esta.',
+    reviewYours: 'Tu respuesta: {answer}',
+    reviewRight: 'Respuesta correcta: {answer}',
+    reviewWhy: 'Por qué:',
     chooseMode: 'Modo',
     progress: '{n} de {total}',
     next: 'Siguiente',

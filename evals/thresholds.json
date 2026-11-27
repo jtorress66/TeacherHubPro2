@@ -35,7 +35,8 @@
     "structure": 1,
     "count": 1,
     "language": 1,
-    "playable": 1
+    "playable": 1,
+    "explained": 0.9
   },
   "path-writer": {
     "structure": 1,

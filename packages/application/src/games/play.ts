@@ -3,6 +3,8 @@ import {
   err,
   ok,
   percentOf,
+  roundReview,
+  showsAnswersAfterPlay,
   playableModes,
   type Game,
   type GameId,
@@ -11,6 +13,7 @@ import {
   type GameModeRegistry,
   type GamePlayId,
   type Result,
+  type RoundReviewItem,
   type RoundScore,
   type RoundView,
 } from '@thp/domain';
@@ -40,6 +43,8 @@ export interface GameRound {
 
 export interface RoundResult extends RoundScore {
   readonly percent: number;
+  /** The missed items; their answers are hidden when replaying could raise a grade. */
+  readonly review: readonly RoundReviewItem[];
 }
 
 const maxSeed = 2 ** 31;
@@ -84,19 +89,25 @@ export interface FinishInput {
   readonly answers: unknown;
 }
 
-/** Scores answers to the round the seed rebuilds, by the mode's own rules. */
+/**
+ * Scores answers to the round the seed rebuilds, by the mode's own rules, with the review of the
+ * missed items (answers shown as the game's grading allows, unless `showAnswers` says otherwise).
+ */
 export function scoreOf(
   game: Game,
   modes: GameModeRegistry,
   input: FinishInput,
+  showAnswers = showsAnswersAfterPlay(game.grading),
 ): Result<{ mode: GameModeId; score: RoundResult }, UseCaseError> {
   if (!Number.isInteger(input.seed) || input.seed < 0 || input.seed >= maxSeed) {
     return err({ field: 'seed', code: 'out_of_range' });
   }
   const found = modeFor(game, modes, input.mode);
   if (!found.ok) return found;
-  const score = found.value.mode.score(game.content, input.seed, input.answers);
-  return ok({ mode: found.value.mode.id, score: { ...score, percent: percentOf(score) } });
+  const { mode } = found.value;
+  const score = mode.score(game.content, input.seed, input.answers);
+  const review = roundReview(mode.review(game.content, input.seed, input.answers), showAnswers);
+  return ok({ mode: mode.id, score: { ...score, percent: percentOf(score), review } });
 }
 
 export const clampDuration = (ms: number): number =>
@@ -195,7 +206,8 @@ export class FinishPreviewRound {
   async execute(input: GameRef & FinishInput): Promise<Result<RoundResult, UseCaseError>> {
     const game = await findOwnGame(this.deps.games, input);
     if (!game.ok) return game;
-    const scored = scoreOf(game.value, this.deps.gameModes, input);
+    // The teacher's own preview always shows the answers.
+    const scored = scoreOf(game.value, this.deps.gameModes, input, true);
     return scored.ok ? ok(scored.value.score) : scored;
   }
 }

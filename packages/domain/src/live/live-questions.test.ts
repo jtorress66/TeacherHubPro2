@@ -4,7 +4,12 @@ import { valueOf } from '../test-support.ts';
 import type { GameContent } from '../games/content.ts';
 import { createGame, type Game } from '../games/game.ts';
 import { defaultGameModes } from '../games/mode-registry.ts';
-import { isCorrectLiveAnswer, liveModes, liveQuestions } from './live-questions.ts';
+import {
+  isCorrectLiveAnswer,
+  liveExplanation,
+  liveModes,
+  liveQuestions,
+} from './live-questions.ts';
 
 const questions: GameContent = {
   kind: 'questions',
@@ -163,5 +168,29 @@ describe('isCorrectLiveAnswer', () => {
     expect(isCorrectLiveAnswer(game, 'quiz', 1, 0, 0.5, defaultGameModes)).toBe(false);
     expect(isCorrectLiveAnswer(game, 'quiz', 1, 7, 0, defaultGameModes)).toBe(false);
     expect(isCorrectLiveAnswer(game, 'matching', 1, 0, 0, defaultGameModes)).toBe(false);
+  });
+});
+
+describe('liveExplanation', () => {
+  it('gives the shown question’s explanation, for the reveal only', () => {
+    const explained: GameContent = {
+      kind: 'statements',
+      items: [
+        { statement: 'The Sun is a star', isTrue: true, explanation: 'It makes its own light.' },
+        { statement: 'The Moon is a planet', isTrue: false },
+        { statement: 'Mars is red', isTrue: true },
+      ],
+    };
+    const game = gameOf(explained, 'true_false');
+    const shown = liveQuestions(game, 'true_false', 6, defaultGameModes) ?? [];
+    const sun = shown.findIndex((q) => q.prompt === 'The Sun is a star');
+    const moon = shown.findIndex((q) => q.prompt === 'The Moon is a planet');
+
+    expect(liveExplanation(game, 'true_false', 6, sun, defaultGameModes)).toBe(
+      'It makes its own light.',
+    );
+    expect(liveExplanation(game, 'true_false', 6, moon, defaultGameModes)).toBeNull();
+    expect(liveExplanation(game, 'true_false', 6, 99, defaultGameModes)).toBeNull();
+    expect(shown.every((q) => !('explanation' in q))).toBe(true);
   });
 });

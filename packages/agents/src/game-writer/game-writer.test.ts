@@ -102,6 +102,33 @@ describe('reviewGame', () => {
     });
   });
 
+  it('asks for a one-sentence explanation where a student can get an item wrong', async () => {
+    for (const kind of ['questions', 'statements', 'sentences'] as const) {
+      // Unusable replies: the writer asks twice more, then gives up; only the prompt matters here.
+      const llm = new FakeLlmClient().replyWith('{}').replyWith('{}').replyWith('{}');
+      await new GameWriter(llm).write(requestOf({ kind, count: 3 }));
+      const prompt = llm.requests[0]?.messages[0]?.content ?? '';
+      expect(prompt).toContain('"explanation": string');
+      expect(prompt).toContain('Each explanation is one short sentence');
+    }
+    const llm = new FakeLlmClient().replyWith(pairsReply);
+    await new GameWriter(llm).write(requestOf());
+    expect(llm.requests[0]?.messages[0]?.content).not.toContain('explanation');
+  });
+
+  it('keeps each item’s explanation, and accepts an item without one', () => {
+    const request = requestOf({ kind: 'statements', count: 3 });
+    const items = [
+      { statement: 'El Sol es una estrella', isTrue: true, explanation: 'Produce su propia luz.' },
+      { statement: 'La Luna es un planeta', isTrue: false },
+      { statement: 'Marte es rojo', isTrue: true, explanation: 42 },
+    ];
+    const content = unwrap(reviewGame(request, reply(JSON.stringify({ items }))));
+    expect(content.items[0]).toMatchObject({ explanation: 'Produce su propia luz.' });
+    expect(content.items[1]).not.toHaveProperty('explanation');
+    expect(content.items[2]).not.toHaveProperty('explanation');
+  });
+
   it('reads every other kind', () => {
     const cases = [
       {

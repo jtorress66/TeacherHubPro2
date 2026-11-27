@@ -15,6 +15,7 @@ const text = z.string().max(maxItemTextLength * 2);
 const list = <T extends z.ZodType>(item: T) => z.array(item).max(maxGameItems * 2);
 const standards = z.array(z.string().max(80)).max(20).optional();
 const picture = z.object({ id: z.string().max(64), alt: z.string().max(maxPictureAltLength * 2) });
+const explanation = text.optional();
 
 const itemSchemas = {
   questions: z.object({
@@ -23,14 +24,16 @@ const itemSchemas = {
     answer: z.number().int(),
     picture: picture.optional(),
     standards,
+    explanation,
   }),
   statements: z.object({
     statement: text,
     isTrue: z.boolean(),
     picture: picture.optional(),
     standards,
+    explanation,
   }),
-  sentences: z.object({ text, answer: text, picture: picture.optional(), standards }),
+  sentences: z.object({ text, answer: text, picture: picture.optional(), standards, explanation }),
   pairs: z.object({ term: text, definition: text, picture: picture.optional(), standards }),
   steps: text,
   groups: z.object({ name: text, members: z.array(text).max(maxGameItems * 2), standards }),

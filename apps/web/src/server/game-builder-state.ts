@@ -113,21 +113,23 @@ const labelsOf = <K extends ContentKind>(kind: K, items: readonly ItemOf<K>[]) =
 interface Extras {
   readonly picture?: GamePicture;
   readonly standards?: readonly string[];
+  readonly explanation?: string;
 }
 
 const extrasOf = (item: unknown): Extras => {
   if (typeof item !== 'object' || item === null) return {};
-  const { picture, standards } = item as Extras;
+  const { picture, standards, explanation } = item as Extras;
   return {
     ...(picture === undefined ? {} : { picture }),
     ...(standards === undefined ? {} : { standards }),
+    ...(explanation === undefined ? {} : { explanation }),
   };
 };
 
 /**
- * Cards read back from the text box, with the pictures and standards the cards had before put
- * back on the items whose question (or term, or statement) is unchanged; the text box cannot
- * show them.
+ * Cards read back from the text box, with the pictures, standards and explanations the cards had
+ * before put back on the items whose question (or term, or statement) is unchanged; the text box
+ * cannot show them.
  */
 export function keepExtras<K extends ContentKind>(
   kind: K,

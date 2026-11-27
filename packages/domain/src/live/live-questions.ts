@@ -90,3 +90,17 @@ export function isCorrectLiveAnswer(
   answers[question] = round.format.answerFor(choice);
   return round.mode.score(game.content, seed, answers).results[question] === true;
 }
+
+/** The explanation of the question on screen, shown with the answer at the reveal; else null. */
+export function liveExplanation(
+  game: Game,
+  modeId: string,
+  seed: number,
+  question: number,
+  modes: GameModeRegistry,
+): string | null {
+  const round = liveRound(game, modeId, modes);
+  if (round === null) return null;
+  // With no answers every question is missed, so the review lists them all, in round order.
+  return round.mode.review(game.content, seed, [])[question]?.explanation ?? null;
+}

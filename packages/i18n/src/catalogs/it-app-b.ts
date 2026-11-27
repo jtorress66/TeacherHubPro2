@@ -803,6 +803,8 @@ export const itAppB = {
     openDoc: 'Apri il file',
   },
   games: {
+    builderExplanation: 'Perché questa è la risposta (facoltativo)',
+    builderExplanationHint: 'Una frase. Gli studenti la vedono dopo aver risposto e alla rivelazione in un gioco dal vivo.',
     builderStandards: 'Standard',
     builderStandardsHint: 'Codici che questa scheda esercita, separati da virgole.',
     builderAllStandards: 'Standard per tutte le schede',
@@ -975,6 +977,12 @@ export const itAppB = {
     drag_drop: 'Trascina e rilascia',
   },
   gamePlay: {
+    reviewTitle: 'Rivedi le tue risposte',
+    reviewHidden: 'Questo gioco conta per il tuo voto, quindi le risposte giuste restano nascoste. Chiedi al tuo insegnante di quelle che hai sbagliato.',
+    reviewNoAnswer: 'Non hai risposto a questa.',
+    reviewYours: 'La tua risposta: {answer}',
+    reviewRight: 'Risposta giusta: {answer}',
+    reviewWhy: 'Perché:',
     chooseMode: 'Modalità',
     progress: '{n} di {total}',
     next: 'Avanti',

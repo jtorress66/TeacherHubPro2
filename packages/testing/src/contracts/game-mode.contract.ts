@@ -59,9 +59,27 @@ export function gameModeContract(name: string, mode: GameMode, content: GameCont
       }
     });
 
-    it('the view does not reveal the answers', () => {
+    it('the view does not reveal the answers or their explanations', () => {
       const view = JSON.stringify(mode.prepare(content, 6));
-      expect(view).not.toMatch(/"(answer|answers|key|correct|isTrue)"/);
+      expect(view).not.toMatch(/"(answer|answers|key|correct|isTrue|explanation)"/);
+      for (const item of content.items) {
+        const explanation =
+          typeof item === 'object' && 'explanation' in item ? item.explanation : '';
+        if (explanation) expect(view).not.toContain(explanation);
+      }
+    });
+
+    it('has nothing to review after perfect answers', () => {
+      for (const seed of seeds) {
+        expect(mode.review(content, seed, mode.solve(content, seed))).toEqual([]);
+      }
+    });
+
+    it('reviews no more items than it scores, and never throws on malformed answers', () => {
+      for (const answers of [undefined, [], ...malformed]) {
+        const missed = mode.score(content, 5, answers).results.filter((right) => !right).length;
+        expect(mode.review(content, 5, answers).length).toBeLessThanOrEqual(missed);
+      }
     });
   });
 }

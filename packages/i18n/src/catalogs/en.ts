@@ -2035,6 +2035,8 @@ export const en = {
     openDoc: 'Open the file',
   },
   games: {
+    builderExplanation: 'Why this is the answer (optional)',
+    builderExplanationHint: 'One sentence. Students see it after they answer, and at the reveal in a live game.',
     builderStandards: 'Standards',
     builderStandardsHint: 'Codes this card practises, separated by commas.',
     builderAllStandards: 'Standards for every card',
@@ -2204,6 +2206,12 @@ export const en = {
     drag_drop: 'Drag and drop',
   },
   gamePlay: {
+    reviewTitle: 'Review your answers',
+    reviewHidden: 'This game counts toward your grade, so the right answers stay hidden. Ask your teacher about the ones you missed.',
+    reviewNoAnswer: 'You did not answer this one.',
+    reviewYours: 'Your answer: {answer}',
+    reviewRight: 'Right answer: {answer}',
+    reviewWhy: 'Why:',
     chooseMode: 'Mode',
     progress: '{n} of {total}',
     next: 'Next',
