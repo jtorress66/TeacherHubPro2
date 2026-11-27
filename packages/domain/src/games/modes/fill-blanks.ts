@@ -1,6 +1,13 @@
 import { blank } from '../content.ts';
 import type { GamePicture } from '../game-picture.ts';
-import { defineMode, listOf, sameAnswer, scored } from '../game-mode.ts';
+import {
+  defineMode,
+  explanationsOf,
+  listOf,
+  sameAnswer,
+  scored,
+  typedAt,
+} from '../game-mode.ts';
 import { shuffle } from '../random.ts';
 
 export interface ShownSentence {
@@ -35,11 +42,19 @@ export const fillBlanksMode = defineMode({
         random,
       ),
     };
-    return { view, key: items.map((item) => item.answer) };
+    return { view, key: items.map((item) => item.answer), explanations: explanationsOf(items) };
   },
   solve: (key) => key,
   score(key, answers) {
     const typed = listOf(answers);
     return scored(key.map((answer, index) => sameAnswer(typed[index], answer)));
+  },
+  review({ view, key, explanations }, answers) {
+    return view.sentences.map((sentence, index) => ({
+      prompt: `${sentence.before}${blank}${sentence.after}`,
+      given: typedAt(answers, index),
+      right: { text: key[index] ?? '' },
+      explanation: explanations?.[index] ?? null,
+    }));
   },
 });

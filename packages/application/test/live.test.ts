@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   defaultGameModes,
   isCorrectLiveAnswer,
+  liveExplanation,
   liveQuestions,
   type Game,
   type LiveSession,
@@ -259,6 +260,7 @@ describe('Live sessions: playing', () => {
     expect(lobbyView).toMatchObject({ status: 'question', current: 0, pin: null, reveal: null });
     expect(JSON.stringify(lobbyView.question)).not.toContain('answer');
 
+    const explained: (string | null)[] = [];
     for (let q = 0; q < 4; q += 1) {
       const right = rightChoice(s.game, s.session, q);
       world.clock.advanceBy(2000);
@@ -281,9 +283,15 @@ describe('Live sessions: playing', () => {
       expect(valueOf(last).revealed).toBe(true);
       const revealed = await view(world, s.host);
       expect(revealed.status).toBe('reveal');
-      expect(revealed.reveal).toMatchObject({ correctChoice: right, stats: { answered: 3 } });
+      expect(revealed.reveal).toMatchObject({
+        correctChoice: right,
+        stats: { answered: 3 },
+        explanation: liveExplanation(s.game, s.session.mode, s.session.seed, q, defaultGameModes),
+      });
+      explained.push(revealed.reveal?.explanation ?? null);
       valueOf(await new NextLiveQuestion(world).execute({ actor: s.host }));
     }
+    expect(explained).toContain('Jupiter is more massive than all the other planets together.');
 
     const end = await view(world, s.host);
     expect(end.status).toBe('ended');

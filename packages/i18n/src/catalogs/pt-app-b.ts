@@ -803,6 +803,8 @@ export const ptAppB = {
     openDoc: 'Abrir o arquivo',
   },
   games: {
+    builderExplanation: 'Por que esta é a resposta (opcional)',
+    builderExplanationHint: 'Uma frase. Os alunos a veem depois de responder e na revelação de um jogo ao vivo.',
     builderStandards: 'Padrões',
     builderStandardsHint: 'Códigos que este cartão pratica, separados por vírgulas.',
     builderAllStandards: 'Padrões para todos os cartões',
@@ -973,6 +975,12 @@ export const ptAppB = {
     drag_drop: 'Arrastar e soltar',
   },
   gamePlay: {
+    reviewTitle: 'Revise suas respostas',
+    reviewHidden: 'Este jogo conta para sua nota, então as respostas certas ficam ocultas. Pergunte ao seu professor sobre as que você errou.',
+    reviewNoAnswer: 'Você não respondeu esta.',
+    reviewYours: 'Sua resposta: {answer}',
+    reviewRight: 'Resposta certa: {answer}',
+    reviewWhy: 'Por quê:',
     chooseMode: 'Modo',
     progress: '{n} de {total}',
     next: 'Próximo',

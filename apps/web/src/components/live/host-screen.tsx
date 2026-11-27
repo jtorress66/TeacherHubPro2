@@ -3,6 +3,7 @@
 import type { LiveView } from '@thp/application';
 import { createTranslator, type Locale } from '@thp/i18n';
 import { AnswerOptions, optionLabel } from './answer-options.tsx';
+import { RevealExplanation } from './reveal-explanation.tsx';
 import { useCountdown, useLiveSocket } from './use-live-socket.ts';
 import { TableScroll } from '../table-scroll.tsx';
 import { LivePicture } from '../game-picture.tsx';
@@ -159,6 +160,7 @@ export function HostScreen(props: {
                   answer: optionLabel(view.question, view.reveal.correctChoice, props.locale),
                 })}
               </p>
+              <RevealExplanation locale={props.locale} explanation={view.reveal.explanation} />
               <h3>{t('live.leaderboard')}</h3>
               <Leaderboard view={view} locale={props.locale} />
               <div className="button-row">

@@ -21,11 +21,18 @@ describe('scoreGame', () => {
       count: 1,
       language: 1,
       playable: 1,
+      explained: 1,
     });
   });
 
   it('scores zero when there is no content', () => {
-    expect(scoreGame(request, null)).toEqual({ structure: 0, count: 0, language: 0, playable: 0 });
+    expect(scoreGame(request, null)).toEqual({
+      structure: 0,
+      count: 0,
+      language: 0,
+      playable: 0,
+      explained: 0,
+    });
   });
 
   it('judges language from the words that show it, not from single names and numbers', () => {
@@ -60,5 +67,18 @@ describe('scoreGame', () => {
     expect(scores.count).toBe(0);
     expect(scores.language).toBe(0);
     expect(scores.playable).toBeCloseTo(6 / 7);
+  });
+
+  it('scores the share of questions, statements and sentences with an explanation', () => {
+    const halfExplained: GameContent = {
+      kind: 'statements',
+      items: [
+        { statement: 'The Sun is a star', isTrue: true, explanation: 'It makes its own light.' },
+        { statement: 'The Moon is a planet', isTrue: false },
+      ],
+    };
+    expect(scoreGame(request, halfExplained).explained).toBe(0.5);
+    // Matching, ordering and sorting games have nothing to explain.
+    expect(scoreGame(request, sampleGameContent.steps).explained).toBe(1);
   });
 });

@@ -752,6 +752,8 @@ export const zhAppB = {
     openDoc: '打开文件',
   },
   games: {
+    builderExplanation: '为什么这是答案（可选）',
+    builderExplanationHint: '一句话。学生作答后会看到它，现场游戏公布答案时也会显示。',
     builderStandards: '标准',
     builderStandardsHint: '这张卡片练习的代码，用逗号分隔。',
     builderAllStandards: '所有卡片的标准',
@@ -914,6 +916,12 @@ export const zhAppB = {
     drag_drop: '拖放',
   },
   gamePlay: {
+    reviewTitle: '回顾你的答案',
+    reviewHidden: '这个游戏计入你的成绩，所以正确答案不会显示。答错的题可以问问你的老师。',
+    reviewNoAnswer: '这题你没有作答。',
+    reviewYours: '你的答案：{answer}',
+    reviewRight: '正确答案：{answer}',
+    reviewWhy: '原因：',
     chooseMode: '模式',
     progress: '第 {n} 个，共 {total} 个',
     next: '下一个',

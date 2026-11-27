@@ -814,6 +814,8 @@ export const deAppB = {
     openDoc: 'Datei öffnen',
   },
   games: {
+    builderExplanation: 'Warum das die Antwort ist (optional)',
+    builderExplanationHint: 'Ein Satz. Schüler sehen ihn nach ihrer Antwort und bei der Auflösung im Live-Spiel.',
     builderStandards: 'Standards',
     builderStandardsHint: 'Codes, die diese Karte übt, durch Kommas getrennt.',
     builderAllStandards: 'Standards für alle Karten',
@@ -987,6 +989,12 @@ export const deAppB = {
     drag_drop: 'Ziehen und ablegen',
   },
   gamePlay: {
+    reviewTitle: 'Deine Antworten im Rückblick',
+    reviewHidden: 'Dieses Spiel zählt für deine Note, deshalb bleiben die richtigen Antworten verborgen. Frag deine Lehrkraft nach denen, die du verpasst hast.',
+    reviewNoAnswer: 'Diese hast du nicht beantwortet.',
+    reviewYours: 'Deine Antwort: {answer}',
+    reviewRight: 'Richtige Antwort: {answer}',
+    reviewWhy: 'Warum:',
     chooseMode: 'Modus',
     progress: '{n} von {total}',
     next: 'Weiter',

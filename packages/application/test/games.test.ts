@@ -398,6 +398,76 @@ describe('Games: playing from a student link', () => {
   });
 });
 
+describe('Games: the review after a round', () => {
+  const jupiter = 'Jupiter is more massive than all the other planets together.';
+
+  it('shows the student each missed question with the right answer and the explanation', async () => {
+    const world = makeWorld();
+    const s = await setUp(world);
+    const result = await play(world, s.anaToken, s.game, 0);
+    expect(result.review).toHaveLength(4);
+    expect(result.review).toContainEqual({
+      prompt: 'Which is the largest planet?',
+      given: null,
+      right: { text: 'Jupiter' },
+      explanation: jupiter,
+    });
+    expect((await play(world, s.anaToken, s.game, 4)).review).toEqual([]);
+  });
+
+  it('hides the answers when the grade keeps the best try, but shows them for the first try', async () => {
+    const world = makeWorld();
+    const s = await setUp(world);
+    const grading = {
+      actor: s.actor,
+      gameId: s.game.id,
+      countAsGrade: true,
+      method: 'best',
+      points: 10,
+      categoryId: s.category('Tareas'),
+    };
+    const best = valueOf(await new SaveGameGrading(world).execute(grading));
+    const hidden = await play(world, s.anaToken, best, 0);
+    expect(hidden.review).toHaveLength(4);
+    expect(hidden.review.every((item) => item.right === null && item.explanation === null)).toBe(
+      true,
+    );
+
+    const first = valueOf(await new SaveGameGrading(world).execute({ ...grading, method: 'first' }));
+    expect((await play(world, s.anaToken, first, 0)).review).toContainEqual(
+      expect.objectContaining({ explanation: jupiter }),
+    );
+  });
+
+  it('always shows the teacher the answers in a preview', async () => {
+    const world = makeWorld();
+    const s = await setUp(world);
+    valueOf(
+      await new SaveGameGrading(world).execute({
+        actor: s.actor,
+        gameId: s.game.id,
+        countAsGrade: true,
+        method: 'average',
+        points: 10,
+        categoryId: s.category('Tareas'),
+      }),
+    );
+    const round = valueOf(
+      await new StartPreviewRound(world).execute({ actor: s.actor, gameId: s.game.id }),
+    );
+    const result = valueOf(
+      await new FinishPreviewRound(world).execute({
+        actor: s.actor,
+        gameId: s.game.id,
+        mode: round.mode,
+        seed: round.seed,
+        answers: [],
+      }),
+    );
+    expect(result.review).toContainEqual(expect.objectContaining({ explanation: jupiter }));
+  });
+});
+
 describe('Games: previews', () => {
   it('a teacher previews and scores a round, and nothing is saved', async () => {
     const world = makeWorld();

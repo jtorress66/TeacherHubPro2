@@ -61,6 +61,22 @@ function CardText(props: {
   );
 }
 
+/** Why the right answer is right: shown to students after they answer, and at a live reveal. */
+function ExplanationField(props: {
+  readonly t: T;
+  readonly value: string | undefined;
+  readonly onChange: (value: string) => void;
+}) {
+  return (
+    <CardText
+      label={props.t('games.builderExplanation')}
+      hint={props.t('games.builderExplanationHint')}
+      value={props.value ?? ''}
+      onChange={props.onChange}
+    />
+  );
+}
+
 function SmallButton(props: {
   readonly children: ReactNode;
   readonly onClick: () => void;
@@ -102,6 +118,13 @@ function QuestionCard({
         picture={item.picture}
         onChange={(picture) => {
           onChange(setPicture(item, picture));
+        }}
+      />
+      <ExplanationField
+        t={t}
+        value={item.explanation}
+        onChange={(explanation) => {
+          onChange({ ...item, explanation });
         }}
       />
       <ul className="builder-options">
@@ -182,6 +205,13 @@ function StatementCard({
           onChange(setPicture(item, picture));
         }}
       />
+      <ExplanationField
+        t={t}
+        value={item.explanation}
+        onChange={(explanation) => {
+          onChange({ ...item, explanation });
+        }}
+      />
       <fieldset className="builder-truth">
         <legend>{t('games.builderTruth')}</legend>
         {([true, false] as const).map((truth) => (
@@ -233,6 +263,13 @@ function SentenceCard({
         picture={item.picture}
         onChange={(picture) => {
           onChange(setPicture(item, picture));
+        }}
+      />
+      <ExplanationField
+        t={t}
+        value={item.explanation}
+        onChange={(explanation) => {
+          onChange({ ...item, explanation });
         }}
       />
     </>

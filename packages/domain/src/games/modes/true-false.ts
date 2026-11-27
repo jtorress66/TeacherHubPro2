@@ -1,5 +1,5 @@
 import type { GamePicture } from '../game-picture.ts';
-import { defineMode, listOf, scored } from '../game-mode.ts';
+import { defineMode, explanationsOf, listOf, scored } from '../game-mode.ts';
 import { shuffle } from '../random.ts';
 
 export interface TrueFalseView {
@@ -20,11 +20,23 @@ export const trueFalseMode = defineMode({
       statements: items.map((i) => i.statement),
       pictures: items.map((i) => i.picture ?? null),
     };
-    return { view, key: items.map((item) => item.isTrue) };
+    return { view, key: items.map((item) => item.isTrue), explanations: explanationsOf(items) };
   },
   solve: (key) => key,
   score(key, answers) {
     const given = listOf(answers);
     return scored(key.map((truth, index) => given[index] === truth));
+  },
+  review({ view, key, explanations }, answers) {
+    const given = listOf(answers);
+    return view.statements.map((statement, index) => {
+      const truth = given[index];
+      return {
+        prompt: statement,
+        given: typeof truth === 'boolean' ? { truth } : null,
+        right: { truth: key[index] === true },
+        explanation: explanations?.[index] ?? null,
+      };
+    });
   },
 });

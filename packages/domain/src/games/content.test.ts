@@ -332,3 +332,70 @@ describe('validateContent with standards', () => {
     });
   });
 });
+
+describe('validateContent with explanations', () => {
+  it('keeps a trimmed explanation on questions, statements and sentences, and drops a blank one', () => {
+    const checked = valueOf(
+      validateContent({
+        kind: 'questions',
+        items: [
+          {
+            prompt: 'Largest planet?',
+            options: ['Mars', 'Jupiter'],
+            answer: 1,
+            explanation: '  Jupiter is more than twice as massive as all other planets together. ',
+          },
+          { prompt: 'Closest to the Sun?', options: ['Mercury', 'Earth'], answer: 0, explanation: ' ' },
+          { prompt: 'The red planet?', options: ['Saturn', 'Mars'], answer: 1 },
+        ],
+      }),
+    );
+    expect(checked.items[0]).toMatchObject({
+      explanation: 'Jupiter is more than twice as massive as all other planets together.',
+    });
+    expect(checked.items[1]).not.toHaveProperty('explanation');
+
+    const statements = valueOf(
+      validateContent({
+        kind: 'statements',
+        items: [
+          { statement: 'The Sun is a star.', isTrue: true, explanation: 'It makes its own light.' },
+          { statement: 'Mars is blue.', isTrue: false },
+          { statement: 'Earth has one moon.', isTrue: true },
+        ],
+      }),
+    );
+    expect(statements.items[0]).toMatchObject({ explanation: 'It makes its own light.' });
+
+    const sentences = valueOf(
+      validateContent({
+        kind: 'sentences',
+        items: [
+          { text: 'Water boils at ___ °C.', answer: '100', explanation: 'At sea level.' },
+          { text: 'The ___ is our star.', answer: 'Sun' },
+          { text: 'Plants need ___ to grow.', answer: 'light' },
+        ],
+      }),
+    );
+    expect(sentences.items[0]).toMatchObject({ explanation: 'At sea level.' });
+  });
+
+  it('refuses an explanation that is too long or left as a placeholder', () => {
+    const explained = (explanation: string): GameContent => ({
+      kind: 'statements',
+      items: [
+        { statement: 'The Sun is a star.', isTrue: true },
+        { statement: 'Mars is blue.', isTrue: false, explanation },
+        { statement: 'Earth has one moon.', isTrue: true },
+      ],
+    });
+    expect(errorOf(validateContent(explained('x'.repeat(301))))).toEqual({
+      field: 'items.1.explanation',
+      code: 'too_long',
+    });
+    expect(errorOf(validateContent(explained('TODO explain')))).toEqual({
+      field: 'items.1.explanation',
+      code: 'not_allowed',
+    });
+  });
+});

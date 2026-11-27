@@ -95,10 +95,11 @@ describe('the question builder', () => {
     expect(textAsItems('questions', text)).toEqual(cards);
   });
 
-  it('keeps each picture and standard on its question when the text is edited and read back', () => {
+  it('keeps each picture, standard and explanation on its question when the text is edited and read back', () => {
     const map = { id: 'pic-1', alt: 'A map of Peru' };
+    const why = 'Lima is the seat of government.';
     const cards = [
-      { ...q('Capital of Peru', 1), picture: map, standards: ['6.G.1'] },
+      { ...q('Capital of Peru', 1), picture: map, standards: ['6.G.1'], explanation: why },
       q('Capital of Chile'),
     ];
     const edited = textAsItems('questions', 'Capital of Chile | *A | B\nCapital of Peru | A | *B');
@@ -111,6 +112,7 @@ describe('the question builder', () => {
         answer: 1,
         picture: map,
         standards: ['6.G.1'],
+        explanation: why,
       },
     ]);
     expect(keepExtras('steps', ['Mix'], ['Mix', 'Bake'])).toEqual(['Mix', 'Bake']);

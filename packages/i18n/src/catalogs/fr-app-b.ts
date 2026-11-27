@@ -812,6 +812,8 @@ export const frAppB = {
     openDoc: 'Ouvrir le fichier',
   },
   games: {
+    builderExplanation: 'Pourquoi c’est la bonne réponse (facultatif)',
+    builderExplanationHint: 'Une phrase. Les élèves la voient après avoir répondu, et lors de la révélation dans un jeu en direct.',
     builderStandards: 'Normes',
     builderStandardsHint: 'Codes travaillés par cette carte, séparés par des virgules.',
     builderAllStandards: 'Normes pour toutes les cartes',
@@ -983,6 +985,12 @@ export const frAppB = {
     drag_drop: 'Glisser-déposer',
   },
   gamePlay: {
+    reviewTitle: 'Revois tes réponses',
+    reviewHidden: 'Ce jeu compte dans ta note, donc les bonnes réponses restent cachées. Demande à ton enseignant pour celles que tu as manquées.',
+    reviewNoAnswer: 'Tu n’as pas répondu à celle-ci.',
+    reviewYours: 'Ta réponse : {answer}',
+    reviewRight: 'Bonne réponse : {answer}',
+    reviewWhy: 'Pourquoi :',
     chooseMode: 'Mode',
     progress: '{n} sur {total}',
     next: 'Suivant',

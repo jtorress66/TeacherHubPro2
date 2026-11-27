@@ -8,6 +8,7 @@ import {
   startSelfPacedRoundAction,
 } from '../../app/_lib/live-actions.ts';
 import { GamePlayer } from '../game-player.tsx';
+import { RevealExplanation } from './reveal-explanation.tsx';
 import { AnswerOptions } from './answer-options.tsx';
 import { useCountdown, useLiveSocket } from './use-live-socket.ts';
 import { LivePicture } from '../game-picture.tsx';
@@ -115,6 +116,10 @@ export function PlayerScreen(props: {
                 ? t('play.correct', { points: view.you.lastAnswer.points })
                 : t('play.wrong')}
           </p>
+          <RevealExplanation
+            locale={props.locale}
+            explanation={view.reveal?.explanation ?? null}
+          />
           <Standing view={view} locale={props.locale} />
         </>
       ) : null}

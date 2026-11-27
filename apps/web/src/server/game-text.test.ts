@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { contentKinds, validateContent } from '@thp/domain';
+import { contentKinds, validateContent, type GameContent } from '@thp/domain';
 import { sampleGameContent } from '@thp/testing';
 import { contentText, parseContentText } from './game-text.ts';
 
@@ -75,9 +75,18 @@ describe('game content as text', () => {
     });
   });
 
-  it('writes content back as the same text, for every kind', () => {
+  it('writes content back as the same text, for every kind (explanations stay on the cards)', () => {
+    const withoutExplanations = (content: GameContent): GameContent =>
+      ({
+        ...content,
+        items: (content.items as readonly unknown[]).map((item) =>
+          typeof item === 'object' && item !== null
+            ? Object.fromEntries(Object.entries(item).filter(([key]) => key !== 'explanation'))
+            : item,
+        ),
+      }) as GameContent;
     for (const kind of contentKinds) {
-      const content = sampleGameContent[kind];
+      const content = withoutExplanations(sampleGameContent[kind]);
       expect(parseContentText(kind, contentText(content))).toEqual(content);
     }
     expect(contentText(sampleGameContent.questions).split('\n')[0]).toBe(

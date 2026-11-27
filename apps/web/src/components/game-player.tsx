@@ -21,6 +21,7 @@ import { accessFor, PictureSourceProvider, type PicturePlace } from './game-pict
 import { CrosswordRound, WordSearchRound } from './game-modes/grid-modes.tsx';
 import { DragDropRound, SequenceRound } from './game-modes/order-modes.tsx';
 import type { RendererProps } from './game-modes/renderer.ts';
+import { RoundReview } from './round-review.tsx';
 
 /** One player per mode: a new mode adds an entry here, never a branch. */
 const renderers: {
@@ -138,6 +139,7 @@ export function GamePlayer(props: {
                 percent: result.percent,
               })}
             </p>
+            <RoundReview locale={props.locale} items={result.review} />
             <button
               type="button"
               className="button"

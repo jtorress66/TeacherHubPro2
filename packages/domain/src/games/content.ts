@@ -9,6 +9,8 @@ export interface QuestionItem {
   /** The index of the correct option. */
   readonly answer: number;
   readonly picture?: GamePicture;
+  /** Why the right answer is right, shown to a student after they answer. */
+  readonly explanation?: string;
   /** The standards this item practises (codes the teacher typed). */
   readonly standards?: readonly string[];
 }
@@ -17,6 +19,8 @@ export interface StatementItem {
   readonly statement: string;
   readonly isTrue: boolean;
   readonly picture?: GamePicture;
+  /** Why the right answer is right, shown to a student after they answer. */
+  readonly explanation?: string;
   /** The standards this item practises (codes the teacher typed). */
   readonly standards?: readonly string[];
 }
@@ -26,6 +30,8 @@ export interface SentenceItem {
   readonly text: string;
   readonly answer: string;
   readonly picture?: GamePicture;
+  /** Why the right answer is right, shown to a student after they answer. */
+  readonly explanation?: string;
   /** The standards this item practises (codes the teacher typed). */
   readonly standards?: readonly string[];
 }
@@ -121,22 +127,32 @@ export const maxItemStandards = 5;
 interface Extras {
   readonly picture?: GamePicture | undefined;
   readonly standards?: readonly string[] | undefined;
+  readonly explanation?: string | undefined;
 }
 
-/** The checked item, with its picture and standards (if it has them) checked too. */
+/** An optional explanation: blank is none; otherwise short and not a placeholder. */
+function optionalText(field: string, value: string | undefined): Checked<string | undefined> {
+  if (value === undefined || value.trim() === '') return ok(undefined);
+  return itemText(field, value);
+}
+
+/** The checked item, with its picture, standards and explanation (if it has them) checked too. */
 function withExtras<T extends object>(
   field: string,
   checked: T,
   item: Extras,
-): Checked<T & { picture?: GamePicture; standards?: readonly string[] }> {
+): Checked<T & { picture?: GamePicture; standards?: readonly string[]; explanation?: string }> {
   const shown = checkPicture(field, item.picture);
   if (!shown.ok) return shown;
   const codes = typedStandardCodes(`${field}.standards`, item.standards ?? [], maxItemStandards);
   if (!codes.ok) return codes;
+  const explanation = optionalText(`${field}.explanation`, item.explanation);
+  if (!explanation.ok) return explanation;
   return ok({
     ...checked,
     ...(shown.value === undefined ? {} : { picture: shown.value }),
     ...(codes.value.length === 0 ? {} : { standards: codes.value }),
+    ...(explanation.value === undefined ? {} : { explanation: explanation.value }),
   });
 }
 

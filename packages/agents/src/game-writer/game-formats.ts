@@ -11,36 +11,56 @@ export interface GameFormat {
 
 const str = (value: unknown): string => text(value) ?? '';
 
+/** The item's explanation, when the reply gave one as text. */
+const explained = (item: Json): { explanation?: string } => {
+  const explanation = text(item.explanation);
+  return explanation === null ? {} : { explanation };
+};
+
+/** For kinds a student can get wrong: the review after the round shows this sentence. */
+const explanationRule =
+  '\nEach explanation is one short sentence saying why the right answer is right, written for a student who chose wrong; never just repeat the answer.';
+
 const questions: GameFormat = {
   ask: 'multiple-choice questions, each with 3 or 4 short options and exactly one right answer',
-  shape: `{ "items": [ { "prompt": string, "options": [string, ...], "correct": string (copied exactly from options) } ] }`,
+  shape: `{ "items": [ { "prompt": string, "options": [string, ...], "correct": string (copied exactly from options), "explanation": string } ] }${explanationRule}`,
   read: (items) => ({
     kind: 'questions',
     items: objects(items).map((item: Json) => {
       const options = texts(item.options);
-      return { prompt: str(item.prompt), options, answer: options.indexOf(str(item.correct)) };
+      return {
+        prompt: str(item.prompt),
+        options,
+        answer: options.indexOf(str(item.correct)),
+        ...explained(item),
+      };
     }),
   }),
 };
 
 const statements: GameFormat = {
   ask: 'true-or-false statements, about half of them true, each clearly true or clearly false',
-  shape: `{ "items": [ { "statement": string, "isTrue": boolean } ] }`,
+  shape: `{ "items": [ { "statement": string, "isTrue": boolean, "explanation": string } ] }${explanationRule}`,
   read: (items) => ({
     kind: 'statements',
     items: objects(items).map((item: Json) => ({
       statement: str(item.statement),
       isTrue: item.isTrue === true,
+      ...explained(item),
     })),
   }),
 };
 
 const sentences: GameFormat = {
   ask: 'sentences with one missing key word, written as ___ (three underscores), and the missing word',
-  shape: `{ "items": [ { "text": string (with exactly one ___), "answer": string (one or two words) } ] }`,
+  shape: `{ "items": [ { "text": string (with exactly one ___), "answer": string (one or two words), "explanation": string } ] }${explanationRule}`,
   read: (items) => ({
     kind: 'sentences',
-    items: objects(items).map((item: Json) => ({ text: str(item.text), answer: str(item.answer) })),
+    items: objects(items).map((item: Json) => ({
+      text: str(item.text),
+      answer: str(item.answer),
+      ...explained(item),
+    })),
   }),
 };
 

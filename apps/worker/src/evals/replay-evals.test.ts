@@ -103,7 +103,13 @@ describe('replay evals (saved replies, no API calls)', () => {
   it('the game writer meets its thresholds', async () => {
     const report = await runGameEvals(replay('games'), thresholds['game-writer']);
     expect(report.failing, formatReport(report)).toEqual([]);
-    expect(report.average).toEqual({ structure: 1, count: 1, language: 1, playable: 1 });
+    expect(report.average).toEqual({
+      structure: 1,
+      count: 1,
+      language: 1,
+      playable: 1,
+      explained: 1,
+    });
   });
 
   it('the path writer meets its thresholds', async () => {

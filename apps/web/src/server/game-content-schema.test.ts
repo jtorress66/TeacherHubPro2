@@ -33,6 +33,16 @@ describe('parseContentJson', () => {
     expect(parseContentJson('groups', JSON.stringify(items))).toEqual({ kind: 'groups', items });
   });
 
+  it('keeps a card’s explanation on questions, statements and sentences', () => {
+    const items = [{ statement: 'The Sun is a star', isTrue: true, explanation: 'It shines.' }];
+    expect(parseContentJson('statements', JSON.stringify(items))).toEqual({
+      kind: 'statements',
+      items,
+    });
+    const sentences = [{ text: 'The ___ shines.', answer: 'Sun', explanation: 'Our star.' }];
+    expect(parseContentJson('sentences', JSON.stringify(sentences))?.items).toEqual(sentences);
+  });
+
   it('refuses JSON of another shape, or that is not JSON at all', () => {
     expect(parseContentJson('questions', '[{"term":"Sun","definition":"Star"}]')).toBeNull();
     expect(parseContentJson('pairs', '{"kind":"pairs"}')).toBeNull();

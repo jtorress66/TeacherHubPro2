@@ -10,6 +10,7 @@ export const sampleGameContent: { readonly [K in ContentKind]: Extract<GameConte
           prompt: 'Which is the largest planet?',
           options: ['Mars', 'Jupiter', 'Venus'],
           answer: 1,
+          explanation: 'Jupiter is more massive than all the other planets together.',
         },
         { prompt: 'Which planet is closest to the Sun?', options: ['Mercury', 'Earth'], answer: 0 },
         { prompt: 'Which is the red planet?', options: ['Saturn', 'Mars', 'Neptune'], answer: 1 },
@@ -20,7 +21,11 @@ export const sampleGameContent: { readonly [K in ContentKind]: Extract<GameConte
       kind: 'statements',
       items: [
         { statement: 'The Sun is a star', isTrue: true },
-        { statement: 'The Moon is a planet', isTrue: false },
+        {
+          statement: 'The Moon is a planet',
+          isTrue: false,
+          explanation: 'The Moon travels around the Earth, so it is a moon.',
+        },
         { statement: 'Mars is called the red planet', isTrue: true },
         { statement: 'Jupiter is the smallest planet', isTrue: false },
       ],
@@ -28,7 +33,11 @@ export const sampleGameContent: { readonly [K in ContentKind]: Extract<GameConte
     sentences: {
       kind: 'sentences',
       items: [
-        { text: 'The Sun is a ___.', answer: 'star' },
+        {
+          text: 'The Sun is a ___.',
+          answer: 'star',
+          explanation: 'It makes its own light and heat.',
+        },
         { text: '___ is the red planet.', answer: 'Mars' },
         { text: 'The ___ goes around the Earth.', answer: 'Moon' },
         { text: 'Saturn has beautiful ___.', answer: 'rings' },
