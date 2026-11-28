@@ -13,7 +13,7 @@
     "test:e2e": "pnpm --filter @thp/web build && pnpm --filter @thp/web test:e2e",
     "eval": "pnpm --filter @thp/worker eval",
     "typecheck": "pnpm -r --parallel typecheck && tsc -p tsconfig.json --noEmit",
-    "lint": "eslint . --max-warnings 0",
+    "lint": "node --max-old-space-size=8192 node_modules/eslint/bin/eslint.js . --max-warnings 0",
     "format": "prettier --write .",
     "check:forbidden": "node scripts/forbidden-terms.ts",
     "standards:import": "node scripts/import-standards.ts",

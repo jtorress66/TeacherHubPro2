@@ -14,6 +14,15 @@ export const demoDe: DemoMessages = {
     enlarge: 'Screenshot in voller Größe öffnen: {title}',
     madeUp:
       'Alle Namen, Klassen und Noten auf diesen Screenshots sind erfunden. Die KI-Entwürfe hat die KI der App geschrieben, und sie werden so gezeigt, wie sie entstanden sind.',
+    video: {
+      introTitle: 'TeacherHubPro in zwei Minuten',
+      introLine:
+        'Willkommen bei TeacherHubPro, dem KI-Arbeitsplatz für Lehrkräfte, Schulen und Familien mit Heimunterricht. Hier ein kurzer Überblick über alles, was es kann.',
+      outroTitle: '{days} Tage kostenlos testen',
+      outroLine:
+        'Testen Sie TeacherHubPro {days} Tage kostenlos, ohne Karte, auf teacherhubpro.com.',
+      madeUp: 'Alle gezeigten Schülerinnen und Schüler sind erfunden.',
+    },
     chapters: {
       start: {
         title: 'Erste Schritte',

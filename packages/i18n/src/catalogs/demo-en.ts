@@ -14,6 +14,15 @@ export const demoEn = {
     enlarge: 'Open the full-size screenshot: {title}',
     madeUp:
       'All names, classes and grades in these screenshots are made up. The AI drafts were written by the app’s AI and are shown as it wrote them.',
+    video: {
+      introTitle: 'TeacherHubPro in two minutes',
+      introLine:
+        'Welcome to TeacherHubPro, the AI teaching workspace for teachers, schools and homeschool families. Here is a quick look at what it does.',
+      outroTitle: 'Try it free for {days} days',
+      outroLine:
+        'Try TeacherHubPro free for {days} days, with no card needed, at teacherhubpro.com.',
+      madeUp: 'Every student shown is made up.',
+    },
     chapters: {
       start: {
         title: 'Getting started',

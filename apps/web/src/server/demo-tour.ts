@@ -11,31 +11,47 @@ export type TourDevice = 'desktop' | 'phone';
 interface ChapterDefinition {
   readonly id: string;
   readonly steps: readonly (string | { readonly id: string; readonly device: TourDevice })[];
+  /** The one screen that stands for the chapter in the short overview video. */
+  readonly hero: string;
 }
 
 const phone = <const I extends string>(id: I) => ({ id, device: 'phone' as const });
 
 const chapters = [
-  { id: 'start', steps: ['signup', 'commandCenter', 'sampleClass'] },
-  { id: 'classes', steps: ['rosterImport', 'accommodations', 'attendance', 'attendanceReport'] },
-  { id: 'planning', steps: ['planner', 'planPrint', 'curriculum', 'templates'] },
-  { id: 'assistant', steps: ['assistantForm', 'assistantResult', 'rubric'] },
-  { id: 'presentations', steps: ['presentation', 'presentationExport'] },
-  { id: 'prep', steps: ['prepStart', 'prepReview'] },
+  { id: 'start', steps: ['signup', 'commandCenter', 'sampleClass'], hero: 'commandCenter' },
+  {
+    id: 'classes',
+    steps: ['rosterImport', 'accommodations', 'attendance', 'attendanceReport'],
+    hero: 'attendance',
+  },
+  { id: 'planning', steps: ['planner', 'planPrint', 'curriculum', 'templates'], hero: 'planner' },
+  {
+    id: 'assistant',
+    steps: ['assistantForm', 'assistantResult', 'rubric'],
+    hero: 'assistantResult',
+  },
+  { id: 'presentations', steps: ['presentation', 'presentationExport'], hero: 'presentation' },
+  { id: 'prep', steps: ['prepStart', 'prepReview'], hero: 'prepReview' },
   {
     id: 'assignments',
     steps: ['pdfImport', 'studentLinks', phone('studentAnswer'), 'aiGrading'],
+    hero: 'aiGrading',
   },
-  { id: 'gradebook', steps: ['gradebook', 'reportCards'] },
-  { id: 'games', steps: ['gameBuilder', phone('gameReview'), 'aiExplanations', 'coverage'] },
-  { id: 'live', steps: ['liveLobby', phone('livePlayer'), 'liveReveal'] },
-  { id: 'learning', steps: ['learningPath', phone('studentLesson'), 'insights'] },
-  { id: 'families', steps: [phone('parentPortal')] },
-  { id: 'substitutes', steps: ['subPacket'] },
-  { id: 'connections', steps: ['integrations', 'schoolSystems'] },
+  { id: 'gradebook', steps: ['gradebook', 'reportCards'], hero: 'gradebook' },
+  {
+    id: 'games',
+    steps: ['gameBuilder', phone('gameReview'), 'aiExplanations', 'coverage'],
+    hero: 'aiExplanations',
+  },
+  { id: 'live', steps: ['liveLobby', phone('livePlayer'), 'liveReveal'], hero: 'liveReveal' },
+  { id: 'learning', steps: ['learningPath', phone('studentLesson'), 'insights'], hero: 'insights' },
+  { id: 'families', steps: [phone('parentPortal')], hero: 'parentPortal' },
+  { id: 'substitutes', steps: ['subPacket'], hero: 'subPacket' },
+  { id: 'connections', steps: ['integrations', 'schoolSystems'], hero: 'integrations' },
   {
     id: 'schools',
     steps: ['schoolOverview', 'schoolUsers', 'approvals', 'dataExport', 'languages'],
+    hero: 'schoolOverview',
   },
 ] as const satisfies readonly ChapterDefinition[];
 
@@ -52,8 +68,14 @@ export interface TourStep {
   readonly device: TourDevice;
 }
 
-export const tourChapters: readonly { readonly id: TourChapterId }[] = chapters.map(({ id }) => ({
+export interface TourChapter {
+  readonly id: TourChapterId;
+  readonly hero: TourStepId;
+}
+
+export const tourChapters: readonly TourChapter[] = chapters.map(({ id, hero }) => ({
   id,
+  hero,
 }));
 
 export const tourSteps: readonly TourStep[] = chapters

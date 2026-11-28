@@ -22,6 +22,13 @@ describe('the demo tour', () => {
     expect(tourSteps[0]?.chapter).toBe(tourChapters[0]?.id);
   });
 
+  it('picks one of its own screens to stand for each chapter in the overview video', () => {
+    for (const chapter of tourChapters) {
+      const own = tourSteps.filter((s) => s.chapter === chapter.id).map((s) => s.id);
+      expect(own, chapter.id).toContain(chapter.hero);
+    }
+  });
+
   it('gives every chapter and step a title and words in every language', () => {
     for (const locale of locales) {
       for (const chapter of tourChapters) {

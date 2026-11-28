@@ -43,6 +43,7 @@ export class OpenAiTextToSpeech implements TextToSpeech {
         input: request.text,
         voice: request.voice,
         response_format: 'mp3',
+        ...(request.style === undefined ? {} : { instructions: request.style }),
       });
       return ok({ audio: new Uint8Array(await response.arrayBuffer()), mimeType: 'audio/mpeg' });
     } catch (error) {

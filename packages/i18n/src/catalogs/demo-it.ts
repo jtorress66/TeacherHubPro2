@@ -14,6 +14,14 @@ export const demoIt: DemoMessages = {
     enlarge: 'Apri la schermata a dimensione intera: {title}',
     madeUp:
       'Tutti i nomi, le classi e i voti in queste schermate sono inventati. Le bozze IA sono state scritte dall’IA dell’app e sono mostrate così come le ha scritte.',
+    video: {
+      introTitle: 'TeacherHubPro in due minuti',
+      introLine:
+        'Benvenuti in TeacherHubPro, lo spazio di lavoro con IA per insegnanti, scuole e famiglie che fanno istruzione parentale. Ecco in breve tutto quello che fa.',
+      outroTitle: 'Provalo gratis per {days} giorni',
+      outroLine: 'Prova TeacherHubPro gratis per {days} giorni, senza carta, su teacherhubpro.com.',
+      madeUp: 'Tutti gli studenti mostrati sono inventati.',
+    },
     chapters: {
       start: {
         title: 'Per iniziare',
