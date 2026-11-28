@@ -12,6 +12,14 @@ export const demoZh: DemoMessages = {
     chapterNumber: '第 {n} 章',
     enlarge: '打开原尺寸截图：{title}',
     madeUp: '这些截图中的姓名、班级和成绩均为虚构。AI 草稿由应用内的 AI 撰写，并按原样展示。',
+    video: {
+      introTitle: '两分钟了解 TeacherHubPro',
+      introLine:
+        '欢迎使用 TeacherHubPro，这是为教师、学校和在家教育家庭打造的 AI 教学工作台。下面快速看看它能做什么。',
+      outroTitle: '免费试用 {days} 天',
+      outroLine: '在 teacherhubpro.com 免费试用 TeacherHubPro {days} 天，无需银行卡。',
+      madeUp: '画面中的所有学生均为虚构。',
+    },
     chapters: {
       start: {
         title: '快速上手',

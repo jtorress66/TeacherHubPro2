@@ -75,6 +75,29 @@ describe('OpenAiTextToSpeech', () => {
     expect(result).toEqual({ ok: true, value: { audio: mp3, mimeType: 'audio/mpeg' } });
   });
 
+  it('passes a speaking style to the model as instructions, only when one is given', async () => {
+    let sent: unknown;
+    server.use(
+      http.post(endpoint, async ({ request }) => {
+        sent = await request.json();
+        return HttpResponse.arrayBuffer(mp3.buffer, { headers: { 'content-type': 'audio/mpeg' } });
+      }),
+    );
+
+    await client().synthesize({
+      text: 'Welcome',
+      voice: 'coral',
+      language: 'en',
+      style: 'Warm and clear.',
+    });
+
+    expect(sent).toMatchObject({
+      input: 'Welcome',
+      voice: 'coral',
+      instructions: 'Warm and clear.',
+    });
+  });
+
   it.each(Object.entries(statusFor))('maps %s', async (code, status) => {
     server.use(
       http.post(endpoint, () => HttpResponse.json({ error: { message: 'x' } }, { status })),

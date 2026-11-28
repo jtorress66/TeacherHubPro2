@@ -30,6 +30,7 @@ export default defineConfig({
         'apps/worker/src/index.ts',
         'apps/realtime/src/index.ts',
         'apps/worker/src/eval.ts',
+        'apps/tour-video/src/main.ts',
         // React pages and components: covered by the Playwright journeys.
         'apps/web/src/app/**',
         'apps/web/src/components/**',

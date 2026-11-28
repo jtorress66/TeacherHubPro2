@@ -14,6 +14,15 @@ export const demoFr: DemoMessages = {
     enlarge: 'Ouvrir la capture d’écran en taille réelle : {title}',
     madeUp:
       'Les noms, classes et notes de ces captures d’écran sont fictifs. Les brouillons IA ont été rédigés par l’IA de l’application et sont montrés tels quels.',
+    video: {
+      introTitle: 'TeacherHubPro en deux minutes',
+      introLine:
+        'Bienvenue dans TeacherHubPro, l’espace de travail avec IA pour les enseignants, les écoles et les familles qui font l’instruction en famille. Voici un aperçu de tout ce qu’il fait.',
+      outroTitle: 'Essayez-le gratuitement pendant {days} jours',
+      outroLine:
+        'Essayez TeacherHubPro gratuitement pendant {days} jours, sans carte bancaire, sur teacherhubpro.com.',
+      madeUp: 'Tous les élèves présentés sont fictifs.',
+    },
     chapters: {
       start: {
         title: 'Premiers pas',

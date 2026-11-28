@@ -4,6 +4,8 @@ export interface SpeechRequest {
   readonly text: string;
   readonly voice: string;
   readonly language: Language;
+  /** How to speak, such as "warm and clear"; services without styles ignore it. */
+  readonly style?: string;
 }
 
 export interface Speech {

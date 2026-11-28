@@ -14,6 +14,15 @@ export const demoPt: DemoMessages = {
     enlarge: 'Abrir a captura de tela em tamanho real: {title}',
     madeUp:
       'Todos os nomes, turmas e notas destas capturas são fictícios. Os rascunhos de IA foram escritos pela IA do aplicativo e aparecem exatamente como ela os escreveu.',
+    video: {
+      introTitle: 'TeacherHubPro em dois minutos',
+      introLine:
+        'Bem-vindo ao TeacherHubPro, o espaço de ensino com IA para professores, escolas e famílias que educam em casa. Veja em poucos minutos tudo o que ele faz.',
+      outroTitle: 'Experimente grátis por {days} dias',
+      outroLine:
+        'Experimente o TeacherHubPro grátis por {days} dias, sem cartão, em teacherhubpro.com.',
+      madeUp: 'Todos os alunos mostrados são fictícios.',
+    },
     chapters: {
       start: {
         title: 'Primeiros passos',

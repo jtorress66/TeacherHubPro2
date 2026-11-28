@@ -1,0 +1,86 @@
+name: Make demo videos
+
+# Records the app with real Claude for the AI screens, narrates each screen with OpenAI's voice,
+# and offers two downloads: "demo-videos" (an overview and one video per chapter per language,
+# with .srt captions and YouTube titles and descriptions in videos.json) and
+# "tour-screenshots" (the /demo page's screenshots from the same run). Costs money: Claude for
+# the AI screens and OpenAI for the voice. It runs only when started by hand.
+
+on:
+  workflow_dispatch:
+    inputs:
+      locales:
+        description: 'Only these languages (e.g. "en es"); empty makes all seven'
+        required: false
+        default: 'en'
+      only:
+        description: 'Only these videos (e.g. "overview chapter-live"); empty makes them all'
+        required: false
+        default: ''
+      voice:
+        description: 'OpenAI voice'
+        required: false
+        default: 'coral'
+
+jobs:
+  videos:
+    name: Make the demo videos
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      DATABASE_URL: postgres://teacherhub:teacherhub@localhost:5432/teacherhub
+      TOUR_AI: claude
+      TOUR_LOCALES: ${{ inputs.locales }}
+      TOUR_ONLY: ${{ inputs.only }}
+      TOUR_VOICE: ${{ inputs.voice }}
+      TOUR_FRAMES: ${{ github.workspace }}/tour-work
+      TTS_PROVIDER: openai
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: teacherhub
+          POSTGRES_PASSWORD: teacherhub
+          POSTGRES_DB: teacherhub
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U teacherhub" --health-interval 5s --health-retries 10
+    steps:
+      - name: Require the Claude and OpenAI keys
+        if: env.ANTHROPIC_API_KEY == '' || env.OPENAI_API_KEY == ''
+        run: |
+          echo "::error::Add the ANTHROPIC_API_KEY and OPENAI_API_KEY repository secrets to make the videos."
+          exit 1
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @thp/web exec playwright install --with-deps chromium
+      - run: pnpm db:migrate
+      - run: pnpm tour:capture
+      - run: pnpm --filter @thp/tour-video make
+      - uses: actions/upload-artifact@v4
+        with:
+          name: demo-videos
+          path: |
+            tour-work/videos/*/*.mp4
+            tour-work/videos/*/*.srt
+            tour-work/videos/*/videos.json
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tour-screenshots
+          path: apps/web/public/tour/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: demo-videos-report
+          path: apps/web/test-results/
+          retention-days: 7

@@ -107,6 +107,8 @@ pnpm test:int      # integration (needs Docker)
 pnpm test:e2e      # Playwright
 pnpm eval          # LLM evals against real Claude (only when asked: costs money)
 pnpm tour:capture  # retake the /demo tour's screenshots (TOUR_LOCALES=en for one language)
+# demo videos: TOUR_FRAMES=<folder> pnpm tour:capture, then TOUR_FRAMES=<folder> pnpm --filter @thp/tour-video make
+# (a silent preview; the narrated videos: CI → Make demo videos, only when the owner OKs the cost)
 pnpm typecheck
 pnpm lint
 ```

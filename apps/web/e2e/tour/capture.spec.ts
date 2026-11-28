@@ -1,11 +1,12 @@
 import { randomUUID } from 'node:crypto';
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { expect, test, type Browser, type Locator, type Page } from '@playwright/test';
 import { createTranslator, locales, type Locale, type Translate } from '@thp/i18n';
-import { tourSteps, type TourStepId } from '../../src/server/demo-tour.ts';
+import { tourChapters, tourSteps, type TourStepId } from '../../src/server/demo-tour.ts';
 import { makeSchoolAdmin } from '../database.ts';
 import { quizPdf } from '../grading-helpers.ts';
 import { confirmEmail, password } from '../helpers.ts';
-import { scrollTo, shot, windowFor } from './tour-kit.ts';
+import { drawCards } from './tour-cards.ts';
+import { scrollTo, shot, windowFor, writeManifest, type FrameEntry } from './tour-kit.ts';
 import { tourWords, type TourWords } from './tour-words.ts';
 
 // Retakes every screenshot of the /demo tour: `pnpm tour:capture` (all languages) or
@@ -38,7 +39,7 @@ interface Tour {
   readonly words: TourWords;
   readonly page: Page;
   readonly browser: Browser;
-  readonly taken: Set<TourStepId>;
+  readonly taken: Map<TourStepId, FrameEntry>;
   /** The sample class's page. */
   sampleClass: string;
   /** The imported class's page. */
@@ -47,9 +48,14 @@ interface Tour {
   readonly links: Map<string, string>;
 }
 
-const take = async (tour: Tour, step: TourStepId, page = tour.page) => {
-  await shot(page, tour.locale, step);
-  tour.taken.add(step);
+/** Screenshots a step; `focus` is what the video highlights and zooms toward. */
+const take = async (
+  tour: Tour,
+  step: TourStepId,
+  { page = tour.page, focus }: { readonly page?: Page; readonly focus?: Locator } = {},
+) => {
+  const device = tourSteps.find((s) => s.id === step)?.device ?? 'desktop';
+  tour.taken.set(step, await shot(page, tour.locale, step, device, focus));
 };
 
 for (const locale of tourLocales) {
@@ -62,7 +68,7 @@ for (const locale of tourLocales) {
       words: tourWords[locale],
       page: await context.newPage(),
       browser,
-      taken: new Set(),
+      taken: new Map(),
       sampleClass: '',
       importedClass: '',
       links: new Map(),
@@ -85,6 +91,12 @@ for (const locale of tourLocales) {
     await test.step('schools', () => schools(tour));
 
     expect(tourSteps.map((s) => s.id).filter((id) => !tour.taken.has(id))).toEqual([]);
+    writeManifest(locale, {
+      locale,
+      chapters: tourChapters,
+      steps: tourSteps.map((s) => ({ ...tour.taken.get(s.id), chapter: s.chapter })),
+    });
+    await drawCards(tour.page, locale);
     await context.close();
   });
 }
@@ -119,7 +131,9 @@ async function gettingStarted(tour: Tour) {
 
   await page.goto(`/${locale}/app`);
   await expect(page.getByRole('list', { name: t('commandCenter.atRisk') })).toBeVisible();
-  await take(tour, 'commandCenter');
+  await take(tour, 'commandCenter', {
+    focus: page.getByRole('list', { name: t('commandCenter.atRisk') }),
+  });
 }
 
 async function classes(tour: Tour) {
@@ -180,7 +194,7 @@ async function planning(tour: Tour) {
     .first()
     .click();
   await expect(page.getByRole('dialog')).toBeVisible();
-  await take(tour, 'planner');
+  await take(tour, 'planner', { focus: page.getByRole('dialog') });
   await page.keyboard.press('Escape');
 
   await page.goto(`/${locale}/app/plans`);
@@ -215,7 +229,7 @@ async function assistant(tour: Tour) {
   await form.getByLabel(t('assistant.type')).selectOption('worksheet');
   await form.getByLabel(t('assistant.topic')).fill(t('sample.day3Theme'));
   await form.getByLabel(t('esl.label')).check();
-  await take(tour, 'assistantForm');
+  await take(tour, 'assistantForm', { focus: form.getByLabel(t('esl.label')) });
   await form.getByRole('button', { name: t('assistant.submit') }).click();
   await expect(page).toHaveURL(/\/assistant\/[^/]+$/u, worker);
   await expect(page).not.toHaveURL(/\/jobs\//u);
@@ -277,7 +291,7 @@ async function prep(tour: Tour) {
   await form
     .getByLabel(t('prep.quizCategory'))
     .selectOption({ label: t('gradebook.standard_quiz') });
-  await take(tour, 'prepStart');
+  await take(tour, 'prepStart', { focus: form.getByLabel(t('prep.prompt')) });
   await form.getByRole('button', { name: t('prep.start') }).click();
   await expect(page.getByTestId('prep-status')).toHaveText(t('prep.status_ready'), worker);
   await take(tour, 'prepReview');
@@ -309,7 +323,7 @@ async function assignments(tour: Tour) {
   await page.getByRole('button', { name: t('studentLinks.issue') }).click();
   const issued = page.getByRole('region', { name: t('studentLinks.issuedTitle') });
   await expect(issued).toBeVisible();
-  await take(tour, 'studentLinks');
+  await take(tour, 'studentLinks', { focus: issued });
   for (const name of [
     `${t('sample.student2')} T.`,
     `${t('sample.student5')} D.`,
@@ -325,7 +339,7 @@ async function assignments(tour: Tour) {
   await student.goto(mayaUrl);
   await student.getByRole('link', { name: t('sample.onlineQuiz') }).click();
   await student.getByRole('radio', { name: '1/4', exact: true }).check();
-  await take(tour, 'studentAnswer', student);
+  await take(tour, 'studentAnswer', { page: student });
   await phone.close();
 
   await page.goto(`/${locale}/app`);
@@ -336,7 +350,7 @@ async function assignments(tour: Tour) {
   await page.getByRole('link', { name: t('questions.submissions') }).click();
   await expect(page.getByTestId('submission-R.')).toContainText(t('grading.status_ai_graded'));
   await scrollTo(page, '[data-testid="submission-R."]');
-  await take(tour, 'aiGrading');
+  await take(tour, 'aiGrading', { focus: page.getByTestId('submission-R.') });
   await page
     .getByTestId('submission-R.')
     .getByRole('button', { name: t('grading.confirm') })
@@ -373,7 +387,9 @@ async function games(tour: Tour) {
     .evaluate((field) => {
       field.closest('fieldset')?.scrollIntoView({ block: 'start' });
     });
-  await take(tour, 'aiExplanations');
+  await take(tour, 'aiExplanations', {
+    focus: page.getByLabel(t('games.builderExplanation')).first(),
+  });
   await page
     .getByRole('form', { name: t('games.save') })
     .getByRole('button', { name: t('games.save') })
@@ -395,7 +411,7 @@ async function games(tour: Tour) {
   }
   await expect(student.getByRole('region', { name: t('gamePlay.reviewTitle') })).toBeVisible();
   await scrollTo(student, `section:has(h2:text-is("${t('gamePlay.reviewTitle')}"))`);
-  await take(tour, 'gameReview', student);
+  await take(tour, 'gameReview', { page: student });
   await phone.close();
 
   await page.goto(`${tour.sampleClass}/standards`);
@@ -427,20 +443,20 @@ async function live(tour: Tour) {
     phones.push({ phone, student });
   }
   await expect(page.getByRole('status')).toHaveText(t('live.players', { count: 4 }));
-  await take(tour, 'liveLobby');
+  await take(tour, 'liveLobby', { focus: page.getByTestId('live-pin') });
 
   await page.getByRole('button', { name: t('live.startGame') }).click();
   const [first, ...others] = phones;
   if (first === undefined) throw new Error('no players');
   await expect(first.student.locator('.answer-grid button').first()).toBeVisible();
-  await take(tour, 'livePlayer', first.student);
+  await take(tour, 'livePlayer', { page: first.student });
   // Three students pick the right answer (every sample question's is 1/2, 4 or 3/8); one doesn't.
   for (const [index, { student }] of [first, ...others].entries()) {
     const name = index < 3 ? /: (?:1\/2|4|3\/8)$/u : /: (?!(?:1\/2|4|3\/8)$)[^:]+$/u;
     await student.locator('.answer-grid').getByRole('button', { name }).first().click();
   }
   await expect(page.locator('.reveal-explanation')).toBeVisible(worker);
-  await take(tour, 'liveReveal');
+  await take(tour, 'liveReveal', { focus: page.locator('.reveal-explanation') });
   for (const { phone } of phones) await phone.close();
 }
 
@@ -466,7 +482,7 @@ async function learning(tour: Tour) {
   await student.goto(leoUrl);
   await student.locator('a[href*="/learn/"]').first().click();
   await student.locator('a[href*="/learn/"]').first().click();
-  await take(tour, 'studentLesson', student);
+  await take(tour, 'studentLesson', { page: student });
   await phone.close();
 
   await page.goto(`/${locale}/app`);
@@ -482,7 +498,9 @@ async function learning(tour: Tour) {
       .getByRole('listitem')
       .first(),
   ).toBeVisible(worker);
-  await take(tour, 'insights');
+  await take(tour, 'insights', {
+    focus: page.getByRole('list', { name: t('student360.insight') }),
+  });
 }
 
 async function families(tour: Tour) {
@@ -497,7 +515,7 @@ async function families(tour: Tour) {
   const parent = await phone.newPage();
   await parent.goto(url);
   await expect(parent.getByRole('table', { name: t('family.grades') })).toBeVisible();
-  await take(tour, 'parentPortal', parent);
+  await take(tour, 'parentPortal', { page: parent });
   await phone.close();
 }
 
