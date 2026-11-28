@@ -208,7 +208,7 @@ export const zhAppB = {
     updated: '更新于 {date}',
     newBlank: '新建空白演示文稿',
     name: '名称',
-    theme: '主题',
+    theme: '视觉风格',
     theme_ocean: '海洋',
     theme_sunset: '日落',
     theme_forest: '森林',

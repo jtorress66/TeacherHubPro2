@@ -10,6 +10,7 @@ export const marketingZh: MarketingMessages = {
     },
     nav: {
       label: '主导航',
+      demo: '演示',
       features: '功能',
       useCases: '使用场景',
       pricing: '价格',
@@ -136,6 +137,7 @@ export const marketingZh: MarketingMessages = {
     },
     home: {
       seeItWork: '看看实际效果',
+      fullTour: '逐步查看完整导览',
       factTrial: '{days} 天免费试用',
       factNoCard: '无需付款卡',
       factLanguages: '7 种语言',

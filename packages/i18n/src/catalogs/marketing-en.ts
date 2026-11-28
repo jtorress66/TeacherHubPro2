@@ -9,6 +9,7 @@ export const marketingEn = {
     },
     nav: {
       label: 'Main',
+      demo: 'Demo',
       features: 'Features',
       useCases: 'Use cases',
       pricing: 'Pricing',
@@ -147,6 +148,7 @@ export const marketingEn = {
     },
     home: {
       seeItWork: 'See it work',
+      fullTour: 'Take the full tour, step by step',
       factTrial: '{days}-day free trial',
       factNoCard: 'No payment card needed',
       factLanguages: '7 languages',

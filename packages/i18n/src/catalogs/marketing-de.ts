@@ -11,6 +11,7 @@ export const marketingDe: MarketingMessages = {
     },
     nav: {
       label: 'Hauptmenü',
+      demo: 'Demo',
       features: 'Funktionen',
       useCases: 'Anwendungsfälle',
       pricing: 'Preise',
@@ -158,6 +159,7 @@ export const marketingDe: MarketingMessages = {
     },
     home: {
       seeItWork: 'In Aktion ansehen',
+      fullTour: 'Die ganze Tour ansehen, Schritt für Schritt',
       factTrial: '{days} Tage kostenlos testen',
       factNoCard: 'Keine Zahlungskarte nötig',
       factLanguages: '7 Sprachen',

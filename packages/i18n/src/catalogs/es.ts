@@ -1,8 +1,10 @@
 import type { Messages } from '../messages.ts';
+import { demoEs } from './demo-es.ts';
 import { marketingEs } from './marketing-es.ts';
 
 export const es: Messages = {
   ...marketingEs,
+  ...demoEs,
   app: {
     name: 'TeacherHubPro',
   },

@@ -73,6 +73,7 @@ Test names describe behaviour: `it("counts a tardy as present in the attendance 
 - [ ] No concrete adapter imported into `domain`, `ports`, or `agents`
 - [ ] Every legacy behaviour listed for the step in `docs/FEATURES.md` is covered by a test, or the user agreed to drop it
 - [ ] README / this file updated if conventions changed
+- [ ] A new or changed feature has its step in the /demo product tour (`apps/web/src/server/demo-tour.ts`, the `demo` catalogs, `apps/web/e2e/tour/capture.spec.ts`), and its screenshots are retaken (`pnpm tour:capture`; the AI screens with real Claude via CI → Retake demo tour, only when the owner OKs the cost)
 - [ ] Summary posted: what was built, tests added, commands run and their results
 
 ## Product safety rules (enforced in code)
@@ -105,6 +106,7 @@ pnpm test          # unit + contract
 pnpm test:int      # integration (needs Docker)
 pnpm test:e2e      # Playwright
 pnpm eval          # LLM evals against real Claude (only when asked: costs money)
+pnpm tour:capture  # retake the /demo tour's screenshots (TOUR_LOCALES=en for one language)
 pnpm typecheck
 pnpm lint
 ```

@@ -42,6 +42,7 @@ describe('the marketing pages', () => {
     const paths = marketingPaths();
     expect(paths).toContain('');
     expect(paths).toContain('/pricing');
+    expect(paths).toContain('/demo');
     expect(paths).toContain('/features/attendance');
     expect(paths).toEqual(
       expect.arrayContaining([

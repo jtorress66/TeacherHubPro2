@@ -48,6 +48,14 @@ describe('catalogs', () => {
     }
   });
 
+  it.each(locales)(
+    'labels the slide form’s topic and design differently, so each field has its own name (%s)',
+    (locale) => {
+      const catalog = catalogs[locale];
+      expect(catalog.presentations.theme).not.toBe(catalog.assistant.topic);
+    },
+  );
+
   it('has no empty translations', () => {
     for (const locale of locales) {
       for (const [key, value] of leafEntries(catalogs[locale])) {

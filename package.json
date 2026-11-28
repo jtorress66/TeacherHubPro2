@@ -22,6 +22,7 @@
     "db:migrate": "pnpm --filter @thp/worker migrate",
     "stripe:setup": "pnpm --filter @thp/worker stripe:setup",
     "test:e2e:stripe": "pnpm --filter @thp/web test:e2e:stripe",
+    "tour:capture": "pnpm --filter @thp/web build && pnpm --filter @thp/web tour:capture",
     "test:smoke": "pnpm --filter @thp/web test:smoke"
   },
   "devDependencies": {
