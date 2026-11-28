@@ -13,6 +13,7 @@ on:
         description: 'Only these languages (e.g. "en es"); empty makes all seven'
         required: false
         default: 'en'
+      # An empty box falls back to this default; type all seven to make every language.
       only:
         description: 'Only these videos (e.g. "overview chapter-live"); empty makes them all'
         required: false
@@ -20,7 +21,7 @@ on:
       voice:
         description: 'OpenAI voice'
         required: false
-        default: 'coral'
+        default: 'onyx'
 
 jobs:
   videos:
@@ -60,7 +61,7 @@ jobs:
         run: |
           status="$(curl -s -o /dev/null -w '%{http_code}' https://api.openai.com/v1/audio/speech \
             -H "Authorization: Bearer $OPENAI_API_KEY" -H 'Content-Type: application/json' \
-            -d '{"model":"gpt-4o-mini-tts","voice":"coral","input":"Ready.","response_format":"mp3"}')"
+            -d '{"model":"gpt-4o-mini-tts","voice":"onyx","input":"Ready.","response_format":"mp3"}')"
           if [ "$status" != "200" ]; then
             echo "::error::OpenAI's voice answered $status. Check the OPENAI_API_KEY secret and that the OpenAI account has credit (platform.openai.com → Settings → Billing)."
             exit 1

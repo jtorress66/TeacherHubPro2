@@ -22,6 +22,7 @@ describe('Narrator', () => {
     const store = new MemoryStore();
     const result = await new Narrator(tts, store, 'coral').speak('Hola clase', 'es');
 
+    expect(narratorStyle).toMatch(/authoritative/u);
     expect(tts.requests).toEqual([
       { text: 'Hola clase', language: 'es', voice: 'coral', style: narratorStyle },
     ]);

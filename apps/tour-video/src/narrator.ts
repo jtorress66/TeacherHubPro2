@@ -4,7 +4,7 @@ import type { TextToSpeech, TextToSpeechError } from '@thp/ports';
 
 /** How the narrator speaks, in every language. */
 export const narratorStyle =
-  'A warm, clear and confident narrator for a product demo for teachers. Calm, friendly pace, natural pauses between sentences. Speak naturally in the language of the text.';
+  'A confident, authoritative and warm narrator for a product demo for school leaders and teachers. Steady, unhurried pace, clear diction, natural pauses between sentences. Speak naturally in the language of the text.';
 
 /** Where spoken lines are kept between runs, by a key that changes when the line would. */
 export interface VoiceStore {

@@ -87,7 +87,27 @@ export async function makeVideo(
   const list = join(work, 'clips.txt');
   await deps.files.write(list, concatList(clips));
   const file = join(deps.outDir, language, `${plan.id}.mp4`);
-  await deps.media.run(['-y', '-f', 'concat', '-safe', '0', '-i', list, '-c', 'copy', file]);
+  // The picture is copied as it is; the voice is evened to YouTube's loudness (-14 LUFS).
+  await deps.media.run([
+    '-y',
+    '-f',
+    'concat',
+    '-safe',
+    '0',
+    '-i',
+    list,
+    '-c:v',
+    'copy',
+    '-af',
+    'loudnorm=I=-14:TP=-1.5:LRA=11',
+    '-c:a',
+    'aac',
+    '-b:a',
+    '160k',
+    '-ar',
+    '44100',
+    file,
+  ]);
   const captions = join(deps.outDir, language, `${plan.id}.srt`);
   await deps.files.write(captions, toSrt(captionsFor(timed)));
   return ok({ id: plan.id, title: plan.title, file, captions, seconds: Number(at.toFixed(1)) });
