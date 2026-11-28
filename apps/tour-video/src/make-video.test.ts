@@ -62,6 +62,10 @@ describe('makeVideo', () => {
     expect(media.runs[2]).toEqual(
       expect.arrayContaining(['concat', join('out', 'en', 'chapter-live.mp4')]),
     );
+    // Joining keeps the picture as it is and evens the voice to YouTube's loudness.
+    expect(media.runs[2]).toEqual(
+      expect.arrayContaining(['-c:v', 'copy', '-af', 'loudnorm=I=-14:TP=-1.5:LRA=11']),
+    );
     expect(result).toEqual({
       ok: true,
       value: {

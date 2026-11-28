@@ -47,6 +47,6 @@ export function parseVideoConfig(
     locales: chosen.length === 0 ? [...locales] : chosen.filter(isLocale),
     only: list(env.TOUR_ONLY),
     voice,
-    voiceName: name === '' ? 'coral' : name,
+    voiceName: name === '' ? 'onyx' : name,
   });
 }

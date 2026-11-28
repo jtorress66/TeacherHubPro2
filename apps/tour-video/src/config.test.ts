@@ -18,7 +18,7 @@ describe('parseVideoConfig', () => {
         locales: ['en', 'es', 'fr', 'pt', 'de', 'it', 'zh'],
         only: [],
         voice: { provider: 'local' },
-        voiceName: 'coral',
+        voiceName: 'onyx',
       },
     });
   });
