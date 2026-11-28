@@ -54,6 +54,17 @@ jobs:
         run: |
           echo "::error::Add the ANTHROPIC_API_KEY and OPENAI_API_KEY repository secrets to make the videos."
           exit 1
+      - name: Check the voice works before paying for anything else
+        # One word from OpenAI's voice (well under a cent). Without credit or with a wrong key it
+        # stops here, before the Claude part of the run is spent.
+        run: |
+          status="$(curl -s -o /dev/null -w '%{http_code}' https://api.openai.com/v1/audio/speech \
+            -H "Authorization: Bearer $OPENAI_API_KEY" -H 'Content-Type: application/json' \
+            -d '{"model":"gpt-4o-mini-tts","voice":"coral","input":"Ready.","response_format":"mp3"}')"
+          if [ "$status" != "200" ]; then
+            echo "::error::OpenAI's voice answered $status. Check the OPENAI_API_KEY secret and that the OpenAI account has credit (platform.openai.com → Settings → Billing)."
+            exit 1
+          fi
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
