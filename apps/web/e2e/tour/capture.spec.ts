@@ -452,7 +452,8 @@ async function live(tour: Tour) {
   await take(tour, 'livePlayer', { page: first.student });
   // Three students pick the right answer (every sample question's is 1/2, 4 or 3/8); one doesn't.
   for (const [index, { student }] of [first, ...others].entries()) {
-    const name = index < 3 ? /: (?:1\/2|4|3\/8)$/u : /: (?!(?:1\/2|4|3\/8)$)[^:]+$/u;
+    // The label is "Answer 1: 1/2"; Chinese writes the colon full-width ("答案 1：1/2").
+    const name = index < 3 ? /[:：]\s*(?:1\/2|4|3\/8)$/u : /[:：]\s*(?!(?:1\/2|4|3\/8)$)[^:：]+$/u;
     await student.locator('.answer-grid').getByRole('button', { name }).first().click();
   }
   await expect(page.locator('.reveal-explanation')).toBeVisible(worker);

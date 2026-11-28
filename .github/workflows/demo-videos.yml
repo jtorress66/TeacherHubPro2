@@ -75,9 +75,16 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @thp/web exec playwright install --with-deps chromium
       - run: pnpm db:migrate
-      - run: pnpm tour:capture
-      - run: pnpm --filter @thp/tour-video make
+      - name: Capture every language
+        id: capture
+        # A language that fails is retried once; the others' frames are kept either way.
+        continue-on-error: true
+        run: pnpm tour:capture
+      - name: Make the videos for every language that captured
+        if: always()
+        run: pnpm --filter @thp/tour-video make
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: demo-videos
           path: |
@@ -86,10 +93,16 @@ jobs:
             tour-work/videos/*/videos.json
           retention-days: 14
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: tour-screenshots
           path: apps/web/public/tour/
           retention-days: 14
+      - name: Fail the run if a language did not capture
+        if: steps.capture.outcome == 'failure'
+        run: |
+          echo "::error::A language's capture failed; see the report. The other languages' videos are in the downloads."
+          exit 1
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

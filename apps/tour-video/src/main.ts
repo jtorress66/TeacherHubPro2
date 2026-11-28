@@ -1,10 +1,11 @@
-import { readFile } from 'node:fs/promises';
+import { access, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { trialDays } from '@thp/domain';
 import { parseVideoConfig } from './config.ts';
 import { videoContainer } from './container.ts';
 import { makeVideo, type MadeVideo } from './make-video.ts';
 import { manifestSchema } from './manifest.ts';
+import { manifestPath, splitReady } from './ready.ts';
 import { planVideos } from './script.ts';
 
 // `pnpm --filter @thp/tour-video make`: turns the frames from `TOUR_FRAMES=… pnpm tour:capture`
@@ -29,8 +30,21 @@ console.log(
     : `Narrating with OpenAI, voice "${settings.voiceName}". Lines already spoken are reused.`,
 );
 
-for (const locale of settings.locales) {
-  const raw = await readFile(join(settings.framesDir, 'frames', locale, 'manifest.json'), 'utf8');
+const { ready, missing } = await splitReady(
+  settings.locales,
+  (path) =>
+    access(path).then(
+      () => true,
+      () => false,
+    ),
+  settings.framesDir,
+);
+if (missing.length > 0) {
+  console.error(`No finished capture for: ${missing.join(', ')}. Making the others.`);
+}
+
+for (const locale of ready) {
+  const raw = await readFile(manifestPath(settings.framesDir, locale), 'utf8');
   const manifest = manifestSchema.parse(JSON.parse(raw));
   const plans = planVideos(manifest, locale, trialDays).filter(
     (plan) => settings.only.length === 0 || settings.only.includes(plan.id),
@@ -53,3 +67,6 @@ for (const locale of settings.locales) {
     `${JSON.stringify(made, null, 2)}\n`,
   );
 }
+
+// Every language that was asked for and could not be made fails the run, after the others.
+if (missing.length > 0) process.exitCode = 1;
