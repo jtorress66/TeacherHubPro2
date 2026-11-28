@@ -366,6 +366,13 @@ async function games(tour: Tour) {
   const ask = page.getByRole('region', { name: t('games.explainTitle') });
   await ask.getByRole('button', { name: t('games.explainButton') }).click();
   await expect(page.getByText(t('games.explainReview'))).toBeVisible(worker);
+  // Show the first card's AI-written explanation, not just the top of the form.
+  await page
+    .getByLabel(t('games.builderExplanation'))
+    .first()
+    .evaluate((field) => {
+      field.closest('fieldset')?.scrollIntoView({ block: 'start' });
+    });
   await take(tour, 'aiExplanations');
   await page
     .getByRole('form', { name: t('games.save') })
@@ -427,11 +434,10 @@ async function live(tour: Tour) {
   if (first === undefined) throw new Error('no players');
   await expect(first.student.locator('.answer-grid button').first()).toBeVisible();
   await take(tour, 'livePlayer', first.student);
+  // Three students pick the right answer (every sample question's is 1/2, 4 or 3/8); one doesn't.
   for (const [index, { student }] of [first, ...others].entries()) {
-    await student
-      .locator('.answer-grid button')
-      .nth(index % 2)
-      .click();
+    const name = index < 3 ? /: (?:1\/2|4|3\/8)$/u : /: (?!(?:1\/2|4|3\/8)$)[^:]+$/u;
+    await student.locator('.answer-grid').getByRole('button', { name }).first().click();
   }
   await expect(page.locator('.reveal-explanation')).toBeVisible(worker);
   await take(tour, 'liveReveal');
